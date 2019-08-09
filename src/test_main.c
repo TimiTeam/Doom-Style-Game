@@ -1,5 +1,5 @@
 #include "main_head.h"
-#define EyeHeight  8
+#define EyeHeight  5
 #define DuckHeight 2.5
 #define HeadMargin 1
 #define KneeHeight 2
@@ -197,6 +197,11 @@ void 			draw_world(t_sector *sec, t_wall wall, t_player player, t_sdl *sdl, t_dr
 	
 	if(wall.type == empty_wall)
 	{
+		if (!wall.sectors[1])
+		{
+			printf("wall.sectors[1] is empty. Wall #%d, sector #%d\n", wall.id, wall.sectors[0]->sector);
+			return;
+		}
 		n_ceil_y_s = calc_floor_ceil(player, min(wall.sectors[0]->ceil, wall.sectors[1]->ceil), scale1.y);
 		n_ceil_y_e = calc_floor_ceil(player, min(wall.sectors[0]->ceil, wall.sectors[1]->ceil), scale2.y);
     	n_floor_y_s = calc_floor_ceil(player, max(wall.sectors[0]->floor, wall.sectors[1]->floor), scale1.y);
@@ -266,13 +271,13 @@ void 			draw_world(t_sector *sec, t_wall wall, t_player player, t_sdl *sdl, t_dr
 	SDL_SetRenderDrawColor(sdl->ren, 200, 200, 200, 255);
 	SDL_RenderDrawLine(sdl->ren, x - 1, cya, x - 1, cyb);
 
-//	if (wall.type == empty_wall)
-//	{
-//		if (wall.sectors[0]->sector != player.curr_sector->sector && wall.sectors[0]->sector != sec->sector)
-//			draw_sectors(wall.sectors[0], player, sdl, &data);
-//		else if (wall.sectors[1]->sector != player.curr_sector->sector && wall.sectors[1]->sector != sec->sector)
-//			draw_sectors(wall.sectors[1], player, sdl, &data);
-//	}
+	if (wall.type == empty_wall)
+	{
+		if (wall.sectors[0]->sector != player.curr_sector->sector && wall.sectors[0]->sector != sec->sector)
+			draw_sectors(wall.sectors[0], player, sdl, &data);
+		else if (wall.sectors[1]->sector != player.curr_sector->sector && wall.sectors[1]->sector != sec->sector)
+			draw_sectors(wall.sectors[1], player, sdl, &data);
+	}
 }
 
 void			draw_sectors(t_sector *sec, t_player player, t_sdl *sdl, t_draw_data *data)
@@ -340,6 +345,7 @@ void			move_player(t_player *player, float sin_angle, float cos_angle)
 				player->curr_sector->sector != player->curr_sector->wall[i]->sectors[1]->sector) 
 				player->curr_sector = player->curr_sector->wall[i]->sectors[1];
 			player->pos = (t_vector){player->pos.x + cos_angle, player->pos.y + sin_angle};
+			//player->height = EyeHeight + (player->curr_sector->floor > 0 ? player->curr_sector->floor - 1 : player->curr_sector->floor);
 			player->height = EyeHeight + player->curr_sector->floor;
 			break;
         }
