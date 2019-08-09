@@ -74,7 +74,7 @@ t_vector		*get_vectors(int fd, int vec_size)
 		if (ft_isdigit(line[0]))
 		{
 			get_data(&vectors[i].x, &vectors[i].y, line);
-			vectors[i].z = 1;
+			vectors[i].z = 5;
 			i++;
 		}
 		ft_strdel(&line);

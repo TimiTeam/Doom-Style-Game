@@ -9,6 +9,15 @@
 #define H 1000
 #define W 1200
 
+typedef struct		s_draw_data
+{
+	float 			start;
+	float			end;
+	int 			*ytop;
+	int				*ybottom;
+}					t_draw_data;
+
+
 typedef struct		s_plyer
 {	
 	t_vector		pos;
