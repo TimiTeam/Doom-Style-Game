@@ -8,9 +8,11 @@
 
 #define H 1000
 #define W 1200
+#define MAX_SECTORS 128
 
 typedef struct		s_draw_data
 {
+	unsigned short 	prev_sector_id;
 	float 			start;
 	float			end;
 	int 			*ytop;

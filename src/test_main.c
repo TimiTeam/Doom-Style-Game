@@ -180,6 +180,22 @@ void 			draw_world(t_sector *sec, t_wall wall, t_player player, t_sdl *sdl, t_dr
 
 	if (wall.start.y <= 0 && wall.end.y <= 0)
 		return ;
+/*
+	SDL_SetRenderDrawColor(sdl->ren, 200, 200, 200, 255);
+	SDL_RenderDrawLine(sdl->ren, wall.start.x, wall.start.y, wall.end.x, wall.end.y);
+
+	if (wall.type == empty_wall)
+	{
+		data.prev_sector_id = sec->sector;
+		if (wall.sectors[0]->sector != player.curr_sector->sector && wall.sectors[0]->sector != sec->sector && data.prev_sector_id != wall.sectors[0]->sector )
+			draw_sectors(wall.sectors[0], player, sdl, &data);
+		else if (wall.sectors[1]->sector != player.curr_sector->sector && wall.sectors[1]->sector != sec->sector && data.prev_sector_id != wall.sectors[1]->sector )
+			draw_sectors(wall.sectors[1], player, sdl, &data);
+	}
+
+	return ;
+*/
+
 	if (wall.start.y <= 0 || wall.end.y <= 0)
 		make_intersect(&wall);
 	scale1 =(t_vector) {player.hfov / wall.start.y, player.vfov / wall.start.y};
@@ -273,6 +289,7 @@ void 			draw_world(t_sector *sec, t_wall wall, t_player player, t_sdl *sdl, t_dr
 
 	if (wall.type == empty_wall)
 	{
+		data.prev_sector_id = sec->sector;
 		if (wall.sectors[0]->sector != player.curr_sector->sector && wall.sectors[0]->sector != sec->sector)
 			draw_sectors(wall.sectors[0], player, sdl, &data);
 		else if (wall.sectors[1]->sector != player.curr_sector->sector && wall.sectors[1]->sector != sec->sector)
@@ -294,7 +311,7 @@ void			draw_sectors(t_sector *sec, t_player player, t_sdl *sdl, t_draw_data *dat
 			draw_world(sec, *sec->wall[i], player, sdl, *data);
 		i++;
 	}
-	sort_by_nearest(sec->wall, player, sec->portals, MAX_PORTALS);
+//	sort_by_nearest(sec->wall, player, sec->portals, MAX_PORTALS);
 	while (p < MAX_PORTALS && sec->portals[p] >= 0)
 	{
 		draw_world(sec, *sec->wall[sec->portals[p]], player, sdl, *data);
@@ -316,6 +333,7 @@ void				run_with_buff(t_player player, t_sdl *sdl, unsigned int win_x)
 		ytop[x] = 0;
 		x++;
 	}
+	draw_data.prev_sector_id = player.curr_sector->sector;
 	draw_data.start = 0;
 	draw_data.end = win_x;
 	draw_data.ytop = &ytop[0];
@@ -352,6 +370,7 @@ void			move_player(t_player *player, float sin_angle, float cos_angle)
 		i++;
 	}
 	player->pos = (t_vector){player->pos.x + cos_angle, player->pos.y + sin_angle};
+	sort_by_nearest(player->curr_sector->wall, *player, player->curr_sector->portals, MAX_PORTALS);
 }
 
 int 				is_it_wall(t_vector pos, t_wall wall)
