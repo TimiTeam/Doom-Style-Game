@@ -271,7 +271,7 @@ void 			draw_world(t_sector *sec, t_wall wall, t_player player, t_sdl *sdl, t_dr
             float 	mapx, mapz;
 			hei = y < cya ? sec->ceil - player.height: sec->floor - player.height;
             CeilingFloorScreenCoordinatesToMapCoordinates(hei, x, y,mapx, mapz);
-            unsigned tx = (mapx * 300), txtz = (mapz * 300);
+            unsigned tx = (mapx * 100), txtz = (mapz * 100);
             //printf("%d\n%d\n", txtx, txtz);
             int *floorPix = (int*)sec->floor_tex->pixels;
             int *surfacePix = (int*)sdl->surf->pixels;
@@ -396,7 +396,7 @@ void			move_player(t_player *player, float sin_angle, float cos_angle)
 			else if (player->curr_sector->wall[i]->sectors[1] &&
 				player->curr_sector->sector != player->curr_sector->wall[i]->sectors[1]->sector) 
 				player->curr_sector = player->curr_sector->wall[i]->sectors[1];
-			player->pos = (t_vector){player->pos.x + cos_angle, player->pos.y + sin_angle};
+			//player->pos = (t_vector){player->pos.x + cos_angle, player->pos.y + sin_angle};
 			//player->height = EyeHeight + (player->curr_sector->floor > 0 ? player->curr_sector->floor - 1 : player->curr_sector->floor);
 			player->height = EyeHeight + player->curr_sector->floor;
 			break;
