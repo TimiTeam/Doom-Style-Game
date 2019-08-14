@@ -277,7 +277,7 @@ void			mark_all_neighbors(t_sector *sectors, t_wall **all)
 	int			i;
 	int			p;
 
-	floor_tex = load_img("textures/floor2.jpg");
+	floor_tex = load_img("textures/023.png");
 	ceil_tex = load_img("textures/ceil.jpeg");
 	sec = sectors;
 	while (sec)

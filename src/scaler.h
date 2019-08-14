@@ -2,8 +2,8 @@
 #define __SCALER_H
 
 #define CeilingFloorScreenCoordinatesToMapCoordinates(mapY, screenX,screenY, X,Z) \
-            do { Z = (mapY)*H*tan(400)/ ((H/2 - (screenY))); \
-                 X = (Z) * (W/2 - (screenX)) / (W*tan(400)); \
+            do { Z = (mapY)*H*(1.0 * .2f)/ ((H/2 - (screenY))); \
+                 X = (Z) * (W/2 - (screenX)) / (W*(1.0 * 0.73f*H/W)); \
                 RelativeMapCoordinatesToAbsoluteOnes(X,Z); } while(0)
 #define RelativeMapCoordinatesToAbsoluteOnes(X,Z) \
             do { float rtx = (Z) * player.cos_angl + (X) * player.sin_angl; \
