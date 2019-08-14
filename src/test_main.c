@@ -3,7 +3,8 @@
 #define DuckHeight 2.5
 #define HeadMargin 1
 #define KneeHeight 2
-
+#define horfov (1.0 * 0.73f*H/W)
+#define verfov (1.0 * .2f)
 #define Yaw(y,z) (y + z*player.yaw)
 
 float scaleH = 34;
@@ -213,7 +214,6 @@ void 			draw_world(t_sector *sec, t_wall wall, t_player player, t_sdl *sdl, t_dr
 
 	if(wall.start.x >= wall.end.x || wall.end.x < data.start || wall.start.x > data.end)
 		return ;
-
 	ceil_y_s = calc_floor_ceil(player, sec->ceil, scale1.y);
 	ceil_y_e = calc_floor_ceil(player, sec->ceil, scale2.y);
 	floor_y_s = calc_floor_ceil(player, sec->floor, scale1.y);
@@ -254,15 +254,14 @@ void 			draw_world(t_sector *sec, t_wall wall, t_player player, t_sdl *sdl, t_dr
 	//	SDL_SetRenderDrawColor(sdl->ren, 102, 100, 98, 255);
 	//	SDL_RenderDrawLine(sdl->ren, x, data.ytop[x] , x, cya - 1);
 
-		vline(sdl->surf, x, data.ytop[x], cya - 1, 102, 100, 98);
+		//vline(sdl->surf, x, data.ytop[x], cya - 1, 102, 100, 98);
 
 	//	SDL_SetRenderDrawColor(sdl->ren, 200, 200, 200, 255);
 	//	SDL_RenderDrawPoint(sdl->ren, x, cya - 1);
 
 	//	SDL_SetRenderDrawColor(sdl->ren, 73, 52, 0, 255);
 	//	SDL_RenderDrawLine(sdl->ren, x, cyb, x, data.ybottom[x]);
-
-		/*		for(int y=ytop[x]; y<=ybottom[x]; ++y)
+		for(int y=data.ytop[x]; y<=data.ybottom[x]; ++y)
         {
             if (y >= cya && y <= cyb) {
 				y = cyb;
@@ -270,17 +269,17 @@ void 			draw_world(t_sector *sec, t_wall wall, t_player player, t_sdl *sdl, t_dr
 			}
             float 	hei;
             float 	mapx, mapz;
-			hei = y < cya ? yceil: yfloor;
+			hei = y < cya ? sec->ceil - player.height: sec->floor - player.height;
             CeilingFloorScreenCoordinatesToMapCoordinates(hei, x, y,mapx, mapz);
-            unsigned tx = (mapx * 50), txtz = (mapz * 50);
+            unsigned tx = (mapx * 300), txtz = (mapz * 300);
             //printf("%d\n%d\n", txtx, txtz);
-            int *floorPix = (int*)sectors->floor_tex->pixels;
+            int *floorPix = (int*)sec->floor_tex->pixels;
             int *surfacePix = (int*)sdl->surf->pixels;
-            int pel = floorPix[tx % sectors->floor_tex->w + (txtz % sectors->floor_tex->h) * sectors->floor_tex->w];
-            surfacePix[y * W + x] = getpixel(sectors->floor_tex, tx % sectors->floor_tex->w, txtz % sectors->floor_tex->h);
+            int pel = floorPix[tx % sec->floor_tex->w + (txtz % sec->floor_tex->h) * sec->floor_tex->w];
+            surfacePix[y * W + x] = getpixel(sec->floor_tex, tx % sec->floor_tex->w, txtz % sec->floor_tex->h);
         }
-	*/
-		vline(sdl->surf, x, cyb, data.ybottom[x], 73, 52, 0);
+	
+		//vline(sdl->surf, x, cyb, data.ybottom[x], 73, 52, 0);
 		if (wall.type != empty_wall)
 		{
 		//	SDL_SetRenderDrawColor(sdl->ren, 160, 130, 65, 255);
@@ -301,7 +300,7 @@ void 			draw_world(t_sector *sec, t_wall wall, t_player player, t_sdl *sdl, t_dr
 	//	SDL_SetRenderDrawColor(sdl->ren, 0, 0, 98, 255);
 	//	SDL_RenderDrawLine(sdl->ren, x, cya, x, n_cya);
 
-		vline(sdl->surf, x, cya, n_cya, 255, 255, 200);
+		//vline(sdl->surf, x, cya, n_cya, 255, 255, 200);
 
 	//	SDL_SetRenderDrawColor(sdl->ren, 200, 200, 200, 255);
 	//	SDL_RenderDrawPoint(sdl->ren, x, n_cya - 1);
@@ -309,7 +308,7 @@ void 			draw_world(t_sector *sec, t_wall wall, t_player player, t_sdl *sdl, t_dr
 	//	SDL_SetRenderDrawColor(sdl->ren, 22, 0, 118, 255);
 	//	SDL_RenderDrawLine(sdl->ren, x, n_cyb, x, cyb);
 
-		vline(sdl->surf, x, n_cyb, cyb, 255, 200, 0);
+		//vline(sdl->surf, x, n_cyb, cyb, 255, 200, 0);
 
 	//	SDL_SetRenderDrawColor(sdl->ren, 200, 200, 200, 255);
 	//	SDL_RenderDrawPoint(sdl->ren, x, n_cyb + 1);
@@ -542,7 +541,7 @@ int				main(int argc, char **argv)
 	sdl = new_t_sdl(W, H, "test_sectors");
 	init_sdl(sdl);
 	SDL_ShowCursor(SDL_DISABLE);
-
+	printf("tan:%f\n2f:%f\n", sdl->win_size.y / tan(350), .2f * sdl->win_size.y);
 	player = (t_player){};
 	player.pos = (t_vector){3, 3, 0};
 	player.half_win_size = (t_point) {sdl->win_size.x / 2, sdl->win_size.y / 2};
@@ -551,7 +550,7 @@ int				main(int argc, char **argv)
 	player.hfov = sdl->win_size.x / tan(400) /*0.73f * sdl->win_size.y*/; 
 //	player.vfov = sdl->win_size.y * (1.0 * .2f);
 	// screenWidth / tan(verticalfov) good value tan(350)
-	player.vfov	= sdl->win_size.y / tan(350) /*.2f * sdl->win_size.y*/;
+	player.vfov	= .2f * sdl->win_size.y /*.2f * sdl->win_size.y*/;
 //	player.hfov = sdl->win_size.y * (1.0 * 0.73f * sdl->win_size.y / sdl->win_size.x);
 	player.height = EyeHeight;
 	player.curr_sector = sectors;
