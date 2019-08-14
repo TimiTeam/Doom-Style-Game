@@ -31,7 +31,7 @@ void			get_count_vectors_and_walls(int fd, int *co_vec, int *co_wall)
 	ft_strdel(&wall);
 }
 
-int 			get_data(float *x, float *y, char *data)
+int 			get_data(float *x, float *y, float *z, char *data)
 {
 	int			i;
 	char		*num;
@@ -53,6 +53,13 @@ int 			get_data(float *x, float *y, char *data)
 		num = ft_itoa((int)*y);
 		i += ft_strlen(num);
 		ft_strdel(&num);
+		if (data[i] && ft_isdigit(data[i + 1]) && z)
+		{
+			*z = (float)ft_atoi(&data[i]);
+			num = ft_itoa((int)*z);
+			i += ft_strlen(num);
+			ft_strdel(&num);
+		}
 	}
 	return (i);
 }
@@ -73,8 +80,8 @@ t_vector		*get_vectors(int fd, int vec_size)
 			break ;
 		if (ft_isdigit(line[0]))
 		{
-			get_data(&vectors[i].x, &vectors[i].y, line);
-			vectors[i].z = 5;
+			get_data(&vectors[i].x, &vectors[i].y, &vectors[i].z, line);
+			//vectors[i].z = 5;
 			i++;
 		}
 		ft_strdel(&line);
@@ -134,7 +141,7 @@ t_wall			**get_walls(int fd, int wall_size, t_vector *vectors)
 		{
 			walls[i] = (t_wall*)malloc(sizeof(t_wall));
 			*walls[i] = (t_wall){};
-			j = get_data(&start, &end, line);
+			j = get_data(&start, &end, NULL, line);
 			walls[i]->start = vectors[(int)start - 1];
 			walls[i]->end = vectors[(int)end - 1];
 			walls[i]->type = ft_strcmp(&line[j], " filled") == 0 ? fieled_wall : empty_wall;
@@ -210,7 +217,7 @@ t_sector		*crate_and_fill_sector_by_data(t_wall **walls, char *data)
 	float		c;
 
 	port = 0;
-	i = get_data(&f, &c, data);
+	i = get_data(&f, &c, NULL, data);
 	sect = crate_new_sector(f, c);
 	sect->n_walls = get_wall_count(&data[i]);
 	count = 0;

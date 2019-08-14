@@ -6,6 +6,7 @@
 
 #define Yaw(y,z) (y + z*player.yaw)
 
+float scaleH = 34;
 
 void			draw_yellow_line(SDL_Renderer *ren, t_vector start, t_vector end)
 {
@@ -103,7 +104,7 @@ void 			make_intersect(t_wall *wall)
 {
 	t_vector 	i1;
 	t_vector 	i2;
-	float nearz = 1e-4f, farz = 5, nearside = 1e-5f, farside = 20.f;
+	float nearz = 1e-4f, farz = 5, nearside = 1e-5f, farside = 1000.f;
 
 	i1 = Intersect(wall->start.x, wall->start.y, wall->end.x, wall->end.y, -nearside,nearz, -farside,farz);
     i2 = Intersect(wall->start.x, wall->start.y, wall->end.x, wall->end.y,  nearside,nearz,  farside,farz);
@@ -147,11 +148,11 @@ int			calc_floor_ceil(t_player player, float floor_or_ceil, float scale_y)
 
 void 			draw_world(t_sector *sec, t_wall wall, t_player player, t_sdl *sdl, t_draw_data data)
 {
-	t_wall		ds;
 	t_vector	line_start;
 	t_vector	line_end;
 	t_vector 	scale1;
 	t_vector 	scale2;
+	t_wall		cp;
 	int 		ceil_y_s;
 	int 		ceil_y_e;
 	int 		floor_y_s;
@@ -168,38 +169,45 @@ void 			draw_world(t_sector *sec, t_wall wall, t_player player, t_sdl *sdl, t_dr
 	int 		n_cyb;
 	int			x;
 	int 		end;
+	int 		u0, u1;
 
-	ds = wall;
+	cp = wall;
+
 	line_start = (t_vector){wall.start.x - player.pos.x, wall.start.y - player.pos.y, wall.start.z - player.pos.z};
-	line_end = (t_vector){wall.end.x - player.pos.x, wall.end.y - player.pos.y, wall.end.z - player.pos.z};
-	
+	line_end = (t_vector){wall.end.x - player.pos.x, wall.end.y - player.pos.y, wall.end.z - player.pos.z};	
+
+
 	wall.start = (t_vector){line_start.x * player.sin_angl - line_start.y * player.cos_angl,
 				line_start.x * player.cos_angl + line_start.y * player.sin_angl, .z = wall.start.y};
 	wall.end = (t_vector){line_end.x * player.sin_angl - line_end.y * player.cos_angl,
-				line_end.x * player.cos_angl + line_end.y * player.sin_angl, .z = wall.end.y};
-
+			line_end.x * player.cos_angl + line_end.y * player.sin_angl, .z = wall.end.y};
 	if (wall.start.y <= 0 && wall.end.y <= 0)
 		return ;
-/*
-	SDL_SetRenderDrawColor(sdl->ren, 200, 200, 200, 255);
-	SDL_RenderDrawLine(sdl->ren, wall.start.x, wall.start.y, wall.end.x, wall.end.y);
 
-	if (wall.type == empty_wall)
-	{
-		data.prev_sector_id = sec->sector;
-		if (wall.sectors[0]->sector != player.curr_sector->sector && wall.sectors[0]->sector != sec->sector && data.prev_sector_id != wall.sectors[0]->sector )
-			draw_sectors(wall.sectors[0], player, sdl, &data);
-		else if (wall.sectors[1]->sector != player.curr_sector->sector && wall.sectors[1]->sector != sec->sector && data.prev_sector_id != wall.sectors[1]->sector )
-			draw_sectors(wall.sectors[1], player, sdl, &data);
-	}
+	int scaleL;
+    if(fabsf(cp.start.x - cp.end.x) > fabsf(cp.start.y - cp.end.y))
+        scaleL = fabsf(cp.start.x - cp.end.x) / 5.0f;
+    else
+        scaleL = fabsf(cp.start.y - cp.end.y) / 5.0f;
 
-	return ;
-*/
-
+	if(wall.type != empty_wall)
+    	u0 = 0, u1 = wall.texture->w * scaleL - 1;
+	
+	t_vector org1 = {wall.start.x, wall.start.y}, org2 = {wall.end.x, wall.end.y};
+	
 	if (wall.start.y <= 0 || wall.end.y <= 0)
 		make_intersect(&wall);
+	if (wall.type != empty_wall)
+	{
+		if(fabs(wall.end.x - wall.start.x) > fabs(wall.end.y-wall.start.y))
+            u0 = (wall.start.x-org1.x) * (wall.texture->w * scaleL- 1) / (org2.x-org1.x), u1 = (wall.end.x-org1.x) * (wall.texture->w * scaleL - 1) / (org2.x-org1.x);
+    	else
+    	    u0 = (wall.start.y-org1.y) * (wall.texture->w * scaleL- 1) / (org2.y-org1.y), u1 = (wall.end.y-org1.y) * (wall.texture->w * scaleL - 1) / (org2.y-org1.y);
+	
+	}
 	scale1 =(t_vector) {player.hfov / wall.start.y, player.vfov / wall.start.y};
     scale2 =(t_vector) {player.hfov / wall.end.y, player.vfov / wall.end.y};
+
 	wall.start.x = player.half_win_size.x - (int)(wall.start.x * scale1.x);
 	wall.end.x = player.half_win_size.x - (int)(wall.end.x * scale2.x);
 
@@ -231,6 +239,8 @@ void 			draw_world(t_sector *sec, t_wall wall, t_player player, t_sdl *sdl, t_dr
 	data.end = end;
 	while (x < end && x < sdl->win_size.x)
 	{
+		int txtx = (u0 * ((wall.end.x - x) * wall.end.y) + u1 * ((x - wall.start.x) * wall.start.y)) / ((wall.end.x - x) * wall.end.y + (x - wall.start.x) * wall.start.y);
+		
 		ya = (x - wall.start.x) * (ceil_y_e - ceil_y_s) / (wall.end.x-wall.start.x) + ceil_y_s;
 
 		cya = clamp(ya, data.ytop[x], data.ybottom[x]);
@@ -241,19 +251,25 @@ void 			draw_world(t_sector *sec, t_wall wall, t_player player, t_sdl *sdl, t_dr
 
 		
 		
-		SDL_SetRenderDrawColor(sdl->ren, 102, 100, 98, 255);
-		SDL_RenderDrawLine(sdl->ren, x, data.ytop[x] , x, cya - 1);
+	//	SDL_SetRenderDrawColor(sdl->ren, 102, 100, 98, 255);
+	//	SDL_RenderDrawLine(sdl->ren, x, data.ytop[x] , x, cya - 1);
 
-		SDL_SetRenderDrawColor(sdl->ren, 200, 200, 200, 255);
-		SDL_RenderDrawPoint(sdl->ren, x, cya - 1);
+		vline(sdl->surf, x, data.ytop[x], cya - 1, 102, 100, 98);
 
-		SDL_SetRenderDrawColor(sdl->ren, 73, 52, 0, 255);
-		SDL_RenderDrawLine(sdl->ren, x, cyb, x, data.ybottom[x]);
+	//	SDL_SetRenderDrawColor(sdl->ren, 200, 200, 200, 255);
+	//	SDL_RenderDrawPoint(sdl->ren, x, cya - 1);
 
+	//	SDL_SetRenderDrawColor(sdl->ren, 73, 52, 0, 255);
+	//	SDL_RenderDrawLine(sdl->ren, x, cyb, x, data.ybottom[x]);
+
+		vline(sdl->surf, x, cyb, data.ybottom[x], 73, 52, 0);
 		if (wall.type != empty_wall)
 		{
-			SDL_SetRenderDrawColor(sdl->ren, 160, 130, 65, 255);
-			SDL_RenderDrawLine(sdl->ren, x, cya, x, cyb);					
+		//	SDL_SetRenderDrawColor(sdl->ren, 160, 130, 65, 255);
+		//	SDL_RenderDrawLine(sdl->ren, x, cya, x, cyb);
+			//if (t % 2 == 0)
+		//	textLine(x, cya, cyb, (struct Scaler)Scaler_Init(ya, cya, yb, 0, wall.texture->h), txtx, sdl->surf, wall.texture);
+			textLine(x, cya, cyb, (struct Scaler)Scaler_Init(ya,cya,yb, 0, fabsf(sec->floor - sec->ceil) * scaleH), txtx, sdl->surf, wall.texture);
 			data.ybottom[x] = cyb;
 			data.ytop[x] = cya;
 		}
@@ -264,32 +280,34 @@ void 			draw_world(t_sector *sec, t_wall wall, t_player player, t_sdl *sdl, t_dr
 			n_cyb = clamp((x - wall.start.x) * (n_floor_y_e - n_floor_y_s) / (wall.end.x-wall.start.x) + 
 			n_floor_y_s, data.ytop[x], data.ybottom[x]);
 
-			SDL_SetRenderDrawColor(sdl->ren, 0, 0, 98, 255);
-			SDL_RenderDrawLine(sdl->ren, x, cya, x, n_cya);
+	//	SDL_SetRenderDrawColor(sdl->ren, 0, 0, 98, 255);
+	//	SDL_RenderDrawLine(sdl->ren, x, cya, x, n_cya);
 
-			SDL_SetRenderDrawColor(sdl->ren, 200, 200, 200, 255);
-			SDL_RenderDrawPoint(sdl->ren, x, n_cya - 1);
+		vline(sdl->surf, x, cya, n_cya, 255, 255, 200);
 
-			SDL_SetRenderDrawColor(sdl->ren, 22, 0, 118, 255);
-			SDL_RenderDrawLine(sdl->ren, x, n_cyb, x, cyb);
+	//	SDL_SetRenderDrawColor(sdl->ren, 200, 200, 200, 255);
+	//	SDL_RenderDrawPoint(sdl->ren, x, n_cya - 1);
 
-			SDL_SetRenderDrawColor(sdl->ren, 200, 200, 200, 255);
-			SDL_RenderDrawPoint(sdl->ren, x, n_cyb + 1);
+	//	SDL_SetRenderDrawColor(sdl->ren, 22, 0, 118, 255);
+	//	SDL_RenderDrawLine(sdl->ren, x, n_cyb, x, cyb);
+
+		vline(sdl->surf, x, n_cyb, cyb, 255, 200, 0);
+
+	//	SDL_SetRenderDrawColor(sdl->ren, 200, 200, 200, 255);
+	//	SDL_RenderDrawPoint(sdl->ren, x, n_cyb + 1);
 			
 
 			data.ytop[x] = n_cya;
 			data.ybottom[x] = n_cyb;
 		}
-		SDL_SetRenderDrawColor(sdl->ren, 200, 200, 200, 255);
-		SDL_RenderDrawPoint(sdl->ren, x, cyb + 1);
+	//	SDL_SetRenderDrawColor(sdl->ren, 200, 200, 200, 255);
+	//	SDL_RenderDrawPoint(sdl->ren, x, cyb + 1);
 		x++;
 	}
-	SDL_SetRenderDrawColor(sdl->ren, 200, 200, 200, 255);
-	SDL_RenderDrawLine(sdl->ren, x - 1, cya, x - 1, cyb);
-
+//	SDL_SetRenderDrawColor(sdl->ren, 200, 200, 200, 255);
+//	SDL_RenderDrawLine(sdl->ren, x - 1, cya, x - 1, cyb);
 	if (wall.type == empty_wall)
 	{
-		data.prev_sector_id = sec->sector;
 		if (wall.sectors[0]->sector != player.curr_sector->sector && wall.sectors[0]->sector != sec->sector)
 			draw_sectors(wall.sectors[0], player, sdl, &data);
 		else if (wall.sectors[1]->sector != player.curr_sector->sector && wall.sectors[1]->sector != sec->sector)
@@ -333,7 +351,6 @@ void				run_with_buff(t_player player, t_sdl *sdl, unsigned int win_x)
 		ytop[x] = 0;
 		x++;
 	}
-	draw_data.prev_sector_id = player.curr_sector->sector;
 	draw_data.start = 0;
 	draw_data.end = win_x;
 	draw_data.ytop = &ytop[0];
@@ -449,8 +466,13 @@ int					hook_event(t_player *player)
 				player->cos_angl = cos(player->angle);
 				player->sin_angl = sin(player->angle);
 			}
-			if (e.key.keysym.sym == 't')
-				t++;
+			if (e.key.keysym.sym == 'p')
+			{
+				scaleH++;
+			//	t++;
+			}
+			if (e.key.keysym.sym == 'm')
+				scaleH--;
 			if (e.key.keysym.sym == SDLK_a)
 				move_player(player, -player->cos_angl, player->sin_angl);
 			if (e.key.keysym.sym == SDLK_d)
@@ -476,12 +498,12 @@ void			game_loop(t_sdl *sdl, t_player player, t_sector *sectors)
 		SDL_RenderClear(sdl->ren);
 		SDL_FillRect(sdl->surf, NULL, 0x00);
 		run_with_buff(player, sdl, sdl->win_size.x);
-		if (t % 2 == 0)
-		{
+	//	if (t % 2 == 0)
+	//	{
 			tex = SDL_CreateTextureFromSurface(sdl->ren, sdl->surf);
 			sdl_render(sdl->ren, tex, NULL, NULL);
 			SDL_DestroyTexture(tex);
-		}
+	//	}
 		SDL_RenderPresent(sdl->ren);
 		run = hook_event(&player);
 	}
