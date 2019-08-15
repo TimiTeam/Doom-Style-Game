@@ -10,6 +10,21 @@
 #define OK 1
 #define ERROR 0
 
+/*
+** timer status
+*/
+
+# define TIMER_OFF				0
+# define TIMER_ON				1
+# define TIMER_PAUSED			2
+
+typedef struct					s_timer
+{
+    Uint32						when_started;
+    Uint32						when_paused;
+    int							status;
+}								t_timer;
+
 typedef struct		s_point
 {
 	int				x;
@@ -23,7 +38,10 @@ typedef	struct		s_sdl
 	SDL_Window		*win;
 	SDL_Renderer	*ren;
 	SDL_Surface		*surf;
+	float			fps;
+	unsigned        frame_id;
 }					t_sdl;
+
 
 //					CREATE
 t_sdl				*new_t_sdl(int win_size_x, int win_size_y, const char *title);
@@ -51,10 +69,20 @@ void				sdl_render(SDL_Renderer *ren, SDL_Texture *tex, SDL_Rect *src, SDL_Rect 
 
 SDL_Texture			*make_color_text(SDL_Renderer *ren, const char *str, const char *file_font, int size, SDL_Color col);
 SDL_Texture			*make_black_text(SDL_Renderer *ren, const char *str, const char *path_to_font, int size);
+SDL_Texture			*make_text_using_ttf_font(SDL_Renderer *ren, TTF_Font *font, const char *str, SDL_Color col);
+SDL_Texture			*make_black_text_using_ttf_font(SDL_Renderer *ren, TTF_Font *font, const char *str);
 
 //					DESTROY
 void				quit_sdl();
 void				free_t_sdl(t_sdl **s);
 void				close_t_sdl(t_sdl *s);
 
-#endif	
+//					TIMER
+Uint32							get_ticks(t_timer timer);
+void							stop_timer(t_timer *timer);
+void							unpause_timer(t_timer *timer);
+void							pause_timer(t_timer *timer);
+void							start_timer(t_timer *timer);
+t_timer							init_timer(void);
+
+#endif

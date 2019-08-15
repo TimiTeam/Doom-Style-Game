@@ -501,30 +501,56 @@ int					hook_event(t_player *player)
 	return (1);
 }
 
-void			game_loop(t_sdl *sdl, t_player player, t_sector *sectors)
+void                game_loop(t_sdl *sdl, t_player player, t_sector *sectors)
 {
-	int			run;
-	SDL_Texture *tex;
-
-	player.cos_angl = cos(player.angle);
-	player.sin_angl = sin(player.angle);
-	run = 1;
-	while(run)
-	{
-		SDL_SetRenderDrawColor(sdl->ren, 0, 0, 0, 255);
-		SDL_RenderClear(sdl->ren);
-		SDL_FillRect(sdl->surf, NULL, 0x00);
-		run_with_buff(player, sdl, sdl->win_size.x);
-	//	if (t % 2 == 0)
-	//	{
-			tex = SDL_CreateTextureFromSurface(sdl->ren, sdl->surf);
-			sdl_render(sdl->ren, tex, NULL, NULL);
-			SDL_DestroyTexture(tex);
-	//	}
-		SDL_RenderPresent(sdl->ren);
-		run = hook_event(&player);
-	}
-	SDL_DestroyTexture(tex);
+    int                run;
+    SDL_Texture     *tex;
+    TTF_Font         *font;
+    t_timer            timer;
+    char            str[100];
+    SDL_Texture        *text;
+    SDL_Rect        fps_area;
+    
+    font = TTF_OpenFont("font.ttf", 100);
+    fps_area = (SDL_Rect){20, 20, 150, 55};
+    
+    player.cos_angl = cos(player.angle);
+    player.sin_angl = sin(player.angle);
+    run = 1;
+    sdl->frame_id = 0;
+    timer = init_timer();
+    start_timer(&timer);
+    while(run)
+    {
+        SDL_SetRenderDrawColor(sdl->ren, 0, 0, 0, 255);
+        SDL_RenderClear(sdl->ren);
+        SDL_FillRect(sdl->surf, NULL, 0x00);
+        run_with_buff(player, sdl, sdl->win_size.x);
+        tex = SDL_CreateTextureFromSurface(sdl->ren, sdl->surf);
+        sdl_render(sdl->ren, tex, NULL, NULL);
+        
+        SDL_DestroyTexture(tex);
+        
+        if((sdl->fps = (float)sdl->frame_id / (get_ticks(timer) / 1000.f)) > 2000000)
+            sdl->fps = 0;
+        sdl->frame_id++;
+        sprintf(str, "fps:  %f", sdl->fps);
+        //    printf("got fps = %f\n", sdl->fps);
+        
+        text = make_black_text_using_ttf_font(sdl->ren, font, str);
+        
+        SDL_RenderCopy(sdl->ren, text, NULL, &fps_area);
+        
+        SDL_DestroyTexture(text);
+        
+        SDL_RenderPresent(sdl->ren);
+        
+        run = hook_event(&player);
+    }
+    
+    TTF_CloseFont(font);
+    
+    SDL_DestroyTexture(tex);
 }
 
 
