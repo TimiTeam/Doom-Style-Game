@@ -17,9 +17,9 @@ SDL_INCL =	-I $(CURDIR)/frameworks/SDL2.framework/Headers/ \
 			-I $(CURDIR)/frameworks/SDL2_ttf.framework/Headers/ \
 			-I $(CURDIR)/frameworks/SDL2_image.framework/Headers/
 
-FLAG_W = -Wall -Wextra -Werror
+FLAG_W = -Wall -Wextra -Werror 
 
-FLAG_W = 
+FLAG_W = -O0
 
 FLAG_F = -F frameworks
 
@@ -42,7 +42,7 @@ $(NAME): $(LIBFT_A) $(OBJS)
 
 
 $(DIR_OBJ)/%.o: $(DIR_SRC)/%.c | $(DIR_OBJ)
-	$(CC) -g -fsanitize=address $(FLAG_W) -pthread  $(FLAG_F) $(SDL_INCL) $(LFT_INCL) -c $< -o $@
+	$(CC) -g -fsanitize=address $(FLAG_W) -pthread  $(FLAG_F) $(SDL_INCL) $(LFT_INCL) -c $< -o $@ 
 
 clean:
 	@make -C libft/ clean

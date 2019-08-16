@@ -2,16 +2,16 @@
 
 Uint32					get_ticks(t_timer timer)
 {
-    if (timer.status == TIMER_ON)
-    {
+//    if (timer.status == TIMER_ON)
+  //  {
         return (SDL_GetTicks() - timer.when_started);
-    }
+   /* }
     else if (timer.status == TIMER_PAUSED)
     {
         return (timer.when_paused);
     }
     else
-        return (0);
+        return (0);*/
 }
 
 void					stop_timer(t_timer *timer)

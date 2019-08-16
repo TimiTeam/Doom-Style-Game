@@ -4,11 +4,15 @@
 #include <fcntl.h>
 #include "sdl_head.h"
 #include "sectors.h"
-#include "scaler.h"
 
 #define H 1000
 #define W 1200
 #define MAX_SECTORS 128
+
+static float m_vfov =  0.73;
+static float m_hfov = .2f;
+static int h_w = W >> 1;
+static int h_h = H >> 1;
 
 typedef struct		s_draw_data
 {
@@ -33,6 +37,26 @@ typedef struct		s_plyer
 	t_point			half_win_size;
 }					t_player;
 
+
+#define CeilingFloorScreenCoordinatesToMapCoordinates(mapY, screenX,screenY, X,Z) \
+            Z = (mapY)* H * m_hfov /  ((h_h - (screenY))); \
+        	X = (Z) * (h_w - (screenX)) / ((m_vfov * H)); \
+        	RelativeMapCoordinatesToAbsoluteOnes(X,Z);
+
+#define RelativeMapCoordinatesToAbsoluteOnes(X,Z) \
+            float rtx = (Z) * player.cos_angl + (X) * player.sin_angl; \
+        	float rtz = (Z) * player.sin_angl - (X) * player.cos_angl; \
+         	X = rtx + player.pos.x; Z = rtz + player.pos.y; \
+
+#define Scaler_Init(a,b,c,d,f) \
+    { d + (b-1 - a) * (f-d) / (c-a), ((f<d) ^ (c<a)) ? -1 : 1, \
+      fabs(f-d), abs(c-a), (int)((b-1-a) * abs((int)(f-d))) % abs(c-a) }
+
+typedef struct 		Scaler {
+	int result, bop, fd, ca, cache;
+} 					Scaler;
+
+
 #define min(a,b)             (((a) < (b)) ? (a) : (b)) // min: Choose smaller of two scalars.
 #define max(a,b)             (((a) > (b)) ? (a) : (b)) // max: Choose greater of two scalars.
 #define clamp(a, mi,ma)      min(max(a,mi),ma)         // clamp: Clamp value into set range.
@@ -48,7 +72,11 @@ typedef struct		s_plyer
     vxs(vxs(x1,y1, x2,y2), (x1)-(x2), vxs(x3,y3, x4,y4), (x3)-(x4)) / vxs((x1)-(x2), (y1)-(y2), (x3)-(x4), (y3)-(y4)), \
     vxs(vxs(x1,y1, x2,y2), (y1)-(y2), vxs(x3,y3, x4,y4), (y3)-(y4)) / vxs((x1)-(x2), (y1)-(y2), (x3)-(x4), (y3)-(y4)) })
 
-int 				Scaler_Next(struct Scaler* i);
-void 					textLine(int x, int y1,int y2, struct Scaler ty,unsigned txtx, SDL_Surface *surface, SDL_Surface *image);
+
+int 			Scaler_Next(Scaler *i);
+
+void 			textLine(int x, int y1,int y2, Scaler ty,unsigned txtx, SDL_Surface *surface, SDL_Surface *image);
+
+Uint32      	getpixel(SDL_Surface *surface, int x, int y);
 
 #endif

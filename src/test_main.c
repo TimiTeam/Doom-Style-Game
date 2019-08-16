@@ -3,8 +3,8 @@
 #define DuckHeight 2.5
 #define HeadMargin 1
 #define KneeHeight 2
-#define horfov (1.0 * 0.73f*H/W)
-#define verfov (1.0 * .2f)
+//#define horfov (1.0 * 0.73f*H/W)
+//#define verfov (1.0 * .2f)
 #define Yaw(y,z) (y + z*player.yaw)
 
 float scaleH = 34;
@@ -270,12 +270,10 @@ void 			draw_world(t_sector *sec, t_wall wall, t_player player, t_sdl *sdl, t_dr
             float 	hei;
             float 	mapx, mapz;
 			hei = y < cya ? sec->ceil - player.height: sec->floor - player.height;
-            CeilingFloorScreenCoordinatesToMapCoordinates(hei, x, y,mapx, mapz);
-            unsigned tx = (mapx * 100), txtz = (mapz * 100);
-            //printf("%d\n%d\n", txtx, txtz);
-            int *floorPix = (int*)sec->floor_tex->pixels;
+           CeilingFloorScreenCoordinatesToMapCoordinates(hei, x, y, mapx, mapz);
+        //    CeilingFloorScreenCoordinatesToMapCoordinates(hei, x, y, &mapx, &mapz, player);
+            unsigned tx = (mapx * 50), txtz = (mapz * 50);
             int *surfacePix = (int*)sdl->surf->pixels;
-            int pel = floorPix[tx % sec->floor_tex->w + (txtz % sec->floor_tex->h) * sec->floor_tex->w];
             surfacePix[y * W + x] = getpixel(sec->floor_tex, tx % sec->floor_tex->w, txtz % sec->floor_tex->h);
         }
 	
@@ -286,7 +284,7 @@ void 			draw_world(t_sector *sec, t_wall wall, t_player player, t_sdl *sdl, t_dr
 		//	SDL_RenderDrawLine(sdl->ren, x, cya, x, cyb);
 			//if (t % 2 == 0)
 		//	textLine(x, cya, cyb, (struct Scaler)Scaler_Init(ya, cya, yb, 0, wall.texture->h), txtx, sdl->surf, wall.texture);
-			textLine(x, cya, cyb, (struct Scaler)Scaler_Init(ya,cya,yb, 0, fabsf(sec->floor - sec->ceil) * scaleH), txtx, sdl->surf, wall.texture);
+			textLine(x, cya, cyb, (struct Scaler)Scaler_Init(ya, cya, yb, 0, fabsf(sec->floor - sec->ceil) * scaleH), txtx, sdl->surf, wall.texture);
 			data.ybottom[x] = cyb;
 			data.ytop[x] = cya;
 		}
@@ -311,8 +309,7 @@ void 			draw_world(t_sector *sec, t_wall wall, t_player player, t_sdl *sdl, t_dr
 		//vline(sdl->surf, x, n_cyb, cyb, 255, 200, 0);
 
 	//	SDL_SetRenderDrawColor(sdl->ren, 200, 200, 200, 255);
-	//	SDL_RenderDrawPoint(sdl->ren, x, n_cyb + 1);
-			
+	//	SDL_RenderDrawPoint(sdl->ren, x, n_cyb +
 
 			data.ytop[x] = n_cya;
 			data.ybottom[x] = n_cyb;
@@ -477,9 +474,9 @@ int					hook_event(t_player *player)
 			if (e.key.keysym.sym == SDLK_LEFT || e.key.keysym.sym == SDLK_RIGHT)
 			{
 				if (e.key.keysym.sym == SDLK_LEFT)
-					player->angle -= 0.05;	
+					player->angle -= 0.08;	
 				else
-					player->angle += 0.05;
+					player->angle += 0.08;
 				player->cos_angl = cos(player->angle);
 				player->sin_angl = sin(player->angle);
 			}
@@ -578,6 +575,10 @@ int				main(int argc, char **argv)
 	// screenWidth / tan(verticalfov) good value tan(350)
 	player.vfov	= .2f * sdl->win_size.y /*.2f * sdl->win_size.y*/;
 //	player.hfov = sdl->win_size.y * (1.0 * 0.73f * sdl->win_size.y / sdl->win_size.x);
+
+//	player.hfov = 1.0 * 0.73;
+//	player.vfov = 1.0 * .2f;
+
 	player.height = EyeHeight;
 	player.curr_sector = sectors;
 
