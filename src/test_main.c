@@ -269,12 +269,15 @@ void 			draw_world(t_sector *sec, t_wall wall, t_player player, t_sdl *sdl, t_dr
 			}
             float 	hei;
             float 	mapx, mapz;
+	    Uint32	pix;
 			hei = y < cya ? sec->ceil - player.height: sec->floor - player.height;
            CeilingFloorScreenCoordinatesToMapCoordinates(hei, x, y, mapx, mapz);
         //    CeilingFloorScreenCoordinatesToMapCoordinates(hei, x, y, &mapx, &mapz, player);
             unsigned tx = (mapx * 50), txtz = (mapz * 50);
-            int *surfacePix = (int*)sdl->surf->pixels;
-            surfacePix[y * W + x] = getpixel(sec->floor_tex, tx % sec->floor_tex->w, txtz % sec->floor_tex->h);
+           // int *surfacePix = (int*)sdl->surf->pixels;
+           // surfacePix[y * W + x] = getpixel(sec->floor_tex, tx % sec->floor_tex->w, txtz % sec->floor_tex->h);
+	   pix = get_pixel(sec->floor_tex, tx % sec->floor_tex->w, txtz % sec->floor_tex->h);
+	   put_pixel(sdl->surf, x, y, pix);
         }
 	
 		//vline(sdl->surf, x, cyb, data.ybottom[x], 73, 52, 0);
