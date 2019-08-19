@@ -5,8 +5,8 @@
 #include "sdl_head.h"
 #include "sectors.h"
 
-#define H 1000
-#define W 1200
+#define W 1240
+#define H 980
 #define MAX_SECTORS 128
 
 static float m_vfov =  0.73;
@@ -18,6 +18,8 @@ typedef struct		s_draw_data
 {
 	float 			start;
 	float			end;
+	int 			diff_ceil;
+	int 			diff_floor;
 	int 			*ytop;
 	int				*ybottom;
 }					t_draw_data;
@@ -38,12 +40,12 @@ typedef struct		s_plyer
 }					t_player;
 
 
-#define CeilingFloorScreenCoordinatesToMapCoordinates(mapY, screenX,screenY, X,Z) \
+#define CeilingFloorScreenCoordinatesToMapCoordinates(mapY, screenX, screenY, X, Z, player) \
             Z = (mapY)* H * m_hfov /  ((h_h - (screenY))); \
         	X = (Z) * (h_w - (screenX)) / ((m_vfov * H)); \
-        	RelativeMapCoordinatesToAbsoluteOnes(X,Z);
+        	RelativeMapCoordinatesToAbsoluteOnes(X,Z,player);
 
-#define RelativeMapCoordinatesToAbsoluteOnes(X,Z) \
+#define RelativeMapCoordinatesToAbsoluteOnes(X,Z,player) \
             float rtx = (Z) * player.cos_angl + (X) * player.sin_angl; \
         	float rtz = (Z) * player.sin_angl - (X) * player.cos_angl; \
          	X = rtx + player.pos.x; Z = rtz + player.pos.y; \
@@ -77,6 +79,6 @@ int 			Scaler_Next(Scaler *i);
 
 void 			textLine(int x, int y1,int y2, Scaler ty,unsigned txtx, SDL_Surface *surface, SDL_Surface *image);
 
-Uint32      	getpixel(SDL_Surface *surface, int x, int y);
+void 			draw_floor_or_ceil(SDL_Surface *dst, SDL_Surface *src, int x, int start_y, int end_y, int diff_height, t_player player);
 
 #endif

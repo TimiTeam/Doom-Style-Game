@@ -1,54 +1,52 @@
 #include "main_head.h"
 
-Uint32 getpixel(SDL_Surface *surface, int x, int y)
+void 			draw_floor_or_ceil(SDL_Surface *dst, SDL_Surface *src, int x, int y, int end_y, int diff_height, t_player player)
 {
-    int bpp = surface->format->BytesPerPixel;
-    /* Here p is the address to the pixel we want to retrieve */
-    Uint8 *p = (Uint8 *)surface->pixels + y * surface->pitch + x * bpp;
+	float		mapx;
+	float		mapz;
+	float		tmp;
+	Uint32		pix;
+	unsigned 	tx;
+	unsigned	txtz;
 
-    switch(bpp) {
-        case 1:
-            return *p;
-            break;
 
-        case 2:
-            return *(Uint16 *)p;
-            break;
+	while(y <= end_y)
+	{
+		mapz = diff_height * H * m_hfov / (h_h - y);
+		mapx = mapz * (h_w - x) / (m_vfov * H);
+		tmp = mapx;
 
-        case 3:
-            if(SDL_BYTEORDER == SDL_BIG_ENDIAN)
-                return p[0] << 16 | p[1] << 8 | p[2];
-            else
-                return p[0] | p[1] << 8 | p[2] << 16;
-            break;
+		mapx = mapz * player.cos_angl + tmp * player.sin_angl;
+		mapz = mapz * player.sin_angl - tmp * player.cos_angl;
 
-        case 4:
-            return *(Uint32 *)p;
-            break;
+		tx = (mapx + player.pos.x) * 50;
+		txtz = (mapz + player.pos.y) * 50;
 
-        default:
-            return 0;       /* shouldn't happen, but avoids warnings */
-    }
+		pix = get_pixel(src, tx % src->w, txtz % src->h);
+		put_pixel(dst, x, y, pix);
+		++y;
+	}
 }
 
-int Scaler_Next(struct Scaler* i)
+
+int				Scaler_Next(struct Scaler* i)
 {
-    for(i->cache += i->fd; i->cache >= i->ca; i->cache -= i->ca) i->result += i->bop;
-    return i->result;
+	for(i->cache += i->fd; i->cache >= i->ca; i->cache -= i->ca) i->result += i->bop;
+	return i->result;
 }
 
-void textLine(int x, int y1,int y2, struct Scaler ty,unsigned txtx, SDL_Surface *surface, SDL_Surface *image)
+void 			textLine(int x, int y1,int y2, struct Scaler ty,unsigned txtx, SDL_Surface *surface, SDL_Surface *image)
 {
-    int *pix = (int*) surface->pixels;
-    int *imagePix = (int*)image->pixels;
-    y1 = clamp(y1, 0, H-1);
-    y2 = clamp(y2, 0, H-1);
-    pix += y1 * W + x;
-    for(int y = y1; y <= y2; ++y)
-    {
-        unsigned txty = Scaler_Next(&ty);
-        //*pix = imagePix[txtx % image->w + (txty % image->h) * image->w];
-        *pix = getpixel(image, txtx % image->w, txty % image->h);
-        pix += W;
-    }
+	int *pix = (int*) surface->pixels;
+	int *imagePix = (int*)image->pixels;
+	y1 = clamp(y1, 0, H-1);
+	y2 = clamp(y2, 0, H-1);
+	pix += y1 * W + x;
+	for(int y = y1; y <= y2; ++y)
+	{
+		unsigned txty = Scaler_Next(&ty);
+		//*pix = imagePix[txtx % image->w + (txty % image->h) * image->w];
+		*pix = get_pixel(image, txtx % image->w, txty % image->h);
+		pix += W;
+	}
 }

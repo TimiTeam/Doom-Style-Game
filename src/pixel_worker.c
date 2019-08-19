@@ -68,6 +68,8 @@ void			put_pixel(SDL_Surface *dst, int x, int y, Uint32 pixel)
 	else if (bpp == 4)
 		*(Uint32*)p = pixel;
 }
+
+
 /*
 int				scale_image(SDL_Surface *dst, SDL_Surface *src)
 {
@@ -96,3 +98,4 @@ int				scale_image(SDL_Surface *dst, SDL_Surface *src)
 	}
 	return (0);
 }*/
+	

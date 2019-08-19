@@ -7,7 +7,7 @@
 //#define verfov (1.0 * .2f)
 #define Yaw(y,z) (y + z*player.yaw)
 
-float scaleH = 34;
+float scaleH = 20;
 
 void			draw_yellow_line(SDL_Renderer *ren, t_vector start, t_vector end)
 {
@@ -37,7 +37,6 @@ static void vline(SDL_Surface *surface, int x, int y1, int y2, int top, int midd
         pix[y2*W+x] = bottom;
     }
 }
-
 
 
 float				len_between_points(t_vector a, t_vector b)
@@ -142,9 +141,9 @@ void			draw_sectors(t_sector *sectors, t_player player, t_sdl *sdl, t_draw_data 
 int t = 1;
 
 
-int			calc_floor_ceil(t_player player, float floor_or_ceil, float scale_y)
+int			calc_floor_ceil(unsigned half_win_size_y, int floor_or_ceil_diff, float scale_y)
 {
-	return (player.half_win_size.y - (floor_or_ceil - player.height) * scale_y);
+	return (half_win_size_y - floor_or_ceil_diff * scale_y);
 }
 
 void 			draw_world(t_sector *sec, t_wall wall, t_player player, t_sdl *sdl, t_draw_data data)
@@ -214,10 +213,10 @@ void 			draw_world(t_sector *sec, t_wall wall, t_player player, t_sdl *sdl, t_dr
 
 	if(wall.start.x >= wall.end.x || wall.end.x < data.start || wall.start.x > data.end)
 		return ;
-	ceil_y_s = calc_floor_ceil(player, sec->ceil, scale1.y);
-	ceil_y_e = calc_floor_ceil(player, sec->ceil, scale2.y);
-	floor_y_s = calc_floor_ceil(player, sec->floor, scale1.y);
-	floor_y_e = calc_floor_ceil(player, sec->floor, scale2.y);
+	ceil_y_s = calc_floor_ceil(player.half_win_size.y, data.diff_ceil, scale1.y);
+	ceil_y_e = calc_floor_ceil(player.half_win_size.y, data.diff_ceil, scale2.y);
+	floor_y_s = calc_floor_ceil(player.half_win_size.y, data.diff_floor, scale1.y);
+	floor_y_e = calc_floor_ceil(player.half_win_size.y, data.diff_floor, scale2.y);
 	
 	if(wall.type == empty_wall)
 	{
@@ -226,10 +225,10 @@ void 			draw_world(t_sector *sec, t_wall wall, t_player player, t_sdl *sdl, t_dr
 			printf("wall.sectors[1] is empty. Wall #%d, sector #%d\n", wall.id, wall.sectors[0]->sector);
 			return;
 		}
-		n_ceil_y_s = calc_floor_ceil(player, min(wall.sectors[0]->ceil, wall.sectors[1]->ceil), scale1.y);
-		n_ceil_y_e = calc_floor_ceil(player, min(wall.sectors[0]->ceil, wall.sectors[1]->ceil), scale2.y);
-    	n_floor_y_s = calc_floor_ceil(player, max(wall.sectors[0]->floor, wall.sectors[1]->floor), scale1.y);
-		n_floor_y_e = calc_floor_ceil(player, max(wall.sectors[0]->floor, wall.sectors[1]->floor), scale2.y);
+		n_ceil_y_s = calc_floor_ceil(player.half_win_size.y, min(wall.sectors[0]->ceil, wall.sectors[1]->ceil) - player.height, scale1.y);
+		n_ceil_y_e = calc_floor_ceil(player.half_win_size.y, min(wall.sectors[0]->ceil, wall.sectors[1]->ceil) - player.height, scale2.y);
+    	n_floor_y_s = calc_floor_ceil(player.half_win_size.y, max(wall.sectors[0]->floor, wall.sectors[1]->floor) - player.height, scale1.y);
+		n_floor_y_e = calc_floor_ceil(player.half_win_size.y, max(wall.sectors[0]->floor, wall.sectors[1]->floor) - player.height, scale2.y);
 	}
 
 	x = max(wall.start.x, data.start);
@@ -261,32 +260,12 @@ void 			draw_world(t_sector *sec, t_wall wall, t_player player, t_sdl *sdl, t_dr
 
 	//	SDL_SetRenderDrawColor(sdl->ren, 73, 52, 0, 255);
 	//	SDL_RenderDrawLine(sdl->ren, x, cyb, x, data.ybottom[x]);
-		for(int y=data.ytop[x]; y<=data.ybottom[x]; ++y)
-        {
-            if (y >= cya && y <= cyb) {
-				y = cyb;
-				continue;
-			}
-            float 	hei;
-            float 	mapx, mapz;
-	    Uint32	pix;
-			hei = y < cya ? sec->ceil - player.height: sec->floor - player.height;
-           CeilingFloorScreenCoordinatesToMapCoordinates(hei, x, y, mapx, mapz);
-        //    CeilingFloorScreenCoordinatesToMapCoordinates(hei, x, y, &mapx, &mapz, player);
-            unsigned tx = (mapx * 50), txtz = (mapz * 50);
-           // int *surfacePix = (int*)sdl->surf->pixels;
-           // surfacePix[y * W + x] = getpixel(sec->floor_tex, tx % sec->floor_tex->w, txtz % sec->floor_tex->h);
-	   pix = get_pixel(sec->floor_tex, tx % sec->floor_tex->w, txtz % sec->floor_tex->h);
-	   put_pixel(sdl->surf, x, y, pix);
-        }
-	
-		//vline(sdl->surf, x, cyb, data.ybottom[x], 73, 52, 0);
+
+		draw_floor_or_ceil(sdl->surf, sec->ceil_tex, x, data.ytop[x], cya, data.diff_ceil, player);
+		draw_floor_or_ceil(sdl->surf, sec->floor_tex, x, cyb, data.ybottom[x], data.diff_floor, player);
+		
 		if (wall.type != empty_wall)
 		{
-		//	SDL_SetRenderDrawColor(sdl->ren, 160, 130, 65, 255);
-		//	SDL_RenderDrawLine(sdl->ren, x, cya, x, cyb);
-			//if (t % 2 == 0)
-		//	textLine(x, cya, cyb, (struct Scaler)Scaler_Init(ya, cya, yb, 0, wall.texture->h), txtx, sdl->surf, wall.texture);
 			textLine(x, cya, cyb, (struct Scaler)Scaler_Init(ya, cya, yb, 0, fabsf(sec->floor - sec->ceil) * scaleH), txtx, sdl->surf, wall.texture);
 			data.ybottom[x] = cyb;
 			data.ytop[x] = cya;
@@ -340,6 +319,8 @@ void			draw_sectors(t_sector *sec, t_player player, t_sdl *sdl, t_draw_data *dat
 
 	i = 0;
 	p = 0;
+	data->diff_ceil = sec->ceil - player.height;
+	data->diff_floor = sec->floor - player.height;
 	while (i < sec->n_walls)
 	{
 		if(sec->wall[i]->type != empty_wall)
@@ -510,7 +491,9 @@ void                game_loop(t_sdl *sdl, t_player player, t_sector *sectors)
     char            str[100];
     SDL_Texture        *text;
     SDL_Rect        fps_area;
+	float 			max;
     
+	max = 0;
     font = TTF_OpenFont("font.ttf", 100);
     fps_area = (SDL_Rect){20, 20, 150, 55};
     
@@ -533,6 +516,7 @@ void                game_loop(t_sdl *sdl, t_player player, t_sector *sectors)
         
         if((sdl->fps = (float)sdl->frame_id / (get_ticks(timer) / 1000.f)) > 2000000)
             sdl->fps = 0;
+		max = sdl->fps > max ? sdl->fps : max;
         sdl->frame_id++;
         sprintf(str, "fps:  %f", sdl->fps);
         //    printf("got fps = %f\n", sdl->fps);
@@ -547,6 +531,8 @@ void                game_loop(t_sdl *sdl, t_player player, t_sector *sectors)
         
         run = hook_event(&player);
     }
+	
+	printf("\n\n\t\t---- MAX FPS  %f ----\n\n", max);
     
     TTF_CloseFont(font);
     
@@ -576,6 +562,22 @@ int				main(int argc, char **argv)
 	player.hfov = sdl->win_size.x / tan(400) /*0.73f * sdl->win_size.y*/; 
 //	player.vfov = sdl->win_size.y * (1.0 * .2f);
 	// screenWidth / tan(verticalfov) good value tan(350)
+	player.vfov	= .2f * sdl->win_size.y /*.2f * sdl->win_size.y*/;
+//	player.hfov = sdl->win_size.y * (1.0 * 0.73f * sdl->win_size.y / sdl->win_size.x);
+
+//	player.hfov = 1.0 * 0.73;
+//	player.vfov = 1.0 * .2f;
+
+	player.height = EyeHeight;
+	player.curr_sector = sectors;
+	player.vfov	= .2f * sdl->win_size.y /*.2f * sdl->win_size.y*/;
+//	player.hfov = sdl->win_size.y * (1.0 * 0.73f * sdl->win_size.y / sdl->win_size.x);
+
+//	player.hfov = 1.0 * 0.73;
+//	player.vfov = 1.0 * .2f;
+
+	player.height = EyeHeight;
+	player.curr_sector = sectors;
 	player.vfov	= .2f * sdl->win_size.y /*.2f * sdl->win_size.y*/;
 //	player.hfov = sdl->win_size.y * (1.0 * 0.73f * sdl->win_size.y / sdl->win_size.x);
 
