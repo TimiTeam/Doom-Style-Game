@@ -35,7 +35,7 @@ int				Scaler_Next(struct Scaler* i)
 	return i->result;
 }
 
-void 			textLine(int x, int y1,int y2, struct Scaler ty,unsigned txtx, SDL_Surface *surface, SDL_Surface *image)
+void 			textLine(int x, int y1,int y2, struct Scaler ty, unsigned txtx, SDL_Surface *surface, SDL_Surface *image)
 {
 	int *pix = (int*) surface->pixels;
 	int *imagePix = (int*)image->pixels;

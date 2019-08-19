@@ -7,39 +7,12 @@
 //#define verfov (1.0 * .2f)
 #define Yaw(y,z) (y + z*player.yaw)
 
-float scaleH = 20;
+#define THREAD 4
 
-void			draw_yellow_line(SDL_Renderer *ren, t_vector start, t_vector end)
-{
-	SDL_SetRenderDrawColor(ren, 0xff, 0xff, 0, 200);
-	SDL_RenderDrawLine(ren, start.x, start.y, end.x, end.y);
-	SDL_SetRenderDrawColor(ren, 0xff, 0xff, 0xff, 0xff);
-}
-
-void			draw_line_any_colar(SDL_Renderer *ren,  t_vector start, t_vector end, int r, int g, int b)
-{
-	SDL_SetRenderDrawColor(ren, r, g, b, 200);
-	SDL_RenderDrawLine(ren, start.x, start.y, end.x, end.y);
-	SDL_SetRenderDrawColor(ren, 0xff, 0xff, 0xff, 0xff);
-}
-
-static void vline(SDL_Surface *surface, int x, int y1, int y2, int top, int middle, int bottom)
-{
-    int *pix = (int*) surface->pixels;
-    y1 = clamp(y1, 0, H-1);
-    y2 = clamp(y2, 0, H-1);
-    if(y2 == y1)
-        pix[y1*W+x] = middle;
-    else if(y2 > y1)
-    {
-        pix[y1*W+x] = top;
-        for(int y=y1+1; y<y2; ++y) pix[y*W+x] = middle;
-        pix[y2*W+x] = bottom;
-    }
-}
+float scaleH = 16;
 
 
-float				len_between_points(t_vector a, t_vector b)
+static float		len_between_points(t_vector a, t_vector b)
 {
 	return (sqrt((b.x - a.x) * (b.x - a.x) + (b.y - a.y) * (b.y - a.y)));
 }
@@ -58,7 +31,7 @@ float				get_triangle_height(t_vector a, t_vector b, t_vector c)
 	return (2 * (sqrt (p * (p - ab) * (p - bc) * (p - ca))) / ab);
 }
 
-int				get_nearest_line_to_dot(t_vector a, t_vector d1, t_vector d2)
+static int		get_nearest_line_to_dot(t_vector a, t_vector d1, t_vector d2)
 {
 	int 		ad1;
 	int			ad2;
@@ -68,7 +41,7 @@ int				get_nearest_line_to_dot(t_vector a, t_vector d1, t_vector d2)
 	return min(ad1, ad2);
 }
 
-void			sort_by_nearest(t_wall **walls, t_player player, signed short *tab, unsigned short max)
+static void			sort_by_nearest(t_wall **walls, t_player player, signed short *tab, unsigned short max)
 {
 	int			i;
 	int			j;
@@ -100,7 +73,7 @@ void			sort_by_nearest(t_wall **walls, t_player player, signed short *tab, unsig
 }
 
 
-void 			make_intersect(t_wall *wall)
+static void 			make_intersect(t_wall *wall)
 {
 	t_vector 	i1;
 	t_vector 	i2;
@@ -146,6 +119,11 @@ int			calc_floor_ceil(unsigned half_win_size_y, int floor_or_ceil_diff, float sc
 	return (half_win_size_y - floor_or_ceil_diff * scale_y);
 }
 
+void			maping_wall_texture(int *u0, int *u1, float diff_start, float diff_end, float scaled_tex)
+{
+	*u0 = diff_start * scaled_tex;
+	*u1 = diff_end * scaled_tex;
+}
 void 			draw_world(t_sector *sec, t_wall wall, t_player player, t_sdl *sdl, t_draw_data data)
 {
 	t_vector	line_start;
@@ -170,6 +148,8 @@ void 			draw_world(t_sector *sec, t_wall wall, t_player player, t_sdl *sdl, t_dr
 	int			x;
 	int 		end;
 	int 		u0, u1;
+	float 		scaleL;
+	int 		txtx;
 
 	cp = wall;
 
@@ -184,27 +164,23 @@ void 			draw_world(t_sector *sec, t_wall wall, t_player player, t_sdl *sdl, t_dr
 	if (wall.start.y <= 0 && wall.end.y <= 0)
 		return ;
 
-	float scaleL;
-    if(fabsf(cp.start.x - cp.end.x) > fabsf(cp.start.y - cp.end.y))
-        scaleL = fabsf(cp.start.x - cp.end.x) / 5.0f;
-    else
-        scaleL = fabsf(cp.start.y - cp.end.y) / 5.0f;
-
-	if(wall.type != empty_wall)
-    	u0 = 0, u1 = wall.texture->w * scaleL - 1;
-	
 	t_vector org1 = {wall.start.x, wall.start.y}, org2 = {wall.end.x, wall.end.y};
 	
 	if (wall.start.y <= 0 || wall.end.y <= 0)
 		make_intersect(&wall);
 	if (wall.type != empty_wall)
 	{
-		if(fabs(wall.end.x - wall.start.x) > fabs(wall.end.y-wall.start.y))
-            u0 = (wall.start.x-org1.x) * (wall.texture->w * scaleL- 1) / (org2.x-org1.x), u1 = (wall.end.x-org1.x) * (wall.texture->w * scaleL - 1) / (org2.x-org1.x);
+		if(fabsf(cp.start.x - cp.end.x) > fabsf(cp.start.y - cp.end.y))
+    		scaleL = fabsf(cp.start.x - cp.end.x) / 5;
     	else
-    	    u0 = (wall.start.y-org1.y) * (wall.texture->w * scaleL- 1) / (org2.y-org1.y), u1 = (wall.end.y-org1.y) * (wall.texture->w * scaleL - 1) / (org2.y-org1.y);
-	
+        	scaleL = fabsf(cp.start.y - cp.end.y) / 5;
+
+		if(fabs(wall.end.x - wall.start.x) > fabs(wall.end.y - wall.start.y))
+			maping_wall_texture(&u0, &u1, wall.start.x - org1.x, wall.end.x - org1.x, (wall.texture->w * scaleL - 1) / (org2.x - org1.x));
+		else
+			maping_wall_texture(&u0, &u1, wall.start.y - org1.y, wall.end.y - org1.y, (wall.texture->w * scaleL - 1) / (org2.y - org1.y));
 	}
+
 	scale1 =(t_vector) {player.hfov / wall.start.y, player.vfov / wall.start.y};
     scale2 =(t_vector) {player.hfov / wall.end.y, player.vfov / wall.end.y};
 
@@ -220,11 +196,6 @@ void 			draw_world(t_sector *sec, t_wall wall, t_player player, t_sdl *sdl, t_dr
 	
 	if(wall.type == empty_wall)
 	{
-		if (!wall.sectors[1])
-		{
-			printf("wall.sectors[1] is empty. Wall #%d, sector #%d\n", wall.id, wall.sectors[0]->sector);
-			return;
-		}
 		n_ceil_y_s = calc_floor_ceil(player.half_win_size.y, min(wall.sectors[0]->ceil, wall.sectors[1]->ceil) - player.height, scale1.y);
 		n_ceil_y_e = calc_floor_ceil(player.half_win_size.y, min(wall.sectors[0]->ceil, wall.sectors[1]->ceil) - player.height, scale2.y);
     	n_floor_y_s = calc_floor_ceil(player.half_win_size.y, max(wall.sectors[0]->floor, wall.sectors[1]->floor) - player.height, scale1.y);
@@ -238,17 +209,14 @@ void 			draw_world(t_sector *sec, t_wall wall, t_player player, t_sdl *sdl, t_dr
 	data.end = end;
 	while (x < end && x < sdl->win_size.x)
 	{
-		int txtx = (u0 * ((wall.end.x - x) * wall.end.y) + u1 * ((x - wall.start.x) * wall.start.y)) / ((wall.end.x - x) * wall.end.y + (x - wall.start.x) * wall.start.y);
-		
-		ya = (x - wall.start.x) * (ceil_y_e - ceil_y_s) / (wall.end.x-wall.start.x) + ceil_y_s;
+		ya = (x - wall.start.x) * (ceil_y_e - ceil_y_s) / (wall.end.x - wall.start.x) + ceil_y_s;
 
 		cya = clamp(ya, data.ytop[x], data.ybottom[x]);
 
-        yb = (x - wall.start.x) * (floor_y_e - floor_y_s) / (wall.end.x-wall.start.x) + floor_y_s;
+        yb = (x - wall.start.x) * (floor_y_e - floor_y_s) / (wall.end.x - wall.start.x) + floor_y_s;
 
 		cyb = clamp(yb, data.ytop[x], data.ybottom[x]);
 
-		
 		
 	//	SDL_SetRenderDrawColor(sdl->ren, 102, 100, 98, 255);
 	//	SDL_RenderDrawLine(sdl->ren, x, data.ytop[x] , x, cya - 1);
@@ -262,10 +230,12 @@ void 			draw_world(t_sector *sec, t_wall wall, t_player player, t_sdl *sdl, t_dr
 	//	SDL_RenderDrawLine(sdl->ren, x, cyb, x, data.ybottom[x]);
 
 		draw_floor_or_ceil(sdl->surf, sec->ceil_tex, x, data.ytop[x], cya, data.diff_ceil, player);
+
 		draw_floor_or_ceil(sdl->surf, sec->floor_tex, x, cyb, data.ybottom[x], data.diff_floor, player);
-		
+
 		if (wall.type != empty_wall)
 		{
+			txtx = (u0 * ((wall.end.x - x) * wall.end.y) + u1 * ((x - wall.start.x) * wall.start.y)) / ((wall.end.x - x) * wall.end.y + (x - wall.start.x) * wall.start.y);
 			textLine(x, cya, cyb, (struct Scaler)Scaler_Init(ya, cya, yb, 0, fabsf(sec->floor - sec->ceil) * scaleH), txtx, sdl->surf, wall.texture);
 			data.ybottom[x] = cyb;
 			data.ytop[x] = cya;
@@ -327,7 +297,6 @@ void			draw_sectors(t_sector *sec, t_player player, t_sdl *sdl, t_draw_data *dat
 			draw_world(sec, *sec->wall[i], player, sdl, *data);
 		i++;
 	}
-//	sort_by_nearest(sec->wall, player, sec->portals, MAX_PORTALS);
 	while (p < MAX_PORTALS && sec->portals[p] >= 0)
 	{
 		draw_world(sec, *sec->wall[sec->portals[p]], player, sdl, *data);
