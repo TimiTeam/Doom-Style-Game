@@ -1,9 +1,10 @@
 #ifndef __MAIN_HEAD_H
 #define __MAIN_HEAD_H
 
-#include <fcntl.h>
-#include "sdl_head.h"
-#include "sectors.h"
+# include <fcntl.h>
+# include <pthread.h>
+# include "sdl_head.h"
+# include "sectors.h"
 
 #define W 1240
 #define H 980
@@ -39,6 +40,14 @@ typedef struct		s_plyer
 	t_point			half_win_size;
 }					t_player;
 
+typedef struct 		s_super_data
+{
+	t_sector 		*sec;
+	t_wall 			wall;
+	t_player 		player;
+	t_sdl 			*sdl;
+	t_draw_data 	data;
+}					t_super_data;
 
 #define CeilingFloorScreenCoordinatesToMapCoordinates(mapY, screenX, screenY, X, Z, player) \
             Z = (mapY)* H * m_hfov /  ((h_h - (screenY))); \

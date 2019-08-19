@@ -7,7 +7,7 @@
 //#define verfov (1.0 * .2f)
 #define Yaw(y,z) (y + z*player.yaw)
 
-#define THREAD 4
+#define THREADS 4
 
 float scaleH = 16;
 
@@ -114,20 +114,18 @@ void			draw_sectors(t_sector *sectors, t_player player, t_sdl *sdl, t_draw_data 
 int t = 1;
 
 
-int			calc_floor_ceil(unsigned half_win_size_y, int floor_or_ceil_diff, float scale_y)
+static int			calc_floor_ceil(unsigned half_win_size_y, int floor_or_ceil_diff, float scale_y)
 {
 	return (half_win_size_y - floor_or_ceil_diff * scale_y);
 }
 
-void			maping_wall_texture(int *u0, int *u1, float diff_start, float diff_end, float scaled_tex)
+static void			maping_wall_texture(int *u0, int *u1, float diff_start, float diff_end, float scaled_tex)
 {
 	*u0 = diff_start * scaled_tex;
 	*u1 = diff_end * scaled_tex;
 }
 void 			draw_world(t_sector *sec, t_wall wall, t_player player, t_sdl *sdl, t_draw_data data)
 {
-	t_vector	line_start;
-	t_vector	line_end;
 	t_vector 	scale1;
 	t_vector 	scale2;
 	t_wall		cp;
@@ -153,19 +151,18 @@ void 			draw_world(t_sector *sec, t_wall wall, t_player player, t_sdl *sdl, t_dr
 
 	cp = wall;
 
-	line_start = (t_vector){wall.start.x - player.pos.x, wall.start.y - player.pos.y, wall.start.z - player.pos.z};
-	line_end = (t_vector){wall.end.x - player.pos.x, wall.end.y - player.pos.y, wall.end.z - player.pos.z};	
+	wall.start = (t_vector){wall.start.x - player.pos.x, wall.start.y - player.pos.y, wall.start.z - player.pos.z};
+	wall.end = (t_vector){wall.end.x - player.pos.x, wall.end.y - player.pos.y, wall.end.z - player.pos.z};	
 
-
-	wall.start = (t_vector){line_start.x * player.sin_angl - line_start.y * player.cos_angl,
-				line_start.x * player.cos_angl + line_start.y * player.sin_angl, .z = wall.start.y};
-	wall.end = (t_vector){line_end.x * player.sin_angl - line_end.y * player.cos_angl,
-			line_end.x * player.cos_angl + line_end.y * player.sin_angl, .z = wall.end.y};
+	wall.start = (t_vector){wall.start.x * player.sin_angl - wall.start.y * player.cos_angl,
+				wall.start.x * player.cos_angl + wall.start.y * player.sin_angl, .z = wall.start.y};
+	wall.end = (t_vector){wall.end.x * player.sin_angl - wall.end.y * player.cos_angl,
+			wall.end.x * player.cos_angl + wall.end.y * player.sin_angl, .z = wall.end.y};
 	if (wall.start.y <= 0 && wall.end.y <= 0)
 		return ;
 
 	t_vector org1 = {wall.start.x, wall.start.y}, org2 = {wall.end.x, wall.end.y};
-	
+
 	if (wall.start.y <= 0 || wall.end.y <= 0)
 		make_intersect(&wall);
 	if (wall.type != empty_wall)
@@ -217,18 +214,6 @@ void 			draw_world(t_sector *sec, t_wall wall, t_player player, t_sdl *sdl, t_dr
 
 		cyb = clamp(yb, data.ytop[x], data.ybottom[x]);
 
-		
-	//	SDL_SetRenderDrawColor(sdl->ren, 102, 100, 98, 255);
-	//	SDL_RenderDrawLine(sdl->ren, x, data.ytop[x] , x, cya - 1);
-
-		//vline(sdl->surf, x, data.ytop[x], cya - 1, 102, 100, 98);
-
-	//	SDL_SetRenderDrawColor(sdl->ren, 200, 200, 200, 255);
-	//	SDL_RenderDrawPoint(sdl->ren, x, cya - 1);
-
-	//	SDL_SetRenderDrawColor(sdl->ren, 73, 52, 0, 255);
-	//	SDL_RenderDrawLine(sdl->ren, x, cyb, x, data.ybottom[x]);
-
 		draw_floor_or_ceil(sdl->surf, sec->ceil_tex, x, data.ytop[x], cya, data.diff_ceil, player);
 
 		draw_floor_or_ceil(sdl->surf, sec->floor_tex, x, cyb, data.ybottom[x], data.diff_floor, player);
@@ -246,32 +231,12 @@ void 			draw_world(t_sector *sec, t_wall wall, t_player player, t_sdl *sdl, t_dr
 			data.ytop[x], data.ybottom[x]);
 			n_cyb = clamp((x - wall.start.x) * (n_floor_y_e - n_floor_y_s) / (wall.end.x-wall.start.x) + 
 			n_floor_y_s, data.ytop[x], data.ybottom[x]);
-
-	//	SDL_SetRenderDrawColor(sdl->ren, 0, 0, 98, 255);
-	//	SDL_RenderDrawLine(sdl->ren, x, cya, x, n_cya);
-
-		//vline(sdl->surf, x, cya, n_cya, 255, 255, 200);
-
-	//	SDL_SetRenderDrawColor(sdl->ren, 200, 200, 200, 255);
-	//	SDL_RenderDrawPoint(sdl->ren, x, n_cya - 1);
-
-	//	SDL_SetRenderDrawColor(sdl->ren, 22, 0, 118, 255);
-	//	SDL_RenderDrawLine(sdl->ren, x, n_cyb, x, cyb);
-
-		//vline(sdl->surf, x, n_cyb, cyb, 255, 200, 0);
-
-	//	SDL_SetRenderDrawColor(sdl->ren, 200, 200, 200, 255);
-	//	SDL_RenderDrawPoint(sdl->ren, x, n_cyb +
-
+			
 			data.ytop[x] = n_cya;
 			data.ybottom[x] = n_cyb;
 		}
-	//	SDL_SetRenderDrawColor(sdl->ren, 200, 200, 200, 255);
-	//	SDL_RenderDrawPoint(sdl->ren, x, cyb + 1);
 		x++;
 	}
-//	SDL_SetRenderDrawColor(sdl->ren, 200, 200, 200, 255);
-//	SDL_RenderDrawLine(sdl->ren, x - 1, cya, x - 1, cyb);
 	if (wall.type == empty_wall)
 	{
 		if (wall.sectors[0]->sector != player.curr_sector->sector && wall.sectors[0]->sector != sec->sector)
@@ -281,21 +246,54 @@ void 			draw_world(t_sector *sec, t_wall wall, t_player player, t_sdl *sdl, t_dr
 	}
 }
 
+void			*run_thread(void *param)
+{
+	t_super_data	*super;
+	super = (t_super_data*)param;
+	draw_world(super->sec, super->wall, super->player, super->sdl, super->data);
+	return (NULL);
+}
+
 void			draw_sectors(t_sector *sec, t_player player, t_sdl *sdl, t_draw_data *data)
 {
 	int			i;
+	int			d;
 	int			p;
 	int			wall;
+	pthread_t	thread[THREADS];
+	t_super_data super[THREADS];
 
+	d = 0;
 	i = 0;
 	p = 0;
 	data->diff_ceil = sec->ceil - player.height;
 	data->diff_floor = sec->floor - player.height;
+
+	while (d < THREADS && i < sec->n_walls)
+	{
+		if(sec->wall[i]->type != empty_wall)
+		{
+			super[d].data = *data;
+			super[d].player = player;
+			super[d].sdl = sdl;
+			super[d].sec = sec;
+			super[d].wall = *sec->wall[i];
+			pthread_create(&thread[d], NULL, run_thread, &super[d]);
+			d++;
+		}
+		i++;
+	}
 	while (i < sec->n_walls)
 	{
 		if(sec->wall[i]->type != empty_wall)
 			draw_world(sec, *sec->wall[i], player, sdl, *data);
 		i++;
+	}
+	d = 0;
+	while (d < THREADS)
+	{
+		pthread_join(thread[d], NULL);
+		d++;
 	}
 	while (p < MAX_PORTALS && sec->portals[p] >= 0)
 	{
@@ -346,8 +344,6 @@ void			move_player(t_player *player, float sin_angle, float cos_angle)
 			else if (player->curr_sector->wall[i]->sectors[1] &&
 				player->curr_sector->sector != player->curr_sector->wall[i]->sectors[1]->sector) 
 				player->curr_sector = player->curr_sector->wall[i]->sectors[1];
-			//player->pos = (t_vector){player->pos.x + cos_angle, player->pos.y + sin_angle};
-			//player->height = EyeHeight + (player->curr_sector->floor > 0 ? player->curr_sector->floor - 1 : player->curr_sector->floor);
 			player->height = EyeHeight + player->curr_sector->floor;
 			break;
         }
@@ -366,50 +362,7 @@ int 				is_it_wall(t_vector pos, t_wall wall)
 	p = (n.x * (pos.x - wall.start.x) + n.y * (pos.y - wall.start.y)) / sqrtf(n.x * n.x + n.y * n.y);
 	return (p);
 }
-/*
-void				move_player(t_player *player, float sin_angle, float cos_angle)
-{
-	int				i;
-	int				intersect;
-	t_wall			*wall;
-	t_sector		*curr_sec;
 
-	i = 0;
-	curr_sec = player->curr_sector;
-	printf("\n\tPlayer in sectot %d pos: %f, %f\n", player->curr_sector->sector, player->pos.x, player->pos.y);
-	while (i < curr_sec->n_walls)
-	{
-		wall = curr_sec->wall[i];
-		if (wall->type != empty_wall)
-		{
-			printf("Wall #%d (%f, %f; %f, %f)\n", wall->id, wall->start.x, wall->start.y, wall->end.x, wall->end.y);
-			intersect = is_it_wall((t_vector){player->pos.x + cos_angle, player->pos.y + sin_angle}, *wall);
-			printf("intersect %d\n\n",intersect);
-			if (intersect < 2)
-				return ;
-		}
-		i++;
-	}
-	i = 0;
-	while (i < MAX_PORTALS && curr_sec->portals[i] > -1)
-	{
-		wall = curr_sec->wall[curr_sec->portals[i]];printf("Wall #%d (%f, %f; %f, %f)\n", wall->id, wall->start.x, wall->start.y, wall->end.x, wall->end.y);
-		intersect = is_it_wall((t_vector){player->pos.x + cos_angle, player->pos.y + sin_angle}, *wall);
-		printf("intersect %d\n\n",intersect);
-		if (intersect < 1)
-		{
-			if (wall->sectors[0]->sector != player->curr_sector->sector)
-				player->curr_sector = wall->sectors[0];
-			else if (wall->sectors[1]->sector != player->curr_sector->sector)
-				 player->curr_sector = wall->sectors[1];				
-			player->pos = (t_vector){player->pos.x + cos_angle, player->pos.y + sin_angle};
-			break ;
-		}
-		i++;
-	}
-	player->pos = (t_vector){player->pos.x + cos_angle, player->pos.y + sin_angle};
-}
-*/
 int					hook_event(t_player *player)
 {
 	SDL_Event		e;
@@ -427,16 +380,15 @@ int					hook_event(t_player *player)
 			if (e.key.keysym.sym == SDLK_LEFT || e.key.keysym.sym == SDLK_RIGHT)
 			{
 				if (e.key.keysym.sym == SDLK_LEFT)
-					player->angle -= 0.08;	
+					player->angle -= 0.11;	
 				else
-					player->angle += 0.08;
+					player->angle += 0.11;
 				player->cos_angl = cos(player->angle);
 				player->sin_angl = sin(player->angle);
 			}
 			if (e.key.keysym.sym == 'p')
 			{
 				scaleH++;
-			//	t++;
 			}
 			if (e.key.keysym.sym == 'm')
 				scaleH--;

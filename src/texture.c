@@ -31,7 +31,8 @@ void 			draw_floor_or_ceil(SDL_Surface *dst, SDL_Surface *src, int x, int y, int
 
 int				Scaler_Next(struct Scaler* i)
 {
-	for(i->cache += i->fd; i->cache >= i->ca; i->cache -= i->ca) i->result += i->bop;
+	for(i->cache += i->fd; i->cache >= i->ca; i->cache -= i->ca)
+		i->result += i->bop;
 	return i->result;
 }
 
