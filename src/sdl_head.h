@@ -85,4 +85,8 @@ void							pause_timer(t_timer *timer);
 void							start_timer(t_timer *timer);
 t_timer							init_timer(void);
 
+//					PIXELS
+void				put_pixel(SDL_Surface *dst, int x, int y, Uint32 pixel);
+Uint32				get_pixel(SDL_Surface *src, int x, int y);
+
 #endif

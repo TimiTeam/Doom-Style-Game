@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pixel_worker.h"
+#include "sdl_head.h"
 
 static	void	fill_pixel_3(Uint8 *dst, Uint32 src)
 {

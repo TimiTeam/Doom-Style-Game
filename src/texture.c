@@ -36,12 +36,7 @@ int Scaler_Next(struct Scaler* i)
     for(i->cache += i->fd; i->cache >= i->ca; i->cache -= i->ca) i->result += i->bop;
     return i->result;
 }
-/*
-void 			Sacaler_Init(Scaler *ret, float a, float b, float c, float d, float f)
-{
-	ret = {d + (b-1 - a) * (f-d) / (c-a), ((f<d) ^ (c<a)) ? -1 : 1, fabs(f-d), abs(c-a), (int)((b-1-a) * abs((int)(f-d))) % abs(c-a)};
-}
-*/
+
 void textLine(int x, int y1,int y2, struct Scaler ty,unsigned txtx, SDL_Surface *surface, SDL_Surface *image)
 {
     int *pix = (int*) surface->pixels;

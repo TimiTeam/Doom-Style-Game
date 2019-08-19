@@ -20,11 +20,11 @@ SDL_Surface 			*get_empty_surface(unsigned width, unsigned height)
     amask = 0xff000000;
 #endif
 
-    surface = SDL_CreateRGBSurface(0, width, height, 32,
-                                   rmask, gmask, bmask, 0);
+ //   surface = SDL_CreateRGBSurface(0, width, height, 32,
+   //                                rmask, gmask, bmask, 0);
 
     /* or using the default masks for the depth: */
- //   surface = SDL_CreateRGBSurface(0, width, height, 32, 0, 0, 0, 0);
+    surface = SDL_CreateRGBSurface(0, width, height, 32, 0, 0, 0, 0);
     return (surface);
 }
 
