@@ -158,6 +158,7 @@ void 			draw_world(t_sector *sec, t_wall wall, t_player player, t_sdl *sdl, t_dr
 				wall.start.x * player.cos_angl + wall.start.y * player.sin_angl, .z = wall.start.y};
 	wall.end = (t_vector){wall.end.x * player.sin_angl - wall.end.y * player.cos_angl,
 			wall.end.x * player.cos_angl + wall.end.y * player.sin_angl, .z = wall.end.y};
+	
 	if (wall.start.y <= 0 && wall.end.y <= 0)
 		return ;
 
@@ -168,9 +169,9 @@ void 			draw_world(t_sector *sec, t_wall wall, t_player player, t_sdl *sdl, t_dr
 	if (wall.type != empty_wall)
 	{
 		if(fabsf(cp.start.x - cp.end.x) > fabsf(cp.start.y - cp.end.y))
-    		scaleL = fabsf(cp.start.x - cp.end.x) / 5;
+    		scaleL = fabsf(cp.start.x - cp.end.x) / 10;
     	else
-        	scaleL = fabsf(cp.start.y - cp.end.y) / 5;
+        	scaleL = fabsf(cp.start.y - cp.end.y) / 10;
 
 		if(fabs(wall.end.x - wall.start.x) > fabs(wall.end.y - wall.start.y))
 			maping_wall_texture(&u0, &u1, wall.start.x - org1.x, wall.end.x - org1.x, (wall.texture->w * scaleL - 1) / (org2.x - org1.x));
@@ -268,7 +269,7 @@ void			draw_sectors(t_sector *sec, t_player player, t_sdl *sdl, t_draw_data *dat
 	p = 0;
 	data->diff_ceil = sec->ceil - player.height;
 	data->diff_floor = sec->floor - player.height;
-
+	/*
 	while (d < THREADS && i < sec->n_walls)
 	{
 		if(sec->wall[i]->type != empty_wall)
@@ -282,19 +283,19 @@ void			draw_sectors(t_sector *sec, t_player player, t_sdl *sdl, t_draw_data *dat
 			d++;
 		}
 		i++;
-	}
+	}*/
 	while (i < sec->n_walls)
 	{
 		if(sec->wall[i]->type != empty_wall)
 			draw_world(sec, *sec->wall[i], player, sdl, *data);
 		i++;
 	}
-	d = 0;
+/*	d = 0;
 	while (d < THREADS)
 	{
 		pthread_join(thread[d], NULL);
 		d++;
-	}
+	}*/
 	while (p < MAX_PORTALS && sec->portals[p] >= 0)
 	{
 		draw_world(sec, *sec->wall[sec->portals[p]], player, sdl, *data);
@@ -330,7 +331,7 @@ void			move_player(t_player *player, float sin_angle, float cos_angle)
 	i = 0;
 	while (i < player->curr_sector->n_walls)
 	{
-		if(IntersectBox(player->pos.x,player->pos.y, player->pos.x + cos_angle, player->pos.y + sin_angle,
+		if(IntersectBox(player->pos.x, player->pos.y, player->pos.x + cos_angle, player->pos.y + sin_angle,
 			player->curr_sector->wall[i]->start.x, player->curr_sector->wall[i]->start.y,
 			player->curr_sector->wall[i]->end.x, player->curr_sector->wall[i]->end.y)
         && PointSide( player->pos.x + cos_angle, player->pos.y + sin_angle,player->curr_sector->wall[i]->start.x, player->curr_sector->wall[i]->start.y,
@@ -380,9 +381,9 @@ int					hook_event(t_player *player)
 			if (e.key.keysym.sym == SDLK_LEFT || e.key.keysym.sym == SDLK_RIGHT)
 			{
 				if (e.key.keysym.sym == SDLK_LEFT)
-					player->angle -= 0.11;	
+					player->angle -= 0.1f;	
 				else
-					player->angle += 0.11;
+					player->angle += 0.1f;
 				player->cos_angl = cos(player->angle);
 				player->sin_angl = sin(player->angle);
 			}
@@ -442,7 +443,7 @@ void                game_loop(t_sdl *sdl, t_player player, t_sector *sectors)
         sprintf(str, "fps:  %f", sdl->fps);
         //    printf("got fps = %f\n", sdl->fps);
         
-        text = make_black_text_using_ttf_font(sdl->ren, font, str);
+       text = make_black_text_using_ttf_font(sdl->ren, font, str);
         
         SDL_RenderCopy(sdl->ren, text, NULL, &fps_area);
         
@@ -481,32 +482,15 @@ int				main(int argc, char **argv)
 //	player.yaw = -0.3;
 	// screenHeight / tan(horizontalfov) good value tan(400) 
 	player.hfov = sdl->win_size.x / tan(400) /*0.73f * sdl->win_size.y*/; 
-//	player.vfov = sdl->win_size.y * (1.0 * .2f);
+	player.vfov = sdl->win_size.y * (1.0 * .2f);
+//	player.vfov	= .2f * sdl->win_size.y /*.2f * sdl->win_size.y*/;
+//	player.hfov = sdl->win_size.y * (1.0 * 0.73f * sdl->win_size.y / sdl->win_size.x);
 	// screenWidth / tan(verticalfov) good value tan(350)
-	player.vfov	= .2f * sdl->win_size.y /*.2f * sdl->win_size.y*/;
-//	player.hfov = sdl->win_size.y * (1.0 * 0.73f * sdl->win_size.y / sdl->win_size.x);
 
-//	player.hfov = 1.0 * 0.73;
-//	player.vfov = 1.0 * .2f;
 
 	player.height = EyeHeight;
 	player.curr_sector = sectors;
-	player.vfov	= .2f * sdl->win_size.y /*.2f * sdl->win_size.y*/;
-//	player.hfov = sdl->win_size.y * (1.0 * 0.73f * sdl->win_size.y / sdl->win_size.x);
 
-//	player.hfov = 1.0 * 0.73;
-//	player.vfov = 1.0 * .2f;
-
-	player.height = EyeHeight;
-	player.curr_sector = sectors;
-	player.vfov	= .2f * sdl->win_size.y /*.2f * sdl->win_size.y*/;
-//	player.hfov = sdl->win_size.y * (1.0 * 0.73f * sdl->win_size.y / sdl->win_size.x);
-
-//	player.hfov = 1.0 * 0.73;
-//	player.vfov = 1.0 * .2f;
-
-	player.height = EyeHeight;
-	player.curr_sector = sectors;
 
 	game_loop(sdl, player, sectors);
 

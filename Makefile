@@ -19,7 +19,7 @@ SDL_INCL =	-I $(CURDIR)/frameworks/SDL2.framework/Headers/ \
 
 FLAG_W = -Wall -Wextra -Werror 
 
-FLAG_W = 
+FLAG_W =
 
 FLAG_F = -F frameworks
 

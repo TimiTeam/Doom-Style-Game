@@ -31,10 +31,10 @@ typedef struct		s_plyer
 	t_vector		pos;
 	t_sector 		*curr_sector;
 	float			yaw;
-	float			height;
+	int				height;
 	float			angle;
-	double			sin_angl;
-	double			cos_angl;
+	float			sin_angl;
+	float			cos_angl;
 	float 			hfov;
 	float 			vfov;
 	t_point			half_win_size;
