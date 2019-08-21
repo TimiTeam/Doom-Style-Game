@@ -84,18 +84,14 @@ void				delete_walls(t_wall **wall, unsigned size)
 void				delete_sectors(t_sector *sectors)
 {
 	t_sector		*next;
-	int				i = 0;
 
 	if (!sectors)
 		return ;
 	next = sectors;
 	while(sectors)
 	{
-		i++;
-		if (i > 10)
-			break ;
 		next = sectors;
-		sectors = sectors->next;
+		sectors = next->next;
 		delete_walls(next->wall, next->n_walls);
 		ft_memdel((void**)&next);
 		printf("Destroyed\n");

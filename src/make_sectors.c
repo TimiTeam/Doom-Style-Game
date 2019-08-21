@@ -3,7 +3,7 @@
 int				get_num_from_str(char *str)
 {
 	int			i;
-	
+
 	i = 0;
 	while (str[i])
 	{
@@ -14,53 +14,68 @@ int				get_num_from_str(char *str)
 	return (0);
 }
 
-void			get_count_vectors_and_walls(int fd, int *co_vec, int *co_wall)
+
+char			*skip_row_number(char *line)
 {
-	char		*vec;
-	char		*wall;
+	unsigned	p;
+
+	p = 0;
+	while (line[p] && line[p + 1])
+	{
+		if (line[p] == ')' && line[p + 1] == ' ')
+		{
+			while(line[++p] && line[p] == ' ')
+				;
+			return (&line[p]);
+		}
+		p++;
+	}
+	return(NULL);
+}
+
+static void			get_count_struct_arrays(int fd, int *vect_count, int *wall_count, int *text_count)
+{
+	char			*vec;
+	char			*wall;
+	char			*tex;
 
 	vec = NULL;
 	wall = NULL;
+	tex = NULL; 
 	get_next_line(fd, &vec);
 	get_next_line(fd, &wall);
-
-	*co_vec = get_num_from_str(vec);
-	*co_wall = get_num_from_str(wall);
-
+	get_next_line(fd, &tex);
+	*vect_count = get_num_from_str(vec);
+	*wall_count = get_num_from_str(wall);
+	*text_count = get_num_from_str(tex);
 	ft_strdel(&vec);
 	ft_strdel(&wall);
+	ft_strdel(&tex);
 }
 
-int 			get_data(float *x, float *y, float *z, char *data)
+static unsigned	get_numbers(float *one, float *two, char dilimeter, char *line)
 {
-	int			i;
+	unsigned	i;
+	int			nb;
 	char		*num;
 
-	if (!data || !*data)
+	if (!line)
 		return (0);
 	i = 0;
-	while (data[i] && data[i] != ' ')
+	while (line[i] && !ft_isdigit(line[i]))
 		i++;
-	if (++i < ft_strlen(data))
-	{
-		*x = (float)ft_atoi(&data[i]);
-		num = ft_itoa((int)*x);
-		i += ft_strlen(num);
+	nb = (float)ft_atoi(&line[i]);
+	num = ft_itoa(nb);
+	i += ft_strlen(num);
+	*one = nb;
+	if (line[i] && line[i] == dilimeter)
 		i++;
-		ft_strdel(&num);
-		if (i < ft_strlen(data))
-			*y = (float)ft_atoi(&data[i]);
-		num = ft_itoa((int)*y);
-		i += ft_strlen(num);
-		ft_strdel(&num);
-		if (data[i] && ft_isdigit(data[i + 1]) && z)
-		{
-			*z = (float)ft_atoi(&data[i]);
-			num = ft_itoa((int)*z);
-			i += ft_strlen(num);
-			ft_strdel(&num);
-		}
-	}
+	ft_strdel(&num);
+	nb = (float)ft_atoi(&line[i]);
+	num = ft_itoa(nb);
+	i += ft_strlen(num);
+	*two = nb;
+	ft_strdel(&num);
 	return (i);
 }
 
@@ -80,7 +95,7 @@ t_vector		*get_vectors(int fd, int vec_size)
 			break ;
 		if (ft_isdigit(line[0]))
 		{
-			get_data(&vectors[i].x, &vectors[i].y, &vectors[i].z, line);
+			get_numbers(&vectors[i].x, &vectors[i].y, ',' , skip_row_number(line));
 			i++;
 		}
 		ft_strdel(&line);
@@ -103,48 +118,45 @@ void				list_vectors(t_vector *vec, unsigned size)
 	}
 }
 
-void			list_and_dell_walls(t_wall **walls, int size)
+t_wall			*make_wall(char *line, t_vector *vectors, SDL_Surface **textures)
 {
+	t_wall		*ret;
 	int			i;
-
-	i = 0;
-	while (i < size)
-	{
-		printf("Wall # %d: type = %d;\n", i, walls[i]->type);
-		list_vectors(&walls[i]->start, 1);
-		list_vectors(&walls[i]->end, 1);
-		ft_memdel((void**)&walls[i]);
-		i++;
-	}
-	ft_memdel((void**)&walls);
-}
-
-t_wall			**get_walls(int fd, int wall_size, t_vector *vectors)
-{
-	char		*line;
-	SDL_Surface	*texture;
-	int			i;
-	int			j;
 	float		start;
 	float		end;
+	int			word_len;
+
+	word_len = ft_strlen("filled");
+	if (!line || !vectors || !textures)
+		return (NULL);
+	ret = (t_wall*)malloc(sizeof(t_wall));
+	*ret = (t_wall){};
+	i = get_numbers(&start, &end, '-', line);
+	ret->start = vectors[(int)start - 1];
+	ret->end =  vectors[(int)end - 1];
+	while (line[i] && !ft_isalpha(line[i]))
+		i++;
+	ret->type = ft_strncmp(&line[i], "filled", word_len) == 0 ? fieled_wall : empty_wall;
+	if (ret->type != empty_wall)
+		ret->texture = textures[get_num_from_str(&line[i]) - 1];
+	return (ret);
+}
+
+t_wall			**get_walls(int fd, int wall_size, t_vector *vectors, SDL_Surface **textures)
+{
+	char		*line;
+	int			i;
 	t_wall		**walls;
 
 	i = 0;
 	walls = (t_wall**)malloc(sizeof(t_wall*) * wall_size);
-	texture = load_img("textures/image.jpeg");
 	while (get_next_line(fd, &line) > 0 && i < wall_size)
 	{
 		if (ft_strcmp(line,"") == 0)
 			break ;
 		if (ft_isdigit(line[0]))
 		{
-			walls[i] = (t_wall*)malloc(sizeof(t_wall));
-			*walls[i] = (t_wall){};
-			j = get_data(&start, &end, NULL, line);
-			walls[i]->start = vectors[(int)start - 1];
-			walls[i]->end = vectors[(int)end - 1];
-			walls[i]->type = ft_strcmp(&line[j], " filled") == 0 ? fieled_wall : empty_wall;
-			walls[i]->texture = walls[i]->type != empty_wall ? texture : NULL;
+			walls[i] = make_wall(skip_row_number(line), vectors, textures);
 			walls[i]->id = i;
 			i++;
 		}
@@ -204,7 +216,24 @@ t_wall			*copy_t_wall_velue(t_wall *src)
 	return (dst);
 }
 
-t_sector		*crate_and_fill_sector_by_data(t_wall **walls, char *data)
+static unsigned	fill_floor_and_ceil(t_sector *sector, SDL_Surface **textures, char *line)
+{
+	unsigned	i;
+	float		height;
+	float		text;
+
+	if (!sector || !line || !textures)
+		return (0);
+	i = get_numbers(&height, &text, ' ', line);
+	sector->floor = height;
+	sector->floor_tex = textures[(int)text - 1];
+	i += get_numbers(&height, &text, ' ', &line[i]);
+	sector->ceil = height;
+	sector->ceil_tex = textures[(int)text - 1];
+	return (i);
+}
+
+t_sector		*crate_and_fill_sector_by_data(t_wall **walls, SDL_Surface	**textures, char *data)
 {
 	t_sector	*sect;
 	t_wall		*wall;
@@ -212,12 +241,10 @@ t_sector		*crate_and_fill_sector_by_data(t_wall **walls, char *data)
 	int			count;
 	int			port;
 	int			i;
-	float		f;
-	float		c;
 
 	port = 0;
-	i = get_data(&f, &c, NULL, data);
-	sect = crate_new_sector(f, c);
+	sect = new_sector();
+	i = fill_floor_and_ceil(sect, textures, data);
 	sect->n_walls = get_wall_count(&data[i]);
 	count = 0;
 	sect->wall = (t_wall**)malloc(sizeof(t_wall*) * sect->n_walls);
@@ -241,7 +268,7 @@ t_sector		*crate_and_fill_sector_by_data(t_wall **walls, char *data)
 	return (sect);
 }
 
-t_sector		*make_sectors_list(int fd, t_wall **walls)
+t_sector		*make_sectors_list(int fd, t_wall **walls, SDL_Surface **textures)
 {
 	char		*line;
 	t_sector	*head;
@@ -253,11 +280,11 @@ t_sector		*make_sectors_list(int fd, t_wall **walls)
 		ft_strdel(&line);
 		get_next_line(fd, &line);
 	}
-	head = crate_and_fill_sector_by_data(walls, line);
+	head = crate_and_fill_sector_by_data(walls, textures, skip_row_number(line));
 	ft_strdel(&line);
 	while (get_next_line(fd, &line) > 0)
 	{
-		new = crate_and_fill_sector_by_data(walls, line);
+		new = crate_and_fill_sector_by_data(walls, textures, skip_row_number(line));
 		ft_strdel(&line);
 		add_next_sector(&head, new);
 	}
@@ -266,18 +293,16 @@ t_sector		*make_sectors_list(int fd, t_wall **walls)
 }
 
 
-void			mark_all_neighbors(t_sector *sectors, t_wall **all)
+void			mark_all_neighbors(t_sector *sectors, t_wall **all, SDL_Surface **textures)
 {
 	t_sector	*sec;
 	t_wall		*wall;
 	t_vector	tmp;
-	SDL_Surface		*floor_tex;
-	SDL_Surface		*ceil_tex;
+	SDL_Surface	*floor_tex;
+	SDL_Surface	*ceil_tex;
 	int			i;
 	int			p;
-
-	floor_tex = load_img("textures/floor2.jpg");
-	ceil_tex = load_img("textures/ceil.jpeg");
+	
 	sec = sectors;
 	while (sec)
 	{
@@ -298,29 +323,48 @@ void			mark_all_neighbors(t_sector *sectors, t_wall **all)
 				sec->portals[p++] = i;
 			i++;
 		}
-		sec->floor_tex = floor_tex;
-		sec->ceil_tex = ceil_tex;
 		sec = sec->next;
 	}
 }
 
-t_sector		*read_map(char *pth)
+
+SDL_Surface		**load_img_array_from_file(int fd, unsigned size)
 {
-	int			fd;
-	int			vect_count;
-	int			wall_count;
+	SDL_Surface	**array;
+	char		*pth;
+	int			i;
+
+	array = (SDL_Surface**)malloc(sizeof(SDL_Surface**) * size);
+	i = 0;
+	while (get_next_line(fd, &pth) > 0 && i < size)
+	{
+		if (!pth || !ft_isdigit(*pth))
+		{
+			ft_strdel(&pth);
+			continue;
+		}
+		array[i] = load_jpg_png(skip_row_number(pth));
+		ft_strdel(&pth);
+		i++;
+	}
+	ft_strdel(&pth);
+	return (array);
+}
+
+t_sector		*read_map(char *pth, t_read_holder *holder)
+{
 	t_sector	*sectors;
 	t_vector	*vectors;
-	t_wall		**walls;
 
-	if (!(fd = open(pth, O_RDONLY)))
+	if (!(holder->fd = open(pth, O_RDONLY)))
 		return (NULL);
-	get_count_vectors_and_walls(fd, &vect_count, &wall_count);
-	vectors = get_vectors(fd, vect_count);
-	walls = get_walls(fd, wall_count, vectors);
+	get_count_struct_arrays(holder->fd, &holder->vect_count, &holder->wall_count, &holder->text_count);
+	holder->textures = load_img_array_from_file(holder->fd, holder->text_count);
+	vectors = get_vectors(holder->fd, holder->vect_count);
+	holder->walls = get_walls(holder->fd, holder->wall_count, vectors, holder->textures);
 	ft_memdel((void**)&vectors);
-	sectors = make_sectors_list(fd, walls);
-	mark_all_neighbors(sectors, walls);
-	delete_walls(walls, wall_count);
+	sectors = make_sectors_list(holder->fd, holder->walls, holder->textures);
+	mark_all_neighbors(sectors, holder->walls, holder->textures);
+	close(holder->fd);
 	return (sectors);
 }

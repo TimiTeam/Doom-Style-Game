@@ -21,6 +21,10 @@ FLAG_W = -Wall -Wextra -Werror
 
 FLAG_W =
 
+SANIT_F = -fsanitize=address 
+
+SANIT_F = 
+
 FLAG_F = -F frameworks
 
 LFT_INCL = -I libft/
@@ -38,11 +42,11 @@ $(DIR_OBJ):
 	@mkdir -p $(DIR_OBJ)
 
 $(NAME): $(LIBFT_A) $(OBJS)
-	$(CC) -g -fsanitize=address $(OBJS) $(FLAG_F) $(SDL_RUN_FLAGS) -L libft -lft -o $(NAME)
+	$(CC) -g $(SANIT_F) $(OBJS) $(FLAG_F) $(SDL_RUN_FLAGS) -L libft -lft -o $(NAME)
 
 
 $(DIR_OBJ)/%.o: $(DIR_SRC)/%.c | $(DIR_OBJ)
-	$(CC) -g -fsanitize=address $(FLAG_W) -pthread  $(FLAG_F) $(SDL_INCL) $(LFT_INCL) -c $< -o $@ 
+	$(CC) -g $(SANIT_F) $(FLAG_W) -pthread  $(FLAG_F) $(SDL_INCL) $(LFT_INCL) -c $< -o $@ 
 
 clean:
 	@make -C libft/ clean
