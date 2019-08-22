@@ -10,8 +10,8 @@
 #define H 980
 #define MAX_SECTORS 128
 
-static float m_vfov =  0.73;
-static float m_hfov = .2f;
+static float m_vfov = 0.2f;
+static float m_hfov = 0.73f*H/W;
 static int h_w = W >> 1;
 static int h_h = H >> 1;
 
@@ -28,8 +28,9 @@ typedef struct		s_draw_data
 
 typedef struct		s_plyer
 {	
-	t_vector		pos;
 	t_sector 		*curr_sector;
+	t_vector		pos;
+	float 			speed;
 	float			yaw;
 	int				height;
 	float			angle;

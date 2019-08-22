@@ -3,9 +3,7 @@
 #define DuckHeight 2.5
 #define HeadMargin 1
 #define KneeHeight 2
-//#define horfov (1.0 * 0.73f*H/W)
-//#define verfov (1.0 * .2f)
-#define Yaw(y,z) (y + z*player.yaw)
+#define Yaw(y,z) (y + z * player.yaw)
 
 #define THREADS 4
 
@@ -114,7 +112,7 @@ void			draw_sectors(t_sector *sectors, t_player player, t_sdl *sdl, t_draw_data 
 int t = 1;
 
 
-static int			calc_floor_ceil(unsigned half_win_size_y, int floor_or_ceil_diff, float scale_y)
+static int			calc_floor_ceil(unsigned half_win_size_y, float floor_or_ceil_diff, float scale_y)
 {
 	return (half_win_size_y - floor_or_ceil_diff * scale_y);
 }
@@ -187,17 +185,28 @@ void 			draw_world(t_sector *sec, t_wall wall, t_player player, t_sdl *sdl, t_dr
 
 	if(wall.start.x >= wall.end.x || wall.end.x < data.start || wall.start.x > data.end)
 		return ;
-	ceil_y_s = calc_floor_ceil(player.half_win_size.y, data.diff_ceil, scale1.y);
+/*	ceil_y_s = calc_floor_ceil(player.half_win_size.y, data.diff_ceil, scale1.y);
 	ceil_y_e = calc_floor_ceil(player.half_win_size.y, data.diff_ceil, scale2.y);
 	floor_y_s = calc_floor_ceil(player.half_win_size.y, data.diff_floor, scale1.y);
 	floor_y_e = calc_floor_ceil(player.half_win_size.y, data.diff_floor, scale2.y);
+*/
+
+	ceil_y_s = calc_floor_ceil(player.half_win_size.y, Yaw(data.diff_ceil, wall.start.y), scale1.y);
+	ceil_y_e = calc_floor_ceil(player.half_win_size.y, Yaw(data.diff_ceil, wall.end.y), scale2.y);
+	floor_y_s = calc_floor_ceil(player.half_win_size.y, Yaw(data.diff_floor, wall.start.y), scale1.y);
+	floor_y_e = calc_floor_ceil(player.half_win_size.y, Yaw(data.diff_floor, wall.end.y), scale2.y);
 
 	if(wall.type == empty_wall)
-	{
+	{/*
 		n_ceil_y_s = calc_floor_ceil(player.half_win_size.y, min(wall.sectors[0]->ceil, wall.sectors[1]->ceil) - player.height, scale1.y);
 		n_ceil_y_e = calc_floor_ceil(player.half_win_size.y, min(wall.sectors[0]->ceil, wall.sectors[1]->ceil) - player.height, scale2.y);
     	n_floor_y_s = calc_floor_ceil(player.half_win_size.y, max(wall.sectors[0]->floor, wall.sectors[1]->floor) - player.height, scale1.y);
-		n_floor_y_e = calc_floor_ceil(player.half_win_size.y, max(wall.sectors[0]->floor, wall.sectors[1]->floor) - player.height, scale2.y);
+		n_floor_y_e = calc_floor_ceil(player.half_win_size.y, max(wall.sectors[0]->floor, wall.sectors[1]->floor) - player.height, scale2.y);*/
+		n_ceil_y_s = calc_floor_ceil(player.half_win_size.y, Yaw(min(wall.sectors[0]->ceil, wall.sectors[1]->ceil) - player.height, wall.start.y), scale1.y);
+		n_ceil_y_e = calc_floor_ceil(player.half_win_size.y, Yaw(min(wall.sectors[0]->ceil, wall.sectors[1]->ceil) - player.height, wall.end.y),scale2.y);
+    	n_floor_y_s = calc_floor_ceil(player.half_win_size.y, Yaw(max(wall.sectors[0]->floor, wall.sectors[1]->floor) - player.height,wall.start.y), scale1.y);
+		n_floor_y_e = calc_floor_ceil(player.half_win_size.y, Yaw(max(wall.sectors[0]->floor, wall.sectors[1]->floor) - player.height,wall.end.y), scale2.y);
+
 	}
 
 	x = max(wall.start.x, data.start);
@@ -223,8 +232,6 @@ void 			draw_world(t_sector *sec, t_wall wall, t_player player, t_sdl *sdl, t_dr
 		{
 			txtx = (u0 * ((wall.end.x - x) * wall.end.y) + u1 * ((x - wall.start.x) * wall.start.y)) / ((wall.end.x - x) * wall.end.y + (x - wall.start.x) * wall.start.y);
 			textLine(x, cya, cyb, (struct Scaler)Scaler_Init(ya, cya, yb, 0, fabsf(sec->floor - sec->ceil) * scaleH), txtx, sdl->surf, wall.texture);
-//			data.ybottom[x] = cyb;
-//			data.ytop[x] = cya;
 		}
 		else
 		{
@@ -301,6 +308,7 @@ void			draw_sectors(t_sector *sec, t_player player, t_sdl *sdl, t_draw_data *dat
 		draw_world(sec, *sec->wall[sec->portals[p]], player, sdl, *data);
 		p++;
 	}
+
 }
 
 void				run_with_buff(t_player player, t_sdl *sdl, unsigned int win_x)
@@ -327,14 +335,16 @@ void				run_with_buff(t_player player, t_sdl *sdl, unsigned int win_x)
 void			move_player(t_player *player, float sin_angle, float cos_angle)
 {
 	int			i;
+	t_vector	step;
 
 	i = 0;
+	step = (t_vector){player->pos.x + cos_angle * player->speed, player->pos.y + sin_angle * player->speed};
 	while (i < player->curr_sector->n_walls)
 	{
-		if(IntersectBox(player->pos.x, player->pos.y, player->pos.x + cos_angle, player->pos.y + sin_angle,
+		if(IntersectBox(player->pos.x, player->pos.y, step.x, step.y,
 			player->curr_sector->wall[i]->start.x, player->curr_sector->wall[i]->start.y,
 			player->curr_sector->wall[i]->end.x, player->curr_sector->wall[i]->end.y)
-        && PointSide( player->pos.x + cos_angle, player->pos.y + sin_angle,player->curr_sector->wall[i]->start.x, player->curr_sector->wall[i]->start.y,
+        && PointSide(step.x, step.y, player->curr_sector->wall[i]->start.x, player->curr_sector->wall[i]->start.y,
 			player->curr_sector->wall[i]->end.x, player->curr_sector->wall[i]->end.y) < 0)
         {
 			if (player->curr_sector->wall[i]->type == fieled_wall)
@@ -350,7 +360,7 @@ void			move_player(t_player *player, float sin_angle, float cos_angle)
         }
 		i++;
 	}
-	player->pos = (t_vector){player->pos.x + cos_angle, player->pos.y + sin_angle};
+	player->pos = step;
 }
 
 int 				is_it_wall(t_vector pos, t_wall wall)
@@ -363,43 +373,55 @@ int 				is_it_wall(t_vector pos, t_wall wall)
 	return (p);
 }
 
-int					hook_event(t_player *player)
+int					hook_event(t_player *player, unsigned char move[4])
 {
 	SDL_Event		e;
+	int				x;
+	int				y;
+	float			yaw;
 
 	while(SDL_PollEvent(&e))
 	{
 		if (e.type == SDL_QUIT)
 			return (0);
-		else if (e.type == SDL_KEYDOWN)
+		else if (e.type == SDL_KEYDOWN || e.type == SDL_KEYUP)
 		{
 			if (e.key.keysym.sym == SDLK_w || e.key.keysym.sym == SDLK_UP)
-				move_player(player, player->sin_angl, player->cos_angl);
-			if (e.key.keysym.sym == SDLK_s || e.key.keysym.sym == SDLK_DOWN)
-				move_player(player, -player->sin_angl, -player->cos_angl);
-			if (e.key.keysym.sym == SDLK_LEFT || e.key.keysym.sym == SDLK_RIGHT)
-			{
-				if (e.key.keysym.sym == SDLK_LEFT)
-					player->angle -= 0.1f;
-				else
-					player->angle += 0.1f;
-				player->cos_angl = cos(player->angle);
-				player->sin_angl = sin(player->angle);
-			}
-			if (e.key.keysym.sym == 'p')
-			{
+				move[0] = e.type == SDL_KEYDOWN;
+			else if (e.key.keysym.sym == SDLK_s || e.key.keysym.sym == SDLK_DOWN)
+				move[1] = e.type == SDL_KEYDOWN;
+			else if (e.key.keysym.sym == 'p')
 				scaleH++;
-			}
-			if (e.key.keysym.sym == 'm')
+			else if (e.key.keysym.sym == 'm')
 				scaleH--;
-			if (e.key.keysym.sym == SDLK_a)
-				move_player(player, -player->cos_angl, player->sin_angl);
-			if (e.key.keysym.sym == SDLK_d)
-				move_player(player, player->cos_angl, -player->sin_angl);
-			if (e.key.keysym.sym == SDLK_ESCAPE)
+			else if (e.key.keysym.sym == SDLK_a)
+				move[2] = e.type == SDL_KEYDOWN;
+			else if (e.key.keysym.sym == SDLK_d)
+				move[3] = e.type == SDL_KEYDOWN;
+			else if (e.key.keysym.sym == SDLK_ESCAPE)
 				return (0);
+			else if (e.key.keysym.sym == SDLK_LSHIFT && e.type == SDL_KEYDOWN)
+				player->speed = 1.5f;
+			else if (e.key.keysym.sym == SDLK_LSHIFT && e.type == SDL_KEYUP)
+				player->speed = 0.6;
 		}
 	}
+	if (move[0])
+		move_player(player, player->sin_angl, player->cos_angl);
+	if (move[1])
+		move_player(player, -player->sin_angl, -player->cos_angl);
+	if (move[2])
+		move_player(player, -player->cos_angl, player->sin_angl);
+	if (move[3])
+		move_player(player, player->cos_angl, -player->sin_angl);
+	
+	SDL_GetRelativeMouseState(&x, &y);
+	y = -y;
+    player->angle += x * 0.01;
+	player->cos_angl = cos(player->angle);
+	player->sin_angl = sin(player->angle);
+    yaw = clamp(player->yaw - y * 0.05f, -5, 5);
+	player->yaw = yaw;
 	return (1);
 }
 
@@ -413,11 +435,14 @@ void                game_loop(t_sdl *sdl, t_player player, t_sector *sectors)
     SDL_Texture        *text;
     SDL_Rect        fps_area;
 	float 			max;
+	unsigned char		move[4];
 
 	max = 0;
     font = TTF_OpenFont("font.ttf", 100);
     fps_area = (SDL_Rect){20, 20, 150, 55};
 
+	ft_memset(move, 0, sizeof(move) * 4);
+	
     player.cos_angl = cos(player.angle);
     player.sin_angl = sin(player.angle);
     run = 1;
@@ -450,7 +475,7 @@ void                game_loop(t_sdl *sdl, t_player player, t_sector *sectors)
 
         SDL_RenderPresent(sdl->ren);
 
-        run = hook_event(&player);
+        run = hook_event(&player, move);
     }
 
 	printf("\n\n\t\t---- MAX FPS  %f ----\n\n", max);
@@ -468,10 +493,14 @@ int				main(int argc, char **argv)
 	t_player	player;
 	t_sdl		*sdl;
 
+
+	
+
+
 	if (argc > 1)
 		sectors = read_map(argv[1], &holder);
-	//if (!sectors)
-	//	exit(1);
+	if (!sectors)
+		exit(1);
 	sdl = new_t_sdl(W, H, "test_sectors");
 	init_sdl(sdl);
 	SDL_ShowCursor(SDL_DISABLE);
@@ -479,14 +508,12 @@ int				main(int argc, char **argv)
 	player = (t_player){};
 	player.pos = (t_vector){3, 3, 0};
 	player.half_win_size = (t_point) {sdl->win_size.x / 2, sdl->win_size.y / 2};
-//	player.yaw = -0.3;
-	// screenHeight / tan(horizontalfov) good value tan(400)
-	player.hfov = sdl->win_size.x / tan(400) /*0.73f * sdl->win_size.y*/;
+	player.yaw = 0;
+	player.hfov = sdl->win_size.x / tan(400);
 	player.vfov = sdl->win_size.y * (1.0 * .2f);
-//	player.vfov	= .2f * sdl->win_size.y /*.2f * sdl->win_size.y*/;
-//	player.hfov = sdl->win_size.y * (1.0 * 0.73f * sdl->win_size.y / sdl->win_size.x);
-	// screenWidth / tan(verticalfov) good value tan(350)
-
+/*	player.hfov =m_vfov ;
+	player.vfov =m_hfov ;*/
+	player.speed = 0.7f;
 
 	player.height = EyeHeight;
 	player.curr_sector = sectors;

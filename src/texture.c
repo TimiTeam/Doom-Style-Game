@@ -12,9 +12,9 @@ void 			draw_floor_or_ceil(SDL_Surface *dst, SDL_Surface *src, int x, int y, int
 
 	while(y < end_y)
 	{
-		mapz = diff_height * H * m_hfov / (h_h - y);
-		mapx = mapz * (h_w - x) / (m_vfov * H);
-		tmp = mapx;
+		mapz = diff_height * H * m_vfov / (h_h - y) - H * m_vfov * player.yaw;
+		mapx = mapz * (h_w - x) / (m_hfov * W);
+		tmp = mapx;	
 	
 		mapx = mapz * player.cos_angl + tmp * player.sin_angl;
 		mapz = mapz * player.sin_angl - tmp * player.cos_angl;
