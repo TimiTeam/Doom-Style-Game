@@ -30,15 +30,17 @@ typedef struct		s_plyer
 {	
 	t_sector 		*curr_sector;
 	t_vector		pos;
+	t_point			half_win_size;
 	float 			speed;
 	float			yaw;
-	int				height;
 	float			angle;
 	float			sin_angl;
 	float			cos_angl;
 	float 			hfov;
 	float 			vfov;
-	t_point			half_win_size;
+	int				height;
+	char			fall;
+	unsigned short	jump;
 }					t_player;
 
 typedef struct 		s_super_data

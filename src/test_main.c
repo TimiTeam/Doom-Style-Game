@@ -202,10 +202,10 @@ void 			draw_world(t_sector *sec, t_wall wall, t_player player, t_sdl *sdl, t_dr
 		n_ceil_y_e = calc_floor_ceil(player.half_win_size.y, min(wall.sectors[0]->ceil, wall.sectors[1]->ceil) - player.height, scale2.y);
     	n_floor_y_s = calc_floor_ceil(player.half_win_size.y, max(wall.sectors[0]->floor, wall.sectors[1]->floor) - player.height, scale1.y);
 		n_floor_y_e = calc_floor_ceil(player.half_win_size.y, max(wall.sectors[0]->floor, wall.sectors[1]->floor) - player.height, scale2.y);*/
-		n_ceil_y_s = calc_floor_ceil(player.half_win_size.y, Yaw(min(wall.sectors[0]->ceil, wall.sectors[1]->ceil) - player.height, wall.start.y), scale1.y);
-		n_ceil_y_e = calc_floor_ceil(player.half_win_size.y, Yaw(min(wall.sectors[0]->ceil, wall.sectors[1]->ceil) - player.height, wall.end.y),scale2.y);
-    	n_floor_y_s = calc_floor_ceil(player.half_win_size.y, Yaw(max(wall.sectors[0]->floor, wall.sectors[1]->floor) - player.height,wall.start.y), scale1.y);
-		n_floor_y_e = calc_floor_ceil(player.half_win_size.y, Yaw(max(wall.sectors[0]->floor, wall.sectors[1]->floor) - player.height,wall.end.y), scale2.y);
+		n_ceil_y_s = calc_floor_ceil(player.half_win_size.y, Yaw(min(wall.sectors[0]->ceil, wall.sectors[1]->ceil) - (player.height + player.jump), wall.start.y), scale1.y);
+		n_ceil_y_e = calc_floor_ceil(player.half_win_size.y, Yaw(min(wall.sectors[0]->ceil, wall.sectors[1]->ceil) - (player.height + player.jump), wall.end.y),scale2.y);
+    	n_floor_y_s = calc_floor_ceil(player.half_win_size.y, Yaw(max(wall.sectors[0]->floor, wall.sectors[1]->floor) - (player.height + player.jump),wall.start.y), scale1.y);
+		n_floor_y_e = calc_floor_ceil(player.half_win_size.y, Yaw(max(wall.sectors[0]->floor, wall.sectors[1]->floor) - (player.height + player.jump),wall.end.y), scale2.y);
 
 	}
 
@@ -274,8 +274,8 @@ void			draw_sectors(t_sector *sec, t_player player, t_sdl *sdl, t_draw_data *dat
 	d = 0;
 	i = 0;
 	p = 0;
-	data->diff_ceil = sec->ceil - player.height;
-	data->diff_floor = sec->floor - player.height;
+	data->diff_ceil = sec->ceil - (player.height + player.jump);
+	data->diff_floor = sec->floor - (player.height + player.jump);
 	/*
 	while (d < THREADS && i < sec->n_walls)
 	{
@@ -380,6 +380,14 @@ int					hook_event(t_player *player, unsigned char move[4])
 	int				y;
 	float			yaw;
 
+	if (player->jump > 0 && player->jump < 10 && !player->fall)
+		player->jump += 2;
+	else if (player->jump >= 10)
+		player->fall = 1;
+	if (player->jump > 0 && player->fall)
+		player->jump--;
+	else if (player->jump == 0 && player->fall)
+		player->fall = 0;
 	while(SDL_PollEvent(&e))
 	{
 		if (e.type == SDL_QUIT)
@@ -404,6 +412,8 @@ int					hook_event(t_player *player, unsigned char move[4])
 				player->speed = 1.5f;
 			else if (e.key.keysym.sym == SDLK_LSHIFT && e.type == SDL_KEYUP)
 				player->speed = 0.6;
+			else if (e.key.keysym.sym == SDLK_SPACE && !player->jump)
+				player->jump = 1;
 		}
 	}
 	if (move[0])
@@ -511,6 +521,8 @@ int				main(int argc, char **argv)
 	player.yaw = 0;
 	player.hfov = sdl->win_size.x / tan(400);
 	player.vfov = sdl->win_size.y * (1.0 * .2f);
+	player.fall = 0;
+	player.jump = 0;
 /*	player.hfov =m_vfov ;
 	player.vfov =m_hfov ;*/
 	player.speed = 0.7f;
