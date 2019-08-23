@@ -1,6 +1,6 @@
 NAME := test
 
-SRCS	:= sdl_worker.c sdl_create.c sdl_exit.c sdl_texture.c img_loader.c ttf_worker.c sector_worker.c test_main.c make_sectors.c texture.c timer.c pixel_worker.c
+SRCS	:= sdl_worker.c sdl_create.c sdl_exit.c sdl_texture.c img_loader.c ttf_worker.c sector_worker.c test_main.c make_sectors.c texture.c timer.c pixel_worker.c item_worker.c
 
 DIR_SRC := $(CURDIR)/src
 DIR_OBJ := $(CURDIR)/obj
