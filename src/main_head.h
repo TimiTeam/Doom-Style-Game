@@ -21,8 +21,8 @@ typedef struct		s_draw_data
 	float			end;
 	int 			diff_ceil;
 	int 			diff_floor;
-	int 			*ytop;
-	int				*ybottom;
+	int 			ytop[W];
+	int				ybottom[W];
 }					t_draw_data;
 
 
@@ -86,11 +86,15 @@ typedef struct 		Scaler {
     vxs(vxs(x1,y1, x2,y2), (x1)-(x2), vxs(x3,y3, x4,y4), (x3)-(x4)) / vxs((x1)-(x2), (y1)-(y2), (x3)-(x4), (y3)-(y4)), \
     vxs(vxs(x1,y1, x2,y2), (y1)-(y2), vxs(x3,y3, x4,y4), (y3)-(y4)) / vxs((x1)-(x2), (y1)-(y2), (x3)-(x4), (y3)-(y4)) })
 
+#define Yaw(y,z) (y + z * player.yaw)
 
 int 			Scaler_Next(Scaler *i);
 
 void 			textLine(int x, int y1,int y2, Scaler ty,unsigned txtx, SDL_Surface *surface, SDL_Surface *image);
 
 void 			draw_floor_or_ceil(SDL_Surface *dst, SDL_Surface *src, int x, int start_y, int end_y, int diff_height, t_player player);
+
+
+void    		draw_enemy_sprite(t_item obj, t_draw_data data, t_player player, SDL_Surface *surface);
 
 #endif

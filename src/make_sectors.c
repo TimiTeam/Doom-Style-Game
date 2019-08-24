@@ -244,7 +244,8 @@ t_item			*create_item(int *p, char *data, SDL_Surface **textures)
 	i = get_numbers(&x, &y, ',', data);
 	if(!(item = create_new_item((int)x, (int)y)))
 		return (0);
-	item->id_text[0] = (unsigned)ft_atoi(&data[i]);
+	//item->id_text[0] = (unsigned)ft_atoi(&data[i]);
+	item->id_text[0] = textures[ft_atoi(&data[i]) - 1];
 	item->state = 0;
 	while (data[i] && data[i] != ')')
 		i++;

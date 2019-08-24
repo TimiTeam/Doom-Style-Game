@@ -3,7 +3,6 @@
 #define DuckHeight 2.5
 #define HeadMargin 1
 #define KneeHeight 2
-#define Yaw(y,z) (y + z * player.yaw)
 
 #define THREADS 4
 
@@ -14,6 +13,7 @@ static float		len_between_points(t_vector a, t_vector b)
 {
 	return (sqrt((b.x - a.x) * (b.x - a.x) + (b.y - a.y) * (b.y - a.y)));
 }
+
 
 float				get_triangle_height(t_vector a, t_vector b, t_vector c)
 {
@@ -70,6 +70,35 @@ static void			sort_by_nearest(t_wall **walls, t_player player, signed short *tab
 	}
 }
 
+void 					sort_closer_to_player(t_player player, t_item **items)
+{
+	t_item				*head;
+	t_item				*next;
+	float 				dist;
+	float 				dist_next;
+	t_vector			pos_pl;
+
+	if (!*items)
+		return ;
+	head = *items;
+	pos_pl = player.pos;
+	while (head)
+	{
+		next = head->next;
+		if (next)
+		{
+			dist = len_between_points(pos_pl, head->pos);
+			dist_next = len_between_points(pos_pl, next->pos);
+			if (dist < dist_next)
+			{
+				swap_items(head, next);
+				*items = next;
+			}
+		}
+		head = next;
+	}
+}
+
 
 static void 			make_intersect(t_wall *wall)
 {
@@ -107,7 +136,7 @@ static void 			make_intersect(t_wall *wall)
 	}
 }
 
-void			draw_sectors(t_sector *sectors, t_player player, t_sdl *sdl, t_draw_data *data);
+void			draw_sectors(t_sector *sectors, t_player *player, t_sdl *sdl, t_draw_data data);
 
 int t = 1;
 
@@ -203,6 +232,7 @@ void 			draw_world(t_sector *sec, t_wall wall, t_player player, t_sdl *sdl, t_dr
 	x = max(wall.start.x, data.start);
 	end = min(wall.end.x, data.end);
 
+	
 	data.start = x;
 	data.end = end;
 	while (x < end && x < sdl->win_size.x)
@@ -230,18 +260,18 @@ void 			draw_world(t_sector *sec, t_wall wall, t_player player, t_sdl *sdl, t_dr
 			data.ytop[x], data.ybottom[x]);
 			n_cyb = clamp((x - wall.start.x) * (n_floor_y_e - n_floor_y_s) / (wall.end.x-wall.start.x) +
 			n_floor_y_s, data.ytop[x], data.ybottom[x]);
-
 			data.ytop[x] = n_cya;
 			data.ybottom[x] = n_cyb;
+
 		}
 		x++;
 	}
 	if (wall.type == empty_wall)
 	{
 		if (wall.sectors[0]->sector != player.curr_sector->sector && wall.sectors[0]->sector != sec->sector)
-			draw_sectors(wall.sectors[0], player, sdl, &data);
+			draw_sectors(wall.sectors[0], &player, sdl, data);
 		else if (wall.sectors[1]->sector != player.curr_sector->sector && wall.sectors[1]->sector != sec->sector)
-			draw_sectors(wall.sectors[1], player, sdl, &data);
+			draw_sectors(wall.sectors[1], &player, sdl, data);
 	}
 }
 
@@ -253,7 +283,7 @@ void			*run_thread(void *param)
 	return (NULL);
 }
 
-void			draw_sectors(t_sector *sec, t_player player, t_sdl *sdl, t_draw_data *data)
+void			draw_sectors(t_sector *sec, t_player *player, t_sdl *sdl, t_draw_data data)
 {
 	int			i;
 	int			d;
@@ -261,12 +291,14 @@ void			draw_sectors(t_sector *sec, t_player player, t_sdl *sdl, t_draw_data *dat
 	int			wall;
 	pthread_t	thread[THREADS];
 	t_super_data super[THREADS];
-
+	t_draw_data	spr;
 	d = 0;
 	i = 0;
 	p = 0;
-	data->diff_ceil = sec->ceil - (player.height + player.jump);
-	data->diff_floor = sec->floor - (player.height + player.jump);
+	data.diff_ceil = sec->ceil - (player->height + player->jump);
+	data.diff_floor = sec->floor - (player->height + player->jump);
+	if (data.diff_ceil < 0)
+		player->fall = 1;
 	/*
 	while (d < THREADS && i < sec->n_walls)
 	{
@@ -282,27 +314,45 @@ void			draw_sectors(t_sector *sec, t_player player, t_sdl *sdl, t_draw_data *dat
 		}
 		i++;
 	}*/
+	//spr = data;
 	while (i < sec->n_walls)
 	{
 		if(sec->wall[i]->type != empty_wall)
-			draw_world(sec, *sec->wall[i], player, sdl, *data);
+			draw_world(sec, *sec->wall[i], *player, sdl, data);
 		i++;
 	}
+
 /*	d = 0;
 	while (d < THREADS)
 	{
 		pthread_join(thread[d], NULL);
 		d++;
 	}*/
+	
 	while (p < MAX_PORTALS && sec->portals[p] >= 0)
 	{
-		draw_world(sec, *sec->wall[sec->portals[p]], player, sdl, *data);
+		draw_world(sec, *sec->wall[sec->portals[p]], *player, sdl, data);
 		p++;
 	}
-
+	t_item	*it;
+	it = sec->items;
+	sort_closer_to_player(*player, &sec->items);
+	while (it)
+	{
+		if (len_between_points(player->pos, it->pos) > 0.5)
+			draw_enemy_sprite(*it, data, *player, sdl->surf);
+		it = it->next;
+	}
+	it = sec->enemies;
+	while (it)
+	{
+		if (len_between_points(player->pos, it->pos) > 0.5)
+			draw_enemy_sprite(*it, data, *player, sdl->surf);
+		it = it->next;
+	}
 }
 
-void				run_with_buff(t_player player, t_sdl *sdl, unsigned int win_x)
+void				run_with_buff(t_player *player, t_sdl *sdl, unsigned int win_x)
 {
 	unsigned 		x;
 	int 			ytop[win_x];
@@ -312,15 +362,13 @@ void				run_with_buff(t_player player, t_sdl *sdl, unsigned int win_x)
 	x = 0;
     while(x < win_x)
 	{
-		ybottom[x] = sdl->win_size.y - 1;
-		ytop[x] = 0;
+		draw_data.ybottom[x] = sdl->win_size.y - 1;
+		draw_data.ytop[x] = 0;
 		x++;
 	}
 	draw_data.start = 0;
 	draw_data.end = win_x;
-	draw_data.ytop = &ytop[0];
-	draw_data.ybottom = &ybottom[0];
-	draw_sectors(player.curr_sector, player, sdl, &draw_data);
+	draw_sectors(player->curr_sector, player, sdl, draw_data);
 }
 
 void			move_player(t_player *player, float sin_angle, float cos_angle)
@@ -455,7 +503,7 @@ void                game_loop(t_sdl *sdl, t_player player, t_sector *sectors)
         SDL_SetRenderDrawColor(sdl->ren, 0, 0, 0, 255);
         SDL_RenderClear(sdl->ren);
         SDL_FillRect(sdl->surf, NULL, 0x00);
-        run_with_buff(player, sdl, sdl->win_size.x);
+        run_with_buff(&player, sdl, sdl->win_size.x);
         tex = SDL_CreateTextureFromSurface(sdl->ren, sdl->surf);
         sdl_render(sdl->ren, tex, NULL, NULL);
 
@@ -505,6 +553,7 @@ int				main(int argc, char **argv)
 	sdl = new_t_sdl(W, H, "test_sectors");
 	init_sdl(sdl);
 	SDL_ShowCursor(SDL_DISABLE);
+	SDL_SetRelativeMouseMode(SDL_TRUE);
 	printf("tan:%f\n2f:%f\n", sdl->win_size.y / tan(350), .2f * sdl->win_size.y);
 	player = (t_player){};
 	player.pos = (t_vector){3, 3, 0};

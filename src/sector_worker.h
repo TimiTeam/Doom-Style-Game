@@ -12,23 +12,16 @@ enum 					wall_type
 	empty_wall
 };
 
-enum 					enemy_state
+enum 					item_state
 {
 	object,
-	waiting,
+	waiting = 0,
 	shooting,
 	damage,
-	die
+	die,
+	in_player
 };
 
-typedef struct 			s_item
-{
-	t_point				pos;
-	enum enemy_state	state;
-	unsigned			id;
-	unsigned			id_text[4];
-	struct s_item		*next;
-}						t_item;
 
 typedef struct			s_line
 {
@@ -42,6 +35,15 @@ typedef	struct			s_vector
 	float				y;
 	float				z;
 }						t_vector;
+
+typedef struct 			s_item
+{
+	t_vector			pos;
+	enum item_state		state;
+	unsigned			id;
+	SDL_Surface			*id_text[4];
+	struct s_item		*next;
+}						t_item;
 
 typedef	struct			s_wall
 {
@@ -84,5 +86,6 @@ void 				delete_item_by_id(t_item *items, unsigned id);
 void				list_sectors(t_sector *head);
 void				list_walls(t_wall **walls, int size);
 void				list_items(t_item *items);
+void 				swap_items(t_item *elem1, t_item *elem2);
 
 #endif

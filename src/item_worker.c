@@ -56,8 +56,6 @@ void				list_items(t_item *items)
 		ft_putnbr(it->pos.y);
 		ft_putstr(". State ");
 		ft_putstr(it->state > 1 ? "shooting" : "waiting");
-		ft_putstr("; Id texture: ");
-		ft_putnbr(it->id_text[0]);
 		write(1, "\n", 1);
 		it = it->next;
 	}
@@ -107,4 +105,15 @@ void 				delete_item_by_id(t_item *items, unsigned id)
 		all = tmp;
 		tmp = tmp->next;
 	}
+}
+
+void 				swap_items(t_item *elem1, t_item *elem2)
+{
+	t_item			*tmp;
+
+	if (!elem1 || !elem2)
+		return ;
+	tmp = elem2->next;
+	elem2->next = elem1;
+	elem1->next = tmp;
 }
