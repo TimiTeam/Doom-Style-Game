@@ -21,15 +21,15 @@ t_item				*create_new_item(int x, int y)
 	return (i);
 }
 
-void 				add_next_item(t_item **head, t_item *new)
+void 				add_next_item(t_item *head, t_item *new)
 {
 	t_item			*main;
 	unsigned		id;
 
-	if (!*head || !new)
+	if (!head || !new)
 		return ;
 	id = 1;
-	main = *head;
+	main = head;
 	while (main->next)
 	{
 		main = main->next;
@@ -92,14 +92,19 @@ void 				delete_item_by_id(t_item *items, unsigned id)
 		return ;
 	all = items;
 	if (all->id == id)
-		delete_item(&all);
+	{
+	//	delete_item(&all);
+		items = items->next;
+		return ;
+	}
 	tmp = all->next;
 	while (tmp)
 	{
 		if (tmp->id == id)
 		{
 			all->next = tmp->next;
-			delete_item(&tmp);
+			tmp->next = NULL;
+		//	delete_item(&tmp);		
 			break ;
 		}
 		all = tmp;

@@ -14,59 +14,27 @@ static float		len_between_points(t_vector a, t_vector b)
 	return (sqrt((b.x - a.x) * (b.x - a.x) + (b.y - a.y) * (b.y - a.y)));
 }
 
-
-float				get_triangle_height(t_vector a, t_vector b, t_vector c)
+void 					get_item_to_player(t_player *player, t_item *all, unsigned id)
 {
-	int				ab;
-	int				bc;
-	int				ca;
-	int				p;
+	t_item				*head;
+	t_item				*tmp;
 
-	ab = len_between_points(a, b);
-	bc = len_between_points(b, c);
-	ca = len_between_points(c, a);
-	p = (ab + bc + ca) >> 1;
-	return (2 * (sqrt (p * (p - ab) * (p - bc) * (p - ca))) / ab);
-}
-
-static int		get_nearest_line_to_dot(t_vector a, t_vector d1, t_vector d2)
-{
-	int 		ad1;
-	int			ad2;
-
-	ad1 = len_between_points(a, d1);
-	ad2 = len_between_points(a, d2);
-	return min(ad1, ad2);
-}
-
-static void			sort_by_nearest(t_wall **walls, t_player player, signed short *tab, unsigned short max)
-{
-	int			i;
-	int			j;
-	float 		i_dist;
-	float 		j_dist;
-	int			tmp;
-	
-	i = 0;
-	while (i < max && tab[i] != -1)
+	if (!all || !player)
+		return ;
+	head = all;
+	while (head)
 	{
-		j = 0;
-		i_dist = get_nearest_line_to_dot(player.pos, walls[tab[i]]->start, walls[tab[i]]->end);
-		while (j < max && tab[j] != -1)
+		if (head->id == id)
 		{
-			if (tab[i] != tab[j])
-			{
-				j_dist = get_nearest_line_to_dot(player.pos, walls[tab[j]]->start, walls[tab[j]]->end);
-				if (i_dist < j_dist)
-				{
-					tmp = tab[i];
-					tab[i] = tab[j];
-					tab[j] = tmp;
-				}
-			}
-			j++;
+			if (player->inventar)
+				add_next_item(player->inventar, head);
+			else
+				player->inventar = head;
+			delete_item_by_id(head, head->id);
+			head->next = NULL;
+			return ;
 		}
-		i++;
+		head = head->next;
 	}
 }
 
@@ -339,7 +307,9 @@ void			draw_sectors(t_sector *sec, t_player *player, t_sdl *sdl, t_draw_data dat
 	sort_closer_to_player(*player, &sec->items);
 	while (it)
 	{
-		if (len_between_points(player->pos, it->pos) > 0.5)
+		if (len_between_points(player->pos, it->pos) <= 0.5 && it->type == object)
+			get_item_to_player(player, sec->items, it->id);
+		else
 			draw_enemy_sprite(*it, data, *player, sdl->surf);
 		it = it->next;
 	}
@@ -566,7 +536,7 @@ int				main(int argc, char **argv)
 /*	player.hfov =m_vfov ;
 	player.vfov =m_hfov ;*/
 	player.speed = 0.7f;
-
+	player.inventar = NULL;
 	player.height = EyeHeight;
 	player.curr_sector = sectors;
 
@@ -579,6 +549,6 @@ int				main(int argc, char **argv)
 	delete_walls(holder.walls, holder.wall_count);
 	delete_sectors(sectors);
 	free_t_sdl(&sdl);
-	system("leaks -q test");
+//	system("leaks -q test");
 }
 

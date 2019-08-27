@@ -234,7 +234,7 @@ static unsigned	fill_floor_and_ceil(t_sector *sector, SDL_Surface **textures, ch
 	return (i);
 }
 
-t_item			*create_item(int *p, char *data, SDL_Surface **textures)
+t_item			*create_item(int *p, char *data, SDL_Surface **textures, enum item_type type)
 {
 	t_item 		*item;
 	unsigned	i;
@@ -244,43 +244,62 @@ t_item			*create_item(int *p, char *data, SDL_Surface **textures)
 	i = get_numbers(&x, &y, ',', data);
 	if(!(item = create_new_item((int)x, (int)y)))
 		return (0);
-	//item->id_text[0] = (unsigned)ft_atoi(&data[i]);
 	item->id_text[0] = textures[ft_atoi(&data[i]) - 1];
-	item->state = 0;
+	item->type = type;
+	item->state = item->type == object ? waiting : action;
+	item->size = item->type == object ? 1000 : 4500;
 	while (data[i] && data[i] != ')')
 		i++;
 	*p = i;
 	return (item);
 }
 
-t_item			*make_items(char *data, SDL_Surface	**textures, int type)
+enum item_type		get_item_type_from_str(char *data)
+{
+	int		i;
+	const char	*enem;
+	const char	*item;
+
+	i = 0;
+	enem = "enemies";
+	item = "items";
+	while (data[i])
+	{
+		if (ft_strncmp(&data[i], enem, ft_strlen(enem)) == 0)
+			return (enemy);
+		else if (ft_strncmp(&data[i], item, ft_strlen(item)) == 0)
+			return (object);
+		i++;
+	}
+	return (0);
+}
+
+t_item			*make_items(char *data, SDL_Surface **textures)
 {
 	t_item		*list;
 	t_item		*next;
+	enum item_type	type;
 	int 		i;
 	int			p;
 
 	i = 0;
 	list = NULL;
+	type = get_item_type_from_str(data);
 	while (data[i] && data[i] != '(')
 		i++;
 	if (data[i] == '(')
 	{
-		list = create_item(&p, &data[++i], textures);
+		list = create_item(&p, &data[++i], textures, type);
 		i += p;
-		if (type == 'e')
-			list->state = shooting;
 	}
 	while (list && data[i] && data[i] != 'e')
 	{
 		next = NULL;
 		if (data[i] == '(')
 		{
-			next = create_item(&p, &data[i], textures);
+			next = create_item(&p, &data[i], textures, type);
 			i += p;
-			if (type == 'e')
-				next->state = shooting;
-			add_next_item(&list, next);
+			add_next_item(list, next);
 			continue ;
 		}
 		i++;
@@ -322,10 +341,10 @@ t_sector		*crate_and_fill_sector_by_data(t_wall **walls, SDL_Surface	**textures,
 		else
 			i++;
 	}
-	sect->items = make_items(&data[i], textures, 'i');
+	sect->items = make_items(&data[i], textures);
 	while (data[i] && ft_strncmp(&data[i], "enemies", ft_strlen("enemies")))
 		i++;
-	sect->enemies = make_items(&data[i], textures, 'e');
+	sect->enemies = make_items(&data[i], textures);
 	return (sect);
 }
 
