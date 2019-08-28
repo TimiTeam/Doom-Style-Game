@@ -13,7 +13,55 @@ int		transparent_pixel(Uint32 pixel, SDL_PixelFormat *format)
 	return (0);
 }
 
-void 			draw_scaled_image(SDL_Surface *screen, SDL_Surface *img, int x, int y, int width, int height, t_draw_data data)
+void 			draw_image(SDL_Surface *screen, SDL_Surface *img, int x, int y, int width, int height)
+{
+	int 		i;
+	int		j;
+	Uint32		pix;
+	t_vector	img_point;
+	t_vector	step;
+	
+	step.x = (float)img->w / width;
+	step.y = (float)img->h / height;
+	img_point = (t_vector){};
+	i = 0;
+	while (i < width)
+	{
+		j = 0;
+		img_point.x = 0;
+		while (j < height)
+		{
+			pix = get_pixel(img, (int)img_point.x, (int)img_point.y); 
+			if (j + x > 0 && j + x < screen->w && i + y > 0 && i + y < screen->h && transparent_pixel(pix, img->format))
+				put_pixel(screen, j + x, i + y, pix);
+			img_point.x += step.x;
+			j++;
+		}
+		img_point.y += step.y;
+		i++;
+	}
+}
+
+void 			draw_scaled_image(SDL_Surface *screen, SDL_Surface *img, t_point pos, t_point size)
+{
+	int 		i;
+	int			j;
+	Uint32		pix;
+
+	i = 0;
+	while (i + pos.y < screen->h && i < size.y)
+	{
+		j = 0;
+		while (j + pos.x < screen->w && j < size.x)
+		{
+			put_pixel(screen, j + pos.x, i + pos.y , 0x0000000);
+			j++;
+		}
+		i++;
+	}
+}
+
+void 			draw_image_with_criteria(SDL_Surface *screen, SDL_Surface *img, int x, int y, int width, int height, t_draw_data data)
 {
 	int 		i;
 	int		j;
@@ -68,9 +116,7 @@ void    		draw_enemy_sprite(t_item obj, t_draw_data data, t_player player, SDL_S
 	scale.y = (H * m_vfov) / (ob_pos.y);
         ob_pos.x = player.half_win_size.x + (int)(-ob_pos.x * scale.x);
 	ob_pos.y = player.half_win_size.y + (int)(-Yaw(obj.pos.z - (player.height + player.jump) , ob_pos.y) * scale.y);
-        
-//	printf("dist = %f and ", dist);
  
-	draw_scaled_image(surface, obj.id_text[0], ob_pos.x - obj.size / dist / 2, ob_pos.y - obj.size / dist / 2,
+	draw_image_with_criteria(surface, obj.id_text[0], ob_pos.x - obj.size / dist / 2, ob_pos.y - obj.size / dist / 2,
 			obj.size / dist, obj.size / dist, data);
 }

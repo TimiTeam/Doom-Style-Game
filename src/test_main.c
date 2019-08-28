@@ -1,13 +1,6 @@
 #include "main_head.h"
-#define EyeHeight  5
-#define DuckHeight 2.5
-#define HeadMargin 1
-#define KneeHeight 2
-
-#define THREADS 4
 
 float scaleH = 16;
-
 
 static float		len_between_points(t_vector a, t_vector b)
 {
@@ -282,8 +275,8 @@ void			draw_sectors(t_sector *sec, t_player *player, t_sdl *sdl, t_draw_data dat
 	{
 		if(sec->wall[i]->type != empty_wall)
 		{
-			super[d].data = *data;
-			super[d].player = player;
+			super[d].data = data;
+			super[d].player = *player;
 			super[d].sdl = sdl;
 			super[d].sec = sec;
 			super[d].wall = *sec->wall[i];
@@ -291,22 +284,22 @@ void			draw_sectors(t_sector *sec, t_player *player, t_sdl *sdl, t_draw_data dat
 			d++;
 		}
 		i++;
-	}*/
-	//spr = data;
+	}
+	spr = data;*/
 	while (i < sec->n_walls)
 	{
 		if(sec->wall[i]->type != empty_wall)
 			draw_world(sec, *sec->wall[i], *player, sdl, data);
 		i++;
 	}
-
-/*	d = 0;
+/*
+	d = 0;
 	while (d < THREADS)
 	{
 		pthread_join(thread[d], NULL);
 		d++;
-	}*/
-	
+	}
+*/	
 	while (p < MAX_PORTALS && sec->portals[p] >= 0)
 	{
 		draw_world(sec, *sec->wall[sec->portals[p]], *player, sdl, data);
@@ -454,17 +447,34 @@ int					hook_event(t_player *player, unsigned char move[4])
 	return (1);
 }
 
-void                game_loop(t_sdl *sdl, t_player player, t_sector *sectors)
+void 				print_player_gun(t_sdl *sdl, t_player *pla)
 {
-    int                run;
-    SDL_Texture     *tex;
-    TTF_Font         *font;
-    t_timer            timer;
-    char            str[100];
-    SDL_Texture        *text;
-    SDL_Rect        fps_area;
-	float 			max;
-	unsigned char		move[4];
+	t_point			pos;
+	t_point			size;
+	SDL_Surface		*surf;
+
+	surf = pla->gun.frame[pla->gun.state];
+	pos.x = pla->half_win_size.x - surf->w / 2;
+	pos.y = sdl->win_size.y - surf->h;
+	printf("\ngun satate: %d surf %p;", pla->gun.state, surf);
+	printf(" draw_wall pos x%d y%d, size x%d y%d\n",pla->half_win_size.x - 200, sdl->win_size.y - 400, 400, 400);
+
+//	draw_scaled_image(sdl->surf, surf, pos, (t_point){surf->w, surf->h});
+
+	draw_image(sdl->surf, surf, pla->half_win_size.x - 200, sdl->win_size.y - 400, 400, 400);
+}
+
+void                game_loop(t_sdl *sdl, t_player *player, t_sector *sectors)
+{
+    int				run;
+    SDL_Texture		*tex;
+    TTF_Font		*font;
+    t_timer			timer;
+    char			str[100];
+    SDL_Texture		*text;
+    SDL_Rect		fps_area;
+	float			max;
+	unsigned char	move[4];
 
 	max = 0;
     font = TTF_OpenFont("font.ttf", 100);
@@ -472,8 +482,8 @@ void                game_loop(t_sdl *sdl, t_player player, t_sector *sectors)
 
 	ft_memset(move, 0, sizeof(move) * 4);
 	
-    player.cos_angl = cos(player.angle);
-    player.sin_angl = sin(player.angle);
+    player->cos_angl = cos(player->angle);
+    player->sin_angl = sin(player->angle);
     run = 1;
     sdl->frame_id = 0;
     timer = init_timer();
@@ -483,7 +493,9 @@ void                game_loop(t_sdl *sdl, t_player player, t_sector *sectors)
         SDL_SetRenderDrawColor(sdl->ren, 0, 0, 0, 255);
         SDL_RenderClear(sdl->ren);
         SDL_FillRect(sdl->surf, NULL, 0x00);
-        run_with_buff(&player, sdl, sdl->win_size.x);
+
+        run_with_buff(player, sdl, sdl->win_size.x);
+		print_player_gun(sdl, player);
         tex = SDL_CreateTextureFromSurface(sdl->ren, sdl->surf);
         sdl_render(sdl->ren, tex, NULL, NULL);
 
@@ -494,7 +506,6 @@ void                game_loop(t_sdl *sdl, t_player player, t_sector *sectors)
 		max = sdl->fps > max ? sdl->fps : max;
         sdl->frame_id++;
         sprintf(str, "fps:  %f", sdl->fps);
-        //    printf("got fps = %f\n", sdl->fps);
 
 		text = make_black_text_using_ttf_font(sdl->ren, font, str);
 
@@ -504,7 +515,7 @@ void                game_loop(t_sdl *sdl, t_player player, t_sector *sectors)
 
         SDL_RenderPresent(sdl->ren);
 
-        run = hook_event(&player, move);
+        run = hook_event(player, move);
     }
 
 	printf("\n\n\t\t---- MAX FPS  %f ----\n\n", max);
@@ -513,8 +524,6 @@ void                game_loop(t_sdl *sdl, t_player player, t_sector *sectors)
 
     SDL_DestroyTexture(tex);
 
-	list_items(player.inventar);
-	delete_items_list(player.inventar);
 }
 
 
@@ -522,12 +531,8 @@ int				main(int argc, char **argv)
 {
 	t_read_holder	holder;
 	t_sector	*sectors;
-	t_player	player;
+	t_player	*player;
 	t_sdl		*sdl;
-
-
-	
-
 
 	if (argc > 1)
 		sectors = read_map(argv[1], &holder);
@@ -538,28 +543,26 @@ int				main(int argc, char **argv)
 	SDL_ShowCursor(SDL_DISABLE);
 	SDL_SetRelativeMouseMode(SDL_TRUE);
 	printf("tan:%f\n2f:%f\n", sdl->win_size.y / tan(350), .2f * sdl->win_size.y);
-	player = (t_player){};
-	player.pos = (t_vector){3, 3, 0};
-	player.half_win_size = (t_point) {sdl->win_size.x / 2, sdl->win_size.y / 2};
-	player.yaw = 0;
-	player.hfov = sdl->win_size.x / tan(400);
-	player.vfov = sdl->win_size.y * (1.0 * .2f);
-	player.fall = 0;
-	player.jump = 0;
-	player.speed = 0.7f;
-	player.inventar = NULL;
-	player.height = EyeHeight;
-	player.curr_sector = sectors;
+
+	player = new_t_player(3, 3, sdl->win_size);
+	player->curr_sector = sectors;
 
 	game_loop(sdl, player, sectors);
 
 	list_sectors(sectors);
 
+	list_items(player->inventar);
+
+	delete_items_list(player->inventar);
+
 	for (int i = 0; i < holder.text_count; i++)
-		SDL_FreeSurface(holder.textures[i++]);
+		SDL_FreeSurface(holder.textures[i]);
+	for (int i = 0; i < 4; i++)
+		SDL_FreeSurface(player->gun.frame[i]);
 	delete_walls(holder.walls, holder.wall_count);
 	delete_sectors(sectors);
 	free_t_sdl(&sdl);
+	ft_memdel((void**)&player);
 	system("leaks -q test");
 }
 

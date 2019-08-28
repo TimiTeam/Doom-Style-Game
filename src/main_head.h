@@ -9,6 +9,12 @@
 #define W 1240
 #define H 980
 #define MAX_SECTORS 128
+#define EyeHeight  5
+#define DuckHeight 2.5
+#define HeadMargin 1
+#define KneeHeight 2
+
+#define THREADS 4
 
 static float m_vfov = 0.2f;
 static float m_hfov = 0.73f*H/W;
@@ -25,11 +31,17 @@ typedef struct		s_draw_data
 	int				ybottom[W];
 }					t_draw_data;
 
+typedef struct		s_gun
+{
+	char 			state;
+	SDL_Surface		*frame[4];
+}					t_gun;
 
 typedef struct		s_plyer
 {	
 	t_sector 		*curr_sector;
 	t_item			*inventar;
+	t_gun			gun;
 	t_vector		pos;
 	t_point			half_win_size;
 	float 			speed;
@@ -89,13 +101,18 @@ typedef struct 		Scaler {
 
 #define Yaw(y,z) (y + z * player.yaw)
 
-int 			Scaler_Next(Scaler *i);
+t_player				*new_t_player(int pos_x, int pos_y, t_point wid_size);
 
-void 			textLine(int x, int y1,int y2, Scaler ty,unsigned txtx, SDL_Surface *surface, SDL_Surface *image);
+void 					draw_scaled_image(SDL_Surface *screen, SDL_Surface *img, t_point pos, t_point size);
 
-void 			draw_floor_or_ceil(SDL_Surface *dst, SDL_Surface *src, int x, int start_y, int end_y, int diff_height, t_player player);
+void 					draw_image(SDL_Surface *screen, SDL_Surface *img, int x, int y, int width, int height);
 
+int 					Scaler_Next(Scaler *i);
 
-void    		draw_enemy_sprite(t_item obj, t_draw_data data, t_player player, SDL_Surface *surface);
+void 					textLine(int x, int y1,int y2, Scaler ty,unsigned txtx, SDL_Surface *surface, SDL_Surface *image);
+
+void 					draw_floor_or_ceil(SDL_Surface *dst, SDL_Surface *src, int x, int start_y, int end_y, int diff_height, t_player player);
+
+void    				draw_enemy_sprite(t_item obj, t_draw_data data, t_player player, SDL_Surface *surface);
 
 #endif
