@@ -12,14 +12,19 @@ enum 					wall_type
 	empty_wall
 };
 
-enum 					item_state
+enum 					item_type
 {
 	object,
-	waiting = 0,
-	shooting,
-	damage,
-	die,
-	in_player
+	enemy,
+	door
+};
+
+enum 					item_state
+{
+	waiting,
+	action,
+	get_action,
+	non
 };
 
 
@@ -40,7 +45,9 @@ typedef struct 			s_item
 {
 	t_vector			pos;
 	enum item_state		state;
+	enum item_type 		type;
 	unsigned			id;
+	unsigned 			size;
 	SDL_Surface			*id_text[4];
 	struct s_item		*next;
 }						t_item;
@@ -76,7 +83,7 @@ t_item				*new_item();
 t_item				*create_new_item(int x, int y);
 
 void				add_next_sector(t_sector **main, t_sector *next);
-void 				add_next_item(t_item **head, t_item *new); 
+void 				add_next_item(t_item *head, t_item *new); 
 
 void				delete_sectors(t_sector *sec);
 void				delete_walls(t_wall **wals, unsigned count);

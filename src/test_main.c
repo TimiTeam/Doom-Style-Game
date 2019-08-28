@@ -14,28 +14,38 @@ static float		len_between_points(t_vector a, t_vector b)
 	return (sqrt((b.x - a.x) * (b.x - a.x) + (b.y - a.y) * (b.y - a.y)));
 }
 
-void 					get_item_to_player(t_player *player, t_item *all, unsigned id)
+void 					get_item_to_player(t_player *player, t_item **all, unsigned id)
 {
 	t_item				*head;
-	t_item				*tmp;
+	t_item				*prev;
+	t_item				*pl_item;
 
-	if (!all || !player)
+	pl_item = NULL;
+	if (!*all)
 		return ;
-	head = all;
+	prev = *all;
+	if (prev->id == id)
+	{
+		pl_item = prev;
+		*all = prev->next;
+	}
+	else
+		head = prev;
 	while (head)
 	{
-		if (head->id == id)
+		head = prev->next;
+		if (head && head->id == id)
 		{
-			if (player->inventar)
-				add_next_item(player->inventar, head);
-			else
-				player->inventar = head;
-			delete_item_by_id(head, head->id);
-			head->next = NULL;
-			return ;
+			pl_item = head;
+			prev->next = head->next;
+			break ;
 		}
-		head = head->next;
+		prev = prev->next;
 	}
+	if (player->inventar)
+		add_next_item(player->inventar, pl_item);
+	else
+		player->inventar = pl_item;	
 }
 
 void 					sort_closer_to_player(t_player player, t_item **items)
@@ -308,7 +318,7 @@ void			draw_sectors(t_sector *sec, t_player *player, t_sdl *sdl, t_draw_data dat
 	while (it)
 	{
 		if (len_between_points(player->pos, it->pos) <= 0.5 && it->type == object)
-			get_item_to_player(player, sec->items, it->id);
+			get_item_to_player(player, &sec->items, it->id);
 		else
 			draw_enemy_sprite(*it, data, *player, sdl->surf);
 		it = it->next;
@@ -502,6 +512,9 @@ void                game_loop(t_sdl *sdl, t_player player, t_sector *sectors)
     TTF_CloseFont(font);
 
     SDL_DestroyTexture(tex);
+
+	list_items(player.inventar);
+	delete_items_list(player.inventar);
 }
 
 
@@ -533,8 +546,6 @@ int				main(int argc, char **argv)
 	player.vfov = sdl->win_size.y * (1.0 * .2f);
 	player.fall = 0;
 	player.jump = 0;
-/*	player.hfov =m_vfov ;
-	player.vfov =m_hfov ;*/
 	player.speed = 0.7f;
 	player.inventar = NULL;
 	player.height = EyeHeight;
@@ -549,6 +560,6 @@ int				main(int argc, char **argv)
 	delete_walls(holder.walls, holder.wall_count);
 	delete_sectors(sectors);
 	free_t_sdl(&sdl);
-//	system("leaks -q test");
+	system("leaks -q test");
 }
 

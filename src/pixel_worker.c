@@ -68,34 +68,3 @@ void			put_pixel(SDL_Surface *dst, int x, int y, Uint32 pixel)
 	else if (bpp == 4)
 		*(Uint32*)p = pixel;
 }
-
-
-/*
-int				scale_image(SDL_Surface *dst, SDL_Surface *src)
-{
-	t_point		pix_dst;
-	t_point		pix_src;
-	t_point		div;
-
-	if (!dst || !src)
-		return (1);
-	div.x = round((double)dst->w / (double)src->w);
-	div.y = round((double)dst->h / (double)src->h);
-	pix_dst.x = -1;
-	pix_src.x = 0;
-	while (++pix_dst.x < dst->w)
-	{
-		pix_dst.y = -1;
-		pix_src.y = 0;
-		while (++pix_dst.y < dst->h)
-		{
-			put_pixel(dst, pix_dst, get_pixel(src, pix_src));
-			if (pix_dst.y % div.y == 0 && pix_src.y < src->h)
-				pix_src.y++;
-		}
-		if (pix_dst.x % div.x == 0 && pix_src.x < src->w)
-			pix_src.x++;
-	}
-	return (0);
-}*/
-	

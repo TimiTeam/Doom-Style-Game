@@ -29,6 +29,7 @@ typedef struct		s_draw_data
 typedef struct		s_plyer
 {	
 	t_sector 		*curr_sector;
+	t_item			*inventar;
 	t_vector		pos;
 	t_point			half_win_size;
 	float 			speed;

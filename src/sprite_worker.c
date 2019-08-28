@@ -67,7 +67,7 @@ void    		draw_enemy_sprite(t_item obj, t_draw_data data, t_player player, SDL_S
        	scale.x = (W * m_hfov) / (ob_pos.y);
 	scale.y = (H * m_vfov) / (ob_pos.y);
         ob_pos.x = player.half_win_size.x + (int)(-ob_pos.x * scale.x);
-	ob_pos.y = player.half_win_size.y + (int)(-Yaw(5 - (player.height + player.jump) , ob_pos.y) * scale.y);
+	ob_pos.y = player.half_win_size.y + (int)(-Yaw(obj.pos.z - (player.height + player.jump) , ob_pos.y) * scale.y);
         
 //	printf("dist = %f and ", dist);
  

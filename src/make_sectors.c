@@ -248,6 +248,7 @@ t_item			*create_item(int *p, char *data, SDL_Surface **textures, enum item_type
 	item->type = type;
 	item->state = item->type == object ? waiting : action;
 	item->size = item->type == object ? 1000 : 4500;
+	item->pos.z = item->type == object ? 5 : 8;
 	while (data[i] && data[i] != ')')
 		i++;
 	*p = i;
