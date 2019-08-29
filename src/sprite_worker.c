@@ -25,11 +25,11 @@ void 			draw_image(SDL_Surface *screen, SDL_Surface *img, int x, int y, int widt
 	step.y = (float)img->h / height;
 	img_point = (t_vector){};
 	i = 0;
-	while (i < width)
+	while (i < height)
 	{
 		j = 0;
 		img_point.x = 0;
-		while (j < height)
+		while (j < width)
 		{
 			pix = get_pixel(img, (int)img_point.x, (int)img_point.y); 
 			if (j + x > 0 && j + x < screen->w && i + y > 0 && i + y < screen->h && transparent_pixel(pix, img->format))
@@ -38,25 +38,6 @@ void 			draw_image(SDL_Surface *screen, SDL_Surface *img, int x, int y, int widt
 			j++;
 		}
 		img_point.y += step.y;
-		i++;
-	}
-}
-
-void 			draw_scaled_image(SDL_Surface *screen, SDL_Surface *img, t_point pos, t_point size)
-{
-	int 		i;
-	int			j;
-	Uint32		pix;
-
-	i = 0;
-	while (i + pos.y < screen->h && i < size.y)
-	{
-		j = 0;
-		while (j + pos.x < screen->w && j < size.x)
-		{
-			put_pixel(screen, j + pos.x, i + pos.y , 0x0000000);
-			j++;
-		}
 		i++;
 	}
 }
@@ -93,7 +74,7 @@ void 			draw_image_with_criteria(SDL_Surface *screen, SDL_Surface *img, int x, i
 
 static float            len_between_points(t_vector a, t_vector b)
 {
-        return (sqrt((b.x - a.x) * (b.x - a.x) + (b.y - a.y) * (b.y - a.y)));
+    return (sqrt((b.x - a.x) * (b.x - a.x) + (b.y - a.y) * (b.y - a.y)));
 }
 
 

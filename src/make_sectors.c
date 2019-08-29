@@ -124,9 +124,7 @@ t_wall			*make_wall(char *line, t_vector *vectors, SDL_Surface **textures)
 	int			i;
 	float		start;
 	float		end;
-	int			word_len;
 
-	word_len = ft_strlen("filled");
 	if (!line || !vectors || !textures)
 		return (NULL);
 	ret = (t_wall*)malloc(sizeof(t_wall));
@@ -136,7 +134,12 @@ t_wall			*make_wall(char *line, t_vector *vectors, SDL_Surface **textures)
 	ret->end =  vectors[(int)end - 1];
 	while (line[i] && !ft_isalpha(line[i]))
 		i++;
-	ret->type = ft_strncmp(&line[i], "filled", word_len) == 0 ? fieled_wall : empty_wall;
+	if (!ft_strncmp(&line[i], "filled", 6))
+		ret->type = filled_wall;
+	else if (!ft_strncmp(&line[i], "door", 4))
+  		ret->type = door;
+	else
+  		ret->type = empty_wall;
 	if (ret->type != empty_wall)
 		ret->texture = textures[get_num_from_str(&line[i]) - 1];
 	return (ret);

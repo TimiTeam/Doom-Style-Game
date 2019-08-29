@@ -254,6 +254,38 @@ void			*run_thread(void *param)
 	return (NULL);
 }
 
+void 			open_door(t_wall *door, t_player *player, t_sector *sec)
+{
+	float 		vx;
+	float 		vy;
+	float 		dist;
+	float 		dx;
+	
+	if (!door || player->door_id != door->id)
+		return ;
+	if (door->sectors[0] == sec && door->end.y >door->start.y)
+	{ 
+		vx = door->end.x - door->start.x;
+		vy = door->end.y - door->start.y;
+		dist = len_between_points(door->end, door->start);
+		dx = (dist - 0.1) / dist;
+		door->end.x = vx * dx + door->start.x;
+		door->end.y = vy * dx + door->start.y;
+	}
+	else if (door->sectors[1] == sec && door->end.y < door->start.y)
+	{
+		vx = door->start.x - door->end.x;
+		vy = door->start.y - door->end.y;
+		dist = len_between_points(door->end, door->start);
+		dx = (dist - 0.1) / dist;
+		door->start.x = vx * dx + door->end.x;
+		door->start.y = vy * dx + door->end.y;
+	}
+//	if ((door->sectors[0] == sec && door->end.y <= door->start.y)
+//		|| (door->sectors[0] == sec && door->end.y >= door->start.y))
+//		player->opening_door = 0;
+}
+
 void			draw_sectors(t_sector *sec, t_player *player, t_sdl *sdl, t_draw_data data)
 {
 	int			i;
@@ -288,7 +320,7 @@ void			draw_sectors(t_sector *sec, t_player *player, t_sdl *sdl, t_draw_data dat
 	spr = data;*/
 	while (i < sec->n_walls)
 	{
-		if(sec->wall[i]->type != empty_wall)
+		if(sec->wall[i]->type == filled_wall)
 			draw_world(sec, *sec->wall[i], *player, sdl, data);
 		i++;
 	}
@@ -304,6 +336,20 @@ void			draw_sectors(t_sector *sec, t_player *player, t_sdl *sdl, t_draw_data dat
 	{
 		draw_world(sec, *sec->wall[sec->portals[p]], *player, sdl, data);
 		p++;
+	}
+	i = 0;
+	while (i < sec->n_walls)
+	{
+		if (sec->wall[i]->type != door)
+		{
+			i++;
+			continue;
+		}
+		if (player->opening_door)
+			open_door(sec->wall[i], player, sec);
+		if(sec->wall[i]->type != empty_wall)
+			draw_world(sec, *sec->wall[i], *player, sdl, data);
+		i++;
 	}
 	t_item	*it;
 	it = sec->items;
@@ -359,7 +405,7 @@ void			move_player(t_player *player, float sin_angle, float cos_angle)
         && PointSide(step.x, step.y, player->curr_sector->wall[i]->start.x, player->curr_sector->wall[i]->start.y,
 			player->curr_sector->wall[i]->end.x, player->curr_sector->wall[i]->end.y) < 0)
         {
-			if (player->curr_sector->wall[i]->type == fieled_wall)
+			if (player->curr_sector->wall[i]->type != empty_wall)
 				return;
 			if (player->curr_sector->wall[i]->sectors[0] &&
 				player->curr_sector->sector != player->curr_sector->wall[i]->sectors[0]->sector)
@@ -373,6 +419,34 @@ void			move_player(t_player *player, float sin_angle, float cos_angle)
 		i++;
 	}
 	player->pos = step;
+}
+
+void 				check_door(t_player *player)
+{
+	int			i;
+	t_vector	step;
+	t_wall		**walls;
+
+	i = 0;
+	walls = player->curr_sector->wall;
+	step = (t_vector){player->pos.x + player->cos_angl * player->speed, player->pos.y + player->sin_angl * player->speed};
+	while (i < player->curr_sector->n_walls)
+	{
+		if (walls[i]->type != door)
+		{
+			i++;
+			continue ;
+		}
+		if(IntersectBox(player->pos.x, player->pos.y, step.x, step.y, walls[i]->start.x, walls[i]->start.y,
+			walls[i]->end.x, walls[i]->end.y)
+        && PointSide(step.x, step.y, walls[i]->start.x, walls[i]->start.y, walls[i]->end.x, walls[i]->end.y) < 0)
+        {
+			player->door_id = walls[i]->id;
+			player->opening_door = 1;
+			return ;
+        }
+		i++;
+	}
 }
 
 int 				is_it_wall(t_vector pos, t_wall wall)
@@ -426,6 +500,13 @@ int					hook_event(t_player *player, unsigned char move[4])
 				player->speed = 0.6;
 			else if (e.key.keysym.sym == SDLK_SPACE && !player->jump)
 				player->jump = 1;
+			else if (e.key.keysym.sym == SDLK_e)
+				check_door(player);
+		}
+		else if (e.type == SDL_MOUSEBUTTONDOWN)
+		{
+			if (e.button.button == SDL_BUTTON_LEFT)
+				player->gun.state++;
 		}
 	}
 	if (move[0])
@@ -453,15 +534,15 @@ void 				print_player_gun(t_sdl *sdl, t_player *pla)
 	t_point			size;
 	SDL_Surface		*surf;
 
+	if (pla->gun.state >= 4)
+		pla->gun.state = 0;
 	surf = pla->gun.frame[pla->gun.state];
+	if (pla->gun.state)
+		pla->gun.state++;
 	pos.x = pla->half_win_size.x - surf->w / 2;
 	pos.y = sdl->win_size.y - surf->h;
-	printf("\ngun satate: %d surf %p;", pla->gun.state, surf);
-	printf(" draw_wall pos x%d y%d, size x%d y%d\n",pla->half_win_size.x - 200, sdl->win_size.y - 400, 400, 400);
 
-//	draw_scaled_image(sdl->surf, surf, pos, (t_point){surf->w, surf->h});
-
-	draw_image(sdl->surf, surf, pla->half_win_size.x - 200, sdl->win_size.y - 400, 400, 400);
+	draw_image(sdl->surf, surf, pla->half_win_size.x - 140, sdl->win_size.y - 400, 300, 400);
 }
 
 void                game_loop(t_sdl *sdl, t_player *player, t_sector *sectors)
@@ -496,6 +577,7 @@ void                game_loop(t_sdl *sdl, t_player *player, t_sector *sectors)
 
         run_with_buff(player, sdl, sdl->win_size.x);
 		print_player_gun(sdl, player);
+
         tex = SDL_CreateTextureFromSurface(sdl->ren, sdl->surf);
         sdl_render(sdl->ren, tex, NULL, NULL);
 

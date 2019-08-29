@@ -33,7 +33,7 @@ typedef struct		s_draw_data
 
 typedef struct		s_gun
 {
-	char 			state;
+	unsigned char 	state;
 	SDL_Surface		*frame[4];
 }					t_gun;
 
@@ -54,6 +54,8 @@ typedef struct		s_plyer
 	int				height;
 	char			fall;
 	unsigned short	jump;
+	unsigned char	opening_door;
+	unsigned short	door_id;
 }					t_player;
 
 typedef struct 		s_super_data

@@ -8,15 +8,15 @@
 
 enum 					wall_type
 {
-	fieled_wall,
-	empty_wall
+	filled_wall,
+	empty_wall,
+	door
 };
 
 enum 					item_type
 {
 	object,
-	enemy,
-	door
+	enemy
 };
 
 enum 					item_state
