@@ -249,11 +249,16 @@ t_item			*create_item(int *p, char *data, SDL_Surface **textures, enum item_type
 		return (0);
 	item->id_text[0] = textures[ft_atoi(&data[i]) - 1];
 	item->type = type;
-	item->state = item->type == object ? waiting : action;
-	item->size = item->type == object ? 1000 : 4500;
-	item->pos.z = item->type == object ? 5 : 8;
+	item->state = item->type != enemy ? action : waiting;
+	item->size = item->type != enemy ? 1000 : 2800;
+	item->pos.z = item->type != enemy ? 5 : 2;
+
 	while (data[i] && data[i] != ')')
+	{
+		if (ft_isalpha(data[i]))
+			item->type = ft_strncmp(&data[i], "key", 3) == 0 ? key : item->type;
 		i++;
+	}
 	*p = i;
 	return (item);
 }

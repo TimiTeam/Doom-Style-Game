@@ -57,6 +57,7 @@ typedef struct		s_plyer
 	unsigned short	jump;
 	unsigned char	opening_door;
 	unsigned short	door_id;
+	unsigned short	has_key;
 }					t_player;
 
 typedef struct 		s_super_data

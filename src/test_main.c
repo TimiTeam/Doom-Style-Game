@@ -355,7 +355,7 @@ void			draw_sectors(t_sector *sec, t_player *player, t_sdl *sdl, t_draw_data dat
 	it = sec->items;
 	while (it)
 	{
-		if (it->dist_to_player <= 0.5 && it->type == object)
+		if (it->dist_to_player <= 0.5 && it->type != enemy)
 			get_item_to_player(player, &sec->items, it->id);
 		else
 			draw_enemy_sprite(*it, data, *player, sdl->surf);
@@ -418,6 +418,20 @@ void			move_player(t_player *player, float sin_angle, float cos_angle)
 	player->pos = step;
 }
 
+int 				has_key(t_item *items)
+{
+	t_item			*all;
+
+	all = items;
+	while (all)
+	{
+		if (all->type == key)
+			return (1);
+		all = all->next;
+	}
+	return (0);
+}
+
 void 				check_door(t_player *player)
 {
 	int			i;
@@ -431,7 +445,7 @@ void 				check_door(t_player *player)
 	{
 		if (walls[i]->type != door)
 			continue ;
-		if(IntersectBox(player->pos.x, player->pos.y, step.x, step.y, walls[i]->start.x, walls[i]->start.y,
+		if(has_key(player->inventar) && IntersectBox(player->pos.x, player->pos.y, step.x, step.y, walls[i]->start.x, walls[i]->start.y,
 			walls[i]->end.x, walls[i]->end.y)
         && PointSide(step.x, step.y, walls[i]->start.x, walls[i]->start.y, walls[i]->end.x, walls[i]->end.y) < 0)
         {

@@ -48,7 +48,7 @@ void				list_items(t_item *items)
 	it = items;
 	while (it)
 	{
-		ft_putstr(it->state == 0 ? "Items # " : "Enemies # ");
+		ft_putstr(it->state == 2 ? "Enemies # " : "Items # ");
 		ft_putnbr(it->id);
 		ft_putstr("\npos x = ");
 		ft_putnbr(it->pos.x);

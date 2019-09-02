@@ -16,6 +16,7 @@ enum 					wall_type
 enum 					item_type
 {
 	object,
+	key,
 	enemy
 };
 
