@@ -53,13 +53,16 @@ void 					sort_closer_to_player(t_player player, t_item **items)
 		return ;
 	head = *items;
 	pos_pl = player.pos;
-	while (head)
+	head->dist_to_player = len_between_points(pos_pl, head->pos);
+	while (head->next)
 	{
 		next = head->next;
 		if (next)
 		{
 			dist = len_between_points(pos_pl, head->pos);
 			dist_next = len_between_points(pos_pl, next->pos);
+			head->dist_to_player = dist;
+			next->dist_to_player = dist_next;
 			if (dist < dist_next)
 			{
 				swap_items(head, next);
@@ -75,7 +78,7 @@ static void 			make_intersect(t_wall *wall)
 {
 	t_vector 	i1;
 	t_vector 	i2;
-	float nearz = 1e-4f, farz = 5, nearside = 1e-5f, farside = 1000.f;
+	float 		nearz = 1e-4f, nearside = 1e-5f, farside = 1000.f;
 
 	i1 = Intersect(wall->start.x, wall->start.y, wall->end.x, wall->end.y, -nearside,nearz, -farside,farz);
     i2 = Intersect(wall->start.x, wall->start.y, wall->end.x, wall->end.y,  nearside,nearz,  farside,farz);
@@ -337,35 +340,32 @@ void			draw_sectors(t_sector *sec, t_player *player, t_sdl *sdl, t_draw_data dat
 		draw_world(sec, *sec->wall[sec->portals[p]], *player, sdl, data);
 		p++;
 	}
-	i = 0;
-	while (i < sec->n_walls)
+	i = -1;
+	while (++i < sec->n_walls)
 	{
 		if (sec->wall[i]->type != door)
-		{
-			i++;
 			continue;
-		}
 		if (player->opening_door)
 			open_door(sec->wall[i], player, sec);
 		if(sec->wall[i]->type != empty_wall)
 			draw_world(sec, *sec->wall[i], *player, sdl, data);
-		i++;
 	}
 	t_item	*it;
-	it = sec->items;
 	sort_closer_to_player(*player, &sec->items);
+	it = sec->items;
 	while (it)
 	{
-		if (len_between_points(player->pos, it->pos) <= 0.5 && it->type == object)
+		if (it->dist_to_player <= 0.5 && it->type == object)
 			get_item_to_player(player, &sec->items, it->id);
 		else
 			draw_enemy_sprite(*it, data, *player, sdl->surf);
 		it = it->next;
 	}
+	sort_closer_to_player(*player, &sec->enemies);
 	it = sec->enemies;
 	while (it)
 	{
-		if (len_between_points(player->pos, it->pos) > 0.5)
+		if (it->dist_to_player > 0.5)
 			draw_enemy_sprite(*it, data, *player, sdl->surf);
 		it = it->next;
 	}
@@ -394,25 +394,22 @@ void			move_player(t_player *player, float sin_angle, float cos_angle)
 {
 	int			i;
 	t_vector	step;
+	t_wall		**wall;
 
 	i = 0;
 	step = (t_vector){player->pos.x + cos_angle * player->speed, player->pos.y + sin_angle * player->speed};
+	wall = player->curr_sector->wall;
 	while (i < player->curr_sector->n_walls)
 	{
-		if(IntersectBox(player->pos.x, player->pos.y, step.x, step.y,
-			player->curr_sector->wall[i]->start.x, player->curr_sector->wall[i]->start.y,
-			player->curr_sector->wall[i]->end.x, player->curr_sector->wall[i]->end.y)
-        && PointSide(step.x, step.y, player->curr_sector->wall[i]->start.x, player->curr_sector->wall[i]->start.y,
-			player->curr_sector->wall[i]->end.x, player->curr_sector->wall[i]->end.y) < 0)
+		if(IntersectBox(player->pos.x, player->pos.y, step.x, step.y, wall[i]->start.x, wall[i]->start.y, wall[i]->end.x, wall[i]->end.y)
+        && PointSide(step.x, step.y, wall[i]->start.x, wall[i]->start.y, wall[i]->end.x, wall[i]->end.y) < 0)
         {
-			if (player->curr_sector->wall[i]->type != empty_wall)
+			if (wall[i]->type != empty_wall)
 				return;
-			if (player->curr_sector->wall[i]->sectors[0] &&
-				player->curr_sector->sector != player->curr_sector->wall[i]->sectors[0]->sector)
-				player->curr_sector = player->curr_sector->wall[i]->sectors[0];
-			else if (player->curr_sector->wall[i]->sectors[1] &&
-				player->curr_sector->sector != player->curr_sector->wall[i]->sectors[1]->sector)
-				player->curr_sector = player->curr_sector->wall[i]->sectors[1];
+			if (wall[i]->sectors[0] && player->curr_sector->sector != wall[i]->sectors[0]->sector)
+				player->curr_sector = wall[i]->sectors[0];
+			else if (wall[i]->sectors[1] && player->curr_sector->sector != wall[i]->sectors[1]->sector)
+				player->curr_sector = wall[i]->sectors[1];
 			player->height = EyeHeight + player->curr_sector->floor;
 			break;
         }
@@ -427,16 +424,13 @@ void 				check_door(t_player *player)
 	t_vector	step;
 	t_wall		**walls;
 
-	i = 0;
+	i = -1;
 	walls = player->curr_sector->wall;
 	step = (t_vector){player->pos.x + player->cos_angl * player->speed, player->pos.y + player->sin_angl * player->speed};
-	while (i < player->curr_sector->n_walls)
+	while (++i < player->curr_sector->n_walls)
 	{
 		if (walls[i]->type != door)
-		{
-			i++;
 			continue ;
-		}
 		if(IntersectBox(player->pos.x, player->pos.y, step.x, step.y, walls[i]->start.x, walls[i]->start.y,
 			walls[i]->end.x, walls[i]->end.y)
         && PointSide(step.x, step.y, walls[i]->start.x, walls[i]->start.y, walls[i]->end.x, walls[i]->end.y) < 0)
@@ -445,7 +439,6 @@ void 				check_door(t_player *player)
 			player->opening_door = 1;
 			return ;
         }
-		i++;
 	}
 }
 
@@ -541,8 +534,7 @@ void 				print_player_gun(t_sdl *sdl, t_player *pla)
 		pla->gun.state++;
 	pos.x = pla->half_win_size.x - surf->w / 2;
 	pos.y = sdl->win_size.y - surf->h;
-
-	draw_image(sdl->surf, surf, pla->half_win_size.x - 140, sdl->win_size.y - 400, 300, 400);
+	draw_image(sdl->surf, surf, pla->half_win_size.x - 150, sdl->win_size.y - 400, 300, 400);
 }
 
 void                game_loop(t_sdl *sdl, t_player *player, t_sector *sectors)

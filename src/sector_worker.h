@@ -48,6 +48,7 @@ typedef struct 			s_item
 	enum item_type 		type;
 	unsigned			id;
 	unsigned 			size;
+	float				dist_to_player;
 	SDL_Surface			*id_text[4];
 	struct s_item		*next;
 }						t_item;

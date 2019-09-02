@@ -18,6 +18,7 @@
 
 static float m_vfov = 0.2f;
 static float m_hfov = 0.73f*H/W;
+static int farz = H/W;
 static int h_w = W >> 1;
 static int h_h = H >> 1;
 
