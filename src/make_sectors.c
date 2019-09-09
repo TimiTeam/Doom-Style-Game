@@ -252,7 +252,7 @@ t_item			*create_item(int *p, char *data, SDL_Surface **textures, enum item_type
 	item->state = item->type != enemy ? action : waiting;
 	item->size = item->type != enemy ? 1000 : 2800;
 	item->pos.z = item->type != enemy ? 5 : 2;
-
+	item->dist_to_player = 10.f;
 	while (data[i] && data[i] != ')')
 	{
 		if (ft_isalpha(data[i]))

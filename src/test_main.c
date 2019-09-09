@@ -41,6 +41,7 @@ void 					get_item_to_player(t_player *player, t_item **all, unsigned id)
 		player->inventar = pl_item;	
 }
 
+/*
 void 					sort_closer_to_player(t_player player, t_item **items)
 {
 	t_item				*head;
@@ -72,7 +73,7 @@ void 					sort_closer_to_player(t_player player, t_item **items)
 		head = next;
 	}
 }
-
+*/
 
 static void 			make_intersect(t_wall *wall)
 {
@@ -362,17 +363,19 @@ void			draw_sectors(t_sector *sec, t_player *player, t_sdl *sdl, t_draw_data dat
 			draw_world(sec, *sec->wall[i], *player, sdl, data);
 	}
 	t_item	*it;
-	sort_closer_to_player(*player, &sec->items);
+	quickSort(&sec->items, player);
+
 	it = sec->items;
 	while (it)
 	{
-		if (it->dist_to_player <= 0.5 && it->type != enemy)
+		if (it->dist_to_player <= 0.5)
 			get_item_to_player(player, &sec->items, it->id);
 		else
 			draw_enemy_sprite(*it, data, *player, sdl->surf);
 		it = it->next;
 	}
-	sort_closer_to_player(*player, &sec->enemies);
+
+	quickSort(&sec->enemies, player);
 	it = sec->enemies;
 	while (it)
 	{
