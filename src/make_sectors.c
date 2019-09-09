@@ -140,7 +140,7 @@ t_wall			*make_wall(char *line, t_vector *vectors, SDL_Surface **textures)
   		ret->type = door;
 	else
   		ret->type = empty_wall;
-	if (ret->type != empty_wall)
+//	if (ret->type != empty_wall)
 		ret->texture = textures[get_num_from_str(&line[i]) - 1];
 	return (ret);
 }

@@ -142,6 +142,8 @@ void 			draw_world(t_sector *sec, t_wall wall, t_player player, t_sdl *sdl, t_dr
 	int 		cyb;
 	int 		ya;
 	int 		yb;
+	int			nya;
+	int			nyb;
 	int 		n_cya;
 	int 		n_cyb;
 	int			x;
@@ -167,8 +169,8 @@ void 			draw_world(t_sector *sec, t_wall wall, t_player player, t_sdl *sdl, t_dr
 
 	if (wall.start.y <= 0 || wall.end.y <= 0)
 		make_intersect(&wall);
-	if (wall.type != empty_wall)
-	{
+//	if (wall.type != empty_wall)
+//	{
 		if(fabsf(cp.start.x - cp.end.x) > fabsf(cp.start.y - cp.end.y))
     		scaleL = fabsf(cp.start.x - cp.end.x) / 10;
     	else
@@ -178,7 +180,7 @@ void 			draw_world(t_sector *sec, t_wall wall, t_player player, t_sdl *sdl, t_dr
 			maping_wall_texture(&u0, &u1, wall.start.x - org1.x, wall.end.x - org1.x, (wall.texture->w * scaleL - 1) / (org2.x - org1.x));
 		else
 			maping_wall_texture(&u0, &u1, wall.start.y - org1.y, wall.end.y - org1.y, (wall.texture->w * scaleL - 1) / (org2.y - org1.y));
-	}
+//	}
 
 	scale1 =(t_vector) {player.hfov / wall.start.y, player.vfov / wall.start.y};
     scale2 =(t_vector) {player.hfov / wall.end.y, player.vfov / wall.end.y};
@@ -223,17 +225,26 @@ void 			draw_world(t_sector *sec, t_wall wall, t_player player, t_sdl *sdl, t_dr
 
 		draw_floor_or_ceil(sdl->surf, sec->floor_tex, x, cyb, data.ybottom[x], data.diff_floor, player);
 
+		txtx = (u0 * ((wall.end.x - x) * wall.end.y) + u1 * ((x - wall.start.x) * wall.start.y)) / ((wall.end.x - x) * wall.end.y + (x - wall.start.x) * wall.start.y);
+
 		if (wall.type != empty_wall)
 		{
-			txtx = (u0 * ((wall.end.x - x) * wall.end.y) + u1 * ((x - wall.start.x) * wall.start.y)) / ((wall.end.x - x) * wall.end.y + (x - wall.start.x) * wall.start.y);
 			textLine(x, cya, cyb, (struct Scaler)Scaler_Init(ya, cya, yb, 0, fabsf(sec->floor - sec->ceil) * scaleH), txtx, sdl->surf, wall.texture);
 		}
 		else
 		{
-			n_cya = clamp((x - wall.start.x) * (n_ceil_y_e - n_ceil_y_s) / (wall.end.x-wall.start.x) + n_ceil_y_s,
-			data.ytop[x], data.ybottom[x]);
-			n_cyb = clamp((x - wall.start.x) * (n_floor_y_e - n_floor_y_s) / (wall.end.x-wall.start.x) +
-			n_floor_y_s, data.ytop[x], data.ybottom[x]);
+			nya = (x - wall.start.x) * (n_ceil_y_e - n_ceil_y_s) / (wall.end.x-wall.start.x) + n_ceil_y_s;
+			nyb = (x - wall.start.x) * (n_floor_y_e - n_floor_y_s) / (wall.end.x-wall.start.x) + n_floor_y_s;
+
+			n_cya = clamp((x - wall.start.x) * (n_ceil_y_e - n_ceil_y_s) / (wall.end.x-wall.start.x) + n_ceil_y_s, data.ytop[x], data.ybottom[x]);
+			n_cyb = clamp((x - wall.start.x) * (n_floor_y_e - n_floor_y_s) / (wall.end.x-wall.start.x) + n_floor_y_s, data.ytop[x], data.ybottom[x]);
+
+			if (nya - 1 != ya){
+     			textLine(x, cya, n_cya - 1, (struct Scaler)Scaler_Init(ya, cya, nya - 1, 0, (float)sec->floor_tex->h), txtx, sdl->surf, sec->floor_tex);
+                }
+            if (yb - 1 !=  nyb){
+                 textLine(x, n_cyb + 1, cyb, (struct Scaler)Scaler_Init(nyb, n_cyb, yb - 1, 0, (float)sec->floor_tex->h), txtx, sdl->surf, sec->floor_tex);
+            }
 			data.ytop[x] = n_cya;
 			data.ybottom[x] = n_cyb;
 
