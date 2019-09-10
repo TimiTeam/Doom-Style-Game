@@ -243,9 +243,9 @@ void 			open_door(t_wall *door, t_player *player, t_sector *sec)
 	float 		dist;
 	float 		dx;
 	
-	if (!door || player->door_id != door->id)
+	if (!door)
 		return ;
-	if (door->sectors[0] == sec && door->end.y >door->start.y)
+	if (door->sectors[0] == sec && door->end.y > door->start.y)
 	{ 
 		vx = door->end.x - door->start.x;
 		vy = door->end.y - door->start.y;
@@ -253,6 +253,12 @@ void 			open_door(t_wall *door, t_player *player, t_sector *sec)
 		dx = (dist - 0.1) / dist;
 		door->end.x = vx * dx + door->start.x;
 		door->end.y = vy * dx + door->start.y;
+		if (door->end.y <= door->start.y)
+		{
+			player->opening_door = 0;
+			player->door = NULL;
+			printf("dor end : %f, stat : %f\n", door->end.y, door->start.y);
+		}
 	}
 	else if (door->sectors[1] == sec && door->end.y < door->start.y)
 	{
@@ -262,10 +268,13 @@ void 			open_door(t_wall *door, t_player *player, t_sector *sec)
 		dx = (dist - 0.1) / dist;
 		door->start.x = vx * dx + door->end.x;
 		door->start.y = vy * dx + door->end.y;
+		if (door->end.y >= door->start.y)
+		{
+			player->opening_door = 0;
+			player->door = NULL;
+			printf("dor end : %f, stat : %f\n", door->end.y, door->start.y);
+		}
 	}
-//	if ((door->sectors[0] == sec && door->end.y <= door->start.y)
-//		|| (door->sectors[0] == sec && door->end.y >= door->start.y))
-//		player->opening_door = 0;
 }
 
 void			draw_sectors(t_sector *sec, t_player *player, t_sdl *sdl, t_draw_data data)
@@ -274,6 +283,7 @@ void			draw_sectors(t_sector *sec, t_player *player, t_sdl *sdl, t_draw_data dat
 	int			d;
 	int			p;
 	int			wall;
+	t_wall		*w;
 	pthread_t	thread[THREADS];
 	t_super_data super[THREADS];
 	t_draw_data	spr;
@@ -302,8 +312,9 @@ void			draw_sectors(t_sector *sec, t_player *player, t_sdl *sdl, t_draw_data dat
 	spr = data;*/
 	while (i < sec->n_walls)
 	{
-		if(sec->wall[i]->type == filled_wall)
-			draw_world(sec, *sec->wall[i], *player, sdl, data);
+		w = sec->wall[i];
+		if(w->type == filled_wall)
+			draw_world(sec, *w, *player, sdl, data);
 		i++;
 	}
 /*
@@ -316,21 +327,21 @@ void			draw_sectors(t_sector *sec, t_player *player, t_sdl *sdl, t_draw_data dat
 */	
 	while (++p < MAX_PORTALS && (d = sec->portals[p]) >= 0)
 	{
-	//	if (((d > 0 && sec->wall[d - 1]->type == door) || (d < sec->n_walls - 1 && sec->wall[d + 1]->type == door))
-	//			&& !player->opening_door)
-		if (sec->wall[d]->close && !player->opening_door)
-			continue;
-		draw_world(sec, *sec->wall[d], *player, sdl, data);
+		w = sec->wall[d];
+		if (w->close && player->opening_door && w->id == player->door->id_portal)
+			w->close = 0;
+		if (!w->close)
+			draw_world(sec, *w, *player, sdl, data);
 	}
 	i = -1;
 	while (++i < sec->n_walls)
 	{
-		if (sec->wall[i]->type != door)
+		w = sec->wall[i];
+		if (w->type != door)
 			continue;
-		if (player->opening_door)
-			open_door(sec->wall[i], player, sec);
-		if(sec->wall[i]->type != empty_wall)
-			draw_world(sec, *sec->wall[i], *player, sdl, data);
+		if (player->opening_door && player->door->id == w->id)
+			open_door(w, player, sec);
+		draw_world(sec, *w, *player, sdl, data);
 	}
 	t_item	*it;
 	quickSort(&sec->items, player);
@@ -419,6 +430,7 @@ int 				has_key(t_item *items)
 void 				check_door(t_player *player)
 {
 	int			i;
+	int			j;
 	t_vector	step;
 	t_wall		**walls;
 
@@ -433,7 +445,8 @@ void 				check_door(t_player *player)
 			walls[i]->end.x, walls[i]->end.y)
         && PointSide(step.x, step.y, walls[i]->start.x, walls[i]->start.y, walls[i]->end.x, walls[i]->end.y) < 0)
         {
-			player->door_id = walls[i]->id;
+			j = 0;
+			player->door= walls[i];
 			player->opening_door = 1;
 			return ;
         }
@@ -505,8 +518,10 @@ int					hook_event(t_player *player, unsigned char move[4])
 				player->speed = 0.6;
 			else if (e.key.keysym.sym == SDLK_SPACE && !player->jump)
 				player->jump = 1;
-			else if (e.key.keysym.sym == SDLK_e)
+			else if (e.key.keysym.sym == SDLK_e && !player->opening_door)
 				check_door(player);
+			else if (e.key.keysym.sym == SDLK_i)
+				printf("\n\t\topening door : %s\n", player->opening_door ? "True" : "False");
 		}
 		else if (e.type == SDL_MOUSEBUTTONDOWN)
 		{

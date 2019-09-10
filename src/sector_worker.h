@@ -2,6 +2,7 @@
 #define __SECTOR_WORKER_H
 
 #define	MAX_PORTALS 32
+#define NON -1
 #include "sdl_head.h"
 #include "libft.h"
 #include <fcntl.h>
@@ -62,7 +63,8 @@ typedef	struct			s_wall
 	t_vector			end;
 	enum wall_type		type;
 	unsigned short		id;
-	unsigned short 		close;
+	short 				id_portal;
+	unsigned short		close;
 }						t_wall;
 
 typedef struct			s_sector

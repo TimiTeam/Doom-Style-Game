@@ -214,6 +214,8 @@ t_wall			*copy_t_wall_velue(t_wall *src)
 	dst->type = src->type;
 	dst->start = src->start;
 	dst->end = src->end;
+	dst->close = src->close;
+	dst->id_portal = src->id_portal;
 	dst->sectors[0] = src->sectors[0];
 	dst->sectors[1] = src->sectors[1];
 	dst->texture = src->texture;
@@ -385,17 +387,25 @@ void 				finde_close_doors(t_wall **walls, unsigned short size)
 {
 	unsigned short	i;
 	t_wall			*w;
+	t_wall			*d;
 
 	i = -1;
 	while (++i < size)
 	{
 		w = walls[i];
+		d = NULL;
 		if (w->type != empty_wall)
 			continue ;
-		if ((i > 0 && walls[i - 1]->type == door) || (i < size - 1 && walls[i + 1]->type == door))
+		w->id_portal = NON;
+		if (i > 0 && walls[i - 1]->type == door)
+			d = walls[i - 1];
+		else if (i < size - 1 && walls[i + 1]->type == door)
+			d = walls[i + 1];
+		if (d)
+		{
+			d->id_portal = w->id;
 			w->close = 1;
-		else
-			w->close = 0;
+		}
 	}
 }
 
@@ -467,6 +477,7 @@ t_sector		*read_map(char *pth, t_read_holder *holder)
 	holder->textures = load_img_array_from_file(holder->fd, holder->text_count);
 	vectors = get_vectors(holder->fd, holder->vect_count);
 	holder->walls = get_walls(holder->fd, holder->wall_count, vectors, holder->textures);
+	finde_close_doors(holder->walls, holder->wall_count);
 	ft_memdel((void**)&vectors);
 	sectors = make_sectors_list(holder->fd, holder->walls, holder->textures);
 	mark_all_neighbors(sectors, holder->walls, holder->textures);
