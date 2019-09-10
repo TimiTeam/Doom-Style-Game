@@ -381,14 +381,29 @@ t_sector		*make_sectors_list(int fd, t_wall **walls, SDL_Surface **textures)
 	return (head);
 }
 
+void 				finde_close_doors(t_wall **walls, unsigned short size)
+{
+	unsigned short	i;
+	t_wall			*w;
+
+	i = -1;
+	while (++i < size)
+	{
+		w = walls[i];
+		if (w->type != empty_wall)
+			continue ;
+		if ((i > 0 && walls[i - 1]->type == door) || (i < size - 1 && walls[i + 1]->type == door))
+			w->close = 1;
+		else
+			w->close = 0;
+	}
+}
 
 void			mark_all_neighbors(t_sector *sectors, t_wall **all, SDL_Surface **textures)
 {
 	t_sector	*sec;
 	t_wall		*wall;
 	t_vector	tmp;
-	SDL_Surface	*floor_tex;
-	SDL_Surface	*ceil_tex;
 	int			i;
 	int			p;
 	
@@ -412,6 +427,7 @@ void			mark_all_neighbors(t_sector *sectors, t_wall **all, SDL_Surface **texture
 				sec->portals[p++] = i;
 			i++;
 		}
+		finde_close_doors(sec->wall, sec->n_walls);
 		sec = sec->next;
 	}
 }

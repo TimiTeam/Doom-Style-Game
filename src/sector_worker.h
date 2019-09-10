@@ -44,36 +44,37 @@ typedef	struct			s_vector
 
 typedef struct 			s_item
 {
+	SDL_Surface			*id_text[4];
 	t_vector			pos;
 	enum item_state		state;
 	enum item_type 		type;
 	unsigned			id;
 	unsigned 			size;
 	float				dist_to_player;
-	SDL_Surface			*id_text[4];
 	struct s_item		*next;
 }						t_item;
 
 typedef	struct			s_wall
 {
+	struct s_sector		*sectors[2];
+	SDL_Surface			*texture;
 	t_vector			start;
 	t_vector			end;
 	enum wall_type		type;
 	unsigned short		id;
-	struct s_sector		*sectors[2];
-	SDL_Surface			*texture;
+	unsigned short 		close;
 }						t_wall;
 
 typedef struct			s_sector
 {
 	t_wall				**wall;
-	unsigned short 		sector;
-	unsigned short		n_walls;
-	signed short		portals[MAX_PORTALS];
 	SDL_Surface			*floor_tex;
 	SDL_Surface			*ceil_tex;
 	float				floor;
 	float				ceil;
+	signed short		portals[MAX_PORTALS];
+	unsigned short 		sector;
+	unsigned short		n_walls;
 	t_item				*items;
 	t_item				*enemies;
 	struct s_sector		*next;

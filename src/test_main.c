@@ -41,39 +41,6 @@ void 					get_item_to_player(t_player *player, t_item **all, unsigned id)
 		player->inventar = pl_item;	
 }
 
-/*
-void 					sort_closer_to_player(t_player player, t_item **items)
-{
-	t_item				*head;
-	t_item				*next;
-	float 				dist;
-	float 				dist_next;
-	t_vector			pos_pl;
-
-	if (!*items)
-		return ;
-	head = *items;
-	pos_pl = player.pos;
-	head->dist_to_player = len_between_points(pos_pl, head->pos);
-	while (head->next)
-	{
-		next = head->next;
-		if (next)
-		{
-			dist = len_between_points(pos_pl, head->pos);
-			dist_next = len_between_points(pos_pl, next->pos);
-			head->dist_to_player = dist;
-			next->dist_to_player = dist_next;
-			if (dist < dist_next)
-			{
-				swap_items(head, next);
-				*items = next;
-			}
-		}
-		head = next;
-	}
-}
-*/
 
 static void 			make_intersect(t_wall *wall)
 {
@@ -312,7 +279,7 @@ void			draw_sectors(t_sector *sec, t_player *player, t_sdl *sdl, t_draw_data dat
 	t_draw_data	spr;
 	d = 0;
 	i = 0;
-	p = 0;
+	p = -1;
 	data.diff_ceil = sec->ceil - (player->height + player->jump);
 	data.diff_floor = sec->floor - (player->height + player->jump);
 	if (data.diff_ceil < 0)
@@ -347,10 +314,13 @@ void			draw_sectors(t_sector *sec, t_player *player, t_sdl *sdl, t_draw_data dat
 		d++;
 	}
 */	
-	while (p < MAX_PORTALS && sec->portals[p] >= 0)
+	while (++p < MAX_PORTALS && (d = sec->portals[p]) >= 0)
 	{
-		draw_world(sec, *sec->wall[sec->portals[p]], *player, sdl, data);
-		p++;
+	//	if (((d > 0 && sec->wall[d - 1]->type == door) || (d < sec->n_walls - 1 && sec->wall[d + 1]->type == door))
+	//			&& !player->opening_door)
+		if (sec->wall[d]->close && !player->opening_door)
+			continue;
+		draw_world(sec, *sec->wall[d], *player, sdl, data);
 	}
 	i = -1;
 	while (++i < sec->n_walls)
@@ -480,6 +450,20 @@ int 				is_it_wall(t_vector pos, t_wall wall)
 	return (p);
 }
 
+static void 		calc_dist_to_items(t_item *items, t_vector player_pos)
+{
+	t_item			*i;
+
+	if (!items)
+		return ;
+	i = items;
+	while(i)
+	{
+		i->dist_to_player = len_between_points(i->pos, player_pos);
+		i = i->next;		
+	}
+}
+
 int					hook_event(t_player *player, unsigned char move[4])
 {
 	SDL_Event		e;
@@ -538,7 +522,11 @@ int					hook_event(t_player *player, unsigned char move[4])
 		move_player(player, -player->cos_angl, player->sin_angl);
 	if (move[3])
 		move_player(player, player->cos_angl, -player->sin_angl);
-	
+	if (move[0] || move[1] || move[2] || move[3])
+	{
+		calc_dist_to_items(player->curr_sector->items, player->pos);
+		calc_dist_to_items(player->curr_sector->enemies, player->pos);
+	}
 	SDL_GetRelativeMouseState(&x, &y);
 	y = -y;
     player->angle += x * 0.01;

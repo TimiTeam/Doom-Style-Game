@@ -45,7 +45,7 @@ void 			draw_image(SDL_Surface *screen, SDL_Surface *img, int x, int y, int widt
 void 			draw_image_with_criteria(SDL_Surface *screen, SDL_Surface *img, int x, int y, int width, int height, t_draw_data data)
 {
 	int 		i;
-	int		j;
+	int			j;
 	Uint32		pix;
 	t_vector	img_point;
 	t_vector	step;
