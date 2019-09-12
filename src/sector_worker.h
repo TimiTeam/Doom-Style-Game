@@ -94,6 +94,7 @@ void 				add_next_item(t_item *head, t_item *new);
 void				delete_sectors(t_sector *sec);
 void				delete_walls(t_wall **wals, unsigned count);
 void				delete_items_list(t_item *items);
+void 				delete_item(t_item **item);
 void 				delete_item_by_id(t_item *items, unsigned id);
 
 void				list_sectors(t_sector *head);
