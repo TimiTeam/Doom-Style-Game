@@ -721,7 +721,6 @@ int				main(int argc, char **argv)
 	init_sdl(sdl);
 	SDL_ShowCursor(SDL_DISABLE);
 	SDL_SetRelativeMouseMode(SDL_TRUE);
-	printf("tan:%f\n2f:%f\n", sdl->win_size.y / tan(350), .2f * sdl->win_size.y);
 
 	player = new_t_player(3, 3, sdl->win_size);
 	player->curr_sector = sectors;

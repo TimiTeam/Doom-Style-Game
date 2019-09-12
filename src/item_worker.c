@@ -62,10 +62,26 @@ void				list_items(t_item *items)
 	}
 }
 
+void				delete_item_animation(t_animation *anim)
+{
+	unsigned char	i;
+
+	i = 0;
+	while (i < anim->max_textures && anim->texture[i])
+	{
+		SDL_FreeSurface(anim->texture[i]);
+		i++;
+	}
+}
+
 void 				delete_item(t_item **item)
 {
 	if (!*item)
 		return ;
+	delete_item_animation(&(*item)->waiting);
+	delete_item_animation(&(*item)->walk);
+	delete_item_animation(&(*item)->action);
+	delete_item_animation(&(*item)->die);
 	ft_memdel((void**)item);
 }
 

@@ -1,0 +1,9 @@
+waiting{
+textures/stalker/stalker_action.png
+}
+walk{
+}
+action{
+}
+die{
+}

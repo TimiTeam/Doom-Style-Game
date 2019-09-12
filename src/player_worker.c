@@ -3,10 +3,10 @@
 void 					load_gun(t_player *player)
 {
 	player->gun.state = 0;
-	player->gun.frame[0] = load_jpg_png("textures/pistol1.png");
-	player->gun.frame[1] = load_jpg_png("textures/pistol2.png");
-	player->gun.frame[2] = load_jpg_png("textures/pistol3.png");
-	player->gun.frame[3] = load_jpg_png("textures/pistol4.png");
+	player->gun.frame[0] = load_jpg_png("textures/guns/pistol1.png");
+	player->gun.frame[1] = load_jpg_png("textures/guns/pistol2.png");
+	player->gun.frame[2] = load_jpg_png("textures/guns/pistol3.png");
+	player->gun.frame[3] = load_jpg_png("textures/guns/pistol4.png");
 }
 
 t_player				*new_t_player(int pos_x, int pos_y, t_point win_size)

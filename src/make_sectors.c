@@ -238,6 +238,93 @@ static unsigned	fill_floor_and_ceil(t_sector *sector, SDL_Surface **textures, ch
 	return (i);
 }
 
+char 			*clip_n_str(char *s1, char *s2, char *s3, int size_s2)
+{
+	int			i;
+	int			size;
+	char		*new;
+
+	new = (char*)malloc(sizeof(char) * (size = ft_strlen(s1) + size_s2 + ft_strlen(s3) + 1));
+	i = 0;
+	ft_strcpy(new, s1);
+	ft_strncpy(&new[ft_strlen(s1)], s2, size_s2);
+	ft_strcpy(&new[ft_strlen(s1) + size_s2], s3);
+	return (new);
+}
+
+void 			filed_t_animation(t_animation *anim, int fd)
+{
+	char		*line;
+	int			i;
+
+	i = 0;
+	while (get_next_line(fd, &line) > 0)
+	{
+		if (ft_strcmp(line, "}") == 0)
+			break ;
+		anim->texture[i] = load_jpg_png(line);
+		i++;
+		ft_strdel(&line);
+	}
+	anim->current_text = 0;
+	anim->max_textures = i;
+	ft_strdel(&line);
+}
+
+void			create_animations(t_item *it, char *file_pth)
+{
+	int			fd;
+	char		*line;
+
+	fd = open(file_pth, O_RDONLY);
+	if (fd < 1)
+	{
+		printf("ERROR reading file: %s", file_pth);
+		exit(1);
+	}
+	while(get_next_line(fd, &line) > 0)
+	{
+		if (ft_strcmp(line, "waiting{") == 0)
+			filed_t_animation(&it->waiting, fd);
+		else if (ft_strcmp(line, "walk{") == 0)
+			filed_t_animation(&it->walk, fd);
+		else if (ft_strcmp(line, "action{") == 0)
+			filed_t_animation(&it->action, fd);
+		else if (ft_strcmp(line, "die{") == 0)
+			filed_t_animation(&it->die, fd);
+		ft_strdel(&line);
+	}
+	ft_strdel(&line);
+}
+
+void 			load_animation(t_item *item, char *path_to_enemy)
+{
+	char		*new;
+	int			i;
+	int			j;
+	int			size;
+
+	i = 0;
+	while (path_to_enemy[i] && path_to_enemy[i] == ' ')
+		i++;
+	j = i;
+	size = 0;
+	while (path_to_enemy[i] && ft_isalpha(path_to_enemy[i]) && size < 32)
+	{
+		size++;
+		i++;
+	}
+	if (size)
+	{
+		new = clip_n_str("textures/", &path_to_enemy[j], "/info.txt", size);
+		ft_putstr("'");
+		ft_putstr(new);
+		ft_putstr("'\n");
+		create_animations(item, new);
+		ft_memdel((void**)&new);
+	}
+}
+
 t_item			*create_item(int *p, char *data, SDL_Surface **textures, enum item_type type)
 {
 	t_item 		*item;
@@ -248,9 +335,9 @@ t_item			*create_item(int *p, char *data, SDL_Surface **textures, enum item_type
 	i = get_numbers(&x, &y, ',', data);
 	if(!(item = create_new_item((int)x, (int)y)))
 		return (0);
-	item->id_text[0] = textures[ft_atoi(&data[i]) - 1];
 	item->type = type;
-	item->state = item->type != enemy ? action : waiting;
+	item->state = waiting;
+	load_animation(item, &data[i]);
 	item->size = item->type != enemy ? 900 : 2500;
 	item->pos.z = item->type == enemy ? 5 : 2;
 	item->dist_to_player = 10.f;
@@ -263,6 +350,7 @@ t_item			*create_item(int *p, char *data, SDL_Surface **textures, enum item_type
 	if (item->type == enemy)
 		printf("Enemy\n");
 	*p = i;
+	item->hp = 100;
 	return (item);
 }
 

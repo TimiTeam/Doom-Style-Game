@@ -97,7 +97,11 @@ void    		draw_enemy_sprite(t_item obj, t_draw_data data, t_player player, SDL_S
 	scale.y = (H * m_vfov) / (ob_pos.y);
     ob_pos.x = player.half_win_size.x + (int)(-ob_pos.x * scale.x);
 	ob_pos.y = player.half_win_size.y + (int)(-Yaw(obj.pos.z + data.diff_floor, ob_pos.y) * scale.y);
- 
-	draw_image_with_criteria(surface, obj.id_text[0], ob_pos.x - obj.size / dist / 2, ob_pos.y - obj.size / dist / 2,
-			obj.size / dist, obj.size / dist, data);
+
+	if (obj.state == waiting && obj.waiting.texture[0])
+		draw_image_with_criteria(surface, obj.waiting.texture[obj.waiting.current_text], ob_pos.x - obj.size / dist / 2, ob_pos.y - obj.size / dist / 2,
+				obj.size / dist, obj.size / dist, data);
+	else if (obj.state == action)
+		draw_image_with_criteria(surface, obj.action.texture[obj.action.current_text], ob_pos.x - obj.size / dist / 2, ob_pos.y - obj.size / dist / 2,
+				obj.size / dist, obj.size / dist, data);
 }

@@ -1,0 +1,9 @@
+waiting{
+textures/key/simple_key.png
+}
+walk{
+}
+action{
+}
+die{
+}

@@ -2,6 +2,7 @@
 #define __SECTOR_WORKER_H
 
 #define	MAX_PORTALS 16
+#define	MAX_TEXTURES 8
 #define NON -1
 #include "sdl_head.h"
 #include "libft.h"
@@ -24,9 +25,9 @@ enum 					item_type
 enum 					item_state
 {
 	waiting,
+	walk,
 	action,
-	get_action,
-	none
+	die
 };
 
 
@@ -43,9 +44,20 @@ typedef	struct			s_vector
 	float				z;
 }						t_vector;
 
+typedef	struct 			s_animation
+{
+	SDL_Surface			*texture[MAX_TEXTURES];
+	unsigned char		current_text;
+	unsigned char 		max_textures;
+}						t_animation;
+
 typedef struct 			s_item
 {
-	SDL_Surface			*id_text[4];
+	t_animation			waiting;
+	t_animation			walk;
+	t_animation			action;
+	t_animation			die;
+	int					hp;
 	struct s_item		*next;
 	t_vector			pos;
 	enum item_state		state;
