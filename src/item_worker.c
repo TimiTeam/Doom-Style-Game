@@ -18,6 +18,7 @@ t_item				*create_new_item(int x, int y)
 		return (NULL);
 	i->pos.x = x;
 	i->pos.y = y;
+	i->id = 0;
 	return (i);
 }
 
@@ -93,7 +94,7 @@ void 				delete_item_by_id(t_item *items, unsigned id)
 	all = items;
 	if (all->id == id)
 	{
-	//	delete_item(&all);
+		delete_item(&all);
 		items = items->next;
 		return ;
 	}
@@ -104,7 +105,7 @@ void 				delete_item_by_id(t_item *items, unsigned id)
 		{
 			all->next = tmp->next;
 			tmp->next = NULL;
-		//	delete_item(&tmp);		
+			delete_item(&tmp);		
 			break ;
 		}
 		all = tmp;

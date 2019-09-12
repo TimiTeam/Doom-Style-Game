@@ -7,6 +7,20 @@ static float		len_between_points(t_vector a, t_vector b)
 	return (sqrt((b.x - a.x) * (b.x - a.x) + (b.y - a.y) * (b.y - a.y)));
 }
 
+int 				has_key(t_item *items)
+{
+	t_item			*all;
+
+	all = items;
+	while (all)
+	{
+		if (all->type == key)
+			return (1);
+		all = all->next;
+	}
+	return (0);
+}
+
 void 					get_item_to_player(t_player *player, t_item **all, unsigned id)
 {
 	t_item				*head;
@@ -39,6 +53,8 @@ void 					get_item_to_player(t_player *player, t_item **all, unsigned id)
 		add_next_item(player->inventar, pl_item);
 	else
 		player->inventar = pl_item;	
+	if (pl_item->type == key)
+		player->has_key = 1;
 }
 
 
@@ -236,16 +252,14 @@ void			*run_thread(void *param)
 	return (NULL);
 }
 
-void 			open_door(t_wall *door, t_player *player, t_sector *sec)
+void 			open_door(t_wall *door, t_wall *door_two, t_player *player)
 {
 	float 		vx;
 	float 		vy;
 	float 		dist;
 	float 		dx;
 	
-	if (!door)
-		return ;
-	if (door->sectors[0] == sec && door->end.y > door->start.y)
+	if (door && door->end.y > door->start.y)
 	{ 
 		vx = door->end.x - door->start.x;
 		vy = door->end.y - door->start.y;
@@ -255,27 +269,28 @@ void 			open_door(t_wall *door, t_player *player, t_sector *sec)
 		door->end.y = vy * dx + door->start.y;
 		if (door->end.y <= door->start.y)
 		{
-			player->opening_door = 0;
+			door->close = 0;
 			player->door = NULL;
-			printf("dor end : %f, stat : %f\n", door->end.y, door->start.y);
+			printf("dor id: %d address %p\n end : %f, stat : %f\tplayer->opening_door = %d\n", door->id, door, door->end.y, door->start.y, player->opening_door);
 		}
 	}
-	else if (door->sectors[1] == sec && door->end.y < door->start.y)
+	if (door_two && door_two->end.y < door_two->start.y)
 	{
-		vx = door->start.x - door->end.x;
-		vy = door->start.y - door->end.y;
-		dist = len_between_points(door->end, door->start);
+		vx = door_two->start.x - door_two->end.x;
+		vy = door_two->start.y - door_two->end.y;
+		dist = len_between_points(door_two->end, door_two->start);
 		dx = (dist - 0.1) / dist;
-		door->start.x = vx * dx + door->end.x;
-		door->start.y = vy * dx + door->end.y;
-		if (door->end.y >= door->start.y)
+		door_two->start.x = vx * dx + door_two->end.x;
+		door_two->start.y = vy * dx + door_two->end.y;
+		if(door_two->end.y >= door_two->start.y)
 		{
-			player->opening_door = 0;
-			player->door = NULL;
-			printf("dor end : %f, stat : %f\n", door->end.y, door->start.y);
+			door_two->close = 0;
+			player->door_two = NULL;
+			printf("dor id: %d address %p\n end : %f, stat : %f\tplayer->opening_door = %d\n", door_two->id, door_two, door_two->end.y, door_two->start.y, player->opening_door);
 		}
 	}
 }
+
 
 void			draw_sectors(t_sector *sec, t_player *player, t_sdl *sdl, t_draw_data data)
 {
@@ -325,22 +340,23 @@ void			draw_sectors(t_sector *sec, t_player *player, t_sdl *sdl, t_draw_data dat
 		d++;
 	}
 */	
-	while (++p < MAX_PORTALS && (d = sec->portals[p]) >= 0)
+	while (++p < MAX_PORTALS && (w = sec->portals[p]))
 	{
-		w = sec->wall[d];
-		if (w->close && player->opening_door && w->id == player->door->id_portal)
+		if (w->close && player->door && w->id == player->door->id_portal)
 			w->close = 0;
 		if (!w->close)
 			draw_world(sec, *w, *player, sdl, data);
 	}
 	i = -1;
-	while (++i < sec->n_walls)
-	{
-		w = sec->wall[i];
-		if (w->type != door)
-			continue;
-		if (player->opening_door && player->door->id == w->id)
+	while (++i < MAX_PORTALS && (w = sec->doors[i]))
+	{/*
+		if (player->opening_door && player->door && player->door->id == w->id)
 			open_door(w, player, sec);
+		if (player->one_side && player->two_side)
+		{
+			player->opening_door = 0;
+			player->door = NULL;
+		}*/
 		draw_world(sec, *w, *player, sdl, data);
 	}
 	t_item	*it;
@@ -382,6 +398,10 @@ void				run_with_buff(t_player *player, t_sdl *sdl, unsigned int win_x)
 	}
 	draw_data.start = 0;
 	draw_data.end = win_x;
+	if (player->opening_door)
+		open_door(player->door, player->door_two, player);
+	if (!player->door && !player->door_two)
+		player->opening_door = 0;
 	draw_sectors(player->curr_sector, player, sdl, draw_data);
 }
 
@@ -413,21 +433,60 @@ void			move_player(t_player *player, float sin_angle, float cos_angle)
 	player->pos = step;
 }
 
-int 				has_key(t_item *items)
+t_wall				*find_door_in_next_sector(t_sector *all, t_wall *door)
 {
-	t_item			*all;
+	t_sector		*sectors;
+	t_wall			**walls;
+	int				i;
 
-	all = items;
-	while (all)
+	sectors = all;
+	while (sectors)
 	{
-		if (all->type == key)
-			return (1);
-		all = all->next;
+		walls = sectors->doors;
+		i = 0;
+		while (walls[i] && walls[i] != door)
+		{
+			if (walls[i]->id == door->id)
+				return(walls[i]);
+			i++;
+		}
+		sectors = sectors->next;
 	}
-	return (0);
+	return (NULL);
 }
 
-void 				check_door(t_player *player)
+void 				use_key(t_player *player)
+{
+	t_item			*all;
+	t_item			*tmp;
+
+	all = player->inventar;
+	if (all->type == key)
+	{
+		player->inventar = all->next;
+		delete_item(&all);
+		return ;
+	}
+	while ((all = all->next))
+	{
+		if (all->type == key)
+		{
+			tmp = player->inventar;
+			while (tmp)
+			{
+				if (tmp->next == all)
+				{
+					tmp->next = all->next;
+					delete_item(&all);
+					return ;
+				}
+				tmp = tmp->next;
+			}
+		}
+	}
+}
+
+void 				check_door(t_player *player, t_sector *sectors)
 {
 	int			i;
 	int			j;
@@ -435,22 +494,34 @@ void 				check_door(t_player *player)
 	t_wall		**walls;
 
 	i = -1;
-	walls = player->curr_sector->wall;
-	step = (t_vector){player->pos.x + player->cos_angl * player->speed, player->pos.y + player->sin_angl * player->speed};
-	while (++i < player->curr_sector->n_walls)
+	if (!player->has_key)
 	{
-		if (walls[i]->type != door)
-			continue ;
-		if(has_key(player->inventar) && IntersectBox(player->pos.x, player->pos.y, step.x, step.y, walls[i]->start.x, walls[i]->start.y,
+		printf("You dont have a key\n");
+		return ;
+	}
+	walls = player->curr_sector->doors;
+	step = (t_vector){player->pos.x + player->cos_angl * player->speed, player->pos.y + player->sin_angl * player->speed};
+	while (++i < MAX_PORTALS && walls[i])
+	{
+		if(player->has_key && IntersectBox(player->pos.x, player->pos.y, step.x, step.y, walls[i]->start.x, walls[i]->start.y,
 			walls[i]->end.x, walls[i]->end.y)
         && PointSide(step.x, step.y, walls[i]->start.x, walls[i]->start.y, walls[i]->end.x, walls[i]->end.y) < 0)
         {
+			printf("Opening door...\n");
+			use_key(player);
+			player->has_key = has_key(player->inventar);
 			j = 0;
-			player->door= walls[i];
+			player->door = walls[i];
+			player->door_two = find_door_in_next_sector(sectors, walls[i]);
 			player->opening_door = 1;
+			if (player->door_two)
+				printf("\n\n\tdoor one id: %d address = %p; door two id: %d address = %p\n\n", player->door->id, player->door, player->door_two->id, player->door_two);
+			else
+				printf("ERROR: DOOR TWO NOT FOUND :(\n\n");
 			return ;
         }
 	}
+	printf("There is no door\n");
 }
 
 int 				is_it_wall(t_vector pos, t_wall wall)
@@ -477,7 +548,7 @@ static void 		calc_dist_to_items(t_item *items, t_vector player_pos)
 	}
 }
 
-int					hook_event(t_player *player, unsigned char move[4])
+int					hook_event(t_player *player, unsigned char move[4], t_sector *sectors)
 {
 	SDL_Event		e;
 	int				x;
@@ -517,12 +588,12 @@ int					hook_event(t_player *player, unsigned char move[4])
 			else if (e.key.keysym.sym == SDLK_LSHIFT && e.type == SDL_KEYUP)
 				player->speed = 0.6;
 			else if (e.key.keysym.sym == SDLK_SPACE && !player->jump)
-				player->jump = 1;
-			else if (e.key.keysym.sym == SDLK_e && !player->opening_door)
-				check_door(player);
-			else if (e.key.keysym.sym == SDLK_i)
-				printf("\n\t\topening door : %s\n", player->opening_door ? "True" : "False");
+				player->jump = 1;	
 		}
+		if (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_e && !player->opening_door)
+				check_door(player, sectors);
+		else if (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_i)
+				printf("\n\t\topening door : %s, %d\n", player->opening_door ? "True" : "False", player->opening_door);
 		else if (e.type == SDL_MOUSEBUTTONDOWN)
 		{
 			if (e.button.button == SDL_BUTTON_LEFT)
@@ -620,7 +691,7 @@ void                game_loop(t_sdl *sdl, t_player *player, t_sector *sectors)
 
         SDL_RenderPresent(sdl->ren);
 
-        run = hook_event(player, move);
+        run = hook_event(player, move, sectors);
     }
 
 	printf("\n\n\t\t---- MAX FPS  %f ----\n\n", max);
@@ -630,7 +701,6 @@ void                game_loop(t_sdl *sdl, t_player *player, t_sector *sectors)
     SDL_DestroyTexture(tex);
 
 }
-
 
 int				main(int argc, char **argv)
 {

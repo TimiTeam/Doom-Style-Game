@@ -8,8 +8,6 @@ t_sector			*new_sector()
 	i = 0;
 	sec = (t_sector*)malloc(sizeof(t_sector));
 	*sec = (t_sector){};
-	while (i < MAX_PORTALS)
-		sec->portals[i++] = -1;
 	printf("Created\n");
 	return (sec);
 }
@@ -112,8 +110,8 @@ void				list_walls(t_wall **walls, int size)
 		w = walls[i];
 		ft_putstr("\twall id ");
 		ft_putnbr(walls[i]->id);
-		ft_putstr(", type ");
-		ft_putnbr(walls[i]->type);
+		ft_putstr(", type: ");
+		ft_putstr(walls[i]->type == 0 ? "Wall" : walls[i]->type == 1 ? "Portal" : "Door");
 		ft_putstr(". Neighbors:");
 		if (walls[i]->sectors[0])
 		{
@@ -131,7 +129,7 @@ void				list_walls(t_wall **walls, int size)
 		ft_putstr(", y = ");
 		ft_putnbr(line.y);
 		line = w->end;
-		ft_putstr(";\n\t end: x = ");
+		ft_putstr(";\n\t end:   x = ");
 		ft_putnbr(line.x);
 		ft_putstr(", y = ");
 		ft_putnbr(line.y);

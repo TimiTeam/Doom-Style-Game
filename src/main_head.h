@@ -8,7 +8,6 @@
 
 #define W 1240
 #define H 980
-#define MAX_SECTORS 128
 #define EyeHeight  5
 #define DuckHeight 2.5
 #define HeadMargin 1
@@ -42,6 +41,8 @@ typedef struct		s_plyer
 {	
 	t_sector 		*curr_sector;
 	t_item			*inventar;
+	t_wall			*door;
+	t_wall			*door_two;
 	t_gun			gun;
 	t_vector		pos;
 	t_point			half_win_size;
@@ -55,9 +56,8 @@ typedef struct		s_plyer
 	int				height;
 	char			fall;
 	unsigned short	jump;
-	unsigned char	opening_door;
-	t_wall			*door;
-	unsigned short	has_key;
+	char			opening_door;
+	unsigned char 	has_key;
 }					t_player;
 
 typedef struct 		s_super_data

@@ -140,8 +140,7 @@ t_wall			*make_wall(char *line, t_vector *vectors, SDL_Surface **textures)
   		ret->type = door;
 	else
   		ret->type = empty_wall;
-//	if (ret->type != empty_wall)
-		ret->texture = textures[get_num_from_str(&line[i]) - 1];
+	ret->texture = textures[get_num_from_str(&line[i]) - 1];
 	return (ret);
 }
 
@@ -324,10 +323,8 @@ t_sector		*crate_and_fill_sector_by_data(t_wall **walls, SDL_Surface	**textures,
 	t_wall		*wall;
 	char		*dec;
 	int			count;
-	int			port;
 	int			i;
 
-	port = 0;
 	sect = new_sector();
 	i = fill_floor_and_ceil(sect, textures, data);
 	while (data[i] && data[i] != '\'' && data[i + 1])
@@ -342,8 +339,7 @@ t_sector		*crate_and_fill_sector_by_data(t_wall **walls, SDL_Surface	**textures,
 			wall = walls[ft_atoi(&data[i]) - 1];
 			mark_like_neighbors(sect, wall);
 			sect->wall[count] = copy_t_wall_velue(wall);
-			if (sect->wall[count]->type == empty_wall)
-				sect->portals[port++] = count;
+			
 			dec = ft_itoa(ft_atoi(&data[i]));
 			i += ft_strlen(dec);
 			count++;
@@ -403,6 +399,7 @@ void 				finde_close_doors(t_wall **walls, unsigned short size)
 			d = walls[i + 1];
 		if (d)
 		{
+			d->close = 1;
 			d->id_portal = w->id;
 			w->close = 1;
 		}
@@ -416,12 +413,14 @@ void			mark_all_neighbors(t_sector *sectors, t_wall **all, SDL_Surface **texture
 	t_vector	tmp;
 	int			i;
 	int			p;
+	int			d;
 	
 	sec = sectors;
 	while (sec)
 	{
 		i = 0;
 		p = 0;
+		d = 0;
 		while (i < sec->n_walls)
 		{
 			wall = all[sec->wall[i]->id];
@@ -434,7 +433,9 @@ void			mark_all_neighbors(t_sector *sectors, t_wall **all, SDL_Surface **texture
 			sec->wall[i]->sectors[0] = wall->sectors[0];
 			sec->wall[i]->sectors[1] = wall->sectors[1];
 			if (sec->wall[i]->type == empty_wall && p < MAX_PORTALS)
-				sec->portals[p++] = i;
+				sec->portals[p++] = sec->wall[i];
+			else if (sec->wall[i]->type == door && d < MAX_PORTALS)
+				sec->doors[d++] = sec->wall[i];
 			i++;
 		}
 		finde_close_doors(sec->wall, sec->n_walls);

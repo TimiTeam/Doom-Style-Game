@@ -1,7 +1,7 @@
 #ifndef __SECTOR_WORKER_H
 #define __SECTOR_WORKER_H
 
-#define	MAX_PORTALS 32
+#define	MAX_PORTALS 16
 #define NON -1
 #include "sdl_head.h"
 #include "libft.h"
@@ -26,7 +26,7 @@ enum 					item_state
 	waiting,
 	action,
 	get_action,
-	non
+	none
 };
 
 
@@ -46,13 +46,13 @@ typedef	struct			s_vector
 typedef struct 			s_item
 {
 	SDL_Surface			*id_text[4];
+	struct s_item		*next;
 	t_vector			pos;
 	enum item_state		state;
 	enum item_type 		type;
 	unsigned			id;
 	unsigned 			size;
 	float				dist_to_player;
-	struct s_item		*next;
 }						t_item;
 
 typedef	struct			s_wall
@@ -70,16 +70,17 @@ typedef	struct			s_wall
 typedef struct			s_sector
 {
 	t_wall				**wall;
+	t_wall				*portals[MAX_PORTALS];
+	t_wall 				*doors[MAX_PORTALS];
 	SDL_Surface			*floor_tex;
 	SDL_Surface			*ceil_tex;
-	float				floor;
-	float				ceil;
-	signed short		portals[MAX_PORTALS];
-	unsigned short 		sector;
-	unsigned short		n_walls;
 	t_item				*items;
 	t_item				*enemies;
 	struct s_sector		*next;
+	float				floor;
+	float				ceil;
+	unsigned short 		sector;
+	unsigned short		n_walls;
 }						t_sector;
 
 t_sector			*new_sector();
