@@ -56,7 +56,7 @@ typedef struct		s_plyer
 	int				height;
 	char			fall;
 	unsigned short	jump;
-	char			opening_door;
+	unsigned char	opening_door;
 	unsigned char 	has_key;
 }					t_player;
 

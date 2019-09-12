@@ -251,8 +251,8 @@ t_item			*create_item(int *p, char *data, SDL_Surface **textures, enum item_type
 	item->id_text[0] = textures[ft_atoi(&data[i]) - 1];
 	item->type = type;
 	item->state = item->type != enemy ? action : waiting;
-	item->size = item->type != enemy ? 1000 : 2800;
-	item->pos.z = item->type != enemy ? 5 : 2;
+	item->size = item->type != enemy ? 900 : 2500;
+	item->pos.z = item->type == enemy ? 5 : 2;
 	item->dist_to_player = 10.f;
 	while (data[i] && data[i] != ')')
 	{
@@ -260,6 +260,8 @@ t_item			*create_item(int *p, char *data, SDL_Surface **textures, enum item_type
 			item->type = ft_strncmp(&data[i], "key", 3) == 0 ? key : item->type;
 		i++;
 	}
+	if (item->type == enemy)
+		printf("Enemy\n");
 	*p = i;
 	return (item);
 }

@@ -594,7 +594,11 @@ int					hook_event(t_player *player, unsigned char move[4], t_sector *sectors)
 				check_door(player, sectors);
 		else if (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_i)
 				printf("\n\t\topening door : %s, %d\n", player->opening_door ? "True" : "False", player->opening_door);
-		else if (e.type == SDL_MOUSEBUTTONDOWN)
+		if (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_LCTRL)
+			player->height -= 2;
+		if (e.type == SDL_KEYUP && e.key.keysym.sym == SDLK_LCTRL)
+			player->height += 2;
+		if (e.type == SDL_MOUSEBUTTONDOWN)
 		{
 			if (e.button.button == SDL_BUTTON_LEFT)
 				player->gun.state++;
