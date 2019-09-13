@@ -368,6 +368,8 @@ void			draw_sectors(t_sector *sec, t_player *player, t_sdl *sdl, t_draw_data dat
 	it = sec->enemies;
 	while (it)
 	{
+		if (it->dist_to_player < 20 && it->dist_to_player > 5)
+			move_enemy_to_player(it, player->pos);
 		if (it->dist_to_player > 1)
 			draw_enemy_sprite(*it, data, *player, sdl->surf);
 		it = it->next;
@@ -536,8 +538,6 @@ static void 		calc_dist_to_items(t_item *items, t_vector player_pos)
 	while(i)
 	{
 		i->dist_to_player = len_between_points(i->pos, player_pos);
-		if (i->type == enemy && i->dist_to_player < 10 && i->dist_to_player > 5)
-			move_enemy_to_player(i, player_pos);
 		i = i->next;
 	}
 }

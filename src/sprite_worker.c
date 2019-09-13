@@ -153,11 +153,11 @@ void    		move_enemy_to_player(t_item *enemy, t_vector player_pos)
 	dx = (dist - 0.3f) / dist;
 
 	new_pos.x = step.x * dx + player_pos.x;
-	new_pos.y = step.x * dx + player_pos.y;
+	new_pos.y = step.y * dx + player_pos.y;
 
 	if (move_enemy(enemy, new_pos))
 	{
-		printf("dist = %f; old pos %f %f new pos %f %f\n\n",dist, enemy->pos.x, enemy->pos.y,  new_pos.x, new_pos.y);
+		//printf("dist = %f; old pos %f %f new pos %f %f\n\n",dist, enemy->pos.x, enemy->pos.y,  new_pos.x, new_pos.y);
 		enemy->pos.x = new_pos.x;
 		enemy->pos.y = new_pos.y;
 	}
