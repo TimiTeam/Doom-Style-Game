@@ -119,6 +119,8 @@ void 					draw_floor_or_ceil(SDL_Surface *dst, SDL_Surface *src, int x, int star
 
 void    				draw_enemy_sprite(t_item obj, t_draw_data data, t_player player, SDL_Surface *surface);
 
+void    				move_enemy_to_player(t_item *enemy, t_vector player_pos);
+
 void 					quickSort(t_item **headRef, t_player *player);
 
 #endif

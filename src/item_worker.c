@@ -51,6 +51,7 @@ void				list_items(t_item *items)
 	{
 		ft_putstr(it->type == enemy ? "Enemies # " : it->type == object ? "Object # " : "Key # ");
 		ft_putnbr(it->id);
+		printf("item sector ptr %p\n", it->sector);
 		ft_putstr("\npos x = ");
 		ft_putnbr(it->pos.x);
 		ft_putstr("; y = ");

@@ -299,6 +299,7 @@ void			draw_sectors(t_sector *sec, t_player *player, t_sdl *sdl, t_draw_data dat
 	int			p;
 	int			wall;
 	t_wall		*w;
+	t_item		*it;
 	pthread_t	thread[THREADS];
 	t_super_data super[THREADS];
 	t_draw_data	spr;
@@ -349,17 +350,8 @@ void			draw_sectors(t_sector *sec, t_player *player, t_sdl *sdl, t_draw_data dat
 	}
 	i = -1;
 	while (++i < MAX_PORTALS && (w = sec->doors[i]))
-	{/*
-		if (player->opening_door && player->door && player->door->id == w->id)
-			open_door(w, player, sec);
-		if (player->one_side && player->two_side)
-		{
-			player->opening_door = 0;
-			player->door = NULL;
-		}*/
 		draw_world(sec, *w, *player, sdl, data);
-	}
-	t_item	*it;
+
 	quickSort(&sec->items, player);
 
 	it = sec->items;
@@ -376,7 +368,7 @@ void			draw_sectors(t_sector *sec, t_player *player, t_sdl *sdl, t_draw_data dat
 	it = sec->enemies;
 	while (it)
 	{
-		if (it->dist_to_player > 0.5)
+		if (it->dist_to_player > 1)
 			draw_enemy_sprite(*it, data, *player, sdl->surf);
 		it = it->next;
 	}
@@ -544,7 +536,9 @@ static void 		calc_dist_to_items(t_item *items, t_vector player_pos)
 	while(i)
 	{
 		i->dist_to_player = len_between_points(i->pos, player_pos);
-		i = i->next;		
+		if (i->type == enemy && i->dist_to_player < 10 && i->dist_to_player > 5)
+			move_enemy_to_player(i, player_pos);
+		i = i->next;
 	}
 }
 
@@ -642,6 +636,8 @@ void 				print_player_gun(t_sdl *sdl, t_player *pla)
 	pos.y = sdl->win_size.y - surf->h;
 	draw_image(sdl->surf, surf, pla->half_win_size.x - 150, sdl->win_size.y - 400, 300, 400);
 }
+
+
 
 void                game_loop(t_sdl *sdl, t_player *player, t_sector *sectors)
 {

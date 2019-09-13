@@ -496,6 +496,18 @@ void 				finde_close_doors(t_wall **walls, unsigned short size)
 	}
 }
 
+void 			set_sector_ptr_to_items(t_item *items, t_sector *sector)
+{
+	t_item		*all;
+
+	all = items;
+	while (all)
+	{
+		all->sector = sector;
+		all = all->next;
+	}
+}
+
 void			mark_all_neighbors(t_sector *sectors, t_wall **all, SDL_Surface **textures)
 {
 	t_sector	*sec;
@@ -529,6 +541,7 @@ void			mark_all_neighbors(t_sector *sectors, t_wall **all, SDL_Surface **texture
 			i++;
 		}
 		finde_close_doors(sec->wall, sec->n_walls);
+		set_sector_ptr_to_items(sec->enemies, sec);
 		sec = sec->next;
 	}
 }

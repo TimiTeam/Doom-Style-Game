@@ -105,3 +105,82 @@ void    		draw_enemy_sprite(t_item obj, t_draw_data data, t_player player, SDL_S
 		draw_image_with_criteria(surface, obj.action.texture[obj.action.current_text], ob_pos.x - obj.size / dist / 2, ob_pos.y - obj.size / dist / 2,
 				obj.size / dist, obj.size / dist, data);
 }
+
+int				move_enemy(t_item *enemy, t_vector step)
+{
+	t_wall		**wall;
+	int			i;
+	t_sector	*sector;
+
+	if (!enemy)
+		return (0);
+	sector = enemy->sector;
+	wall = sector->wall;
+	i = 0;
+	while (i < sector->n_walls)
+	{
+		if(IntersectBox(enemy->pos.x, enemy->pos.y, step.x, step.y, wall[i]->start.x, wall[i]->start.y, wall[i]->end.x, wall[i]->end.y)
+        && PointSide(step.x, step.y, wall[i]->start.x, wall[i]->start.y, wall[i]->end.x, wall[i]->end.y) < 0)
+        {
+			if (wall[i]->type != empty_wall)
+				return (0);
+			if (wall[i]->sectors[0] && sector->sector != wall[i]->sectors[0]->sector)
+				enemy->sector = wall[i]->sectors[0];
+			else if (wall[i]->sectors[1] && sector->sector != wall[i]->sectors[1]->sector)
+				enemy->sector = wall[i]->sectors[1];
+	//		player->height = EyeHeight + player->curr_sector->floor;
+	// 		enemy->height = EyeHeight + sector->floor;
+			break;
+        }
+		i++;
+	}
+	return (1);
+}
+
+void    		move_enemy_to_player(t_item *enemy, t_vector player_pos)
+{
+	t_vector	step;
+	t_vector	new_pos;
+	float		dist;
+	float 		dx;
+
+	if (!enemy)
+		return ;
+	step = (t_vector){enemy->pos.x - player_pos.x, enemy->pos.y - player_pos.y};
+
+	dist = sqrtf(step.x * step.x + step.y * step.y);
+
+	dx = (dist - 0.3f) / dist;
+
+	new_pos.x = step.x * dx + player_pos.x;
+	new_pos.y = step.x * dx + player_pos.y;
+
+	if (move_enemy(enemy, new_pos))
+	{
+		printf("dist = %f; old pos %f %f new pos %f %f\n\n",dist, enemy->pos.x, enemy->pos.y,  new_pos.x, new_pos.y);
+		enemy->pos.x = new_pos.x;
+		enemy->pos.y = new_pos.y;
+	}
+
+    /*
+	float px = player.where.x, py = player.where.y;
+    const struct sector* const sect = &sectors[enemy->sector];
+    const struct vertex* const vert = sect->vertex;
+    float vx = enemy->pos.x - px;
+    float vy = enemy->pos.y - py;
+ 	float dist = sqrtf(vx * vx + vy * vy);
+ 	float dx = (dist - enemy->speed) / dist;
+ 	t_fpoint newpos = {vx * dx + px, vy * dx + py};
+    for(unsigned s = 0; s < sect->npoints; ++s)
+        if(sect->neighbors[s] >= 0
+        && IntersectBox(enemy->pos.x,enemy->pos.y, newpos.x, newpos.y, vert[s+0].x, vert[s+0].y, vert[s+1].x, vert[s+1].y)
+        && PointSide(newpos.x, newpos.y, vert[s+0].x, vert[s+0].y, vert[s+1].x, vert[s+1].y) < 0)
+        {
+            enemy->sector = sect->neighbors[s];
+            break;
+        }
+    enemy->pos.x = newpos.x;
+    enemy->pos.y = newpos.y;
+}
+	*/
+}

@@ -57,6 +57,8 @@ typedef struct 			s_item
 	t_animation			walk;
 	t_animation			action;
 	t_animation			die;
+	struct s_sector		*sector;
+	float				speed;
 	int					hp;
 	struct s_item		*next;
 	t_vector			pos;
