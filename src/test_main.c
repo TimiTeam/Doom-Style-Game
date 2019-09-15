@@ -57,7 +57,6 @@ void 					get_item_to_player(t_player *player, t_item **all, unsigned id)
 		player->has_key = 1;
 }
 
-
 static void 			make_intersect(t_wall *wall)
 {
 	t_vector 	i1;
@@ -291,6 +290,30 @@ void 			open_door(t_wall *door, t_wall *door_two, t_player *player)
 	}
 }
 
+// Uint8	enemy_hit(t_item obj, t_player player, t_draw_data data, t_sdl *sdl)
+// {
+// 	t_vector	ob_pos;
+// 	t_vector	scale;
+// 	float		dist;
+// 	float		tmp_x;
+
+// 	dist = obj.dist_to_player;
+// 	ob_pos = (t_vector){obj.pos.x - player.pos.x, obj.pos.y - player.pos.y};
+// 	tmp_x = ob_pos.x;
+// 	ob_pos.x = ob_pos.x * player.sin_angl - ob_pos.y * player.cos_angl;
+// 	ob_pos.y = tmp_x * player.cos_angl + ob_pos.y * player.sin_angl;
+        
+// 	if (ob_pos.y <= 0)
+// 		return 0;
+//     scale.x = (W * m_hfov) / (ob_pos.y);
+// 	scale.y = (H * m_vfov) / (ob_pos.y);
+//     ob_pos.x = player.half_win_size.x + (int)(-ob_pos.x * scale.x);
+// 	ob_pos.y = player.half_win_size.y + (int)(-Yaw(obj.pos.z + data.diff_floor, ob_pos.y) * scale.y);
+//     if (x1 < W / 2 && x1 + imScale > W / 2 && y1 < H / 2 && y1 + imScale > H / 2)
+//         return (1);
+//     else
+//         return (0);
+// }
 
 void			draw_sectors(t_sector *sec, t_player *player, t_sdl *sdl, t_draw_data data)
 {
@@ -353,25 +376,45 @@ void			draw_sectors(t_sector *sec, t_player *player, t_sdl *sdl, t_draw_data dat
 		draw_world(sec, *w, *player, sdl, data);
 
 	quickSort(&sec->items, player);
-
 	it = sec->items;
 	while (it)
 	{
 		if (it->dist_to_player <= 0.5)
 			get_item_to_player(player, &sec->items, it->id);
 		else
-			draw_enemy_sprite(*it, data, *player, sdl->surf);
+			draw_enemy_sprite(it, data, *player, sdl->surf);
 		it = it->next;
 	}
-
 	quickSort(&sec->enemies, player);
 	it = sec->enemies;
+	t_item *tmp;
 	while (it)
 	{
-		if (it->dist_to_player < 20 && it->dist_to_player > 5)
+		if (it->die.current_text >= it->die.max_textures)
+		{
+			tmp = it->next;
+			delete_item_by_ptr(&sec->enemies, it);
+			it = tmp;
+			continue ;
+		}
+		if (it->state )
+		if (!it->is_dying && it->dist_to_player < 20 && it->dist_to_player > 5){
+			it->state = walk;
 			move_enemy_to_player(it, player->pos);
+			it->walk.current_text += 0.5;
+			if (it->walk.current_text >= it->walk.max_textures)
+				it->walk.current_text = 0;
+		}
+		else if (it->is_dying)
+			it->is_dying--;
+		else if ()
+		{
+			it->state = waiting;
+		}
+		if (it->state == die && it->die.current_text)
+			it->die.current_text += 0.5;
 		if (it->dist_to_player > 1)
-			draw_enemy_sprite(*it, data, *player, sdl->surf);
+			draw_enemy_sprite(it, data, *player, sdl->surf);
 		it = it->next;
 	}
 }
@@ -404,6 +447,7 @@ void			move_player(t_player *player, float sin_angle, float cos_angle)
 	int			i;
 	t_vector	step;
 	t_wall		**wall;
+	t_sector	*next;
 
 	i = 0;
 	step = (t_vector){player->pos.x + cos_angle * player->speed, player->pos.y + sin_angle * player->speed};
@@ -415,10 +459,14 @@ void			move_player(t_player *player, float sin_angle, float cos_angle)
         {
 			if (wall[i]->type != empty_wall)
 				return;
+
 			if (wall[i]->sectors[0] && player->curr_sector->sector != wall[i]->sectors[0]->sector)
-				player->curr_sector = wall[i]->sectors[0];
+				next = wall[i]->sectors[0];
 			else if (wall[i]->sectors[1] && player->curr_sector->sector != wall[i]->sectors[1]->sector)
-				player->curr_sector = wall[i]->sectors[1];
+				next = wall[i]->sectors[1];
+			if ((next->ceil - next->floor) < player->height + player->jump)
+				return ;
+			player->curr_sector = next;
 			player->height = EyeHeight + player->curr_sector->floor;
 			break;
         }
@@ -528,20 +576,6 @@ int 				is_it_wall(t_vector pos, t_wall wall)
 	return (p);
 }
 
-static void 		calc_dist_to_items(t_item *items, t_vector player_pos)
-{
-	t_item			*i;
-
-	if (!items)
-		return ;
-	i = items;
-	while(i)
-	{
-		i->dist_to_player = len_between_points(i->pos, player_pos);
-		i = i->next;
-	}
-}
-
 int					hook_event(t_player *player, unsigned char move[4], t_sector *sectors)
 {
 	SDL_Event		e;
@@ -582,7 +616,14 @@ int					hook_event(t_player *player, unsigned char move[4], t_sector *sectors)
 			else if (e.key.keysym.sym == SDLK_LSHIFT && e.type == SDL_KEYUP)
 				player->speed = 0.6;
 			else if (e.key.keysym.sym == SDLK_SPACE && !player->jump)
-				player->jump = 1;	
+				player->jump = 1;
+			else if (e.key.keysym.sym == SDLK_1)
+				player->current_gun = &player->gun[pistol];
+			else if (e.key.keysym.sym == SDLK_2)
+				player->current_gun = &player->gun[shotgun];
+			else if (e.key.keysym.sym == SDLK_3)
+				player->current_gun = &player->gun[plasmagun];
+			
 		}
 		if (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_e && !player->opening_door)
 				check_door(player, sectors);
@@ -594,8 +635,10 @@ int					hook_event(t_player *player, unsigned char move[4], t_sector *sectors)
 			player->height += 2;
 		if (e.type == SDL_MOUSEBUTTONDOWN)
 		{
-			if (e.button.button == SDL_BUTTON_LEFT)
-				player->gun.state++;
+			if (e.button.button == SDL_BUTTON_LEFT){
+				player->current_gun->state++;
+				player->shooting = 1;
+			}
 		}
 	}
 	if (move[0])
@@ -606,11 +649,6 @@ int					hook_event(t_player *player, unsigned char move[4], t_sector *sectors)
 		move_player(player, -player->cos_angl, player->sin_angl);
 	if (move[3])
 		move_player(player, player->cos_angl, -player->sin_angl);
-	if (move[0] || move[1] || move[2] || move[3])
-	{
-		calc_dist_to_items(player->curr_sector->items, player->pos);
-		calc_dist_to_items(player->curr_sector->enemies, player->pos);
-	}
 	SDL_GetRelativeMouseState(&x, &y);
 	y = -y;
     player->angle += x * 0.01;
@@ -627,17 +665,16 @@ void 				print_player_gun(t_sdl *sdl, t_player *pla)
 	t_point			size;
 	SDL_Surface		*surf;
 
-	if (pla->gun.state >= 4)
-		pla->gun.state = 0;
-	surf = pla->gun.frame[pla->gun.state];
-	if (pla->gun.state)
-		pla->gun.state++;
+	pla->shooting = 0;
+	if (!pla->current_gun->frame[(int)pla->current_gun->state])
+		pla->current_gun->state = 0;
+	surf = pla->current_gun->frame[(int)pla->current_gun->state];
+	if (pla->current_gun->state)
+		pla->current_gun->state += 0.5;
 	pos.x = pla->half_win_size.x - surf->w / 2;
 	pos.y = sdl->win_size.y - surf->h;
-	draw_image(sdl->surf, surf, pla->half_win_size.x - 150, sdl->win_size.y - 400, 300, 400);
+	draw_image(sdl->surf, surf, pos.x, pos.y, surf->w, surf->h);
 }
-
-
 
 void                game_loop(t_sdl *sdl, t_player *player, t_sector *sectors)
 {
@@ -708,6 +745,8 @@ int				main(int argc, char **argv)
 	t_sector	*sectors;
 	t_player	*player;
 	t_sdl		*sdl;
+	t_gun		weapons[2];
+
 
 	if (argc > 1)
 		sectors = read_map(argv[1], &holder);
@@ -731,8 +770,15 @@ int				main(int argc, char **argv)
 
 	for (int i = 0; i < holder.text_count; i++)
 		SDL_FreeSurface(holder.textures[i]);
-	for (int i = 0; i < 4; i++)
-		SDL_FreeSurface(player->gun.frame[i]);
+	for (int i = 0; i < 3; i++)
+	{
+		int j = 0;
+		while (player->gun[i].frame[j])
+		{
+			SDL_FreeSurface(player->gun[i].frame[j]);
+			j++;
+		}
+	}
 	delete_walls(holder.walls, holder.wall_count);
 	delete_sectors(sectors);
 	free_t_sdl(&sdl);

@@ -42,6 +42,24 @@ void 			draw_image(SDL_Surface *screen, SDL_Surface *img, int x, int y, int widt
 	}
 }
 
+void    draw_crosshair(SDL_Surface *surface)
+{
+    t_point start1;
+    t_point start2;
+    t_point end1;
+    t_point end2;
+    start1.x = W / 2 - 30;
+    start1.y = H / 2;
+    end1.x = W / 2 + 30;
+    end1.y = H / 2;
+    start2.x = W / 2;
+    start2.y = H / 2 - 30;
+    end2.x = W / 2;
+    end2.y = H / 2 + 30;
+    line(surface, start1, end1, 0xffffffff);
+    line(surface, start2, end2, 0xffffffff);
+}
+
 void 			draw_image_with_criteria(SDL_Surface *screen, SDL_Surface *img, int x, int y, int width, int height, t_draw_data data)
 {
 	int 		i;
@@ -54,6 +72,7 @@ void 			draw_image_with_criteria(SDL_Surface *screen, SDL_Surface *img, int x, i
 	step.y = (float)img->h / height;
 	img_point = (t_vector){};
 	i = 0;
+	draw_crosshair(screen);
 	while (i < width)
 	{
 		j = 0;
@@ -78,15 +97,15 @@ static float            len_between_points(t_vector a, t_vector b)
 }
 
 
-void    		draw_enemy_sprite(t_item obj, t_draw_data data, t_player player, SDL_Surface *surface)
+void    		draw_enemy_sprite(t_item *obj, t_draw_data data, t_player player, SDL_Surface *surface)
 {
 	t_vector	ob_pos;
 	t_vector	scale;
 	float		dist;
 	float		tmp_x;
 
-	dist = len_between_points(obj.pos, player.pos);
-	ob_pos = (t_vector){obj.pos.x - player.pos.x, obj.pos.y - player.pos.y};
+	dist = obj->dist_to_player;
+	ob_pos = (t_vector){obj->pos.x - player.pos.x, obj->pos.y - player.pos.y};
 	tmp_x = ob_pos.x;
 	ob_pos.x = ob_pos.x * player.sin_angl - ob_pos.y * player.cos_angl;
 	ob_pos.y = tmp_x * player.cos_angl + ob_pos.y * player.sin_angl;
@@ -96,14 +115,46 @@ void    		draw_enemy_sprite(t_item obj, t_draw_data data, t_player player, SDL_S
     scale.x = (W * m_hfov) / (ob_pos.y);
 	scale.y = (H * m_vfov) / (ob_pos.y);
     ob_pos.x = player.half_win_size.x + (int)(-ob_pos.x * scale.x);
-	ob_pos.y = player.half_win_size.y + (int)(-Yaw(obj.pos.z + data.diff_floor, ob_pos.y) * scale.y);
-
-	if (obj.state == waiting && obj.waiting.texture[0])
-		draw_image_with_criteria(surface, obj.waiting.texture[obj.waiting.current_text], ob_pos.x - obj.size / dist / 2, ob_pos.y - obj.size / dist / 2,
-				obj.size / dist, obj.size / dist, data);
-	else if (obj.state == action)
-		draw_image_with_criteria(surface, obj.action.texture[obj.action.current_text], ob_pos.x - obj.size / dist / 2, ob_pos.y - obj.size / dist / 2,
-				obj.size / dist, obj.size / dist, data);
+	ob_pos.y = player.half_win_size.y + (int)(-Yaw(obj->pos.z + data.diff_floor, ob_pos.y) * scale.y);
+	float x = ob_pos.x - obj->size / dist / 2;
+	float y = ob_pos.y - obj->size / dist / 2;
+	float size = obj->size / dist;
+/*	t_point start = {x, y};
+	t_point end = {x + size, y};
+	line(surface, start, end, 0xffffffff);
+	start = (t_point){x + size, y};
+	end = (t_point){x + size, y + size};
+	line(surface, start, end, 0xffffffff);
+	start = (t_point){x + size, y + size};
+	end = (t_point){x, y + size};
+	line(surface, start, end, 0xffffffff);
+	start = (t_point){x, y + size};
+	end =(t_point) {x, y};
+	line(surface, start, end, 0xffffffff);*/
+	if (obj->type == enemy && player.shooting && obj->state != die && data.start < player.half_win_size.x && data.end > player.half_win_size.x &&  x < player.half_win_size.x && x + size > player.half_win_size.x && y < player.half_win_size.y && y + size > player.half_win_size.y)
+	{
+		obj->hp -= player.current_gun->damage;
+		if (obj->hp <= 0){
+			obj->state = die;
+		}
+		else{
+			obj->state = taking_damage;
+			obj->is_dying = 5;
+		}
+	
+	}
+	if (obj->state == waiting && obj->waiting.texture[0])
+		draw_image_with_criteria(surface, obj->waiting.texture[(int)obj->waiting.current_text], ob_pos.x - obj->size / dist / 2, ob_pos.y - obj->size / dist / 2,
+				obj->size / dist, obj->size / dist, data);
+	else if (obj->state == walk && obj->walk.texture[(int)obj->walk.current_text])
+		draw_image_with_criteria(surface, obj->walk.texture[(int)obj->walk.current_text], ob_pos.x - obj->size / dist / 2, ob_pos.y - obj->size / dist / 2,
+				obj->size / dist, obj->size / dist, data);
+	else if (obj->state == action)
+		draw_image_with_criteria(surface, obj->action.texture[(int)obj->action.current_text], ob_pos.x - obj->size / dist / 2, ob_pos.y - obj->size / dist / 2,
+				obj->size / dist, obj->size / dist, data);
+	else if (obj->state == die)
+		draw_image_with_criteria(surface, obj->die.texture[(int)obj->die.current_text], ob_pos.x - obj->size / dist / 2, ob_pos.y - obj->size / dist / 2,
+				obj->size / dist, obj->size / dist, data);
 }
 
 void 					from_list_to_another_list(t_sector *current_sector, t_sector *next_sector, t_item *elem)
