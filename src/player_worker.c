@@ -2,11 +2,25 @@
 
 void 					load_gun(t_player *player)
 {
-	player->gun.state = 0;
-	player->gun.frame[0] = load_jpg_png("textures/guns/pistol1.png");
-	player->gun.frame[1] = load_jpg_png("textures/guns/pistol2.png");
-	player->gun.frame[2] = load_jpg_png("textures/guns/pistol3.png");
-	player->gun.frame[3] = load_jpg_png("textures/guns/pistol4.png");
+	player->gun[pistol].state = 0;
+	//player->gun[pistol].max_frames = 4;
+	player->gun[pistol].frame[0] = load_jpg_png("textures/guns/pistol/pistol1.png");
+	player->gun[pistol].frame[1] = load_jpg_png("textures/guns/pistol/pistol2.png");
+	player->gun[pistol].frame[2] = load_jpg_png("textures/guns/pistol/pistol3.png");
+	player->gun[pistol].frame[3] = load_jpg_png("textures/guns/pistol/pistol4.png");
+	player->gun[shotgun].state = 0;
+	//player->gun[shotgun].max_frames = 6;
+	player->gun[shotgun].frame[0] = load_jpg_png("textures/guns/shotgun/shotgun_frame_1.png");
+	player->gun[shotgun].frame[1] = load_jpg_png("textures/guns/shotgun/shotgun_frame_2.png");
+	player->gun[shotgun].frame[2] = load_jpg_png("textures/guns/shotgun/shotgun_frame_3.png");
+	player->gun[shotgun].frame[3] = load_jpg_png("textures/guns/shotgun/shotgun_frame_4.png");
+	player->gun[shotgun].frame[4] = load_jpg_png("textures/guns/shotgun/shotgun_frame_3.png");
+	player->gun[shotgun].frame[5] = load_jpg_png("textures/guns/shotgun/shotgun_frame_2.png");
+	player->gun[plasmagun].state = 0;
+	//player->gun[plasmagun].max_frames = 3;
+	player->gun[plasmagun].frame[0] = load_jpg_png("textures/guns/plasmagun/plasmagun_1.png");
+	player->gun[plasmagun].frame[1] = load_jpg_png("textures/guns/plasmagun/plasmagun_2.png");
+	player->gun[plasmagun].frame[2] = load_jpg_png("textures/guns/plasmagun/plasmagun_3.png");
 }
 
 t_player				*new_t_player(int pos_x, int pos_y, t_point win_size)
@@ -26,5 +40,6 @@ t_player				*new_t_player(int pos_x, int pos_y, t_point win_size)
 	player->inventar = NULL;
 	player->height = EyeHeight;
 	load_gun(player);
+	player->current_gun = &player->gun[plasmagun];
 	return (player);
 }

@@ -18,11 +18,10 @@ t_item *partition(t_item *head, t_item *end,
 { 
     t_item *pivot = end; 
     t_item *prev = NULL, *cur = head, *tail = pivot;
-  
     // During partition, both the head and end of the list might change 
     // which is updated in the newHead and newEnd variables 
     while (cur != pivot) 
-    { 
+    {
         if ((cur->dist_to_player = len_between_points(player->pos, cur->pos)) > (pivot->dist_to_player = len_between_points(player->pos, pivot->pos)))
         { 
             // First node that has a value less than the pivot - becomes 
@@ -98,10 +97,11 @@ t_item *quickSortRecur(t_item *head, t_item *end, t_player *player)
   
 // The main function for quick sort. This is a wrapper over recursive 
 // function quickSortRecur() 
-void quickSort(t_item **headRef, t_player *player) 
+void  quickSort(t_item **headRef, t_player *player) 
 {
 	if (!headRef || !*headRef)
 		return;
+	(*headRef)->dist_to_player = len_between_points((*headRef)->pos, player->pos);
     (*headRef) = quickSortRecur(*headRef, getTail(*headRef), player); 
     return ; 
 }

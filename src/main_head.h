@@ -31,10 +31,22 @@ typedef struct		s_draw_data
 	int				ybottom[W];
 }					t_draw_data;
 
+typedef enum type
+{
+	pistol,
+	shotgun,
+	plasmagun
+}			type;
+
 typedef struct		s_gun
 {
-	unsigned char 	state;
-	SDL_Surface		*frame[4];
+	float 	state;
+	SDL_Surface		*frame[10];
+	SDL_Surface		*icon;
+	type			type;
+	int				max_frames;
+	float			damage;
+	float			rate_of_fire;
 }					t_gun;
 
 typedef struct		s_plyer
@@ -43,9 +55,10 @@ typedef struct		s_plyer
 	t_item			*inventar;
 	t_wall			*door;
 	t_wall			*door_two;
-	t_gun			gun;
+	t_gun			gun[3];
 	t_vector		pos;
 	t_point			half_win_size;
+	t_gun			*current_gun;
 	float 			speed;
 	float			yaw;
 	float			angle;
@@ -58,6 +71,7 @@ typedef struct		s_plyer
 	unsigned short	jump;
 	unsigned char	opening_door;
 	unsigned char 	has_key;
+	unsigned char	shooting;
 }					t_player;
 
 typedef struct 		s_super_data
@@ -117,10 +131,12 @@ void 					textLine(int x, int y1,int y2, Scaler ty,unsigned txtx, SDL_Surface *s
 
 void 					draw_floor_or_ceil(SDL_Surface *dst, SDL_Surface *src, int x, int start_y, int end_y, int diff_height, t_player player);
 
-void    				draw_enemy_sprite(t_item obj, t_draw_data data, t_player player, SDL_Surface *surface);
+void					draw_enemy_sprite(t_item *obj, t_draw_data data, t_player player, SDL_Surface *surface);
 
 void    				move_enemy_to_player(t_item *enemy, t_vector player_pos);
 
 void 					quickSort(t_item **headRef, t_player *player);
+
+void					line(SDL_Surface *surface, t_point start, t_point end, int color);
 
 #endif

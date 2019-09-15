@@ -27,6 +27,7 @@ enum 					item_state
 	waiting,
 	walk,
 	action,
+	taking_damage,
 	die
 };
 
@@ -47,7 +48,7 @@ typedef	struct			s_vector
 typedef	struct 			s_animation
 {
 	SDL_Surface			*texture[MAX_TEXTURES];
-	unsigned char		current_text;
+	float				current_text;
 	unsigned char 		max_textures;
 }						t_animation;
 
@@ -57,6 +58,7 @@ typedef struct 			s_item
 	t_animation			walk;
 	t_animation			action;
 	t_animation			die;
+	t_animation			taking_damage;
 	struct s_sector		*sector;
 	float				speed;
 	int					hp;
@@ -67,6 +69,7 @@ typedef struct 			s_item
 	unsigned			id;
 	unsigned 			size;
 	float				dist_to_player;
+	int					is_dying;
 }						t_item;
 
 typedef	struct			s_wall
@@ -110,6 +113,7 @@ void				delete_walls(t_wall **wals, unsigned count);
 void				delete_items_list(t_item *items);
 void 				delete_item(t_item **item);
 void 				delete_item_by_id(t_item *items, unsigned id);
+void				delete_item_by_ptr(t_item **head, t_item *item);
 
 void				list_sectors(t_sector *head);
 void				list_walls(t_wall **walls, int size);

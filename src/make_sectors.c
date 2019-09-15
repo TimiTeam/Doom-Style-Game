@@ -290,6 +290,8 @@ void			create_animations(t_item *it, char *file_pth)
 			filed_t_animation(&it->walk, fd);
 		else if (ft_strcmp(line, "action{") == 0)
 			filed_t_animation(&it->action, fd);
+		else if (ft_strcmp(line, "taking_damage{") == 0)
+			filed_t_animation(&it->taking_damage, fd);
 		else if (ft_strcmp(line, "die{") == 0)
 			filed_t_animation(&it->die, fd);
 		ft_strdel(&line);

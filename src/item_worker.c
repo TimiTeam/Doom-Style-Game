@@ -101,6 +101,33 @@ void				delete_items_list(t_item *items)
 	}
 }
 
+void				delete_item_by_ptr(t_item **head, t_item *item)
+{
+	t_item	*curr;
+	t_item	*prev;
+	
+	curr = (*head)->next;
+	prev = *head;
+
+	if (item == *head)
+	{
+		*head = item->next;
+		delete_item(&item);
+		return ;
+	}
+	while(curr)
+	{
+		if (item == curr)
+		{
+			prev->next = curr->next;
+			delete_item(&curr);
+			return ;
+		}
+		prev = curr;
+		curr = curr->next;
+	}
+}
+
 void 				delete_item_by_id(t_item *items, unsigned id)
 {	
 	t_item			*all;
