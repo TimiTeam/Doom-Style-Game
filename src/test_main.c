@@ -21,42 +21,6 @@ int 				has_key(t_item *items)
 	return (0);
 }
 
-void 					get_item_to_player(t_player *player, t_item **all, unsigned id)
-{
-	t_item				*head;
-	t_item				*prev;
-	t_item				*pl_item;
-
-	pl_item = NULL;
-	if (!*all)
-		return ;
-	prev = *all;
-	if (prev->id == id)
-	{
-		pl_item = prev;
-		*all = prev->next;
-	}
-	else
-		head = prev;
-	while (head)
-	{
-		head = prev->next;
-		if (head && head->id == id)
-		{
-			pl_item = head;
-			prev->next = head->next;
-			break ;
-		}
-		prev = prev->next;
-	}
-	if (player->inventar)
-		add_next_item(player->inventar, pl_item);
-	else
-		player->inventar = pl_item;	
-	if (pl_item->type == key)
-		player->has_key = 1;
-}
-
 static void 			make_intersect(t_wall *wall)
 {
 	t_vector 	i1;
@@ -290,30 +254,29 @@ void 			open_door(t_wall *door, t_wall *door_two, t_player *player)
 	}
 }
 
-// Uint8	enemy_hit(t_item obj, t_player player, t_draw_data data, t_sdl *sdl)
-// {
-// 	t_vector	ob_pos;
-// 	t_vector	scale;
-// 	float		dist;
-// 	float		tmp_x;
 
-// 	dist = obj.dist_to_player;
-// 	ob_pos = (t_vector){obj.pos.x - player.pos.x, obj.pos.y - player.pos.y};
-// 	tmp_x = ob_pos.x;
-// 	ob_pos.x = ob_pos.x * player.sin_angl - ob_pos.y * player.cos_angl;
-// 	ob_pos.y = tmp_x * player.cos_angl + ob_pos.y * player.sin_angl;
-        
-// 	if (ob_pos.y <= 0)
-// 		return 0;
-//     scale.x = (W * m_hfov) / (ob_pos.y);
-// 	scale.y = (H * m_vfov) / (ob_pos.y);
-//     ob_pos.x = player.half_win_size.x + (int)(-ob_pos.x * scale.x);
-// 	ob_pos.y = player.half_win_size.y + (int)(-Yaw(obj.pos.z + data.diff_floor, ob_pos.y) * scale.y);
-//     if (x1 < W / 2 && x1 + imScale > W / 2 && y1 < H / 2 && y1 + imScale > H / 2)
-//         return (1);
-//     else
-//         return (0);
-// }
+void 			check_enemy_state(t_item *enemy, t_vector player_pos)
+{
+	if (enemy->hp > 0)
+	{
+		if (enemy->is_dying)
+			enemy->is_dying--;
+		else
+			enemy->curr_state = waiting;
+		if (enemy->curr_state != taking_damage
+			&& enemy->dist_to_player < 20 && enemy->dist_to_player > 5)
+		{
+			enemy->curr_state = walk;
+				move_enemy_to_player(enemy, player_pos);
+		}
+	}
+	else if (enemy->curr_state != die)
+	{
+		enemy->curr_state = die;
+		enemy->curr_frame = 0;
+	}
+}
+
 
 void			draw_sectors(t_sector *sec, t_player *player, t_sdl *sdl, t_draw_data data)
 {
@@ -380,7 +343,10 @@ void			draw_sectors(t_sector *sec, t_player *player, t_sdl *sdl, t_draw_data dat
 	while (it)
 	{
 		if (it->dist_to_player <= 0.5)
-			get_item_to_player(player, &sec->items, it->id);
+		{
+			from_list_to_another_list(&sec->items, &player->inventar, it);
+			player->has_key = has_key(player->inventar);
+		}
 		else
 			draw_enemy_sprite(it, data, *player, sdl->surf);
 		it = it->next;
@@ -390,29 +356,18 @@ void			draw_sectors(t_sector *sec, t_player *player, t_sdl *sdl, t_draw_data dat
 	t_item *tmp;
 	while (it)
 	{
-		if (it->die.current_text >= it->die.max_textures)
+		check_enemy_state(it, player->pos);
+		if ((it->curr_frame += 0.35) >= it->states[it->curr_state].max_textures)
 		{
-			tmp = it->next;
-			delete_item_by_ptr(&sec->enemies, it);
-			it = tmp;
-			continue ;
+			it->curr_frame = 0;
+			if (it->curr_state == die)
+			{
+				tmp = it->next;
+				delete_item_by_ptr(&sec->enemies, it);
+				it = tmp;
+				continue ;
+			}
 		}
-		if (it->state )
-		if (!it->is_dying && it->dist_to_player < 20 && it->dist_to_player > 5){
-			it->state = walk;
-			move_enemy_to_player(it, player->pos);
-			it->walk.current_text += 0.5;
-			if (it->walk.current_text >= it->walk.max_textures)
-				it->walk.current_text = 0;
-		}
-		else if (it->is_dying)
-			it->is_dying--;
-		else if ()
-		{
-			it->state = waiting;
-		}
-		if (it->state == die && it->die.current_text)
-			it->die.current_text += 0.5;
 		if (it->dist_to_player > 1)
 			draw_enemy_sprite(it, data, *player, sdl->surf);
 		it = it->next;

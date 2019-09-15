@@ -40,7 +40,7 @@ typedef enum type
 
 typedef struct		s_gun
 {
-	float 	state;
+	float 			state;
 	SDL_Surface		*frame[10];
 	SDL_Surface		*icon;
 	type			type;

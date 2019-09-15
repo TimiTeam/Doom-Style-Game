@@ -101,24 +101,24 @@ void    		draw_enemy_sprite(t_item *obj, t_draw_data data, t_player player, SDL_
 {
 	t_vector	ob_pos;
 	t_vector	scale;
-	float		dist;
 	float		tmp_x;
+	float 		x; 
+	float 		y;
+	float 		size;
 
-	dist = obj->dist_to_player;
 	ob_pos = (t_vector){obj->pos.x - player.pos.x, obj->pos.y - player.pos.y};
 	tmp_x = ob_pos.x;
 	ob_pos.x = ob_pos.x * player.sin_angl - ob_pos.y * player.cos_angl;
 	ob_pos.y = tmp_x * player.cos_angl + ob_pos.y * player.sin_angl;
-        
 	if (ob_pos.y <= 0)
 		return ;
     scale.x = (W * m_hfov) / (ob_pos.y);
 	scale.y = (H * m_vfov) / (ob_pos.y);
     ob_pos.x = player.half_win_size.x + (int)(-ob_pos.x * scale.x);
 	ob_pos.y = player.half_win_size.y + (int)(-Yaw(obj->pos.z + data.diff_floor, ob_pos.y) * scale.y);
-	float x = ob_pos.x - obj->size / dist / 2;
-	float y = ob_pos.y - obj->size / dist / 2;
-	float size = obj->size / dist;
+	x = ob_pos.x - obj->size / obj->dist_to_player / 2;
+	y = ob_pos.y - obj->size / obj->dist_to_player  / 2;
+	size = obj->size /  obj->dist_to_player;
 /*	t_point start = {x, y};
 	t_point end = {x + size, y};
 	line(surface, start, end, 0xffffffff);
@@ -131,65 +131,21 @@ void    		draw_enemy_sprite(t_item *obj, t_draw_data data, t_player player, SDL_
 	start = (t_point){x, y + size};
 	end =(t_point) {x, y};
 	line(surface, start, end, 0xffffffff);*/
-	if (obj->type == enemy && player.shooting && obj->state != die && data.start < player.half_win_size.x && data.end > player.half_win_size.x &&  x < player.half_win_size.x && x + size > player.half_win_size.x && y < player.half_win_size.y && y + size > player.half_win_size.y)
+	if (obj->type == enemy && player.shooting && obj->curr_state != die &&
+		data.start < player.half_win_size.x && data.end > player.half_win_size.x &&
+			x < player.half_win_size.x && x + size > player.half_win_size.x && y < player.half_win_size.y && y + size > player.half_win_size.y)
 	{
 		obj->hp -= player.current_gun->damage;
-		if (obj->hp <= 0){
-			obj->state = die;
-		}
-		else{
-			obj->state = taking_damage;
+		obj->curr_state = taking_damage;
 			obj->is_dying = 5;
-		}
+	}
+	t_animation	*anim;
+	anim = &obj->states[obj->curr_state];
 	
-	}
-	if (obj->state == waiting && obj->waiting.texture[0])
-		draw_image_with_criteria(surface, obj->waiting.texture[(int)obj->waiting.current_text], ob_pos.x - obj->size / dist / 2, ob_pos.y - obj->size / dist / 2,
-				obj->size / dist, obj->size / dist, data);
-	else if (obj->state == walk && obj->walk.texture[(int)obj->walk.current_text])
-		draw_image_with_criteria(surface, obj->walk.texture[(int)obj->walk.current_text], ob_pos.x - obj->size / dist / 2, ob_pos.y - obj->size / dist / 2,
-				obj->size / dist, obj->size / dist, data);
-	else if (obj->state == action)
-		draw_image_with_criteria(surface, obj->action.texture[(int)obj->action.current_text], ob_pos.x - obj->size / dist / 2, ob_pos.y - obj->size / dist / 2,
-				obj->size / dist, obj->size / dist, data);
-	else if (obj->state == die)
-		draw_image_with_criteria(surface, obj->die.texture[(int)obj->die.current_text], ob_pos.x - obj->size / dist / 2, ob_pos.y - obj->size / dist / 2,
-				obj->size / dist, obj->size / dist, data);
+	if (anim->texture[(int)obj->curr_frame])
+		draw_image_with_criteria(surface, anim->texture[(int)obj->curr_frame], x, y,size, size, data);
 }
 
-void 					from_list_to_another_list(t_sector *current_sector, t_sector *next_sector, t_item *elem)
-{
-	t_item				*tmp;
-	t_item				*curr;
-
-	curr = current_sector->enemies;
-	tmp = curr;
-
-	if (curr == elem)
-	{
-		current_sector->enemies = elem->next;
-		elem->next = NULL;
-		if (next_sector->enemies)
-			add_next_item(next_sector->enemies, elem);
-		else
-			next_sector->enemies = elem;
-		return;
-	}
-	while (curr && (curr = curr->next))
-	{
-		if (curr == elem)
-		{
-			tmp->next = curr->next;
-			elem->next = NULL;
-			if (next_sector->enemies)
-				add_next_item(next_sector->enemies, elem);
-			else
-				next_sector->enemies = elem;
-			return;
-		}
-		tmp = curr;
-	}
-}
 
 int						move_enemy(t_item *enemy, t_vector step)
 {		
@@ -214,7 +170,7 @@ int						move_enemy(t_item *enemy, t_vector step)
 				next = wall[i]->sectors[0];
 			else if (wall[i]->sectors[1] && sector->sector != wall[i]->sectors[1]->sector)
 				next = wall[i]->sectors[1];
-			from_list_to_another_list(enemy->sector, next, enemy);
+			from_list_to_another_list(&enemy->sector->enemies, &next->enemies, enemy);
 			enemy->sector = next;
 			break;
         }
@@ -243,7 +199,6 @@ void    		move_enemy_to_player(t_item *enemy, t_vector player_pos)
 
 	if (move_enemy(enemy, new_pos))
 	{
-		//printf("dist = %f; old pos %f %f new pos %f %f\n\n",dist, enemy->pos.x, enemy->pos.y,  new_pos.x, new_pos.y);
 		enemy->pos.x = new_pos.x;
 		enemy->pos.y = new_pos.y;
 	}

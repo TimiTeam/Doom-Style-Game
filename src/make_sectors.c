@@ -285,15 +285,15 @@ void			create_animations(t_item *it, char *file_pth)
 	while(get_next_line(fd, &line) > 0)
 	{
 		if (ft_strcmp(line, "waiting{") == 0)
-			filed_t_animation(&it->waiting, fd);
+			filed_t_animation(&it->states[waiting], fd);
 		else if (ft_strcmp(line, "walk{") == 0)
-			filed_t_animation(&it->walk, fd);
+			filed_t_animation(&it->states[walk], fd);
 		else if (ft_strcmp(line, "action{") == 0)
-			filed_t_animation(&it->action, fd);
+			filed_t_animation(&it->states[action], fd);
 		else if (ft_strcmp(line, "taking_damage{") == 0)
-			filed_t_animation(&it->taking_damage, fd);
+			filed_t_animation(&it->states[taking_damage], fd);
 		else if (ft_strcmp(line, "die{") == 0)
-			filed_t_animation(&it->die, fd);
+			filed_t_animation(&it->states[die], fd);
 		ft_strdel(&line);
 	}
 	ft_strdel(&line);
@@ -338,7 +338,6 @@ t_item			*create_item(int *p, char *data, SDL_Surface **textures, enum item_type
 	if(!(item = create_new_item((int)x, (int)y)))
 		return (0);
 	item->type = type;
-	item->state = waiting;
 	load_animation(item, &data[i]);
 	item->size = item->type != enemy ? 900 : 2500;
 	item->pos.z = item->type == enemy ? 5 : 2;
@@ -403,7 +402,7 @@ t_item			*make_items(char *data, SDL_Surface **textures)
 		{
 			next = create_item(&p, &data[i], textures, type);
 			i += p;
-			add_next_item(list, next);
+			add_next_item(&list, next);
 			continue ;
 		}
 		i++;

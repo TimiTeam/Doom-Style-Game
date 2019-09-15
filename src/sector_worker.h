@@ -54,17 +54,19 @@ typedef	struct 			s_animation
 
 typedef struct 			s_item
 {
+	t_animation			states[5];/*
 	t_animation			waiting;
 	t_animation			walk;
 	t_animation			action;
 	t_animation			die;
-	t_animation			taking_damage;
+	t_animation			taking_damage;*/
+	float				curr_frame;
 	struct s_sector		*sector;
 	float				speed;
 	int					hp;
 	struct s_item		*next;
 	t_vector			pos;
-	enum item_state		state;
+	enum item_state		curr_state;
 	enum item_type 		type;
 	unsigned			id;
 	unsigned 			size;
@@ -106,13 +108,13 @@ t_item				*new_item();
 t_item				*create_new_item(int x, int y);
 
 void				add_next_sector(t_sector **main, t_sector *next);
-void 				add_next_item(t_item *head, t_item *new); 
+void 				add_next_item(t_item **head, t_item *new); 
+void 				from_list_to_another_list(t_item **current_list, t_item **next_list, t_item *elem);
 
 void				delete_sectors(t_sector *sec);
 void				delete_walls(t_wall **wals, unsigned count);
 void				delete_items_list(t_item *items);
 void 				delete_item(t_item **item);
-void 				delete_item_by_id(t_item *items, unsigned id);
 void				delete_item_by_ptr(t_item **head, t_item *item);
 
 void				list_sectors(t_sector *head);

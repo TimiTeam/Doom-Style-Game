@@ -22,15 +22,18 @@ t_item				*create_new_item(int x, int y)
 	return (i);
 }
 
-void 				add_next_item(t_item *head, t_item *new)
+void 				add_next_item(t_item **head, t_item *new)
 {
 	t_item			*main;
 	unsigned		id;
 
-	if (!new || !head)
+	if (!*head)
+	{
+		*head = new;
 		return ;
+	}
 	id = 1;
-	main = head;
+	main = *head;
 	while (main->next)
 	{
 		main = main->next;
@@ -57,7 +60,7 @@ void				list_items(t_item *items)
 		ft_putstr("; y = ");
 		ft_putnbr(it->pos.y);
 		ft_putstr(". State ");
-		ft_putstr(it->state > 1 ? "shooting" : "waiting");
+		ft_putstr(it->curr_state > 1 ? "shooting" : "waiting");
 		write(1, "\n", 1);
 		it = it->next;
 	}
@@ -77,12 +80,15 @@ void				delete_item_animation(t_animation *anim)
 
 void 				delete_item(t_item **item)
 {
+	int				i;
+
 	if (!*item)
 		return ;
-	delete_item_animation(&(*item)->waiting);
-	delete_item_animation(&(*item)->walk);
-	delete_item_animation(&(*item)->action);
-	delete_item_animation(&(*item)->die);
+	i = 0;
+	while(i < 5){
+		delete_item_animation(&(*item)->states[i]);
+		i++;
+	}
 	ft_memdel((void**)item);
 }
 
@@ -128,32 +134,31 @@ void				delete_item_by_ptr(t_item **head, t_item *item)
 	}
 }
 
-void 				delete_item_by_id(t_item *items, unsigned id)
-{	
-	t_item			*all;
-	t_item			*tmp;
+void 					from_list_to_another_list(t_item **current_list, t_item **next_list, t_item *elem)
+{
+	t_item				*curr;
+	t_item				*prev;
 
-	if (!items)
-		return ;
-	all = items;
-	if (all->id == id)
+	if (*current_list == elem)
 	{
-		delete_item(&all);
-		items = items->next;
+		*current_list = elem->next;
+		elem->next = NULL;
+		add_next_item(next_list, elem);
 		return ;
 	}
-	tmp = all->next;
-	while (tmp)
+	curr = (*current_list)->next;
+	prev = *current_list;
+	while(curr)
 	{
-		if (tmp->id == id)
+		if (curr == elem)
 		{
-			all->next = tmp->next;
-			tmp->next = NULL;
-			delete_item(&tmp);		
-			break ;
+			prev->next = elem->next;
+			elem->next = NULL;
+			add_next_item(next_list, elem);
+			return ;
 		}
-		all = tmp;
-		tmp = tmp->next;
+		prev = curr;
+		curr = curr->next;
 	}
 }
 
