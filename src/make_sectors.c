@@ -385,9 +385,11 @@ t_item			*make_items(char *data, SDL_Surface **textures)
 	i = 0;
 	list = NULL;
 	type = get_item_type_from_str(data);
-	while (data[i] && data[i] != '(')
+	while (data[i] && data[i] != '\'')
 		i++;
-	if (data[i] == '(')
+	if (data[i] && data[++i] != '(')
+		return (NULL);
+	else if (data[i] == '(')
 	{
 		list = create_item(&p, &data[++i], textures, type);
 		i += p;
@@ -438,7 +440,12 @@ t_sector		*crate_and_fill_sector_by_data(t_wall **walls, SDL_Surface	**textures,
 		else
 			i++;
 	}
-	sect->items = make_items(&data[i], textures);
+	while (data[i] && (data[i] == ' ' || data[i] =='\''))
+		i++;
+	printf("%s\n", &data[i]);
+	if (!ft_strncmp(&data[i], "items", ft_strlen("items")))
+		sect->items = make_items(&data[i], textures);
+
 	while (data[i] && ft_strncmp(&data[i], "enemies", ft_strlen("enemies")))
 		i++;
 	sect->enemies = make_items(&data[i], textures);

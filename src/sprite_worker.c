@@ -106,11 +106,46 @@ void    		draw_enemy_sprite(t_item obj, t_draw_data data, t_player player, SDL_S
 				obj.size / dist, obj.size / dist, data);
 }
 
-int				move_enemy(t_item *enemy, t_vector step)
+void 					from_list_to_another_list(t_sector *current_sector, t_sector *next_sector, t_item *elem)
 {
-	t_wall		**wall;
-	int			i;
-	t_sector	*sector;
+	t_item				*tmp;
+	t_item				*curr;
+
+	curr = current_sector->enemies;
+	tmp = curr;
+
+	if (curr == elem)
+	{
+		current_sector->enemies = elem->next;
+		elem->next = NULL;
+		if (next_sector->enemies)
+			add_next_item(next_sector->enemies, elem);
+		else
+			next_sector->enemies = elem;
+		return;
+	}
+	while (curr && (curr = curr->next))
+	{
+		if (curr == elem)
+		{
+			tmp->next = curr->next;
+			elem->next = NULL;
+			if (next_sector->enemies)
+				add_next_item(next_sector->enemies, elem);
+			else
+				next_sector->enemies = elem;
+			return;
+		}
+		tmp = curr;
+	}
+}
+
+int						move_enemy(t_item *enemy, t_vector step)
+{		
+	t_wall				**wall;
+	int					i;
+	t_sector			*sector;
+	t_sector			*next;
 
 	if (!enemy)
 		return (0);
@@ -125,11 +160,11 @@ int				move_enemy(t_item *enemy, t_vector step)
 			if (wall[i]->type != empty_wall)
 				return (0);
 			if (wall[i]->sectors[0] && sector->sector != wall[i]->sectors[0]->sector)
-				enemy->sector = wall[i]->sectors[0];
+				next = wall[i]->sectors[0];
 			else if (wall[i]->sectors[1] && sector->sector != wall[i]->sectors[1]->sector)
-				enemy->sector = wall[i]->sectors[1];
-	//		player->height = EyeHeight + player->curr_sector->floor;
-	// 		enemy->height = EyeHeight + sector->floor;
+				next = wall[i]->sectors[1];
+			from_list_to_another_list(enemy->sector, next, enemy);
+			enemy->sector = next;
 			break;
         }
 		i++;
@@ -161,26 +196,4 @@ void    		move_enemy_to_player(t_item *enemy, t_vector player_pos)
 		enemy->pos.x = new_pos.x;
 		enemy->pos.y = new_pos.y;
 	}
-
-    /*
-	float px = player.where.x, py = player.where.y;
-    const struct sector* const sect = &sectors[enemy->sector];
-    const struct vertex* const vert = sect->vertex;
-    float vx = enemy->pos.x - px;
-    float vy = enemy->pos.y - py;
- 	float dist = sqrtf(vx * vx + vy * vy);
- 	float dx = (dist - enemy->speed) / dist;
- 	t_fpoint newpos = {vx * dx + px, vy * dx + py};
-    for(unsigned s = 0; s < sect->npoints; ++s)
-        if(sect->neighbors[s] >= 0
-        && IntersectBox(enemy->pos.x,enemy->pos.y, newpos.x, newpos.y, vert[s+0].x, vert[s+0].y, vert[s+1].x, vert[s+1].y)
-        && PointSide(newpos.x, newpos.y, vert[s+0].x, vert[s+0].y, vert[s+1].x, vert[s+1].y) < 0)
-        {
-            enemy->sector = sect->neighbors[s];
-            break;
-        }
-    enemy->pos.x = newpos.x;
-    enemy->pos.y = newpos.y;
-}
-	*/
 }

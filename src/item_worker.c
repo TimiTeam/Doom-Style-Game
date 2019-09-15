@@ -27,7 +27,7 @@ void 				add_next_item(t_item *head, t_item *new)
 	t_item			*main;
 	unsigned		id;
 
-	if (!head || !new)
+	if (!new || !head)
 		return ;
 	id = 1;
 	main = head;
