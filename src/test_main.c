@@ -343,6 +343,8 @@ void			draw_sectors(t_sector *sec, t_player *player, t_sdl *sdl, t_draw_data dat
 	it = sec->items;
 	while (it)
 	{
+		if ((it->curr_frame += 0.35) >= it->states[it->curr_state].max_textures)
+			it->curr_frame = 0;
 		if (it->dist_to_player <= 0.5)
 		{
 			from_list_to_another_list(&sec->items, &player->inventar, it);
@@ -603,7 +605,7 @@ int					hook_event(t_player *player, unsigned char move[4], t_sector *sectors)
 		if (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_e && !player->opening_door)
 				check_door(player, sectors);
 		else if (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_i)
-				printf("\n\t\topening door : %s, %d\n", player->opening_door ? "True" : "False", player->opening_door);
+				printf("\n\t\topening door : %s, %d\npos: %f %f\n", player->opening_door ? "True" : "False", player->opening_door, player->pos.x, player->pos.y);
 		if (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_LCTRL)
 			player->height -= 3;
 		if (e.type == SDL_KEYUP && e.key.keysym.sym == SDLK_LCTRL)

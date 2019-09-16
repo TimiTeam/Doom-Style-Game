@@ -1,5 +1,10 @@
 waiting{
-textures/key/simple_key.png
+textures/key/key_1.png
+textures/key/key_2.png
+textures/key/key_3.png
+textures/key/key_4.png
+textures/key/key_5.png
+textures/key/key_6.png
 }
 walk{
 }
