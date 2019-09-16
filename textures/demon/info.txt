@@ -8,6 +8,9 @@ textures/demon/demon_walking_3.png
 textures/demon/demon_walking_4.png
 }
 action{
+textures/demon/demon_atac1.png
+textures/demon/demon_atac2.png
+textures/demon/demon_atac3.png
 }
 taking_damage{
 textures/demon/demon_taking_damage.png

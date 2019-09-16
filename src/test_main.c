@@ -261,14 +261,15 @@ void 			check_enemy_state(t_item *enemy, t_vector player_pos)
 	{
 		if (enemy->is_dying)
 			enemy->is_dying--;
-		else
-			enemy->curr_state = waiting;
-		if (enemy->curr_state != taking_damage
-			&& enemy->dist_to_player < 20 && enemy->dist_to_player > 5)
+		else if (enemy->dist_to_player < 30 && enemy->dist_to_player > 5)
 		{
 			enemy->curr_state = walk;
-				move_enemy_to_player(enemy, player_pos);
+			move_enemy_to_player(enemy, player_pos);
 		}
+		else if (enemy->dist_to_player <= 5)
+			enemy->curr_state = action;
+		else
+			enemy->curr_state = waiting;
 	}
 	else if (enemy->curr_state != die)
 	{
@@ -352,8 +353,13 @@ void			draw_sectors(t_sector *sec, t_player *player, t_sdl *sdl, t_draw_data dat
 		it = it->next;
 	}
 	quickSort(&sec->enemies, player);
+
 	it = sec->enemies;
-	t_item *tmp;
+
+	t_item 	*tmp;
+	t_item	*get_damege = NULL;;
+	float	closer;
+	closer = 1000.f;
 	while (it)
 	{
 		check_enemy_state(it, player->pos);
@@ -369,8 +375,22 @@ void			draw_sectors(t_sector *sec, t_player *player, t_sdl *sdl, t_draw_data dat
 			}
 		}
 		if (it->dist_to_player > 1)
+		{
 			draw_enemy_sprite(it, data, *player, sdl->surf);
+			if (it->players_hit && closer > it->dist_to_player)
+			{
+				it->players_hit = 0;
+				closer = it->dist_to_player;
+				get_damege = it;
+			}
+		}
 		it = it->next;
+	}
+	if (get_damege)
+	{
+		get_damege->hp -= player->current_gun->damage;
+		get_damege->curr_state = taking_damage;
+		get_damege->is_dying = 5;
 	}
 }
 
@@ -585,9 +605,9 @@ int					hook_event(t_player *player, unsigned char move[4], t_sector *sectors)
 		else if (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_i)
 				printf("\n\t\topening door : %s, %d\n", player->opening_door ? "True" : "False", player->opening_door);
 		if (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_LCTRL)
-			player->height -= 2;
+			player->height -= 3;
 		if (e.type == SDL_KEYUP && e.key.keysym.sym == SDLK_LCTRL)
-			player->height += 2;
+			player->height += 3;
 		if (e.type == SDL_MOUSEBUTTONDOWN)
 		{
 			if (e.button.button == SDL_BUTTON_LEFT){
@@ -740,4 +760,3 @@ int				main(int argc, char **argv)
 	ft_memdel((void**)&player);
 	system("leaks -q test");
 }
-

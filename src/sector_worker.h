@@ -54,12 +54,7 @@ typedef	struct 			s_animation
 
 typedef struct 			s_item
 {
-	t_animation			states[5];/*
-	t_animation			waiting;
-	t_animation			walk;
-	t_animation			action;
-	t_animation			die;
-	t_animation			taking_damage;*/
+	t_animation			states[5];
 	float				curr_frame;
 	struct s_sector		*sector;
 	float				speed;
@@ -71,7 +66,8 @@ typedef struct 			s_item
 	unsigned			id;
 	unsigned 			size;
 	float				dist_to_player;
-	int					is_dying;
+	unsigned char		is_dying;
+	unsigned char		players_hit;
 }						t_item;
 
 typedef	struct			s_wall

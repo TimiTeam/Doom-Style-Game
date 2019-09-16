@@ -102,8 +102,7 @@ void    		draw_enemy_sprite(t_item *obj, t_draw_data data, t_player player, SDL_
 	t_vector	ob_pos;
 	t_vector	scale;
 	float		tmp_x;
-	float 		x; 
-	float 		y;
+	t_vector	screen_pos;
 	float 		size;
 
 	ob_pos = (t_vector){obj->pos.x - player.pos.x, obj->pos.y - player.pos.y};
@@ -116,8 +115,8 @@ void    		draw_enemy_sprite(t_item *obj, t_draw_data data, t_player player, SDL_
 	scale.y = (H * m_vfov) / (ob_pos.y);
     ob_pos.x = player.half_win_size.x + (int)(-ob_pos.x * scale.x);
 	ob_pos.y = player.half_win_size.y + (int)(-Yaw(obj->pos.z + data.diff_floor, ob_pos.y) * scale.y);
-	x = ob_pos.x - obj->size / obj->dist_to_player / 2;
-	y = ob_pos.y - obj->size / obj->dist_to_player  / 2;
+	screen_pos.x = ob_pos.x - obj->size / obj->dist_to_player / 2;
+	screen_pos.y = ob_pos.y - obj->size / obj->dist_to_player  / 2;
 	size = obj->size /  obj->dist_to_player;
 /*	t_point start = {x, y};
 	t_point end = {x + size, y};
@@ -133,17 +132,15 @@ void    		draw_enemy_sprite(t_item *obj, t_draw_data data, t_player player, SDL_
 	line(surface, start, end, 0xffffffff);*/
 	if (obj->type == enemy && player.shooting && obj->curr_state != die &&
 		data.start < player.half_win_size.x && data.end > player.half_win_size.x &&
-			x < player.half_win_size.x && x + size > player.half_win_size.x && y < player.half_win_size.y && y + size > player.half_win_size.y)
+			screen_pos.x < player.half_win_size.x && screen_pos.x + size > player.half_win_size.x && screen_pos.y < player.half_win_size.y && screen_pos.y + size > player.half_win_size.y)
 	{
-		obj->hp -= player.current_gun->damage;
-		obj->curr_state = taking_damage;
-			obj->is_dying = 5;
+		obj->players_hit = 1;
 	}
 	t_animation	*anim;
 	anim = &obj->states[obj->curr_state];
 	
 	if (anim->texture[(int)obj->curr_frame])
-		draw_image_with_criteria(surface, anim->texture[(int)obj->curr_frame], x, y,size, size, data);
+		draw_image_with_criteria(surface, anim->texture[(int)obj->curr_frame], screen_pos.x, screen_pos.y, size, size, data);
 }
 
 
