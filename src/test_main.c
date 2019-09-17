@@ -116,9 +116,7 @@ void 			draw_world(t_sector *sec, t_wall wall, t_player player, t_sdl *sdl, t_dr
 
 	if (wall.start.y <= 0 || wall.end.y <= 0)
 		make_intersect(&wall);
-//	if (wall.type != empty_wall)
-//	{
-		if(fabsf(cp.start.x - cp.end.x) > fabsf(cp.start.y - cp.end.y))
+	if(fabsf(cp.start.x - cp.end.x) > fabsf(cp.start.y - cp.end.y))
     		scaleL = fabsf(cp.start.x - cp.end.x) / 10;
     	else
         	scaleL = fabsf(cp.start.y - cp.end.y) / 10;
@@ -127,7 +125,6 @@ void 			draw_world(t_sector *sec, t_wall wall, t_player player, t_sdl *sdl, t_dr
 			maping_wall_texture(&u0, &u1, wall.start.x - org1.x, wall.end.x - org1.x, (wall.texture->w * scaleL - 1) / (org2.x - org1.x));
 		else
 			maping_wall_texture(&u0, &u1, wall.start.y - org1.y, wall.end.y - org1.y, (wall.texture->w * scaleL - 1) / (org2.y - org1.y));
-//	}
 
 	scale1 =(t_vector) {player.hfov / wall.start.y, player.vfov / wall.start.y};
     scale2 =(t_vector) {player.hfov / wall.end.y, player.vfov / wall.end.y};
@@ -257,7 +254,7 @@ void 			open_door(t_wall *door, t_wall *door_two, t_player *player)
 
 void 			check_enemy_state(t_item *enemy, t_vector player_pos)
 {
-	if (enemy->hp > 0)
+	if (enemy->health > 0)
 	{
 		if (enemy->is_dying)
 			enemy->is_dying--;
@@ -279,6 +276,53 @@ void 			check_enemy_state(t_item *enemy, t_vector player_pos)
 }
 
 
+void 			draw_sector_items(t_item **items, t_player *player, t_draw_data data, SDL_Surface *screen)
+{
+	t_item 	*tmp;
+	t_item	*get_damege;
+	float	closer;
+	t_item	*it;
+
+	closer = 1000.f;
+	it = *items;
+	get_damege = NULL;
+	while (it)
+	{
+		if (it->type == enemy)
+			check_enemy_state(it, player->pos);
+		if ((it->curr_frame += 0.35) >= it->states[it->curr_state].max_textures)
+		{
+			it->curr_frame = 0;
+			if (it->type == enemy && it->curr_state == die)
+			{
+				tmp = it->next;
+				delete_item_by_ptr(items, it);
+				it = tmp;
+				continue ;
+			}
+		}
+		if (it->type != object && it->type != enemy && it->dist_to_player <= 1)
+			from_list_to_another_list(items, &player->inventar, it);
+		else
+		{
+			draw_enemy_sprite(it, data, *player, screen);
+			if (it->players_hit && closer > it->dist_to_player)
+			{
+				it->players_hit = 0;
+				closer = it->dist_to_player;
+				get_damege = it;
+			}
+		}
+		it = it->next;
+	}
+	if (get_damege)
+	{
+		get_damege->health -= player->current_gun->damage;
+		get_damege->curr_state = taking_damage;
+		get_damege->is_dying = 5;
+	}
+}
+
 void			draw_sectors(t_sector *sec, t_player *player, t_sdl *sdl, t_draw_data data)
 {
 	int			i;
@@ -286,10 +330,10 @@ void			draw_sectors(t_sector *sec, t_player *player, t_sdl *sdl, t_draw_data dat
 	int			p;
 	int			wall;
 	t_wall		*w;
-	t_item		*it;
 	pthread_t	thread[THREADS];
 	t_super_data super[THREADS];
 	t_draw_data	spr;
+
 	d = 0;
 	i = 0;
 	p = -1;
@@ -338,62 +382,8 @@ void			draw_sectors(t_sector *sec, t_player *player, t_sdl *sdl, t_draw_data dat
 	i = -1;
 	while (++i < MAX_PORTALS && (w = sec->doors[i]))
 		draw_world(sec, *w, *player, sdl, data);
-
 	quickSort(&sec->items, player);
-	it = sec->items;
-	while (it)
-	{
-		if ((it->curr_frame += 0.35) >= it->states[it->curr_state].max_textures)
-			it->curr_frame = 0;
-		if (it->dist_to_player <= 0.5)
-		{
-			from_list_to_another_list(&sec->items, &player->inventar, it);
-			player->has_key = has_key(player->inventar);
-		}
-		else
-			draw_enemy_sprite(it, data, *player, sdl->surf);
-		it = it->next;
-	}
-	quickSort(&sec->enemies, player);
-
-	it = sec->enemies;
-
-	t_item 	*tmp;
-	t_item	*get_damege = NULL;;
-	float	closer;
-	closer = 1000.f;
-	while (it)
-	{
-		check_enemy_state(it, player->pos);
-		if ((it->curr_frame += 0.35) >= it->states[it->curr_state].max_textures)
-		{
-			it->curr_frame = 0;
-			if (it->curr_state == die)
-			{
-				tmp = it->next;
-				delete_item_by_ptr(&sec->enemies, it);
-				it = tmp;
-				continue ;
-			}
-		}
-		if (it->dist_to_player > 1)
-		{
-			draw_enemy_sprite(it, data, *player, sdl->surf);
-			if (it->players_hit && closer > it->dist_to_player)
-			{
-				it->players_hit = 0;
-				closer = it->dist_to_player;
-				get_damege = it;
-			}
-		}
-		it = it->next;
-	}
-	if (get_damege)
-	{
-		get_damege->hp -= player->current_gun->damage;
-		get_damege->curr_state = taking_damage;
-		get_damege->is_dying = 5;
-	}
+	draw_sector_items(&sec->items, player, data, sdl->surf);
 }
 
 void				run_with_buff(t_player *player, t_sdl *sdl, unsigned int win_x)
@@ -684,6 +674,7 @@ void                game_loop(t_sdl *sdl, t_player *player, t_sector *sectors)
         SDL_FillRect(sdl->surf, NULL, 0x00);
 
         run_with_buff(player, sdl, sdl->win_size.x);
+		player->has_key = has_key(player->inventar);
 		print_player_gun(sdl, player);
 
         tex = SDL_CreateTextureFromSurface(sdl->ren, sdl->surf);
@@ -725,6 +716,7 @@ int				main(int argc, char **argv)
 	t_gun		weapons[2];
 
 
+	
 	if (argc > 1)
 		sectors = read_map(argv[1], &holder);
 	if (!sectors)

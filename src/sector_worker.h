@@ -18,6 +18,10 @@ enum 					wall_type
 enum 					item_type
 {
 	object,
+	coin,
+	super_bonus,
+	health,
+	ammo,
 	key,
 	enemy
 };
@@ -58,7 +62,7 @@ typedef struct 			s_item
 	float				curr_frame;
 	struct s_sector		*sector;
 	float				speed;
-	int					hp;
+	int					health;
 	struct s_item		*next;
 	t_vector			pos;
 	enum item_state		curr_state;
@@ -90,7 +94,6 @@ typedef struct			s_sector
 	SDL_Surface			*floor_tex;
 	SDL_Surface			*ceil_tex;
 	t_item				*items;
-	t_item				*enemies;
 	struct s_sector		*next;
 	float				floor;
 	float				ceil;

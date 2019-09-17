@@ -167,7 +167,7 @@ int						move_enemy(t_item *enemy, t_vector step)
 				next = wall[i]->sectors[0];
 			else if (wall[i]->sectors[1] && sector->sector != wall[i]->sectors[1]->sector)
 				next = wall[i]->sectors[1];
-			from_list_to_another_list(&enemy->sector->enemies, &next->enemies, enemy);
+			from_list_to_another_list(&enemy->sector->items, &next->items, enemy);
 			enemy->sector = next;
 			break;
         }
@@ -186,14 +186,10 @@ void    		move_enemy_to_player(t_item *enemy, t_vector player_pos)
 	if (!enemy)
 		return ;
 	step = (t_vector){enemy->pos.x - player_pos.x, enemy->pos.y - player_pos.y};
-
 	dist = sqrtf(step.x * step.x + step.y * step.y);
-
 	dx = (dist - 0.3f) / dist;
-
 	new_pos.x = step.x * dx + player_pos.x;
 	new_pos.y = step.y * dx + player_pos.y;
-
 	if (move_enemy(enemy, new_pos))
 	{
 		enemy->pos.x = new_pos.x;

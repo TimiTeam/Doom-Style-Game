@@ -1,3 +1,4 @@
+key
 waiting{
 textures/key/key_1.png
 textures/key/key_2.png

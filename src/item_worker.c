@@ -52,16 +52,16 @@ void				list_items(t_item *items)
 	it = items;
 	while (it)
 	{
-		ft_putstr(it->type == enemy ? "Enemies # " : it->type == object ? "Object # " : "Key # ");
+		ft_putstr(it->type == enemy ? "Enemies # " : it->type == object ? "Unuseable obj # " : "Usable obj # ");
 		ft_putnbr(it->id);
 		printf("item sector ptr %p\n", it->sector);
-		ft_putstr("\npos x = ");
+		ft_putstr("pos x = ");
 		ft_putnbr(it->pos.x);
 		ft_putstr("; y = ");
 		ft_putnbr(it->pos.y);
 		ft_putstr(". State ");
 		ft_putstr(it->curr_state > 1 ? "shooting" : "waiting");
-		write(1, "\n", 1);
+		write(1, "\n\n", 1);
 		it = it->next;
 	}
 }

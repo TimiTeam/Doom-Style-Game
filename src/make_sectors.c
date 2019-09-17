@@ -53,7 +53,7 @@ static void			get_count_struct_arrays(int fd, int *vect_count, int *wall_count, 
 	ft_strdel(&tex);
 }
 
-static unsigned	get_numbers(float *one, float *two, char dilimeter, char *line)
+static unsigned	get_numbers(float *one, float *two, char delimiter, char *line)
 {
 	unsigned	i;
 	int			nb;
@@ -68,7 +68,7 @@ static unsigned	get_numbers(float *one, float *two, char dilimeter, char *line)
 	num = ft_itoa(nb);
 	i += ft_strlen(num);
 	*one = nb;
-	if (line[i] && line[i] == dilimeter)
+	if (line[i] && line[i] == delimiter)
 		i++;
 	ft_strdel(&num);
 	nb = (float)ft_atoi(&line[i]);
@@ -102,20 +102,6 @@ t_vector		*get_vectors(int fd, int vec_size)
 	}
 	ft_strdel(&line);
 	return	(ret);
-}
-
-void				list_vectors(t_vector *vec, unsigned size)
-{
-	int				i;
-
-	i = 0;
-	if (!vec)
-		return ;
-	while (i < size)
-	{
-		printf("vector # %d: x = %f, y = %f;\n", i, vec[i].x, vec[i].y);
-		i++;
-	}
 }
 
 t_wall			*make_wall(char *line, t_vector *vectors, SDL_Surface **textures)
@@ -241,15 +227,41 @@ static unsigned	fill_floor_and_ceil(t_sector *sector, SDL_Surface **textures, ch
 char 			*clip_n_str(char *s1, char *s2, char *s3, int size_s2)
 {
 	int			i;
-	int			size;
 	char		*new;
 
-	new = (char*)malloc(sizeof(char) * (size = ft_strlen(s1) + size_s2 + ft_strlen(s3) + 1));
+	new = (char*)malloc(sizeof(char) * ft_strlen(s1) + size_s2 + ft_strlen(s3) + 1);
 	i = 0;
 	ft_strcpy(new, s1);
 	ft_strncpy(&new[ft_strlen(s1)], s2, size_s2);
 	ft_strcpy(&new[ft_strlen(s1) + size_s2], s3);
 	return (new);
+}
+
+enum item_type	get_item_type(int fd)
+{
+	char 		*type;
+	enum item_type ret;
+
+	type = NULL;
+	ret = object;
+	get_next_line(fd, &type);
+	if (type)
+	{
+		if(ft_strcmp(type,"coin") == 0)
+			ret = coin;
+		else if(ft_strcmp(type,"super_bonus") == 0)
+			ret = super_bonus;
+		else if(ft_strcmp(type,"health") == 0)
+			ret = health;
+		else if(ft_strcmp(type,"ammo") == 0)
+			ret = ammo;
+		else if(ft_strcmp(type,"key") == 0)
+			ret = key;
+		else if(ft_strcmp(type,"enemy") == 0)
+			ret = enemy;
+	}
+	ft_strdel(&type);
+	return (ret);
 }
 
 void 			filed_t_animation(t_animation *anim, int fd)
@@ -282,6 +294,13 @@ void			create_animations(t_item *it, char *file_pth)
 		printf("ERROR reading file: %s", file_pth);
 		exit(1);
 	}
+	it->type = get_item_type(fd);
+	if (it->type == enemy)
+	{
+		get_next_line(fd, &line);
+		it->health = get_num_from_str(line);
+		ft_strdel(&line);
+	}
 	while(get_next_line(fd, &line) > 0)
 	{
 		if (ft_strcmp(line, "waiting{") == 0)
@@ -296,6 +315,7 @@ void			create_animations(t_item *it, char *file_pth)
 			filed_t_animation(&it->states[die], fd);
 		ft_strdel(&line);
 	}
+	close(fd);
 	ft_strdel(&line);
 }
 
@@ -319,15 +339,12 @@ void 			load_animation(t_item *item, char *path_to_enemy)
 	if (size)
 	{
 		new = clip_n_str("textures/", &path_to_enemy[j], "/info.txt", size);
-		ft_putstr("'");
-		ft_putstr(new);
-		ft_putstr("'\n");
 		create_animations(item, new);
 		ft_memdel((void**)&new);
 	}
 }
 
-t_item			*create_item(int *p, char *data, SDL_Surface **textures, enum item_type type)
+t_item			*create_item(char *data, SDL_Surface **textures, enum item_type type)
 {
 	t_item 		*item;
 	unsigned	i;
@@ -337,42 +354,10 @@ t_item			*create_item(int *p, char *data, SDL_Surface **textures, enum item_type
 	i = get_numbers(&x, &y, ',', data);
 	if(!(item = create_new_item((int)x, (int)y)))
 		return (0);
-	item->type = type;
 	load_animation(item, &data[i]);
 	item->size = item->type != enemy ? 900 : 2500;
 	item->pos.z = item->type == enemy ? 5 : 2;
-	item->dist_to_player = 10.f;
-	while (data[i] && data[i] != ')')
-	{
-		if (ft_isalpha(data[i]))
-			item->type = ft_strncmp(&data[i], "key", 3) == 0 ? key : item->type;
-		i++;
-	}
-	if (item->type == enemy)
-		printf("Enemy\n");
-	*p = i;
-	item->hp = 100;
 	return (item);
-}
-
-enum item_type		get_item_type_from_str(char *data)
-{
-	int		i;
-	const char	*enem;
-	const char	*item;
-
-	i = 0;
-	enem = "enemies";
-	item = "items";
-	while (data[i])
-	{
-		if (ft_strncmp(&data[i], enem, ft_strlen(enem)) == 0)
-			return (enemy);
-		else if (ft_strncmp(&data[i], item, ft_strlen(item)) == 0)
-			return (object);
-		i++;
-	}
-	return (0);
 }
 
 t_item			*make_items(char *data, SDL_Surface **textures)
@@ -381,29 +366,18 @@ t_item			*make_items(char *data, SDL_Surface **textures)
 	t_item		*next;
 	enum item_type	type;
 	int 		i;
-	int			p;
 
 	i = 0;
 	list = NULL;
-	type = get_item_type_from_str(data);
+	next = NULL;
 	while (data[i] && data[i] != '\'')
 		i++;
-	if (data[i] && data[++i] != '(')
-		return (NULL);
-	else if (data[i] == '(')
+	while (data[i])
 	{
-		list = create_item(&p, &data[++i], textures, type);
-		i += p;
-	}
-	while (list && data[i] && data[i] != 'e')
-	{
-		next = NULL;
 		if (data[i] == '(')
 		{
-			next = create_item(&p, &data[i], textures, type);
-			i += p;
+			next = create_item(&data[i], textures, type);
 			add_next_item(&list, next);
-			continue ;
 		}
 		i++;
 	}
@@ -431,8 +405,7 @@ t_sector		*crate_and_fill_sector_by_data(t_wall **walls, SDL_Surface	**textures,
 		{
 			wall = walls[ft_atoi(&data[i]) - 1];
 			mark_like_neighbors(sect, wall);
-			sect->wall[count] = copy_t_wall_velue(wall);
-			
+			sect->wall[count] = copy_t_wall_velue(wall);		
 			dec = ft_itoa(ft_atoi(&data[i]));
 			i += ft_strlen(dec);
 			count++;
@@ -443,13 +416,8 @@ t_sector		*crate_and_fill_sector_by_data(t_wall **walls, SDL_Surface	**textures,
 	}
 	while (data[i] && (data[i] == ' ' || data[i] =='\''))
 		i++;
-	printf("%s\n", &data[i]);
-	if (!ft_strncmp(&data[i], "items", ft_strlen("items")))
+	if (ft_strncmp(&data[i], "items", ft_strlen("items")) == 0)
 		sect->items = make_items(&data[i], textures);
-
-	while (data[i] && ft_strncmp(&data[i], "enemies", ft_strlen("enemies")))
-		i++;
-	sect->enemies = make_items(&data[i], textures);
 	return (sect);
 }
 
@@ -549,7 +517,7 @@ void			mark_all_neighbors(t_sector *sectors, t_wall **all, SDL_Surface **texture
 			i++;
 		}
 		finde_close_doors(sec->wall, sec->n_walls);
-		set_sector_ptr_to_items(sec->enemies, sec);
+		set_sector_ptr_to_items(sec->items, sec);
 		sec = sec->next;
 	}
 }
