@@ -39,6 +39,8 @@ void				close_t_sdl(t_sdl *s)
 
 void				free_t_sdl(t_sdl **s)
 {
+	if (!*s)
+		return ;
 	close_t_sdl(*s);
 	if ((*s)->title)
 		ft_strdel(&(*s)->title);

@@ -1,4 +1,3 @@
-enemy
 200
 waiting{
 textures/demon/demon_standing_1.png

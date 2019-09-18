@@ -101,24 +101,25 @@ typedef struct			s_sector
 	unsigned short		n_walls;
 }						t_sector;
 
-t_sector			*new_sector();
-t_sector			*crate_new_sector(float	floor, float ceil);
-t_item				*new_item();
-t_item				*create_new_item(int x, int y);
-
-void				add_next_sector(t_sector **main, t_sector *next);
-void 				add_next_item(t_item **head, t_item *new); 
-void 				from_list_to_another_list(t_item **current_list, t_item **next_list, t_item *elem);
-
-void				delete_sectors(t_sector *sec);
-void				delete_walls(t_wall **wals, unsigned count);
-void				delete_items_list(t_item *items);
-void 				delete_item(t_item **item);
-void				delete_item_by_ptr(t_item **head, t_item *item);
-
-void				list_sectors(t_sector *head);
-void				list_walls(t_wall **walls, int size);
-void				list_items(t_item *items);
-void 				swap_items(t_item *elem1, t_item *elem2);
+t_sector				*new_sector();
+t_sector				*crate_new_sector(float	floor, float ceil);
+t_item					*new_item();
+t_item					*create_new_item(int x, int y);
+	
+void					add_next_sector(t_sector **main, t_sector *next);
+void 					add_next_item(t_item **head, t_item *new); 
+void 					from_list_to_another_list(t_item **current_list, t_item **next_list, t_item *elem);
+	
+void					delete_sectors(t_sector *sec);
+void					delete_walls(t_wall **wals, unsigned count);
+void					delete_items_list(t_item *items);
+void					delete_items_list_with_animation(t_item *items);
+void 					delete_item(t_item **item);
+void					delete_item_by_ptr(t_item **head, t_item *item);
+	
+void					list_sectors(t_sector *head);
+void					list_walls(t_wall **walls, int size);
+void					list_items(t_item *items);
+void 					swap_items(t_item *elem1, t_item *elem2);
 
 #endif

@@ -115,9 +115,11 @@ void    		draw_enemy_sprite(t_item *obj, t_draw_data data, t_player player, SDL_
 	scale.y = (H * m_vfov) / (ob_pos.y);
     ob_pos.x = player.half_win_size.x + (int)(-ob_pos.x * scale.x);
 	ob_pos.y = player.half_win_size.y + (int)(-Yaw(obj->pos.z + data.diff_floor, ob_pos.y) * scale.y);
-	screen_pos.x = ob_pos.x - obj->size / obj->dist_to_player / 2;
-	screen_pos.y = ob_pos.y - obj->size / obj->dist_to_player  / 2;
-	size = obj->size /  obj->dist_to_player;
+	size = obj->size / obj->dist_to_player;
+	if (obj->dist_to_player < 3)
+		size = clamp(0, size, 1500);
+	screen_pos.x = ob_pos.x - size / 2;
+	screen_pos.y = ob_pos.y - size / 2;
 /*	t_point start = {x, y};
 	t_point end = {x + size, y};
 	line(surface, start, end, 0xffffffff);

@@ -42,9 +42,12 @@ void				add_next_sector(t_sector **main, t_sector *next)
 	t_sector		*head;
 	int				i;
 
-	head = *main;
-	if (!head)
+	if (!*main)
+	{
+		*main = next;
 		return ;
+	}
+	head = *main;
 	i = 1;
 	while (head->next)
 	{
@@ -53,9 +56,6 @@ void				add_next_sector(t_sector **main, t_sector *next)
 	}
 	next->sector = i;
 	head->next = next;
-/*	next->next = *main;
-	next->sector = size_sector(next);
-	*main = next;*/
 }
 
 void				delete_walls(t_wall **wall, unsigned size)

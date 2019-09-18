@@ -1,4 +1,3 @@
-coin
 waiting{
 textures/coin/coin_face.png
 textures/coin/coin_move1.png

@@ -1,4 +1,3 @@
-enemy
 100
 waiting{
 textures/imp/imp_attacking_2.png

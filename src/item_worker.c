@@ -30,6 +30,7 @@ void 				add_next_item(t_item **head, t_item *new)
 	if (!*head)
 	{
 		*head = new;
+		(*head)->id = 0;
 		return ;
 	}
 	id = 1;
@@ -52,9 +53,9 @@ void				list_items(t_item *items)
 	it = items;
 	while (it)
 	{
-		ft_putstr(it->type == enemy ? "Enemies # " : it->type == object ? "Unuseable obj # " : "Usable obj # ");
+		ft_putstr(it->type == enemy ? "Enemies # " : it->type == object ? "Unuseable obj # " : it->type == key ? "Key # " : "Usable obj # ");
 		ft_putnbr(it->id);
-		printf("item sector ptr %p\n", it->sector);
+		printf(". item sector ptr %p\n", it->sector);
 		ft_putstr("pos x = ");
 		ft_putnbr(it->pos.x);
 		ft_putstr("; y = ");
@@ -92,7 +93,7 @@ void 				delete_item(t_item **item)
 	ft_memdel((void**)item);
 }
 
-void				delete_items_list(t_item *items)
+void				delete_items_list_with_animation(t_item *items)
 {
 	t_item 			*next;
 
@@ -107,6 +108,21 @@ void				delete_items_list(t_item *items)
 	}
 }
 
+void				delete_items_list(t_item *items)
+{
+	t_item 			*next;
+
+	if (!items)
+		return ;
+	next = items;
+	while(items)
+	{
+		next = items;
+		items = next->next;
+		ft_memdel((void**)&next);
+	}
+}
+
 void				delete_item_by_ptr(t_item **head, t_item *item)
 {
 	t_item	*curr;
@@ -118,7 +134,7 @@ void				delete_item_by_ptr(t_item **head, t_item *item)
 	if (item == *head)
 	{
 		*head = item->next;
-		delete_item(&item);
+		ft_memdel((void**)&item);
 		return ;
 	}
 	while(curr)
@@ -126,7 +142,7 @@ void				delete_item_by_ptr(t_item **head, t_item *item)
 		if (item == curr)
 		{
 			prev->next = curr->next;
-			delete_item(&curr);
+			ft_memdel((void**)&curr);
 			return ;
 		}
 		prev = curr;

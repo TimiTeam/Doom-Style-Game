@@ -25,6 +25,7 @@ typedef struct		s_draw_data
 {
 	float 			start;
 	float			end;
+	float			player_current_height;
 	int 			diff_ceil;
 	int 			diff_floor;
 	int 			ytop[W];
@@ -70,6 +71,7 @@ typedef struct		s_plyer
 	char			fall;
 	unsigned short	jump;
 	unsigned char	opening_door;
+	char			sit;
 	unsigned char 	has_key;
 	unsigned char	shooting;
 }					t_player;
@@ -120,6 +122,8 @@ typedef struct 		Scaler {
 #define Yaw(y,z) (y + z * player.yaw)
 
 t_player				*new_t_player(int pos_x, int pos_y, t_point wid_size);
+
+void					free_player(t_player *player);
 
 void 					draw_scaled_image(SDL_Surface *screen, SDL_Surface *img, t_point pos, t_point size);
 
