@@ -68,6 +68,7 @@ typedef struct		s_plyer
 	float 			hfov;
 	float 			vfov;
 	int				height;
+	int				health;
 	char			fall;
 	unsigned short	jump;
 	unsigned char	opening_door;

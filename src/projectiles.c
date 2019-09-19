@@ -18,8 +18,6 @@ t_projectile			*create_projectile(t_player player)
 	projectile->speed = 3.0f;
 	projectile->damage = 20;
 	projectile->sprite = load_jpg_png("textures/plasma_raw.png");
-//	printf("Projectile spawned on x:%f y:%f z:%f\n", projectile->pos.x, projectile->pos.y, projectile->pos.z);
-//	printf("Player z:%f\n", player.pos.z);
 	return (projectile);
 }
 

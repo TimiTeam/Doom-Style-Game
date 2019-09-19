@@ -19,3 +19,7 @@ Items:
 2) super_bonus bonus
 3) enemy demon
 4) enemy imp
+5) object burning_barrel
+6) object lantern
+7) health big_medkit
+8) health medkit

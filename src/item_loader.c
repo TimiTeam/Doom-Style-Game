@@ -53,6 +53,23 @@ static void 	filed_t_animation(t_animation *anim, int fd)
 	ft_strdel(&line);
 }
 
+static void		read_properties(t_item *item, int fd)
+{
+	char		*line;
+
+	while (get_next_line(fd, &line) > 0)
+	{
+		if (ft_strcmp(line, "}") == 0)
+			break ;
+		else if (ft_strncmp(line, "health", ft_strlen("health")) == 0)
+			item->health = get_num_from_str(line);
+		else if (ft_strncmp(line, "damage", ft_strlen("damage")) == 0)
+			item->damage = get_num_from_str(line);
+		ft_strdel(&line);
+	}
+	ft_strdel(&line);
+}
+
 static void		create_animations(t_item *it, char *file_pth)
 {
 	int			fd;
@@ -64,15 +81,11 @@ static void		create_animations(t_item *it, char *file_pth)
 		printf("ERROR reading file: %s", file_pth);
 		exit(1);
 	}
-	if (it->type == enemy)
-	{
-		get_next_line(fd, &line);
-		it->health = get_num_from_str(line);
-		ft_strdel(&line);
-	}
 	while(get_next_line(fd, &line) > 0 && *line)
 	{
-		if (ft_strcmp(line, "waiting{") == 0)
+		if (ft_strcmp(line, "Properties{") == 0)
+			read_properties(it, fd);
+		else if (ft_strcmp(line, "waiting{") == 0)
 			filed_t_animation(&it->states[waiting], fd);
 		else if (ft_strcmp(line, "walk{") == 0)
 			filed_t_animation(&it->states[walk], fd);

@@ -116,6 +116,7 @@ void 			set_sector_ptr_to_items(t_item *items, t_sector *sector)
 	while (all)
 	{
 		all->sector = sector;
+//		all->pos.z = sector->floor;
 		all = all->next;
 	}
 }

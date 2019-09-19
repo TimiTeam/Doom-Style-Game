@@ -1,0 +1,14 @@
+Properties{
+health 50
+}
+waiting{
+textures/medkit/medkit.png
+}
+walk{
+}
+action{
+}
+taking_damage{
+}
+die{
+}

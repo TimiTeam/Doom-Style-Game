@@ -245,25 +245,42 @@ void 			open_door(t_wall *door, t_wall *door_two, t_player *player)
 	}
 }
 
-void   draw_projectiles(t_projectile **projectiles, t_player player, t_draw_data data, SDL_Surface *screen)
+void   draw_projectiles(t_projectile **projectiles, t_player player, t_draw_data data, SDL_Surface *screen, t_item *items)
 {
- t_projectile *tmp;
- t_projectile *curr;
- curr = *projectiles;
- while (curr)
- {
-  draw_projectile(curr, data, player, screen);
-  if (!move_projectile(curr) || curr->pos.z < curr->curr_sector->floor - 2 || curr->pos.z > curr->curr_sector->ceil - 2){
-   //printf("%f\n", curr->pos.x);
-   tmp = curr->next;
-   printf("Deleting...\n");
-   delete_projectile(projectiles, curr);
-   printf("Deleted\n");
-   curr = tmp;
-   continue ;
-  }
-  curr = curr->next;
- }
+	t_projectile	*tmp;
+	t_projectile	*curr;
+	t_item			*curr_enemy;
+	Uint8			is_hit;
+
+	curr_enemy = items;
+	curr = *projectiles;
+	while (curr)
+	{
+		is_hit = 0;
+		draw_projectile(curr, data, player, screen);
+		printf("%f\n", curr->pos.z);
+		while (curr_enemy)
+		{
+			if (curr_enemy->type == enemy && len_between_points(curr->pos, curr_enemy->pos) <= 2 && curr_enemy->curr_state != die &&
+			curr->pos.z > curr_enemy->pos.z + curr_enemy->sector->floor && curr->pos.z < curr_enemy->pos.z + curr_enemy->size+ curr_enemy->sector->floor)
+			{
+				curr_enemy->health -= curr->damage;
+				is_hit = 1;
+				curr_enemy->players_hit = 1;
+				printf("Quit\n");
+				break ;
+			}
+			curr_enemy = curr_enemy->next;
+		}
+		if (is_hit || !move_projectile(curr) || curr->pos.z < curr->curr_sector->floor - 2 || curr->pos.z > curr->curr_sector->ceil + 2)
+		{
+			tmp = curr->next;
+			delete_projectile(projectiles, curr);
+			curr = tmp;
+			continue ;
+		}
+		curr = curr->next;
+	}
 }
 
 void 			check_enemy_state(t_item *enemy, t_vector player_pos)
@@ -306,6 +323,13 @@ void 			draw_sector_items(t_item **items, t_player *player, t_draw_data data, SD
 			check_enemy_state(it, player->pos);
 		if ((it->curr_frame += 0.35) >= it->states[it->curr_state].max_textures)
 		{
+			if (it->curr_state == action)
+			{
+				player->health -= it->damage;
+				printf("\tYour hp: %d\n", player->health);
+			}
+			if (player->health <= 0)
+				printf("\tHey, You die!!\n");
 			it->curr_frame = 0;
 			if (it->type == enemy && it->curr_state == die)
 			{
@@ -316,7 +340,11 @@ void 			draw_sector_items(t_item **items, t_player *player, t_draw_data data, SD
 			}
 		}
 		if (it->type != object && it->type != enemy && it->dist_to_player <= 1)
+		{
 			from_list_to_another_list(items, &player->inventar, it);
+			if (it->type == health)
+				player->health += it->health;
+		}
 		else
 		{
 			draw_enemy_sprite(it, data, *player, screen);
@@ -399,7 +427,7 @@ void			draw_sectors(t_sector *sec, t_player *player, t_sdl *sdl, t_draw_data dat
 		draw_world(sec, *w, *player, sdl, data);
 	quickSort(&sec->items, player);
 	draw_sector_items(&sec->items, player, data, sdl->surf);
-	draw_projectiles(&sec->projectiles, *player, data, sdl->surf);
+	draw_projectiles(&sec->projectiles, *player, data, sdl->surf, sec->items);
 }
 
 void				run_with_buff(t_player *player, t_sdl *sdl, unsigned int win_x)
@@ -561,7 +589,6 @@ int 				is_it_wall(t_vector pos, t_wall wall)
 	p = (n.x * (pos.x - wall.start.x) + n.y * (pos.y - wall.start.y)) / sqrtf(n.x * n.x + n.y * n.y);
 	return (p);
 }
-
 int					hook_event(t_player *player, unsigned char move[4], t_sector *sectors)
 {
 	SDL_Event		e;
@@ -616,16 +643,19 @@ int					hook_event(t_player *player, unsigned char move[4], t_sector *sectors)
 		else if (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_i)
 				printf("\n\t\topening door : %s, %d\npos: %f %f player height: %d\n", player->opening_door ? "True" : "False", player->opening_door, player->pos.x, player->pos.y, (int)player->pos.z);
 		if (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_LCTRL)
-			//player->height -= 3;
 			player->sit = -3;
 		if (e.type == SDL_KEYUP && e.key.keysym.sym == SDLK_LCTRL)
-			//player->height += 3;
 			player->sit = 0;
 		if (e.type == SDL_MOUSEBUTTONDOWN)
 		{
 			if (e.button.button == SDL_BUTTON_LEFT){
-				player->current_gun->state += 0.5;
 				player->shooting = 1;
+			}
+		}
+		else if (e.type == SDL_MOUSEBUTTONUP)
+		{
+			if (e.button.button == SDL_BUTTON_LEFT){
+				player->shooting = 0;
 			}
 		}
 	}
@@ -645,7 +675,7 @@ int					hook_event(t_player *player, unsigned char move[4], t_sector *sectors)
     yaw = clamp(player->yaw - y * 0.05f, -5, 5);
 	player->yaw = yaw;
 	if (player->current_gun->state == 1 && player->current_gun->type == plasmagun)
-			add_projectile(&player->curr_sector->projectiles, create_projectile(*player));
+		add_projectile(&player->curr_sector->projectiles, create_projectile(*player));
 	return (1);
 }
 
@@ -655,11 +685,10 @@ void 				print_player_gun(t_sdl *sdl, t_player *pla)
 	t_point			size;
 	SDL_Surface		*surf;
 
-	pla->shooting = 0;
 	if (!pla->current_gun->frame[(int)pla->current_gun->state])
 		pla->current_gun->state = 0;
 	surf = pla->current_gun->frame[(int)pla->current_gun->state];
-	if (pla->current_gun->state)
+	if (pla->shooting || pla->current_gun->state)
 		pla->current_gun->state += 0.5;
 	pos.x = pla->half_win_size.x - surf->w / 2;
 	pos.y = sdl->win_size.y - surf->h;
@@ -751,7 +780,6 @@ void 				free_data_holder(t_read_holder *holder)
 	ft_memdel((void**)&holder->textures);
 	//ft_memdel((void**)&holder);
 }
-
 
 int					main(int argc, char **argv)
 {

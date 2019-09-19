@@ -26,6 +26,7 @@ void 			copy_t_item_value_by_id(t_item *dst, t_item *all, unsigned src_item_id)
 			dst->health = all->health;
 			dst->speed = all->speed;
 			dst->type = all->type;
+			dst->damage = all->damage;
 			break ;
 		}
 		all = all->next;
@@ -43,8 +44,12 @@ t_item			*create_item(char *data, t_item *all_items)
 	if(!(item = create_new_item((int)x, (int)y)))
 		return (0);
 	copy_t_item_value_by_id(item, all_items, ft_atoi(&data[i]));
-	item->size = item->type != enemy ? 900 : 2500;
-	item->pos.z = item->type == enemy ? 5 : 2;
+	if (item->type == enemy)
+		item->size = 10;
+	else if (item->type == object)
+		item->size = 7;
+	else
+		item->size = 2;
 	return (item);
 }
 

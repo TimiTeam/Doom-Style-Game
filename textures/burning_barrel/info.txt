@@ -1,0 +1,13 @@
+waiting{
+textures/burning_barrel/burning_barrel_1.png
+textures/burning_barrel/burning_barrel_2.png
+textures/burning_barrel/burning_barrel_3.png
+}
+walk{
+}
+action{
+}
+taking_damage{
+}
+die{
+}

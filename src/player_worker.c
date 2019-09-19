@@ -62,6 +62,7 @@ t_player				*new_t_player(int pos_x, int pos_y, t_point win_size)
 	player->speed = 0.7f;
 	player->inventar = NULL;
 	player->height = EyeHeight;
+	player->health = 100;
 	load_gun(player);
 	player->current_gun = &player->gun[plasmagun];
 	return (player);

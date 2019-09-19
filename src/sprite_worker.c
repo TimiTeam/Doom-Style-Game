@@ -73,11 +73,11 @@ void 			draw_image_with_criteria(SDL_Surface *screen, SDL_Surface *img, int x, i
 	img_point = (t_vector){};
 	i = 0;
 	draw_crosshair(screen);
-	while (i < width)
+	while (i < height)
 	{
 		j = 0;
 		img_point.x = 0;
-		while (j < height)
+		while (j < width)
 		{
 			pix = get_pixel(img, (int)img_point.x, (int)img_point.y); 
 			if (j + x > data.start && j + x < data.end && i + y > data.ytop[j + x] && i + y < data.ybottom[j + x]
@@ -115,11 +115,11 @@ void    		draw_enemy_sprite(t_item *obj, t_draw_data data, t_player player, SDL_
 	scale.y = (H * m_vfov) / (ob_pos.y);
     ob_pos.x = player.half_win_size.x + (int)(-ob_pos.x * scale.x);
 	ob_pos.y = player.half_win_size.y + (int)(-Yaw(obj->pos.z + data.diff_floor, ob_pos.y) * scale.y);
-	size = obj->size / obj->dist_to_player;
+	size = 1000 / obj->dist_to_player * obj->size / 4.0f;
 	if (obj->dist_to_player < 3)
 		size = clamp(0, size, 1500);
 	screen_pos.x = ob_pos.x - size / 2;
-	screen_pos.y = ob_pos.y - size / 2;
+	screen_pos.y = ob_pos.y - size;
 /*	t_point start = {x, y};
 	t_point end = {x + size, y};
 	line(surface, start, end, 0xffffffff);
@@ -132,7 +132,7 @@ void    		draw_enemy_sprite(t_item *obj, t_draw_data data, t_player player, SDL_
 	start = (t_point){x, y + size};
 	end =(t_point) {x, y};
 	line(surface, start, end, 0xffffffff);*/
-	if (obj->type == enemy && player.shooting && obj->curr_state != die &&
+	if (obj->type == enemy && player.shooting && obj->curr_state != die && player.current_gun->type != plasmagun && 
 		data.start < player.half_win_size.x && data.end > player.half_win_size.x &&
 			screen_pos.x < player.half_win_size.x && screen_pos.x + size > player.half_win_size.x && screen_pos.y < player.half_win_size.y && screen_pos.y + size > player.half_win_size.y)
 	{

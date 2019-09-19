@@ -1,4 +1,7 @@
-100
+Properties{
+health 100
+damage 15
+}
 waiting{
 textures/imp/imp_attacking_2.png
 }

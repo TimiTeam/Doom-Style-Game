@@ -1,4 +1,7 @@
-200
+Properties{
+health 200
+damage 10
+}
 waiting{
 textures/demon/demon_standing_1.png
 }

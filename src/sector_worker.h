@@ -76,6 +76,7 @@ typedef struct 			s_item
 	struct s_sector		*sector;
 	float				speed;
 	int					health;
+	int					damage;
 	struct s_item		*next;
 	t_vector			pos;
 	enum item_state		curr_state;
