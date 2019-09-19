@@ -1,12 +1,10 @@
 #include "main_head.h"
 
-
 void				free_player(t_player *player)
 {
 	int				i;
 	if (!player)
 		return ;
-	
 	delete_items_list(player->inventar);
 	i = 0;
 	while(i < 3)
@@ -26,18 +24,21 @@ void 					load_gun(t_player *player)
 {
 	player->gun[pistol].damage = 10;
 	player->gun[pistol].max_frames = 4;
+	player->gun[pistol].type = pistol;
 	player->gun[pistol].frame[0] = load_jpg_png("textures/guns/pistol/pistol1.png");
 	player->gun[pistol].frame[1] = load_jpg_png("textures/guns/pistol/pistol2.png");
 	player->gun[pistol].frame[2] = load_jpg_png("textures/guns/pistol/pistol3.png");
 	player->gun[pistol].frame[3] = load_jpg_png("textures/guns/pistol/pistol4.png");
 	player->gun[shotgun].damage = 20;
 	player->gun[shotgun].max_frames = 6;
+	player->gun[shotgun].type = shotgun;
 	player->gun[shotgun].frame[0] = load_jpg_png("textures/guns/shotgun/shotgun_frame_1.png");
 	player->gun[shotgun].frame[1] = load_jpg_png("textures/guns/shotgun/shotgun_frame_2.png");
 	player->gun[shotgun].frame[2] = load_jpg_png("textures/guns/shotgun/shotgun_frame_3.png");
 	player->gun[shotgun].frame[3] = load_jpg_png("textures/guns/shotgun/shotgun_frame_4.png");
 	player->gun[shotgun].frame[4] = load_jpg_png("textures/guns/shotgun/shotgun_frame_3.png");
 	player->gun[shotgun].frame[5] = load_jpg_png("textures/guns/shotgun/shotgun_frame_2.png");
+	player->gun[plasmagun].type = plasmagun;
 	player->gun[plasmagun].damage = 35;
 	player->gun[plasmagun].max_frames = 3;
 	player->gun[plasmagun].frame[0] = load_jpg_png("textures/guns/plasmagun/plasmagun_1.png");

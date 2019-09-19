@@ -198,3 +198,29 @@ void    		move_enemy_to_player(t_item *enemy, t_vector player_pos)
 		enemy->pos.y = new_pos.y;
 	}
 }
+
+void   draw_projectile(t_projectile *proj, t_draw_data data, t_player player, SDL_Surface *surface)
+{
+	t_vector ob_pos;
+	t_vector scale;
+	float  tmp_x;
+	t_vector screen_pos;
+	float   size;
+	ob_pos = (t_vector){proj->pos.x - player.pos.x, proj->pos.y - player.pos.y};
+	tmp_x = ob_pos.x;
+	ob_pos.x = ob_pos.x * player.sin_angl - ob_pos.y * player.cos_angl;
+	ob_pos.y = tmp_x * player.cos_angl + ob_pos.y * player.sin_angl;
+	if (ob_pos.y <= 0)
+	 return ;
+	   scale.x = (W * m_hfov) / (ob_pos.y);
+	scale.y = (H * m_vfov) / (ob_pos.y);
+	   ob_pos.x = player.half_win_size.x + (int)(-ob_pos.x * scale.x);
+	ob_pos.y = player.half_win_size.y + (int)(-Yaw(proj->pos.z - player.pos.z, ob_pos.y) * scale.y);
+	float dist = len_between_points(player.pos, proj->pos);
+	screen_pos.x = ob_pos.x - 1000 / dist / 2;
+	screen_pos.y = ob_pos.y - 1000 / dist / 2;
+	size = 1000 /  dist;
+	if (dist < 3)
+	 return ;
+	draw_image_with_criteria(surface, proj->sprite, screen_pos.x, screen_pos.y, size, size, data);
+}

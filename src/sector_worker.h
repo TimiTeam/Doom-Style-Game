@@ -49,6 +49,19 @@ typedef	struct			s_vector
 	float				z;
 }						t_vector;
 
+typedef struct			s_projectile
+{
+	t_vector			pos;
+	float				anglecos;
+	float				anglesin;
+	float				speed;
+	float				damage;
+	float				yaw;
+	SDL_Surface			*sprite;
+	struct s_sector		*curr_sector;
+	struct s_projectile	*next;
+}						t_projectile;
+
 typedef	struct 			s_animation
 {
 	SDL_Surface			*texture[MAX_TEXTURES];
@@ -95,6 +108,7 @@ typedef struct			s_sector
 	SDL_Surface			*ceil_tex;
 	t_item				*items;
 	struct s_sector		*next;
+	t_projectile		*projectiles;
 	float				floor;
 	float				ceil;
 	unsigned short 		sector;

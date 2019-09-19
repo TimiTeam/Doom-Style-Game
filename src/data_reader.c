@@ -1,6 +1,6 @@
 #include "sectors.h"
 
-void 			read_maps_path(int fd, char **path_array, int arr_size)
+void 			read_maps_path(int fd, char **array, int arr_size)
 {
 	char		*pth;
 	int			i;
@@ -9,7 +9,7 @@ void 			read_maps_path(int fd, char **path_array, int arr_size)
 	pth = NULL;
 	while (get_next_line(fd, &pth) > 0 && *pth && i < arr_size)
 	{
-		path_array[i] = ft_strdup(skip_row_number(pth));
+		array[i] = ft_strdup(skip_row_number(pth));
 		ft_strdel(&pth);
 		i++;
 	}

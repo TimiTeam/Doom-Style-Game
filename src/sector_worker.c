@@ -92,6 +92,7 @@ void				delete_sectors(t_sector *sectors)
 		sectors = next->next;
 		delete_walls(next->wall, next->n_walls);
 		delete_items_list(next->items);
+		delete_projectiles(next->projectiles);
 		ft_memdel((void**)&next);
 		printf("Destroyed\n");
 	}

@@ -4,7 +4,7 @@ SRCS	:= sdl_worker.c sdl_create.c sdl_exit.c sdl_texture.c img_loader.c \
 			ttf_worker.c sector_worker.c main.c make_sectors.c texture.c \
 			timer.c pixel_worker.c item_worker.c sprite_worker.c player_worker.c sort_items.c \
 			line.c additional_functions.c data_reader.c item_loader.c wall_reader.c \
-			sector_items_loader.c
+			sector_items_loader.c projectiles.c 
 
 DIR_SRC := $(CURDIR)/src
 DIR_OBJ := $(CURDIR)/obj

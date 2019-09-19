@@ -245,6 +245,26 @@ void 			open_door(t_wall *door, t_wall *door_two, t_player *player)
 	}
 }
 
+void   draw_projectiles(t_projectile **projectiles, t_player player, t_draw_data data, SDL_Surface *screen)
+{
+ t_projectile *tmp;
+ t_projectile *curr;
+ curr = *projectiles;
+ while (curr)
+ {
+  draw_projectile(curr, data, player, screen);
+  if (!move_projectile(curr) || curr->pos.z < curr->curr_sector->floor - 2 || curr->pos.z > curr->curr_sector->ceil - 2){
+   //printf("%f\n", curr->pos.x);
+   tmp = curr->next;
+   printf("Deleting...\n");
+   delete_projectile(projectiles, curr);
+   printf("Deleted\n");
+   curr = tmp;
+   continue ;
+  }
+  curr = curr->next;
+ }
+}
 
 void 			check_enemy_state(t_item *enemy, t_vector player_pos)
 {
@@ -379,6 +399,7 @@ void			draw_sectors(t_sector *sec, t_player *player, t_sdl *sdl, t_draw_data dat
 		draw_world(sec, *w, *player, sdl, data);
 	quickSort(&sec->items, player);
 	draw_sector_items(&sec->items, player, data, sdl->surf);
+	draw_projectiles(&sec->projectiles, *player, data, sdl->surf);
 }
 
 void				run_with_buff(t_player *player, t_sdl *sdl, unsigned int win_x)
@@ -603,7 +624,7 @@ int					hook_event(t_player *player, unsigned char move[4], t_sector *sectors)
 		if (e.type == SDL_MOUSEBUTTONDOWN)
 		{
 			if (e.button.button == SDL_BUTTON_LEFT){
-				player->current_gun->state++;
+				player->current_gun->state += 0.5;
 				player->shooting = 1;
 			}
 		}
@@ -623,6 +644,8 @@ int					hook_event(t_player *player, unsigned char move[4], t_sector *sectors)
 	player->sin_angl = sin(player->angle);
     yaw = clamp(player->yaw - y * 0.05f, -5, 5);
 	player->yaw = yaw;
+	if (player->current_gun->state == 1 && player->current_gun->type == plasmagun)
+			add_projectile(&player->curr_sector->projectiles, create_projectile(*player));
 	return (1);
 }
 
@@ -676,7 +699,6 @@ void                game_loop(t_sdl *sdl, t_player *player, t_sector *sectors)
         run_with_buff(player, sdl, sdl->win_size.x);
 		player->has_key = has_key(player->inventar);
 		print_player_gun(sdl, player);
-
         tex = SDL_CreateTextureFromSurface(sdl->ren, sdl->surf);
         sdl_render(sdl->ren, tex, NULL, NULL);
 
@@ -727,23 +749,23 @@ void 				free_data_holder(t_read_holder *holder)
 		i++;
 	}
 	ft_memdel((void**)&holder->textures);
-	ft_memdel((void**)&holder);
+	//ft_memdel((void**)&holder);
 }
 
 
 int					main(int argc, char **argv)
 {
-	t_read_holder	*holder;
+	t_read_holder	holder;
 	t_sector		*sectors;
 	t_player		*player;
 	t_sdl			*sdl;
 
-	holder = (t_read_holder*)malloc(sizeof(t_read_holder));
-	*holder = (t_read_holder){};
+	//holder = (t_read_holder*)malloc(sizeof(t_read_holder));
+	holder = (t_read_holder){};
 
-	read_game_config_file(holder, "game_info.txt");
-	if (holder->maps_path[0])
-		sectors = read_map(holder->maps_path[0], holder);
+	read_game_config_file(&holder, "game_info.txt");
+	if (holder.maps_path[0])
+		sectors = read_map(holder.maps_path[0], &holder);
 	if (!sectors)
 		exit(1);
 	list_sectors(sectors);
@@ -762,7 +784,7 @@ int					main(int argc, char **argv)
 
 	free_player(player);
 	delete_sectors(sectors);
-	free_data_holder(holder);
+	free_data_holder(&holder);
 	free_t_sdl(&sdl);
 	system("leaks -q doom-nukem");
 }

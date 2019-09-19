@@ -143,4 +143,11 @@ void 					quickSort(t_item **headRef, t_player *player);
 
 void					line(SDL_Surface *surface, t_point start, t_point end, int color);
 
+t_projectile			*create_projectile(t_player player);
+void					delete_projectile(t_projectile **head, t_projectile *proj);
+Uint8					move_projectile(t_projectile *proj);
+void 					add_projectile(t_projectile **head, t_projectile *new);
+void					draw_projectile(t_projectile *proj, t_draw_data data, t_player player, SDL_Surface *surface);
+void					delete_projectiles(t_projectile *head);
+
 #endif
