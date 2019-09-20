@@ -7,9 +7,12 @@ void 			read_maps_path(int fd, char **array, int arr_size)
 
 	i = 0;
 	pth = NULL;
-	while (get_next_line(fd, &pth) > 0 && *pth && i < arr_size)
+	while (get_next_line(fd, &pth) > 0 && i < arr_size)
 	{
-		array[i] = ft_strdup(skip_row_number(pth));
+		if (ft_isdigit(*pth))
+			array[i] = ft_strdup(skip_row_number(pth));
+		else if (ft_strcmp(pth, "###") == 0)
+			break ;
 		ft_strdel(&pth);
 		i++;
 	}
@@ -39,9 +42,13 @@ SDL_Surface		**load_img_array_from_file(int fd, unsigned size)
 
 	array = (SDL_Surface**)malloc(sizeof(SDL_Surface**) * size);
 	i = 0;
-	while (get_next_line(fd, &pth) > 0 && i < size && *pth)
+	while (get_next_line(fd, &pth) > 0 && i < size)
 	{
-		array[i] = load_jpg_png(skip_row_number(pth));
+		
+		if (ft_isdigit(*pth))
+			array[i] = load_jpg_png(skip_row_number(pth));
+		else if (ft_strcmp(pth, "###") == 0)
+			break ;
 		ft_strdel(&pth);
 		i++;
 	}
@@ -58,9 +65,12 @@ t_item			*read_all_items(int fd)
 
 	line = NULL;
 	main = NULL;
-	while (get_next_line(fd, &line) > 0 && *line)
+	while (get_next_line(fd, &line) > 0)
 	{
-		new = make_item_ftom_str(skip_row_number(line));
+		if (ft_isdigit(*line))
+			new = make_item_ftom_str(skip_row_number(line));
+		else if (ft_strcmp(line, "###") == 0)
+			break ;
 		add_next_item(&main, new);
 		ft_strdel(&line);
 	}
@@ -78,11 +88,11 @@ int 			read_game_config_file(t_read_holder *holder, char *info_file_path)
 	{
 		while (get_next_line(fd, &line) > 0)
 		{
-			if (ft_strcmp(line, "Maps:") == 0)
+			if (ft_strcmp(line, "#Levels:") == 0)
 				read_maps_path(fd, &holder->maps_path[0], 5);
-			else if (ft_strncmp(line, "Textures", ft_strlen("Textures")) == 0)
+			else if (ft_strncmp(line, "#Textures", ft_strlen("#Textures")) == 0)
 				holder->textures = load_img_array_from_file(fd, (holder->text_count = get_num_from_str(line)));
-			else if (ft_strcmp(line, "Items:") == 0)
+			else if (ft_strcmp(line, "#Items:") == 0)
 				holder->all_items = read_all_items(fd);
 			ft_strdel(&line);
 		}
@@ -108,7 +118,7 @@ t_sector		*read_map(char *pth, t_read_holder *holder)
 	vectors = get_vectors(fd, holder->vect_count);
 	holder->walls = get_walls(fd, holder->wall_count, vectors, holder->textures);
 	ft_memdel((void**)&vectors);
-	sectors = make_sectors_list(fd, holder->walls, holder->textures, holder->all_items);
+	sectors = make_sectors_list(fd, holder);
 	delete_walls(holder->walls, holder->wall_count);
 	close(fd);
 	return (sectors);

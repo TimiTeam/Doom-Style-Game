@@ -67,24 +67,93 @@ static int			calc_floor_ceil(unsigned half_win_size_y, float floor_or_ceil_diff,
 	return (half_win_size_y - floor_or_ceil_diff * scale_y);
 }
 
+/*
+void 			*run_draw_floor(void *param)
+{
+	t_super_data	*super;
+	super = (t_super_data*)param;
+	draw_world(super->sec, super->wall, super->player, super->sdl, super->data);
+	draw_floor_or_ceil(sdl->surf, sec->ceil_tex, x, data.ytop[x], cya, data.diff_ceil, player);
+	return (NULL);
+}
+
+void 			*run_draw_ceil(void *param)
+{
+	t_super_data	*super;
+	super = (t_super_data*)param;
+	draw_world(super->sec, super->wall, super->player, super->sdl, super->data);
+	return (NULL);
+}
+*/
+
 static void			maping_wall_texture(int *u0, int *u1, float diff_start, float diff_end, float scaled_tex)
 {
 	*u0 = diff_start * scaled_tex;
 	*u1 = diff_end * scaled_tex;
+}
+
+void 				*thread_ceil_drawing(void *param)
+{
+	t_super_data	*super;
+	int				x;
+	int				end;
+	float			ya;
+	float			cya;
+	SDL_Surface		*main_screen;
+	SDL_Surface		*ceil_texture;
+
+	super = (t_super_data*)param;
+	x = super->data.start;
+	end = super->data.end;
+	ceil_texture = super->ceil_texture;
+	main_screen = super->main_screen;
+	while (x < end)
+	{
+		ya = (x - super->wall.start.x) * (super->data.ceil_y_e - super->data.ceil_y_s) / (super->wall.end.x - super->wall.start.x) + super->data.ceil_y_s;
+		cya = clamp(ya, super->data.ytop[x], super->data.ybottom[x]);
+		draw_floor_or_ceil(main_screen, ceil_texture, x, super->data.ytop[x], cya, super->data.diff_ceil, super->player);
+		x++;
+	}
+	return (NULL);
+}
+
+void 			*thread_floor_drawing(void *param)
+{
+	t_super_data	*super;
+	int				x;
+	int				end;
+	float			yb;
+	float			cyb;
+	SDL_Surface		*main_screen;
+	SDL_Surface		*floor_texture;
+
+	super = (t_super_data*)param;
+	x = super->data.start;
+	end = super->data.end;
+	floor_texture = super->floor_texture;
+	main_screen = super->main_screen;
+	while (x < end)
+	{
+        yb = (x - super->wall.start.x) * (super->data.floor_y_e - super->data.floor_y_s) / (super->wall.end.x - super->wall.start.x) + super->data.floor_y_s;
+		cyb = clamp(yb, super->data.ytop[x], super->data.ybottom[x]);
+		draw_floor_or_ceil(main_screen, floor_texture, x, cyb, super->data.ybottom[x], super->data.diff_floor, super->player);
+		x++;
+	}
+	return (NULL);
+}
+
+void 			fill_super_data(t_super_data *super, t_sector *sec, t_draw_data data, t_wall wall)
+{
+	super->data = data;
+	super->wall = wall;
+	super->floor_texture = sec->floor_tex;
+	super->ceil_texture = sec->ceil_tex;
 }
 void 			draw_world(t_sector *sec, t_wall wall, t_player player, t_sdl *sdl, t_draw_data data)
 {
 	t_vector 	scale1;
 	t_vector 	scale2;
 	t_wall		cp;
-	int 		ceil_y_s;
-	int 		ceil_y_e;
-	int 		floor_y_s;
-	int 		floor_y_e;
-	int 		n_ceil_y_s;
-	int 		n_ceil_y_e;
-	int 		n_floor_y_s;
-	int 		n_floor_y_e;
 	int 		cya;
 	int 		cyb;
 	int 		ya;
@@ -133,62 +202,72 @@ void 			draw_world(t_sector *sec, t_wall wall, t_player player, t_sdl *sdl, t_dr
 
 	if(wall.start.x >= wall.end.x || wall.end.x < data.start || wall.start.x > data.end)
 		return ;
-	ceil_y_s = calc_floor_ceil(player.half_win_size.y, Yaw(data.diff_ceil, wall.start.y), scale1.y);
-	ceil_y_e = calc_floor_ceil(player.half_win_size.y, Yaw(data.diff_ceil, wall.end.y), scale2.y);
-	floor_y_s = calc_floor_ceil(player.half_win_size.y, Yaw(data.diff_floor, wall.start.y), scale1.y);
-	floor_y_e = calc_floor_ceil(player.half_win_size.y, Yaw(data.diff_floor, wall.end.y), scale2.y);
+	data.ceil_y_s = calc_floor_ceil(player.half_win_size.y, Yaw(data.diff_ceil, wall.start.y), scale1.y);
+	data.ceil_y_e = calc_floor_ceil(player.half_win_size.y, Yaw(data.diff_ceil, wall.end.y), scale2.y);
+	data.floor_y_s = calc_floor_ceil(player.half_win_size.y, Yaw(data.diff_floor, wall.start.y), scale1.y);
+	data.floor_y_e = calc_floor_ceil(player.half_win_size.y, Yaw(data.diff_floor, wall.end.y), scale2.y);
 	if(wall.type == empty_wall)
 	{
-		n_ceil_y_s = calc_floor_ceil(player.half_win_size.y, Yaw(min(wall.sectors[0]->ceil, wall.sectors[1]->ceil) - data.player_current_height, wall.start.y), scale1.y);
-		n_ceil_y_e = calc_floor_ceil(player.half_win_size.y, Yaw(min(wall.sectors[0]->ceil, wall.sectors[1]->ceil) - data.player_current_height, wall.end.y),scale2.y);
-    	n_floor_y_s = calc_floor_ceil(player.half_win_size.y, Yaw(max(wall.sectors[0]->floor, wall.sectors[1]->floor) - data.player_current_height,wall.start.y), scale1.y);
-		n_floor_y_e = calc_floor_ceil(player.half_win_size.y, Yaw(max(wall.sectors[0]->floor, wall.sectors[1]->floor) - data.player_current_height,wall.end.y), scale2.y);
+		data.n_ceil_y_s = calc_floor_ceil(player.half_win_size.y, Yaw(min(wall.sectors[0]->ceil, wall.sectors[1]->ceil) - data.player_current_height, wall.start.y), scale1.y);
+		data.n_ceil_y_e = calc_floor_ceil(player.half_win_size.y, Yaw(min(wall.sectors[0]->ceil, wall.sectors[1]->ceil) - data.player_current_height, wall.end.y),scale2.y);
+    	data.n_floor_y_s = calc_floor_ceil(player.half_win_size.y, Yaw(max(wall.sectors[0]->floor, wall.sectors[1]->floor) - data.player_current_height,wall.start.y), scale1.y);
+		data.n_floor_y_e = calc_floor_ceil(player.half_win_size.y, Yaw(max(wall.sectors[0]->floor, wall.sectors[1]->floor) - data.player_current_height,wall.end.y), scale2.y);
 
 	}
+	pthread_t	thread[2];
+	t_super_data super[2];
+
 	x = max(wall.start.x, data.start);
 	end = min(wall.end.x, data.end);
 	data.start = x;
 	data.end = end;
-	while (x < end && x < sdl->win_size.x)
+	for(int i = 0; i < 2; i++)
 	{
-		ya = (x - wall.start.x) * (ceil_y_e - ceil_y_s) / (wall.end.x - wall.start.x) + ceil_y_s;
+		fill_super_data(&super[i], sec, data, wall);
+		super[i].main_screen = sdl->surf;
+		super[i].player = player;
+	}
+
+	pthread_create(&thread[0], NULL, thread_ceil_drawing, &super[0]);
+
+	pthread_create(&thread[1], NULL, thread_floor_drawing, &super[1]);
+	
+	while (x < end)
+	{
+		ya = (x - wall.start.x) * (data.ceil_y_e - data.ceil_y_s) / (wall.end.x - wall.start.x) + data.ceil_y_s;
 
 		cya = clamp(ya, data.ytop[x], data.ybottom[x]);
 
-        yb = (x - wall.start.x) * (floor_y_e - floor_y_s) / (wall.end.x - wall.start.x) + floor_y_s;
+        yb = (x - wall.start.x) * (data.floor_y_e - data.floor_y_s) / (wall.end.x - wall.start.x) + data.floor_y_s;
 
 		cyb = clamp(yb, data.ytop[x], data.ybottom[x]);
 
-		draw_floor_or_ceil(sdl->surf, sec->ceil_tex, x, data.ytop[x], cya, data.diff_ceil, player);
-
-		draw_floor_or_ceil(sdl->surf, sec->floor_tex, x, cyb, data.ybottom[x], data.diff_floor, player);
-
 		txtx = (u0 * ((wall.end.x - x) * wall.end.y) + u1 * ((x - wall.start.x) * wall.start.y)) / ((wall.end.x - x) * wall.end.y + (x - wall.start.x) * wall.start.y);
+		
+//		draw_floor_or_ceil(sdl->surf, sec->ceil_tex, x, data.ytop[x], cya, data.diff_ceil, player);
+
+//		draw_floor_or_ceil(sdl->surf, sec->floor_tex, x, cyb, data.ybottom[x], data.diff_floor, player);
 
 		if (wall.type != empty_wall)
-		{
 			textLine(x, cya, cyb, (struct Scaler)Scaler_Init(ya, cya, yb, 0, fabsf(sec->floor - sec->ceil) * scaleH), txtx, sdl->surf, wall.texture);
-		}
 		else
 		{
-			nya = (x - wall.start.x) * (n_ceil_y_e - n_ceil_y_s) / (wall.end.x-wall.start.x) + n_ceil_y_s;
-			nyb = (x - wall.start.x) * (n_floor_y_e - n_floor_y_s) / (wall.end.x-wall.start.x) + n_floor_y_s;
-
-			n_cya = clamp((x - wall.start.x) * (n_ceil_y_e - n_ceil_y_s) / (wall.end.x-wall.start.x) + n_ceil_y_s, data.ytop[x], data.ybottom[x]);
-			n_cyb = clamp((x - wall.start.x) * (n_floor_y_e - n_floor_y_s) / (wall.end.x-wall.start.x) + n_floor_y_s, data.ytop[x], data.ybottom[x]);
-
-			if (nya - 1 != ya){
+			nya = (x - wall.start.x) * (data.n_ceil_y_e - data.n_ceil_y_s) / (wall.end.x-wall.start.x) + data.n_ceil_y_s;
+			nyb = (x - wall.start.x) * (data.n_floor_y_e -data.n_floor_y_s) / (wall.end.x-wall.start.x) + data.n_floor_y_s;
+			n_cya = clamp((x - wall.start.x) * (data.n_ceil_y_e - data.n_ceil_y_s) / (wall.end.x-wall.start.x) + data.n_ceil_y_s, data.ytop[x], data.ybottom[x]);
+			n_cyb = clamp((x - wall.start.x) * (data.n_floor_y_e - data.n_floor_y_s) / (wall.end.x-wall.start.x) + data.n_floor_y_s, data.ytop[x], data.ybottom[x]);
+			if (nya - 1 != ya)
      			textLine(x, cya, n_cya - 1, (struct Scaler)Scaler_Init(ya, cya, nya - 1, 0, (float)sec->floor_tex->h), txtx, sdl->surf, wall.texture);
-                }
-            if (yb - 1 !=  nyb){
-                 textLine(x, n_cyb + 1, cyb, (struct Scaler)Scaler_Init(nyb, n_cyb, yb - 1, 0, (float)sec->floor_tex->h), txtx, sdl->surf, wall.texture);
-            }
+        	if (yb - 1 !=  nyb)
+        	     textLine(x, n_cyb + 1, cyb, (struct Scaler)Scaler_Init(nyb, n_cyb, yb - 1, 0, (float)sec->floor_tex->h), txtx, sdl->surf, wall.texture);
 			data.ytop[x] = n_cya;
 			data.ybottom[x] = n_cyb;
 
 		}
 		x++;
 	}
+	pthread_join(thread[0], NULL);
+	pthread_join(thread[1], NULL);
 	if (wall.type == empty_wall)
 	{
 		if (wall.sectors[0]->sector != player.curr_sector->sector && wall.sectors[0]->sector != sec->sector)
@@ -198,22 +277,15 @@ void 			draw_world(t_sector *sec, t_wall wall, t_player player, t_sdl *sdl, t_dr
 	}
 }
 
-void			*run_thread(void *param)
-{
-	t_super_data	*super;
-	super = (t_super_data*)param;
-	draw_world(super->sec, super->wall, super->player, super->sdl, super->data);
-	return (NULL);
-}
 
-void 			open_door(t_wall *door, t_wall *door_two, t_player *player)
+void 			open_door(t_wall *door, t_player *player, t_sector *current_sector)
 {
 	float 		vx;
 	float 		vy;
 	float 		dist;
 	float 		dx;
 	
-	if (door && door->end.y > door->start.y)
+	if (door->sectors[0] == current_sector && door->end.y > door->start.y)
 	{ 
 		vx = door->end.x - door->start.x;
 		vy = door->end.y - door->start.y;
@@ -224,23 +296,21 @@ void 			open_door(t_wall *door, t_wall *door_two, t_player *player)
 		if (door->end.y <= door->start.y)
 		{
 			door->close = 0;
-			player->door = NULL;
-			printf("dor id: %d address %p\n end : %f, stat : %f\tplayer->opening_door = %d\n", door->id, door, door->end.y, door->start.y, player->opening_door);
+			door->opening = 0;
 		}
 	}
-	if (door_two && door_two->end.y < door_two->start.y)
+	if (door->sectors[1] == current_sector && door->end.y < door->start.y)
 	{
-		vx = door_two->start.x - door_two->end.x;
-		vy = door_two->start.y - door_two->end.y;
-		dist = len_between_points(door_two->end, door_two->start);
+		vx = door->start.x - door->end.x;
+		vy = door->start.y - door->end.y;
+		dist = len_between_points(door->end, door->start);
 		dx = (dist - 0.1) / dist;
-		door_two->start.x = vx * dx + door_two->end.x;
-		door_two->start.y = vy * dx + door_two->end.y;
-		if(door_two->end.y >= door_two->start.y)
+		door->start.x = vx * dx + door->end.x;
+		door->start.y = vy * dx + door->end.y;
+		if(door->end.y >= door->start.y)
 		{
-			door_two->close = 0;
-			player->door_two = NULL;
-			printf("dor id: %d address %p\n end : %f, stat : %f\tplayer->opening_door = %d\n", door_two->id, door_two, door_two->end.y, door_two->start.y, player->opening_door);
+			door->close = 0;
+			door->opening = 0;
 		}
 	}
 }
@@ -258,7 +328,6 @@ void   draw_projectiles(t_projectile **projectiles, t_player player, t_draw_data
 	{
 		is_hit = 0;
 		draw_projectile(curr, data, player, screen);
-		printf("%f\n", curr->pos.z);
 		while (curr_enemy)
 		{
 			if (curr_enemy->type == enemy && len_between_points(curr->pos, curr_enemy->pos) <= 2 && curr_enemy->curr_state != die &&
@@ -267,7 +336,6 @@ void   draw_projectiles(t_projectile **projectiles, t_player player, t_draw_data
 				curr_enemy->health -= curr->damage;
 				is_hit = 1;
 				curr_enemy->players_hit = 1;
-				printf("Quit\n");
 				break ;
 			}
 			curr_enemy = curr_enemy->next;
@@ -370,36 +438,16 @@ void			draw_sectors(t_sector *sec, t_player *player, t_sdl *sdl, t_draw_data dat
 	int			i;
 	int			d;
 	int			p;
-	int			wall;
 	t_wall		*w;
-	pthread_t	thread[THREADS];
-	t_super_data super[THREADS];
-	t_draw_data	spr;
+	t_draw_data		spr;
 
 	d = 0;
 	i = 0;
 	p = -1;
-	//data.player_current_height = (player->pos.z + player->jump + ((int)(player->curr_sector->ceil - player->curr_sector->floor) <= (int)(player->height + player->jump + player->sit) ? -3 : player->sit));
 	data.diff_ceil = sec->ceil - data.player_current_height;
 	data.diff_floor = sec->floor - data.player_current_height;
 	if (data.diff_ceil < 0)
 		player->fall = 1;
-	/*
-	while (d < THREADS && i < sec->n_walls)
-	{
-		if(sec->wall[i]->type != empty_wall)
-		{
-			super[d].data = data;
-			super[d].player = *player;
-			super[d].sdl = sdl;
-			super[d].sec = sec;
-			super[d].wall = *sec->wall[i];
-			pthread_create(&thread[d], NULL, run_thread, &super[d]);
-			d++;
-		}
-		i++;
-	}
-	spr = data;*/
 	while (i < sec->n_walls)
 	{
 		w = sec->wall[i];
@@ -407,31 +455,26 @@ void			draw_sectors(t_sector *sec, t_player *player, t_sdl *sdl, t_draw_data dat
 			draw_world(sec, *w, *player, sdl, data);
 		i++;
 	}
-/*
-	d = 0;
-	while (d < THREADS)
-	{
-		pthread_join(thread[d], NULL);
-		d++;
-	}
-*/	
 	while (++p < MAX_PORTALS && (w = sec->portals[p]))
 	{
-		if (w->close && player->door && w->id == player->door->id_portal)
-			w->close = 0;
 		if (!w->close)
 			draw_world(sec, *w, *player, sdl, data);
 	}
 	i = -1;
 	while (++i < MAX_PORTALS && (w = sec->doors[i]))
-		draw_world(sec, *w, *player, sdl, data);
+	{
+		if (w->opening)
+			open_door(w, player, sec);
+		if (w->close)
+			draw_world(sec, *w, *player, sdl, data);
+	}
 	quickSort(&sec->items, player);
 	draw_sector_items(&sec->items, player, data, sdl->surf);
 	draw_projectiles(&sec->projectiles, *player, data, sdl->surf, sec->items);
 }
 
 void				run_with_buff(t_player *player, t_sdl *sdl, unsigned int win_x)
-{
+{ 
 	unsigned 		x;
 	int 			ytop[win_x];
 	int				ybottom[win_x];
@@ -446,10 +489,6 @@ void				run_with_buff(t_player *player, t_sdl *sdl, unsigned int win_x)
 	}
 	draw_data.start = 0;
 	draw_data.end = win_x;
-	if (player->opening_door)
-		open_door(player->door, player->door_two, player);
-	if (!player->door && !player->door_two)
-		player->opening_door = 0;
 	draw_data.player_current_height = (player->pos.z + player->jump + (player->curr_sector->ceil - player->curr_sector->floor <= player->height + player->jump + player->sit ? -3 : player->sit));
 	draw_sectors(player->curr_sector, player, sdl, draw_data);
 }
@@ -548,6 +587,7 @@ void 				check_door(t_player *player, t_sector *sectors)
 	int			j;
 	t_vector	step;
 	t_wall		**walls;
+	t_wall		*door_two;
 
 	i = -1;
 	if (!player->has_key)
@@ -567,13 +607,11 @@ void 				check_door(t_player *player, t_sector *sectors)
 			use_key(player);
 			player->has_key = has_key(player->inventar);
 			j = 0;
-			player->door = walls[i];
-			player->door_two = find_door_in_next_sector(sectors, walls[i]);
-			player->opening_door = 1;
-			if (player->door_two)
-				printf("\n\n\tdoor one id: %d address = %p; door two id: %d address = %p\n\n", player->door->id, player->door, player->door_two->id, player->door_two);
-			else
-				printf("ERROR: DOOR TWO NOT FOUND :(\n\n");
+			walls[i]->opening = 1;
+			walls[i]->portal_ptr->close = 0;
+			door_two = find_door_in_next_sector(sectors, walls[i]);
+			door_two->opening = 1;
+			door_two->portal_ptr->close = 0;
 			return ;
         }
 	}
@@ -638,10 +676,8 @@ int					hook_event(t_player *player, unsigned char move[4], t_sector *sectors)
 				player->current_gun = &player->gun[plasmagun];
 			
 		}
-		if (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_e && !player->opening_door)
+		if (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_e)
 				check_door(player, player->curr_sector);
-		else if (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_i)
-				printf("\n\t\topening door : %s, %d\npos: %f %f player height: %d\n", player->opening_door ? "True" : "False", player->opening_door, player->pos.x, player->pos.y, (int)player->pos.z);
 		if (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_LCTRL)
 			player->sit = -3;
 		if (e.type == SDL_KEYUP && e.key.keysym.sym == SDLK_LCTRL)

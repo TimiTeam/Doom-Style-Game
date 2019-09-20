@@ -23,13 +23,21 @@ static int h_h = H >> 1;
 
 typedef struct		s_draw_data
 {
+	int 			ytop[W];
+	int				ybottom[W];
 	float 			start;
 	float			end;
 	float			player_current_height;
+	float			floor_y_e;
+	float			floor_y_s;
+	float			ceil_y_e;
+	float			ceil_y_s;
+	float			n_ceil_y_s;
+	float			n_ceil_y_e;
+	float			n_floor_y_s;
+	float			n_floor_y_e;
 	int 			diff_ceil;
 	int 			diff_floor;
-	int 			ytop[W];
-	int				ybottom[W];
 }					t_draw_data;
 
 typedef enum type
@@ -54,8 +62,6 @@ typedef struct		s_plyer
 {	
 	t_sector 		*curr_sector;
 	t_item			*inventar;
-	t_wall			*door;
-	t_wall			*door_two;
 	t_gun			gun[3];
 	t_vector		pos;
 	t_point			half_win_size;
@@ -71,7 +77,6 @@ typedef struct		s_plyer
 	int				health;
 	char			fall;
 	unsigned short	jump;
-	unsigned char	opening_door;
 	char			sit;
 	unsigned char 	has_key;
 	unsigned char	shooting;
@@ -79,11 +84,12 @@ typedef struct		s_plyer
 
 typedef struct 		s_super_data
 {
-	t_sector 		*sec;
 	t_wall 			wall;
 	t_player 		player;
-	t_sdl 			*sdl;
 	t_draw_data 	data;
+	SDL_Surface		*main_screen;
+	SDL_Surface		*floor_texture;
+	SDL_Surface		*ceil_texture;
 }					t_super_data;
 
 #define CeilingFloorScreenCoordinatesToMapCoordinates(mapY, screenX, screenY, X, Z, player) \

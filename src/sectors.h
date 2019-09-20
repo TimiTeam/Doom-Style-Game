@@ -25,7 +25,10 @@ void 				load_animation(t_item *item, char *item_name);
 
 t_vector			*get_vectors(int fd, int vec_size);
 t_wall				**get_walls(int fd, int wall_size, t_vector *vectors, SDL_Surface **textures);
-t_sector			*make_sectors_list(int fd, t_wall **walls, SDL_Surface **textures, t_item *all_items);
+t_sector			*make_sectors_list(int fd, t_read_holder *holder);
 t_item				*make_items(char *data, t_item *all_items);
+
+void				finde_close_doors(t_wall **walls, unsigned short size);
+t_wall				**create_sector_walls(t_sector *sector, t_read_holder *holder, char *data, int wall_size);
 
 #endif

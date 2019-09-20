@@ -96,8 +96,9 @@ typedef	struct			s_wall
 	t_vector			end;
 	enum wall_type		type;
 	unsigned short		id;
-	short 				id_portal;
-	unsigned short		close;
+	struct s_wall		*portal_ptr;
+	unsigned char		close;
+	unsigned char		opening;
 }						t_wall;
 
 typedef struct			s_sector

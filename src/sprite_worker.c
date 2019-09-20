@@ -102,7 +102,7 @@ void    		draw_enemy_sprite(t_item *obj, t_draw_data data, t_player player, SDL_
 	t_vector	ob_pos;
 	t_vector	scale;
 	float		tmp_x;
-	t_vector	screen_pos;
+	t_point		screen_pos;
 	float 		size;
 
 	ob_pos = (t_vector){obj->pos.x - player.pos.x, obj->pos.y - player.pos.y};

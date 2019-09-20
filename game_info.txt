@@ -1,7 +1,8 @@
-Maps:
+#Levels:
 1) new_map
+###
 
-Textures 10 (textures/):
+#Textures 10 (textures/):
 0) textures/image.jpeg
 1) textures/metal_wall.jpeg
 2) textures/wall.jpeg
@@ -12,8 +13,9 @@ Textures 10 (textures/):
 7) textures/ground.jpeg
 8) textures/metal_floor.jpeg
 9) textures/metal_door.jpg
+###
 
-Items:
+#Items:
 0) coin coin
 1) key old_key
 2) super_bonus bonus
@@ -23,3 +25,4 @@ Items:
 6) object lantern
 7) health big_medkit
 8) health medkit
+###
