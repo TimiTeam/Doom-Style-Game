@@ -1,0 +1,12 @@
+Properties{
+shotgun
+}
+waiting{
+textures/shotgun_found/shotgun_found.png
+}
+walk{
+}
+action{
+}
+die{
+}

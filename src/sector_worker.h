@@ -15,12 +15,20 @@ enum 					wall_type
 	door
 };
 
+enum 					gun_type
+{
+	pistol,
+	shotgun,
+	plasmagun
+};
+
 enum 					item_type
 {
 	object,
 	coin,
 	super_bonus,
 	health,
+	gun,
 	ammo,
 	key,
 	enemy
@@ -77,10 +85,12 @@ typedef struct 			s_item
 	float				speed;
 	int					health;
 	int					damage;
+	int					ammo;
 	struct s_item		*next;
 	t_vector			pos;
 	enum item_state		curr_state;
 	enum item_type 		type;
+	enum gun_type		gun_type;
 	unsigned			id;
 	unsigned 			size;
 	float				dist_to_player;

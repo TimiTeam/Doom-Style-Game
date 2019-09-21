@@ -28,4 +28,10 @@ Path: textures/
 6) object lantern
 7) health big_medkit
 8) health medkit
+9) gun pistolet_found
+10) gun shotgun_found
+11) gun plasmagun_found
+12) ammo pistolet_ammo
+13) ammo shotgun_ammo
+14) ammo plasmagun_ammo
 ###

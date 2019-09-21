@@ -1,0 +1,13 @@
+Properties{
+pistol
+ammo 35
+}
+waiting{
+textures/pistolet_ammo/pistol_ammo.png
+}
+walk{
+}
+action{
+}
+die{
+}

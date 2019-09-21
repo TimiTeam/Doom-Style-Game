@@ -13,12 +13,31 @@ static enum item_type	get_item_type(char *type)
 			ret = super_bonus;
 		else if(ft_strncmp("health", type, ft_strlen("health")) == 0)
 			ret = health;
-		else if(ft_strncmp("ammo", type, ft_strlen("coammoin")) == 0)
+		else if(ft_strncmp("ammo", type, ft_strlen("ammo")) == 0)
 			ret = ammo;
+		else if(ft_strncmp("gun", type, ft_strlen("gun")) == 0)
+			ret = gun;
 		else if(ft_strncmp("key", type, ft_strlen("key")) == 0)
 			ret = key;
 		else if(ft_strncmp("enemy", type, ft_strlen("enemy")) == 0)
 			ret = enemy;
+	}
+	return (ret);
+}
+
+enum gun_type	get_gun_type(char *type)
+{
+	enum gun_type ret;
+
+	ret = 0;
+	if (type)
+	{
+		if(ft_strncmp("pistol", type, ft_strlen("pistol")) == 0)
+			ret = pistol;
+		else if(ft_strncmp("shotgun", type, ft_strlen("shotgun")) == 0)
+			ret = shotgun;
+		else if(ft_strncmp("plasmagun", type, ft_strlen("plasmagun")) == 0)
+			ret = plasmagun;
 	}
 	return (ret);
 }
@@ -54,6 +73,10 @@ static void		read_properties(t_item *item, int fd)
 			item->health = get_num_from_str(line);
 		else if (ft_strncmp(line, "damage", ft_strlen("damage")) == 0)
 			item->damage = get_num_from_str(line);
+		else if (ft_strncmp(line, "ammo", ft_strlen("ammo")) == 0)
+			item->ammo = get_num_from_str(line);
+		else if (item->type == gun || item->type == ammo)
+			item->gun_type = get_gun_type(line);
 		ft_strdel(&line);
 	}
 	ft_strdel(&line);

@@ -40,20 +40,14 @@ typedef struct		s_draw_data
 	int 			diff_floor;
 }					t_draw_data;
 
-typedef enum type
-{
-	pistol,
-	shotgun,
-	plasmagun
-}			type;
-
 typedef struct		s_gun
 {
 	float 			state;
 	SDL_Surface		*frame[10];
 	SDL_Surface		*icon;
-	type			type;
-	int				max_frames;
+	enum gun_type	type;
+	int				max_frames;\
+	int				ammo;
 	float			damage;
 	float			rate_of_fire;
 }					t_gun;
@@ -62,7 +56,7 @@ typedef struct		s_plyer
 {	
 	t_sector 		*curr_sector;
 	t_item			*inventar;
-	t_gun			gun[3];
+	t_gun			*gun[3];
 	t_vector		pos;
 	t_point			half_win_size;
 	t_gun			*current_gun;

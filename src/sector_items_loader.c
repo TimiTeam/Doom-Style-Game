@@ -23,10 +23,12 @@ void 			copy_t_item_value_by_id(t_item *dst, t_item *all, unsigned src_item_id)
 		if (src_item_id == all->id)
 		{
 			copy_all_t_iteam_states(dst, all);
+			dst->ammo = all->ammo;
 			dst->health = all->health;
 			dst->speed = all->speed;
 			dst->type = all->type;
 			dst->damage = all->damage;
+			dst->gun_type = all->gun_type;
 			break ;
 		}
 		all = all->next;

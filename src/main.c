@@ -2,6 +2,43 @@
 
 float scaleH = 16;
 
+void 					load_gun(t_gun **gun)
+{
+	gun[pistol] = (t_gun*)malloc(sizeof(t_gun));
+	*gun[pistol]= (t_gun){};
+	gun[pistol]->ammo = 35;
+	gun[pistol]->damage = 10;
+	gun[pistol]->max_frames = 4;
+	gun[pistol]->type = pistol;
+	gun[pistol]->frame[0] = load_jpg_png("textures/guns/pistol/pistol1.png");
+	gun[pistol]->frame[1] = load_jpg_png("textures/guns/pistol/pistol2.png");
+	gun[pistol]->frame[2] = load_jpg_png("textures/guns/pistol/pistol3.png");
+	gun[pistol]->frame[3] = load_jpg_png("textures/guns/pistol/pistol4.png");
+	gun[shotgun] = (t_gun*)malloc(sizeof(t_gun));
+	*gun[shotgun]= (t_gun){};
+	gun[shotgun]->ammo = 12;
+	gun[shotgun]->damage = 20;
+	gun[shotgun]->max_frames = 6;
+	gun[shotgun]->type = shotgun;
+	gun[shotgun]->frame[0] = load_jpg_png("textures/guns/shotgun/shotgun_frame_1.png");
+	gun[shotgun]->frame[1] = load_jpg_png("textures/guns/shotgun/shotgun_frame_2.png");
+	gun[shotgun]->frame[2] = load_jpg_png("textures/guns/shotgun/shotgun_frame_3.png");
+	gun[shotgun]->frame[3] = load_jpg_png("textures/guns/shotgun/shotgun_frame_4.png");
+	gun[shotgun]->frame[4] = load_jpg_png("textures/guns/shotgun/shotgun_frame_3.png");
+	gun[shotgun]->frame[5] = load_jpg_png("textures/guns/shotgun/shotgun_frame_2.png");
+	gun[plasmagun] = (t_gun*)malloc(sizeof(t_gun));
+	*gun[plasmagun]= (t_gun){};
+	gun[plasmagun]->ammo = 20;
+	gun[plasmagun]->type = plasmagun;
+	gun[plasmagun]->damage = 35;
+	gun[plasmagun]->max_frames = 3;
+	gun[plasmagun]->frame[0] = load_jpg_png("textures/guns/plasmagun/plasmagun_1.png");
+	gun[plasmagun]->frame[1] = load_jpg_png("textures/guns/plasmagun/plasmagun_2.png");
+	gun[plasmagun]->frame[2] = load_jpg_png("textures/guns/plasmagun/plasmagun_3.png");
+}
+
+t_gun			**all_guns;
+
 static float		len_between_points(t_vector a, t_vector b)
 {
 	return (sqrt((b.x - a.x) * (b.x - a.x) + (b.y - a.y) * (b.y - a.y)));
@@ -66,25 +103,6 @@ static int			calc_floor_ceil(unsigned half_win_size_y, float floor_or_ceil_diff,
 {
 	return (half_win_size_y - floor_or_ceil_diff * scale_y);
 }
-
-/*
-void 			*run_draw_floor(void *param)
-{
-	t_super_data	*super;
-	super = (t_super_data*)param;
-	draw_world(super->sec, super->wall, super->player, super->sdl, super->data);
-	draw_floor_or_ceil(sdl->surf, sec->ceil_tex, x, data.ytop[x], cya, data.diff_ceil, player);
-	return (NULL);
-}
-
-void 			*run_draw_ceil(void *param)
-{
-	t_super_data	*super;
-	super = (t_super_data*)param;
-	draw_world(super->sec, super->wall, super->player, super->sdl, super->data);
-	return (NULL);
-}
-*/
 
 static void			maping_wall_texture(int *u0, int *u1, float diff_start, float diff_end, float scaled_tex)
 {
@@ -229,9 +247,8 @@ void 			draw_world(t_sector *sec, t_wall wall, t_player player, t_sdl *sdl, t_dr
 	}
 
 	pthread_create(&thread[0], NULL, thread_ceil_drawing, &super[0]);
-
 	pthread_create(&thread[1], NULL, thread_floor_drawing, &super[1]);
-	
+
 	while (x < end)
 	{
 		ya = (x - wall.start.x) * (data.ceil_y_e - data.ceil_y_s) / (wall.end.x - wall.start.x) + data.ceil_y_s;
@@ -244,10 +261,6 @@ void 			draw_world(t_sector *sec, t_wall wall, t_player player, t_sdl *sdl, t_dr
 
 		txtx = (u0 * ((wall.end.x - x) * wall.end.y) + u1 * ((x - wall.start.x) * wall.start.y)) / ((wall.end.x - x) * wall.end.y + (x - wall.start.x) * wall.start.y);
 		
-//		draw_floor_or_ceil(sdl->surf, sec->ceil_tex, x, data.ytop[x], cya, data.diff_ceil, player);
-
-//		draw_floor_or_ceil(sdl->surf, sec->floor_tex, x, cyb, data.ybottom[x], data.diff_floor, player);
-
 		if (wall.type != empty_wall)
 			textLine(x, cya, cyb, (struct Scaler)Scaler_Init(ya, cya, yb, 0, fabsf(sec->floor - sec->ceil) * scaleH), txtx, sdl->surf, wall.texture);
 		else
@@ -324,6 +337,7 @@ void   draw_projectiles(t_projectile **projectiles, t_player player, t_draw_data
 
 	curr_enemy = items;
 	curr = *projectiles;
+
 	while (curr)
 	{
 		is_hit = 0;
@@ -375,6 +389,37 @@ void 			check_enemy_state(t_item *enemy, t_vector player_pos)
 }
 
 
+void 			get_gun_to_player(t_player *player, t_gun **guns, enum gun_type gun_type)
+{
+	t_gun		*src;
+	t_gun		*dst;
+	int			i;
+	if (gun_type > 3)
+	{
+		printf("gun_type error %d\n", gun_type);
+		return ;
+	}
+	printf("gun_type %d\n", gun_type);
+	src = guns[gun_type];
+	if (player->gun[gun_type] == NULL)
+	{
+		player->gun[gun_type] = (t_gun*)malloc(sizeof(t_gun));
+		*player->gun[gun_type] = (t_gun){};
+		i = 0;
+		while (i < 10)
+		{
+			player->gun[gun_type]->frame[i] = src->frame[i];
+			i++;
+		}
+		player->gun[gun_type]->damage = src->damage;
+		player->gun[gun_type]->icon = src->icon;
+		player->gun[gun_type]->type = src->type;
+	}
+	dst = player->gun[gun_type];
+	dst->ammo += src->ammo;
+	player->current_gun = dst;
+}
+
 void 			draw_sector_items(t_item **items, t_player *player, t_draw_data data, SDL_Surface *screen)
 {
 	t_item 	*tmp;
@@ -389,7 +434,7 @@ void 			draw_sector_items(t_item **items, t_player *player, t_draw_data data, SD
 	{
 		if (it->type == enemy)
 			check_enemy_state(it, player->pos);
-		if ((it->curr_frame += 0.35) >= it->states[it->curr_state].max_textures)
+		if ((it->curr_frame += 0.22) >= it->states[it->curr_state].max_textures)
 		{
 			if (it->curr_state == action)
 			{
@@ -407,11 +452,39 @@ void 			draw_sector_items(t_item **items, t_player *player, t_draw_data data, SD
 				continue ;
 			}
 		}
-		if (it->type != object && it->type != enemy && it->dist_to_player <= 1)
+		if (it->dist_to_player <= 1 && it->type != object && it->type != enemy)
 		{
-			from_list_to_another_list(items, &player->inventar, it);
-			if (it->type == health)
+			if (it->type == gun )
+			{
+				get_gun_to_player(player, all_guns, it->gun_type);
+				tmp = it->next;
+				delete_item_by_ptr(items, it);
+				it = tmp;
+				continue ;
+			}
+			else if (it->type == health)
+			{
 				player->health += it->health;
+				printf("Your Health %d\n", player->health);
+				tmp = it->next;
+				delete_item_by_ptr(items, it);
+				it = tmp;
+				continue ;
+			}
+			else if (it->type == ammo)
+			{
+				if (player->gun[it->gun_type])
+				{
+					player->gun[it->gun_type]->ammo += it->ammo;
+					printf("player->gun[it->gun_type]->ammo %d\n", player->gun[it->gun_type]->ammo);
+					tmp = it->next;
+					delete_item_by_ptr(items, it);
+					it = tmp;
+					continue ;
+				}
+			}
+			else
+				from_list_to_another_list(items, &player->inventar, it);
 		}
 		else
 		{
@@ -511,7 +584,6 @@ void			move_player(t_player *player, float sin_angle, float cos_angle)
         {
 			if (wall[i]->type != empty_wall)
 				return;
-
 			if (wall[i]->sectors[0] && player->curr_sector->sector != wall[i]->sectors[0]->sector)
 				next = wall[i]->sectors[0];
 			else if (wall[i]->sectors[1] && player->curr_sector->sector != wall[i]->sectors[1]->sector)
@@ -668,12 +740,12 @@ int					hook_event(t_player *player, unsigned char move[4], t_sector *sectors)
 				player->speed = 0.6;
 			else if (e.key.keysym.sym == SDLK_SPACE && !player->jump)
 				player->jump = 1;
-			else if (e.key.keysym.sym == SDLK_1)
-				player->current_gun = &player->gun[pistol];
-			else if (e.key.keysym.sym == SDLK_2)
-				player->current_gun = &player->gun[shotgun];
-			else if (e.key.keysym.sym == SDLK_3)
-				player->current_gun = &player->gun[plasmagun];
+			else if (e.key.keysym.sym == SDLK_1 && player->gun[pistol])
+				player->current_gun = player->gun[pistol];
+			else if (e.key.keysym.sym == SDLK_2 && player->gun[shotgun])
+				player->current_gun = player->gun[shotgun];
+			else if (e.key.keysym.sym == SDLK_3 && player->gun[plasmagun])
+				player->current_gun = player->gun[plasmagun];
 			
 		}
 		if (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_e)
@@ -682,9 +754,9 @@ int					hook_event(t_player *player, unsigned char move[4], t_sector *sectors)
 			player->sit = -3;
 		if (e.type == SDL_KEYUP && e.key.keysym.sym == SDLK_LCTRL)
 			player->sit = 0;
-		if (e.type == SDL_MOUSEBUTTONDOWN)
+		if (e.type == SDL_MOUSEBUTTONDOWN && player->current_gun)
 		{
-			if (e.button.button == SDL_BUTTON_LEFT){
+			if (e.button.button == SDL_BUTTON_LEFT && player->current_gun->ammo > 0){
 				player->shooting = 1;
 			}
 		}
@@ -710,7 +782,7 @@ int					hook_event(t_player *player, unsigned char move[4], t_sector *sectors)
 	player->sin_angl = sin(player->angle);
     yaw = clamp(player->yaw - y * 0.05f, -5, 5);
 	player->yaw = yaw;
-	if (player->current_gun->state == 1 && player->current_gun->type == plasmagun)
+	if (player->current_gun && player->current_gun->state == 0.33f && player->current_gun->type == plasmagun)
 		add_projectile(&player->curr_sector->projectiles, create_projectile(*player));
 	return (1);
 }
@@ -722,10 +794,14 @@ void 				print_player_gun(t_sdl *sdl, t_player *pla)
 	SDL_Surface		*surf;
 
 	if (!pla->current_gun->frame[(int)pla->current_gun->state])
+	{
 		pla->current_gun->state = 0;
+		pla->current_gun->ammo--;
+		printf("current_gun->ammo : %d\n", pla->current_gun->ammo);
+	}
 	surf = pla->current_gun->frame[(int)pla->current_gun->state];
-	if (pla->shooting || pla->current_gun->state)
-		pla->current_gun->state += 0.5;
+	if ((pla->shooting || pla->current_gun->state) && pla->current_gun->ammo > 0)
+		pla->current_gun->state += 0.33;
 	pos.x = pla->half_win_size.x - surf->w / 2;
 	pos.y = sdl->win_size.y - surf->h;
 	draw_image(sdl->surf, surf, pos.x, pos.y, surf->w, surf->h);
@@ -763,7 +839,8 @@ void                game_loop(t_sdl *sdl, t_player *player, t_sector *sectors)
 
         run_with_buff(player, sdl, sdl->win_size.x);
 		player->has_key = has_key(player->inventar);
-		print_player_gun(sdl, player);
+		if(player->current_gun)
+			print_player_gun(sdl, player);
         tex = SDL_CreateTextureFromSurface(sdl->ren, sdl->surf);
         sdl_render(sdl->ren, tex, NULL, NULL);
 
@@ -784,6 +861,8 @@ void                game_loop(t_sdl *sdl, t_player *player, t_sector *sectors)
         SDL_RenderPresent(sdl->ren);
 
         run = hook_event(player, move, sectors);
+		if (sdl->fps > 30)
+			SDL_Delay(20);
     }
 
 	printf("\n\n\t\t---- MAX FPS  %f ----\n\n", max);
@@ -842,6 +921,11 @@ int					main(int argc, char **argv)
 	player->height = EyeHeight;
 	player->curr_sector = sectors;
 	player->pos.z = player->curr_sector->floor + player->height;
+
+
+	all_guns = (t_gun**)malloc(sizeof(t_gun*) * 3);
+	load_gun(all_guns);
+
 	game_loop(sdl, player, sectors);
 
 	list_items(player->inventar);
