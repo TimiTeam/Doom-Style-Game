@@ -78,6 +78,7 @@ typedef struct		s_plyer
 
 typedef struct 		s_super_data
 {
+	t_sector		*sect;
 	t_wall 			wall;
 	t_player 		player;
 	t_draw_data 	data;
@@ -132,9 +133,13 @@ void 					draw_image(SDL_Surface *screen, SDL_Surface *img, int x, int y, int wi
 
 int 					Scaler_Next(Scaler *i);
 
-void 					textLine(int x, int y1,int y2, Scaler ty,unsigned txtx, SDL_Surface *surface, SDL_Surface *image);
+//void 					textLine(int x, int y1,int y2, Scaler ty,unsigned txtx, SDL_Surface *surface, SDL_Surface *image);
 
-void 					draw_floor_or_ceil(SDL_Surface *dst, SDL_Surface *src, int x, int start_y, int end_y, int diff_height, t_player player);
+void 					textLine(int x, int y1, int y2, struct Scaler ty, unsigned txtx, t_sector *sect, SDL_Surface *surface, SDL_Surface *image, t_vector tex_pos, float scaleL, float scaleH, float maxDist, t_vector lightSource);
+
+//void 					draw_floor_or_ceil(SDL_Surface *dst, SDL_Surface *src, int x, int start_y, int end_y, int diff_height, t_player player);
+
+void 					draw_floor_or_ceil(SDL_Surface *dst, SDL_Surface *src, int x, int y, int end_y, int diff_height, t_player player, t_vector lightSource, t_sector *sect);
 
 void					draw_enemy_sprite(t_item *obj, t_draw_data data, t_player player, SDL_Surface *surface);
 

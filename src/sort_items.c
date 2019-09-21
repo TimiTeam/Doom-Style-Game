@@ -102,6 +102,7 @@ void  quickSort(t_item **headRef, t_player *player)
 	if (!headRef || !*headRef)
 		return;
 	(*headRef)->dist_to_player = len_between_points((*headRef)->pos, player->pos);
+
     (*headRef) = quickSortRecur(*headRef, getTail(*headRef), player); 
     return ; 
 }

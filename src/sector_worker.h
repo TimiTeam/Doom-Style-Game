@@ -83,6 +83,7 @@ typedef struct 			s_item
 	float				curr_frame;
 	struct s_sector		*sector;
 	float				speed;
+	t_point				size;
 	int					health;
 	int					damage;
 	int					ammo;
@@ -92,7 +93,7 @@ typedef struct 			s_item
 	enum item_type 		type;
 	enum gun_type		gun_type;
 	unsigned			id;
-	unsigned 			size;
+//	unsigned 			size;
 	float				dist_to_player;
 	unsigned char		is_dying;
 	unsigned char		players_hit;

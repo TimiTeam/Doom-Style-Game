@@ -1,0 +1,11 @@
+waiting{
+textures/dead_man/dead_man.png
+}
+walk{
+}
+action{
+}
+taking_damage{
+}
+die{
+}

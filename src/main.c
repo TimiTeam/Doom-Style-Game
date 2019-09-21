@@ -129,7 +129,7 @@ void 				*thread_ceil_drawing(void *param)
 	{
 		ya = (x - super->wall.start.x) * (super->data.ceil_y_e - super->data.ceil_y_s) / (super->wall.end.x - super->wall.start.x) + super->data.ceil_y_s;
 		cya = clamp(ya, super->data.ytop[x], super->data.ybottom[x]);
-		draw_floor_or_ceil(main_screen, ceil_texture, x, super->data.ytop[x], cya, super->data.diff_ceil, super->player);
+		draw_floor_or_ceil(main_screen, ceil_texture, x, super->data.ytop[x], cya, super->data.diff_ceil, super->player, (t_vector){5,5,10}, super->sect);
 		x++;
 	}
 	return (NULL);
@@ -154,7 +154,7 @@ void 			*thread_floor_drawing(void *param)
 	{
         yb = (x - super->wall.start.x) * (super->data.floor_y_e - super->data.floor_y_s) / (super->wall.end.x - super->wall.start.x) + super->data.floor_y_s;
 		cyb = clamp(yb, super->data.ytop[x], super->data.ybottom[x]);
-		draw_floor_or_ceil(main_screen, floor_texture, x, cyb, super->data.ybottom[x], super->data.diff_floor, super->player);
+		draw_floor_or_ceil(main_screen, floor_texture, x, cyb, super->data.ybottom[x], super->data.diff_floor, super->player, (t_vector){5,5,10}, super->sect);
 		x++;
 	}
 	return (NULL);
@@ -244,6 +244,7 @@ void 			draw_world(t_sector *sec, t_wall wall, t_player player, t_sdl *sdl, t_dr
 		fill_super_data(&super[i], sec, data, wall);
 		super[i].main_screen = sdl->surf;
 		super[i].player = player;
+		super[i].sect = sec;
 	}
 
 	pthread_create(&thread[0], NULL, thread_ceil_drawing, &super[0]);
@@ -260,9 +261,17 @@ void 			draw_world(t_sector *sec, t_wall wall, t_player player, t_sdl *sdl, t_dr
 		cyb = clamp(yb, data.ytop[x], data.ybottom[x]);
 
 		txtx = (u0 * ((wall.end.x - x) * wall.end.y) + u1 * ((x - wall.start.x) * wall.start.y)) / ((wall.end.x - x) * wall.end.y + (x - wall.start.x) * wall.start.y);
-		
+		float maxDist = 15;	
+		int z = ((x - wall.start.x) * (wall.end.y - wall.start.y) / (wall.end.x  - wall.start.x) + wall.start.y);	
+		t_vector vec = {cp.start.x - cp.end.x, cp.start.y - cp.end.y};	
+		float dist = sqrtf(vec.x * vec.x + vec.y * vec.y);	
+		//float mapped = (x - x1) / (float)(x2-x1) * (dist - 0) + 0;	
+		float mapped = txtx / (wall.texture->w * scaleL) * dist;	
+		float dx = (dist - mapped) / dist;
+		t_vector tex_pos = {vec.x * dx + cp.end.x, vec.y * dx + cp.end.y};
 		if (wall.type != empty_wall)
-			textLine(x, cya, cyb, (struct Scaler)Scaler_Init(ya, cya, yb, 0, fabsf(sec->floor - sec->ceil) * scaleH), txtx, sdl->surf, wall.texture);
+//			textLine(x, cya, cyb, (struct Scaler)Scaler_Init(ya, cya, yb, 0, fabsf(sec->floor - sec->ceil) * scaleH), txtx, sdl->surf, wall.texture);
+			textLine(x, cya, cyb, (struct Scaler)Scaler_Init(ya, cya, yb, 0, fabsf(sec->floor - sec->ceil) * scaleH), txtx, sec, sdl->surf, wall.texture, tex_pos, scaleL, scaleH, maxDist, (t_vector){5,5,10});
 		else
 		{
 			nya = (x - wall.start.x) * (data.n_ceil_y_e - data.n_ceil_y_s) / (wall.end.x-wall.start.x) + data.n_ceil_y_s;
@@ -270,9 +279,13 @@ void 			draw_world(t_sector *sec, t_wall wall, t_player player, t_sdl *sdl, t_dr
 			n_cya = clamp((x - wall.start.x) * (data.n_ceil_y_e - data.n_ceil_y_s) / (wall.end.x-wall.start.x) + data.n_ceil_y_s, data.ytop[x], data.ybottom[x]);
 			n_cyb = clamp((x - wall.start.x) * (data.n_floor_y_e - data.n_floor_y_s) / (wall.end.x-wall.start.x) + data.n_floor_y_s, data.ytop[x], data.ybottom[x]);
 			if (nya - 1 != ya)
-     			textLine(x, cya, n_cya - 1, (struct Scaler)Scaler_Init(ya, cya, nya - 1, 0, (float)sec->floor_tex->h), txtx, sdl->surf, wall.texture);
+     	//		textLine(x, cya, n_cya - 1, (struct Scaler)Scaler_Init(ya, cya, nya - 1, 0, (float)sec->floor_tex->h), txtx, sdl->surf, wall.texture);
+		 		textLine(x, cya, n_cya - 1, (struct Scaler)Scaler_Init(ya, cya, yb, 0, fabsf(sec->floor - sec->ceil) * scaleH), txtx, sec, sdl->surf, wall.texture, tex_pos, scaleL, scaleH, maxDist, (t_vector){5,5,10});
+	
         	if (yb - 1 !=  nyb)
-        	     textLine(x, n_cyb + 1, cyb, (struct Scaler)Scaler_Init(nyb, n_cyb, yb - 1, 0, (float)sec->floor_tex->h), txtx, sdl->surf, wall.texture);
+        	    //textLine(x, n_cyb + 1, cyb, (struct Scaler)Scaler_Init(nyb, n_cyb, yb - 1, 0, (float)sec->floor_tex->h), txtx, sdl->surf, wall.texture);
+				textLine(x, n_cyb + 1, cyb, (struct Scaler)Scaler_Init(ya, cya, yb, 0, fabsf(sec->floor - sec->ceil) * scaleH), txtx, sec, sdl->surf, wall.texture, tex_pos, scaleL, scaleH, maxDist, (t_vector){5,5,10});
+	
 			data.ytop[x] = n_cya;
 			data.ybottom[x] = n_cyb;
 
@@ -345,7 +358,7 @@ void   draw_projectiles(t_projectile **projectiles, t_player player, t_draw_data
 		while (curr_enemy)
 		{
 			if (curr_enemy->type == enemy && len_between_points(curr->pos, curr_enemy->pos) <= 2 && curr_enemy->curr_state != die &&
-			curr->pos.z > curr_enemy->pos.z + curr_enemy->sector->floor && curr->pos.z < curr_enemy->pos.z + curr_enemy->size+ curr_enemy->sector->floor)
+			curr->pos.z > curr_enemy->pos.z + curr_enemy->sector->floor && curr->pos.z < curr_enemy->pos.z + curr_enemy->size.x + curr_enemy->sector->floor)
 			{
 				curr_enemy->health -= curr->damage;
 				is_hit = 1;

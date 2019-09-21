@@ -29,6 +29,7 @@ void 			copy_t_item_value_by_id(t_item *dst, t_item *all, unsigned src_item_id)
 			dst->type = all->type;
 			dst->damage = all->damage;
 			dst->gun_type = all->gun_type;
+			dst->size = all->size;
 			break ;
 		}
 		all = all->next;
@@ -46,12 +47,15 @@ t_item			*create_item(char *data, t_item *all_items)
 	if(!(item = create_new_item((int)x, (int)y)))
 		return (0);
 	copy_t_item_value_by_id(item, all_items, ft_atoi(&data[i]));
-	if (item->type == enemy)
-		item->size = 10;
-	else if (item->type == object)
-		item->size = 7;
-	else
-		item->size = 2;
+
+	item->size.x = item->states[0].texture[0]->w ;
+	item->size.y = item->states[0].texture[0]->h ;
+	if(item->size.x > 150 && item->size.y > 150)
+	{
+		item->size.x = item->size.x / 5;
+		item->size.y = item->size.y / 5;
+	}
+	printf("%s img size x %d, y %d\n", data, 1200 / item->states[0].texture[0]->w,  980 / item->states[0].texture[0]->h);
 	return (item);
 }
 

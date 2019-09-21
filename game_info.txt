@@ -34,4 +34,10 @@ Path: textures/
 12) ammo pistolet_ammo
 13) ammo shotgun_ammo
 14) ammo plasmagun_ammo
+15) object torch
+16) object tree_one
+17) object tree_two
+18) object dead_man
+19) object broken_tree
+20) object broken_tree_two
 ###
