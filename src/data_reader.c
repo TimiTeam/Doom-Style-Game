@@ -1,80 +1,105 @@
 #include "sectors.h"
 
-void 			read_maps_path(int fd, char **array, int arr_size)
+char			*get_path(int fd)
 {
 	char		*pth;
+	char		*line;
+	int			skip_len;
+
+	pth = NULL;
+	skip_len = ft_strlen("Path: ");
+	if (get_next_line(fd, &line) > 0 && ft_strncmp(line, "Path: ", skip_len) == 0)
+	{
+		pth = ft_strsub(line, skip_len, ft_strlen(line) - skip_len);
+		if (!*pth)
+			ft_strdel(&pth);
+	}
+	ft_strdel(&line);
+	return (pth);
+}
+
+void 			read_maps_path(int fd, char **array, int arr_size)
+{
+	char		*file_name;
+	char		*path;
+	char		*full_path;
 	int			i;
 
 	i = 0;
-	pth = NULL;
-	while (get_next_line(fd, &pth) > 0 && i < arr_size)
+	file_name = NULL;
+	if(!(path = get_path(fd)))
+		return ;
+	while (get_next_line(fd, &file_name) > 0 && i < arr_size)
 	{
-		if (ft_isdigit(*pth))
-			array[i] = ft_strdup(skip_row_number(pth));
-		else if (ft_strcmp(pth, "###") == 0)
+		if (ft_isdigit(*file_name))
+		{
+			full_path = clip_n_str(path, skip_row_number(file_name), "");
+			array[i] = ft_strdup(full_path);
+			ft_strdel(&full_path);
+		}
+		else if (ft_strcmp(file_name, "###") == 0)
 			break ;
-		ft_strdel(&pth);
+		ft_strdel(&file_name);
 		i++;
 	}
-	ft_strdel(&pth);
+	ft_strdel(&path);
+	ft_strdel(&file_name);
 }
 
-t_item			*make_item_ftom_str(char *line)
-{
-	t_item		*item;
-	int			i;
-
-	if(!(item = new_item()))
-		return (NULL);
-	item->type = get_item_type(line);
-	i = 0;
-	while (line[i] && line[i] != ' ')
-		i++;
-	load_animation(item, &line[i]);
-	return (item);
-}
 
 SDL_Surface		**load_img_array_from_file(int fd, unsigned size)
 {
 	SDL_Surface	**array;
-	char		*pth;
+	char		*file_name;
+	char		*full_path;
+	char		*path;
 	int			i;
 
+	if (!(path = get_path(fd)))
+		return (NULL);
 	array = (SDL_Surface**)malloc(sizeof(SDL_Surface**) * size);
 	i = 0;
-	while (get_next_line(fd, &pth) > 0 && i < size)
+	while (get_next_line(fd, &file_name) > 0 && i < size)
 	{
-		
-		if (ft_isdigit(*pth))
-			array[i] = load_jpg_png(skip_row_number(pth));
-		else if (ft_strcmp(pth, "###") == 0)
+		if (ft_isdigit(*file_name))
+		{
+			full_path = clip_n_str(path, skip_row_number(file_name), "");
+			array[i] = load_jpg_png(full_path);
+			ft_strdel(&full_path);
+		}
+		else if (ft_strcmp(file_name, "###") == 0)
 			break ;
-		ft_strdel(&pth);
+		ft_strdel(&file_name);
 		i++;
 	}
-	ft_strdel(&pth);
+	ft_strdel(&path);
+	ft_strdel(&file_name);
 	return (array);
 }
 
 
 t_item			*read_all_items(int fd)
 {
-	char		*line;
+	char		*file_name;
+	char		*path;
 	t_item		*main;
 	t_item		*new;
 
-	line = NULL;
+	file_name = NULL;
 	main = NULL;
-	while (get_next_line(fd, &line) > 0)
+	if(!(path = get_path(fd)))
+		return (NULL);
+	while (get_next_line(fd, &file_name) > 0)
 	{
-		if (ft_isdigit(*line))
-			new = make_item_ftom_str(skip_row_number(line));
-		else if (ft_strcmp(line, "###") == 0)
+		if (ft_isdigit(*file_name))
+			new = make_item_ftom_str(skip_row_number(file_name), path);
+		else if (ft_strcmp(file_name, "###") == 0)
 			break ;
 		add_next_item(&main, new);
-		ft_strdel(&line);
+		ft_strdel(&file_name);
 	}
-	ft_strdel(&line);
+	ft_strdel(&path);
+	ft_strdel(&file_name);
 	return (main);
 }
 
@@ -88,11 +113,11 @@ int 			read_game_config_file(t_read_holder *holder, char *info_file_path)
 	{
 		while (get_next_line(fd, &line) > 0)
 		{
-			if (ft_strcmp(line, "#Levels:") == 0)
+			if (ft_strcmp(line, "#Levels") == 0)
 				read_maps_path(fd, &holder->maps_path[0], 5);
 			else if (ft_strncmp(line, "#Textures", ft_strlen("#Textures")) == 0)
 				holder->textures = load_img_array_from_file(fd, (holder->text_count = get_num_from_str(line)));
-			else if (ft_strcmp(line, "#Items:") == 0)
+			else if (ft_strcmp(line, "#Items") == 0)
 				holder->all_items = read_all_items(fd);
 			ft_strdel(&line);
 		}

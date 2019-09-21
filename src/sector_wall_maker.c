@@ -21,7 +21,7 @@ int				get_wall_count(char *str)
 	return (count);
 }
 
-void			mark_like_neighbors(t_sector *who, t_wall *where)
+static void		mark_like_neighbors(t_sector *who, t_wall *where)
 {
 	if (!where)
 	{
@@ -34,7 +34,7 @@ void			mark_like_neighbors(t_sector *who, t_wall *where)
 		where->sectors[1] = who;
 }
 
-t_wall			*copy_t_wall_velue(t_wall *src)
+static t_wall	*copy_t_wall_velue(t_wall *src)
 {
 	t_wall		*dst;
 

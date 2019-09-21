@@ -75,3 +75,16 @@ unsigned		get_numbers(float *one, float *two, char delimiter, char *line)
 	ft_strdel(&num);
 	return (i);
 }
+
+char 			*clip_n_str(char *s1, char *s2, char *s3)
+{
+	char		*new;
+
+	if (!s1 || !s2 || !s3)
+		return (NULL);
+	new = (char*)malloc(sizeof(char) * ft_strlen(s1) + ft_strlen(s2) + ft_strlen(s3) + 1);
+	ft_strcpy(new, s1);
+	ft_strncpy(&new[ft_strlen(s1)], s2, ft_strlen(s2));
+	ft_strcpy(&new[ft_strlen(s1) + ft_strlen(s2)], s3);
+	return (new);
+}

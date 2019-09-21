@@ -1,17 +1,6 @@
 #include "sectors.h"
 
-static char 	*clip_n_str(char *s1, char *s2, char *s3)
-{
-	char		*new;
-
-	new = (char*)malloc(sizeof(char) * ft_strlen(s1) + ft_strlen(s2) + ft_strlen(s3) + 1);
-	ft_strcpy(new, s1);
-	ft_strncpy(&new[ft_strlen(s1)], s2, ft_strlen(s2));
-	ft_strcpy(&new[ft_strlen(s1) + ft_strlen(s2)], s3);
-	return (new);
-}
-
-enum item_type	get_item_type(char *type)
+static enum item_type	get_item_type(char *type)
 {
 	enum item_type ret;
 
@@ -101,15 +90,24 @@ static void		create_animations(t_item *it, char *file_pth)
 	ft_strdel(&line);
 }
 
-void 			load_animation(t_item *item, char *item_name)
+t_item			*make_item_ftom_str(char *line, char *directory_pth)
 {
-	char		*new;
+	t_item		*item;
+	char		*full_name;
 	int			i;
 
+	if(!(item = new_item()))
+		return (NULL);
+	item->type = get_item_type(line);
 	i = 0;
-	while (item_name[i] && item_name[i] == ' ')
+	while (line[i] && line[i] != ' ')
 		i++;
-	new = clip_n_str("textures/", &item_name[i], "/info.txt");
-	create_animations(item, new);
-	ft_memdel((void**)&new);
+	while (line[i] && line[i] == ' ')
+		i++;
+	if ((full_name = clip_n_str(directory_pth, &line[i], "/info.txt")))
+	{
+		create_animations(item, full_name);
+		ft_memdel((void**)&full_name);
+	}
+	return (item);
 }

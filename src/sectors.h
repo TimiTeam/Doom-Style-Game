@@ -19,9 +19,9 @@ int					get_num_from_str(char *str);
 char				*skip_row_number(char *line);
 void				get_count_struct_arrays(int fd, int *vect_count, int *wall_count);
 unsigned			get_numbers(float *one, float *two, char delimiter, char *line);
-
-enum item_type		get_item_type(char *line);
-void 				load_animation(t_item *item, char *item_name);
+char 				*clip_n_str(char *s1, char *s2, char *s3);
+int					get_wall_count(char *str);
+t_item				*make_item_ftom_str(char *line, char *directory_pth);
 
 t_vector			*get_vectors(int fd, int vec_size);
 t_wall				**get_walls(int fd, int wall_size, t_vector *vectors, SDL_Surface **textures);
