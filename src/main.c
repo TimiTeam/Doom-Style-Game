@@ -2,6 +2,8 @@
 
 float scaleH = 16;
 
+Uint8 menu = 1;
+
 void 					load_gun(t_gun **gun)
 {
 	gun[pistol] = (t_gun*)malloc(sizeof(t_gun));
@@ -800,6 +802,53 @@ int					hook_event(t_player *player, unsigned char move[4], t_sector *sectors)
 	return (1);
 }
 
+int				render_menu(t_pr *m, t_sdl *sdl, t_sector *sectors)
+{
+		printf("Drawing background\n");
+		draw_image(sdl->surf, m->background, 0, 0, sdl->win_size.x, sdl->win_size.y);
+		printf("Background has been drawn\n");
+		printf("Drawing logo\n");
+		draw_image(sdl->surf, m->logo, m->logo_rect.x, m->logo_rect.y, m->logo_rect.w, m->logo_rect.h);
+		printf("Logo has been drawn\n");
+		printf("Drawing play_button\n");
+		draw_image(sdl->surf, m->play_button, m->play_rect.x, m->play_rect.y, m->play_rect.w, m->play_rect.h);
+		printf("play_button has been drawn\n");
+		printf("Drawing choose_level_button\n");
+		draw_image(sdl->surf, m->choose_level_button, m->choose_level_rect.x,
+			m->choose_level_rect.y, m->choose_level_rect.w, m->choose_level_rect.h);
+		printf("choose_level_button has been drawn\n");
+		printf("Drawing font_texture\n");
+		draw_image(sdl->surf, m->font_texture, m->font_rect.x, m->font_rect.y, m->font_rect.w, m->font_rect.h);
+		printf("font_texture has been drawn\n");
+		printf("Drawing exit_button\n");
+		draw_image(sdl->surf, m->exit_button, m->exit_rect.x, m->exit_rect.y, m->exit_rect.w, m->exit_rect.h);
+		printf("exit_button has been drawn\n");
+		// SDL_RenderClear(sdl->ren);
+		// SDL_RenderCopy(sdl->ren, m->background, NULL, NULL);
+		// SDL_RenderCopy(sdl->ren, m->logo, NULL, &m->logo_rect);
+		// SDL_RenderCopy(sdl->ren, m->play_button, NULL, &m->play_rect);
+		// SDL_RenderCopy(sdl->ren, m->choose_level_button, NULL,
+		// 	&m->choose_level_rect);
+		// SDL_RenderCopy(sdl->ren, m->font_texture, NULL, &m->font_rect);
+		// SDL_RenderCopy(sdl->ren, m->exit_button, NULL, &m->exit_rect);
+		// SDL_RenderPresent(sdl->ren);
+		while (SDL_PollEvent(&m->event))
+		{
+			if (m->event.type == SDL_QUIT)
+				return (0);
+			if (m->event.type == SDL_KEYDOWN)
+			{
+				printf("Event\n");
+				down_action(m);
+				up_action(m);
+				rest_of_the_action_shit(m, &menu, sdl);
+				if (m->event.key.keysym.sym == SDLK_ESCAPE)
+					return (0);
+			}
+		}
+		return (1);
+}
+
 void 				print_player_gun(t_sdl *sdl, t_player *pla)
 {
 	t_point			pos;
@@ -820,7 +869,7 @@ void 				print_player_gun(t_sdl *sdl, t_player *pla)
 	draw_image(sdl->surf, surf, pos.x, pos.y, surf->w, surf->h);
 }
 
-void                game_loop(t_sdl *sdl, t_player *player, t_sector *sectors)
+void                game_loop(t_sdl *sdl, t_player *player, t_sector *sectors, t_pr *m)
 {
     int				run;
     SDL_Texture		*tex;
@@ -846,36 +895,41 @@ void                game_loop(t_sdl *sdl, t_player *player, t_sector *sectors)
     start_timer(&timer);
     while(run)
     {
-        SDL_SetRenderDrawColor(sdl->ren, 0, 0, 0, 255);
-        SDL_RenderClear(sdl->ren);
-        SDL_FillRect(sdl->surf, NULL, 0x00);
+		if (menu)
+			run = render_menu(m, sdl, sectors);
+		else
+		{
 
-        run_with_buff(player, sdl, sdl->win_size.x);
-		player->has_key = has_key(player->inventar);
-		if(player->current_gun)
-			print_player_gun(sdl, player);
-        tex = SDL_CreateTextureFromSurface(sdl->ren, sdl->surf);
-        sdl_render(sdl->ren, tex, NULL, NULL);
+			run_with_buff(player, sdl, sdl->win_size.x);
+			player->has_key = has_key(player->inventar);
+			if(player->current_gun)
+				print_player_gun(sdl, player);
 
-        SDL_DestroyTexture(tex);
+			if((sdl->fps = (float)sdl->frame_id / (get_ticks(timer) / 1000.f)) > 2000000)
+				sdl->fps = 0;
+			max = sdl->fps > max ? sdl->fps : max;
+			sdl->frame_id++;
+			sprintf(str, "fps:  %f", sdl->fps);
 
-        if((sdl->fps = (float)sdl->frame_id / (get_ticks(timer) / 1000.f)) > 2000000)
-            sdl->fps = 0;
-		max = sdl->fps > max ? sdl->fps : max;
-        sdl->frame_id++;
-        sprintf(str, "fps:  %f", sdl->fps);
+			text = make_black_text_using_ttf_font(sdl->ren, font, str);
 
-		text = make_black_text_using_ttf_font(sdl->ren, font, str);
+			SDL_RenderCopy(sdl->ren, text, NULL, &fps_area);
 
-        SDL_RenderCopy(sdl->ren, text, NULL, &fps_area);
+			SDL_DestroyTexture(text);
 
-        SDL_DestroyTexture(text);
 
-        SDL_RenderPresent(sdl->ren);
 
-        run = hook_event(player, move, sectors);
-		if (sdl->fps > 30)
-			SDL_Delay(20);
+			run = hook_event(player, move, sectors);
+			// if (sdl->fps > 30)
+			// 	SDL_Delay(20);
+		}
+		SDL_SetRenderDrawColor(sdl->ren, 0, 0, 0, 255);
+		SDL_RenderClear(sdl->ren);
+		//SDL_FillRect(sdl->surf, NULL, 0x00);
+		tex = SDL_CreateTextureFromSurface(sdl->ren, sdl->surf);
+		sdl_render(sdl->ren, tex, NULL, NULL);
+		SDL_DestroyTexture(tex);
+		SDL_RenderPresent(sdl->ren);
     }
 
 	printf("\n\n\t\t---- MAX FPS  %f ----\n\n", max);
@@ -909,25 +963,46 @@ void 				free_data_holder(t_read_holder *holder)
 	//ft_memdel((void**)&holder);
 }
 
+void	load_textures(t_pr *m, t_sdl *sdl)
+{
+	TTF_Init();
+	m->done = SDL_FALSE;
+	m->background = IMG_Load("textures/background1.jpg");
+	m->play_button = IMG_Load("textures/play_button.png");
+	m->exit_button = IMG_Load("textures/exit_button.png");
+	m->logo = IMG_Load("textures/logo.png");
+	m->choose_level_button = IMG_Load("textures/choose_level_button.png");
+	m->font = TTF_OpenFont("amazdoom/AmazDooMLeft2.ttf", 256);
+	m->font_color.r = 255;
+	m->font_color.g = 255;
+	m->font_color.b = 255;
+	m->font_color.a = 255;
+}
+
 int					main(int argc, char **argv)
 {
 	t_read_holder	holder;
 	t_sector		*sectors;
 	t_player		*player;
 	t_sdl			*sdl;
-
+	t_pr			m;
 	//holder = (t_read_holder*)malloc(sizeof(t_read_holder));
 	holder = (t_read_holder){};
 
+	m.i = 0;
+	m.win_h = H;
+	m.win_w = W;
+	initialize_sdl_win(&m);
 	read_game_config_file(&holder, "game_info.txt");
+	list_sectors(sectors);
 	if (holder.maps_path[0])
 		sectors = read_map(holder.maps_path[0], &holder);
 	if (!sectors)
 		exit(1);
-	list_sectors(sectors);
-
 	sdl = new_t_sdl(W, H, "doom-nukem.");
 	init_sdl(sdl);
+	load_textures(&m, sdl);
+	readdirec(&m, sdl, holder.maps_path);
 	SDL_ShowCursor(SDL_DISABLE);
 	SDL_SetRelativeMouseMode(SDL_TRUE);
 	player = new_t_player(3, 3, sdl->win_size);
@@ -939,7 +1014,7 @@ int					main(int argc, char **argv)
 	all_guns = (t_gun**)malloc(sizeof(t_gun*) * 3);
 	load_gun(all_guns);
 
-	game_loop(sdl, player, sectors);
+	game_loop(sdl, player, sectors, &m);
 
 	list_items(player->inventar);
 
