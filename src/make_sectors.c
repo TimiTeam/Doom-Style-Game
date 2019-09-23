@@ -57,13 +57,15 @@ void			mark_all_neighbors(t_sector *sectors, t_wall **all)
 	int			i;
 	int			p;
 	int			d;
-	
+	int 		w;
+
 	sec = sectors;
 	while (sec)
 	{
 		i = 0;
 		p = 0;
 		d = 0;
+		w = 0;
 		while (i < sec->n_walls)
 		{
 			wall = all[sec->wall[i]->id];
@@ -79,6 +81,8 @@ void			mark_all_neighbors(t_sector *sectors, t_wall **all)
 				sec->portals[p++] = sec->wall[i];
 			else if (sec->wall[i]->type == door && d < MAX_PORTALS)
 				sec->doors[d++] = sec->wall[i];
+			else if (sec->wall[i]->type == filled_wall && w < MAX_PORTALS)
+				sec->only_walls[w++] = sec->wall[i];
 			i++;
 		}
 		set_sector_ptr_to_items(sec->items, sec);

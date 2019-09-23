@@ -93,7 +93,6 @@ typedef struct 			s_item
 	enum item_type 		type;
 	enum gun_type		gun_type;
 	unsigned			id;
-//	unsigned 			size;
 	float				dist_to_player;
 	unsigned char		is_dying;
 	unsigned char		players_hit;
@@ -115,6 +114,7 @@ typedef	struct			s_wall
 typedef struct			s_sector
 {
 	t_wall				**wall;
+	t_wall				*only_walls[MAX_PORTALS];
 	t_wall				*portals[MAX_PORTALS];
 	t_wall 				*doors[MAX_PORTALS];
 	SDL_Surface			*floor_tex;

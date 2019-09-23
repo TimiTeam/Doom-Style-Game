@@ -38,6 +38,10 @@ typedef struct		s_draw_data
 	float			n_floor_y_e;
 	int 			diff_ceil;
 	int 			diff_floor;
+	int				floor_height;
+	int				ceil_height;
+	int				n_floor_height;
+	int				n_ceil_height;
 }					t_draw_data;
 
 typedef struct		s_gun
