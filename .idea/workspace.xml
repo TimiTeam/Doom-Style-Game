@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CMakeRunConfigurationManager" shouldGenerate="true" shouldDeleteObsolete="true">
+    <generated />
+  </component>
+  <component name="CMakeSettings">
+    <configurations>
+      <configuration PROFILE_NAME="Debug" CONFIG_NAME="Debug" />
+    </configurations>
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="68ac8070-20c7-4bc1-9e77-54667beb2bf7" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/Makefile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/builder.h" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/builder.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeCache.txt" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeCache.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/3.14.5/CMakeCCompiler.cmake" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/3.14.5/CMakeDetermineCompilerABI_C.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/3.14.5/CMakeSystem.cmake" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/3.14.5/CompilerIdC/CMakeCCompilerId.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/3.14.5/CompilerIdC/a.out" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/CMakeDirectoryInformation.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/CMakeDirectoryInformation.cmake" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/CMakeOutput.log" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/CMakeOutput.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/Makefile.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/Makefile.cmake" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/Makefile2" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/Makefile2" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/TargetDirectories.txt" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/TargetDirectories.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/builder.dir/C.includecache" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/builder.dir/C.includecache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/builder.dir/DependInfo.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/builder.dir/DependInfo.cmake" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/builder.dir/build.make" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/builder.dir/build.make" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/builder.dir/depend.internal" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/builder.dir/depend.internal" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/builder.dir/depend.make" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/builder.dir/depend.make" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/builder.dir/fill_polygon.c.o" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/builder.dir/flags.make" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/builder.dir/flags.make" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/builder.dir/get_assets.c.o" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/builder.dir/get_next_line.c.o" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/builder.dir/level_edit.c.o" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/builder.dir/link.txt" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/builder.dir/link.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/builder.dir/main.c.o" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/builder.dir/main_menu.c.o" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/builder.dir/math.c.o" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/builder.dir/modes.c.o" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/builder.dir/render.c.o" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/builder.dir/render_grid.c.o" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/builder.dir/rewrite.c.o" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/builder.dir/sdl_fun.c.o" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/builder.dir/summary.c.o" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/clion-log.txt" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/clion-log.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/feature_tests.bin" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/feature_tests.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/feature_tests.c" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/feature_tests.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/C.includecache" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/C.includecache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/DependInfo.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/DependInfo.cmake" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/build.make" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/build.make" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/depend.internal" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/depend.internal" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/flags.make" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/flags.make" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_abs_cut.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_abs_cut.c.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_atoi.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_atoi.c.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_bzero.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_bzero.c.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_count_words.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_count_words.c.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_digittoint.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_digittoint.c.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_isalnum.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_isalnum.c.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_isalpha.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_isalpha.c.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_isascii.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_isascii.c.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_isdigit.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_isdigit.c.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_islower.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_islower.c.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_isprint.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_isprint.c.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_isspace.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_isspace.c.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_isupper.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_isupper.c.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_iswhspace.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_iswhspace.c.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_isxdigit.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_isxdigit.c.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_itoa.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_itoa.c.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_lstadd.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_lstadd.c.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_lstdel.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_lstdel.c.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_lstdelone.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_lstdelone.c.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_lstiter.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_lstiter.c.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_lstmap.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_lstmap.c.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_lstnew.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_lstnew.c.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_memalloc.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_memalloc.c.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_memccpy.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_memccpy.c.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_memchr.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_memchr.c.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_memcmp.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_memcmp.c.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_memcpy.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_memcpy.c.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_memdel.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_memdel.c.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_memmove.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_memmove.c.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_memset.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_memset.c.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_putchar.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_putchar.c.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_putchar_fd.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_putchar_fd.c.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_putendl.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_putendl.c.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_putendl_fd.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_putendl_fd.c.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_putnbr.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_putnbr.c.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_putnbr_fd.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_putnbr_fd.c.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_putstr.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_putstr.c.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_putstr_fd.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_putstr_fd.c.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_strcasecmp.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_strcasecmp.c.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_strcat.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_strcat.c.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_strchr.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_strchr.c.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_strclr.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_strclr.c.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_strcmp.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_strcmp.c.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_strcpy.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_strcpy.c.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_strdel.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_strdel.c.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_strdup.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_strdup.c.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_strequ.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_strequ.c.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_striter.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_striter.c.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_striteri.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_striteri.c.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_strjoin.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_strjoin.c.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_strlcat.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_strlcat.c.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_strlen.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_strlen.c.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_strmap.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_strmap.c.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_strmapi.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_strmapi.c.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_strncat.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_strncat.c.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_strncmp.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_strncmp.c.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_strncpy.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_strncpy.c.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_strnequ.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_strnequ.c.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_strnew.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_strnew.c.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_strnstr.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_strnstr.c.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_strrchr.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_strrchr.c.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_strsplit.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_strsplit.c.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_strstr.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_strstr.c.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_strsub.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_strsub.c.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_strtrim.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_strtrim.c.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_strulen.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_strulen.c.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_tolower.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_tolower.c.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_toupper.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/libft/ft_toupper.c.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/link.txt" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/CMakeFiles/ft.dir/link.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/Makefile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/builder.cbp" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/builder.cbp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/cmake_install.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/cmake_install.cmake" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/libft.a" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/cmake-build-debug/libft.a" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/get_next_line.h" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/get_next_line.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doom-nukem-builder/main.c" beforeDir="false" afterPath="$PROJECT_DIR$/doom-nukem-builder/main.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/new_map" beforeDir="false" afterPath="$PROJECT_DIR$/new_map" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_head.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/main_head.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/player_worker.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/player_worker.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/sector_worker.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/sector_worker.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/sprite_worker.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/sprite_worker.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test_main.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/test_main.c" afterDir="false" />
+    </list>
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ClangdSettings">
+    <option name="formatViaClangd" value="false" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectFrameBounds">
+    <option name="x" value="157" />
+    <option name="y" value="23" />
+    <option name="width" value="1596" />
+    <option name="height" value="1321" />
+  </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectView">
+    <navigator proportions="" version="1">
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="timurdom" type="b2602c69:ProjectViewProjectNode" />
+              <item name="timurdom" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="timurdom" type="b2602c69:ProjectViewProjectNode" />
+              <item name="timurdom" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+      <pane id="Scope" />
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
+    <property name="nodejs_npm_path_reset_for_default_project" value="true" />
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="68ac8070-20c7-4bc1-9e77-54667beb2bf7" name="Default Changelist" comment="" />
+      <created>1568825945753</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1568825945753</updated>
+      <workItem from="1568825953876" duration="18000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TimeTrackingManager">
+    <option name="totallyTimeSpent" value="18000" />
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="157" y="23" width="1596" height="1321" extended-state="0" />
+    <layout>
+      <window_info id="Favorites" side_tool="true" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.24967825" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info anchor="bottom" id="Database Changes" />
+      <window_info anchor="bottom" id="Version Control" />
+      <window_info anchor="bottom" id="Terminal" />
+      <window_info anchor="bottom" id="Event Log" side_tool="true" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="bottom" id="Run" order="2" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="right" id="Database" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+    </layout>
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+</project>

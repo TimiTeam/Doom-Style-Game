@@ -8,6 +8,7 @@ typedef struct 		s_read_holder
 	t_wall			**walls;
 	t_item			*all_items;
 	char			*maps_path[5];
+	int				maps_count;
 	int				text_count;
 	int				vect_count;
 	int				wall_count;
