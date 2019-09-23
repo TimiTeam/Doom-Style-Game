@@ -67,13 +67,13 @@ void	rest_of_the_action_shit(t_pr *m, Uint8 *menu, t_sdl *sdl)
 		if (m->i != m->maxi)
 			m->i++;
 		else
-			m->i = 2;
+			m->i = 0;
 		set_text(m, m->maps[m->i], sdl);
 	}
 	if ((m->event.key.keysym.sym == SDLK_LEFT ||
 		m->event.key.keysym.sym == SDLK_a) && m->sw == 1)
 	{
-		if (m->i != 2)
+		if (m->i != 0)
 			m->i--;
 		else
 			m->i = m->maxi;

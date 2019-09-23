@@ -12,7 +12,7 @@
 
 #include "sdl_head.h"
 
-void	readdirec(t_pr *m, t_sdl *sdl, char **maps)
+void	readdirec(t_pr *m, t_sdl *sdl, char **maps, int max_maps)
 {
 	//m->dir = opendir("./maps");
 	//m->maps = (char**)malloc(sizeof(char*) * 4096);
@@ -27,7 +27,7 @@ void	readdirec(t_pr *m, t_sdl *sdl, char **maps)
 	// 	}
 	// 	m->i++;
 	// }
-	m->maxi = m->i - 1;
+	m->maxi = max_maps - 1;
 	m->i = 0;
 	set_text(m, m->maps[m->i], sdl);
 }

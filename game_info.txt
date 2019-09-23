@@ -1,6 +1,7 @@
 #Levels
 Path: Maps/
 1) map_one
+2) map_two
 ###
 
 #Textures 10

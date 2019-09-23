@@ -18,7 +18,7 @@ char			*get_path(int fd)
 	return (pth);
 }
 
-void 			read_maps_path(int fd, char **array, int arr_size)
+int 			read_maps_path(int fd, char **array, int arr_size)
 {
 	char		*file_name;
 	char		*path;
@@ -28,7 +28,7 @@ void 			read_maps_path(int fd, char **array, int arr_size)
 	i = 0;
 	file_name = NULL;
 	if(!(path = get_path(fd)))
-		return ;
+		return (0);
 	while (get_next_line(fd, &file_name) > 0 && i < arr_size)
 	{
 		if (ft_isdigit(*file_name))
@@ -44,6 +44,7 @@ void 			read_maps_path(int fd, char **array, int arr_size)
 	}
 	ft_strdel(&path);
 	ft_strdel(&file_name);
+	return (i);
 }
 
 
@@ -114,7 +115,7 @@ int 			read_game_config_file(t_read_holder *holder, char *info_file_path)
 		while (get_next_line(fd, &line) > 0)
 		{
 			if (ft_strcmp(line, "#Levels") == 0)
-				read_maps_path(fd, &holder->maps_path[0], 5);
+				holder->maps_count = read_maps_path(fd, &holder->maps_path[0], 5);
 			else if (ft_strncmp(line, "#Textures", ft_strlen("#Textures")) == 0)
 				holder->textures = load_img_array_from_file(fd, (holder->text_count = get_num_from_str(line)));
 			else if (ft_strcmp(line, "#Items") == 0)

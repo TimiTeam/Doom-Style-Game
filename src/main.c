@@ -1010,7 +1010,7 @@ int					main(int argc, char **argv)
 	sdl = new_t_sdl(W, H, "doom-nukem.");
 	init_sdl(sdl);
 	load_textures(&m, sdl);
-	readdirec(&m, sdl, holder.maps_path);
+	readdirec(&m, sdl, holder.maps_path, holder.maps_count);
 	SDL_ShowCursor(SDL_DISABLE);
 	SDL_SetRelativeMouseMode(SDL_TRUE);
 	player = new_t_player(3, 3, sdl->win_size);

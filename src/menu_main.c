@@ -10,7 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "menu.h"
 #include "sdl_head.h"
 
 void			set_text(t_pr *m, char *text, t_sdl *sdl)

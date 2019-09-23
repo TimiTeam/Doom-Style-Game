@@ -84,7 +84,7 @@ typedef struct		s_pr
 //MENU
 void				initialize_sdl_win(t_pr *m);
 void				load_textures(t_pr *m, t_sdl *sdl);
-void				readdirec(t_pr *m, t_sdl *sdl, char **maps);
+void				readdirec(t_pr *m, t_sdl *sdl, char **maps, int max_maps);
 void				set_text(t_pr *m, char *text, t_sdl *sdl);
 void				renderallshit(t_pr *m);
 void				down_action(t_pr *m);
