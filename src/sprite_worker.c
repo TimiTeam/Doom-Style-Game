@@ -128,7 +128,7 @@ void    		draw_enemy_sprite(t_item *obj, t_draw_data data, t_player player, SDL_
 	}
 	screen_pos.x = ob_pos.x - size.x;
 	screen_pos.y = ob_pos.y - size.y;
-	if (obj->type == enemy && player.shooting && obj->curr_state != die && player.current_gun->type != plasmagun && 
+	if (player.shooting && obj->curr_state != die && player.current_gun->type != plasmagun && 
 		data.start < player.half_win_size.x && data.end > player.half_win_size.x &&
 			screen_pos.x < player.half_win_size.x && screen_pos.x + size.x > player.half_win_size.x && screen_pos.y < player.half_win_size.y && screen_pos.y + size.y > player.half_win_size.y)
 	{

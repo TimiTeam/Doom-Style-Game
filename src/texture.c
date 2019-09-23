@@ -10,10 +10,9 @@ void 			draw_floor_or_ceil(SDL_Surface *dst, SDL_Surface *src, int x, int y, int
 	float		mapx;
 	float		mapz;
 	float		tmp;
-	Uint32		pix;
+	Uint32		*pix;
 	unsigned 	tx;
 	unsigned	txtz;
-
 
 	while(y < end_y)
 	{
@@ -97,8 +96,8 @@ void 			textLine(int x, int y1, int y2, struct Scaler ty, unsigned txtx, SDL_Sur
 void 			textLine(int x, int y1, int y2, struct Scaler ty, unsigned txtx, t_sector *sect, SDL_Surface *surface, SDL_Surface *image, t_vector tex_pos, float scaleL, float scaleH, float maxDist, t_vector lightSource)
 {
 	int 		*pix = (int*) surface->pixels;
-	y1 = clamp(y1, 0, H-1);
-	y2 = clamp(y2, 0, H-1);
+	y1 = clamp(y1, 0, H	- 1);
+	y2 = clamp(y2, 0, H	- 1);
 	pix += y1 * W + x;
 	Uint8 r, g, b;
 	float brightness;
