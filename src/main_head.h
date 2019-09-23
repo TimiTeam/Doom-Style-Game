@@ -82,10 +82,16 @@ typedef struct		s_plyer
 
 typedef struct 		s_super_data
 {
+	int 			start_x;
+	int 			end_x;
 	t_sector		*sect;
-	t_wall 			wall;
+	t_wall 			drawing_line;
+	t_wall			wall;
 	t_player 		player;
-	t_draw_data 	data;
+	int 			u0, u1;
+	float 			scaleL;
+	float 			scaleH ;
+	t_draw_data 	*data;
 	SDL_Surface		*main_screen;
 	SDL_Surface		*floor_texture;
 	SDL_Surface		*ceil_texture;

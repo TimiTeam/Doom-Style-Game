@@ -185,7 +185,7 @@ void    		move_enemy_to_player(t_item *enemy, t_vector player_pos)
 		return ;
 	step = (t_vector){enemy->pos.x - player_pos.x, enemy->pos.y - player_pos.y};
 	dist = sqrtf(step.x * step.x + step.y * step.y);
-	dx = (dist - 0.3f) / dist;
+	dx = (dist - enemy->speed) / dist;
 	new_pos.x = step.x * dx + player_pos.x;
 	new_pos.y = step.y * dx + player_pos.y;
 	if (move_enemy(enemy, new_pos))

@@ -118,7 +118,7 @@ void 			textLine(int x, int y1, int y2, struct Scaler ty, unsigned txtx, t_secto
  		}*/
 		float dist_to_light = distance3D((t_vector){tex_pos.x, tex_pos.y, texZ / 2}, (t_vector){lightSource.x, lightSource.y, lightSource.z / 2});
 		brightness += 1.0f - clamp(dist_to_light, 0, maxDist) / maxDist;
-		SDL_GetRGB(get_pixel(image, txtx % image->w, (int)txty % image->h), image->format, &r, &g, &b);
+		SDL_GetRGB(get_pixel(image, txtx, (int)txty % image->h), image->format, &r, &g, &b);
  		*pix = SDL_MapRGB(image->format, min(r * brightness, 255), min(g * brightness, 255), min(b * brightness, 255));
  		pix += W;
     }
