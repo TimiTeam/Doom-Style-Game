@@ -128,8 +128,7 @@ void    		draw_enemy_sprite(t_item *obj, t_draw_data data, t_player player, SDL_
 	}
 	screen_pos.x = ob_pos.x - size.x;
 	screen_pos.y = ob_pos.y - size.y;
-	if (player.shooting && obj->curr_state != die && player.current_gun->type != plasmagun && 
-		data.start < player.half_win_size.x && data.end > player.half_win_size.x &&
+	if (player.shooting && player.current_gun->type != plasmagun && obj->curr_state != die && data.start < player.half_win_size.x && data.end > player.half_win_size.x &&
 			screen_pos.x < player.half_win_size.x && screen_pos.x + size.x > player.half_win_size.x && screen_pos.y < player.half_win_size.y && screen_pos.y + size.y > player.half_win_size.y)
 	{
 		obj->players_hit = 1;
@@ -195,28 +194,29 @@ void    		move_enemy_to_player(t_item *enemy, t_vector player_pos)
 	}
 }
 
-void   draw_projectile(t_projectile *proj, t_draw_data data, t_player player, SDL_Surface *surface)
+void   			draw_projectile(t_projectile *proj, t_draw_data data, t_player player, SDL_Surface *surface)
 {
-	t_vector ob_pos;
-	t_vector scale;
-	float  tmp_x;
-	t_vector screen_pos;
-	float   size;
+	t_vector	ob_pos;
+	t_vector	scale;
+	float		tmp_x;
+	t_vector	screen_pos;
+	float		size;
+
 	ob_pos = (t_vector){proj->pos.x - player.pos.x, proj->pos.y - player.pos.y};
 	tmp_x = ob_pos.x;
 	ob_pos.x = ob_pos.x * player.sin_angl - ob_pos.y * player.cos_angl;
 	ob_pos.y = tmp_x * player.cos_angl + ob_pos.y * player.sin_angl;
 	if (ob_pos.y <= 0)
-	 return ;
-	   scale.x = (W * m_hfov) / (ob_pos.y);
+		return ;
+	scale.x = (W * m_hfov) / (ob_pos.y);
 	scale.y = (H * m_vfov) / (ob_pos.y);
-	   ob_pos.x = player.half_win_size.x + (int)(-ob_pos.x * scale.x);
+	ob_pos.x = player.half_win_size.x + (int)(-ob_pos.x * scale.x);
 	ob_pos.y = player.half_win_size.y + (int)(-Yaw(proj->pos.z - player.pos.z, ob_pos.y) * scale.y);
 	float dist = len_between_points(player.pos, proj->pos);
+	if (dist < 3)
+		return ;
 	screen_pos.x = ob_pos.x - 1000 / dist / 2;
 	screen_pos.y = ob_pos.y - 1000 / dist / 2;
-	size = 1000 /  dist;
-	if (dist < 3)
-	 return ;
+	size = 1000 / dist;
 	draw_image_with_criteria(surface, proj->sprite, screen_pos.x, screen_pos.y, size, size, data);
 }

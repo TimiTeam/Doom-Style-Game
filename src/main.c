@@ -371,7 +371,7 @@ void 			open_door(t_wall *door, t_player *player, t_sector *current_sector)
 	}
 }
 
-void   draw_projectiles(t_projectile **projectiles, t_player player, t_draw_data data, SDL_Surface *screen, t_item *items)
+void				draw_projectiles(t_projectile **projectiles, t_player player, t_draw_data data, SDL_Surface *screen, t_item *items)
 {
 	t_projectile	*tmp;
 	t_projectile	*curr;
@@ -832,7 +832,7 @@ int					hook_event(t_player *player, unsigned char move[4], t_sector *sectors)
 	player->sin_angl = sin(player->angle);
     yaw = clamp(player->yaw - y * 0.05f, -5, 5);
 	player->yaw = yaw;
-	if (player->current_gun && player->current_gun->state == 0.33f && player->current_gun->type == plasmagun)
+	if (player->current_gun && player->current_gun->state == 0.44f && player->current_gun->type == plasmagun)
 		add_projectile(&player->curr_sector->projectiles, create_projectile(*player));
 	return (1);
 }
@@ -851,7 +851,7 @@ void 				print_player_gun(t_sdl *sdl, t_player *pla)
 	}
 	surf = pla->current_gun->frame[(int)pla->current_gun->state];
 	if ((pla->shooting || pla->current_gun->state) && pla->current_gun->ammo > 0)
-		pla->current_gun->state += 0.44;
+		pla->current_gun->state += 0.44f;
 	pos.x = pla->half_win_size.x - surf->w / 2;
 	pos.y = sdl->win_size.y - surf->h;
 	draw_image(sdl->surf, surf, pos.x, pos.y, surf->w, surf->h);

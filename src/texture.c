@@ -13,57 +13,28 @@ void 			draw_floor_or_ceil(SDL_Surface *dst, SDL_Surface *src, int x, int y, int
 	Uint32		*pix;
 	unsigned 	tx;
 	unsigned	txtz;
+	float 		dist_to_light;
+	Uint8 		r;
+	Uint8 		g;
+	Uint8 		b;
+	float 		brightness;
 
 	while(y < end_y)
 	{
+		brightness = 0.2;
 		mapz = diff_height * H * m_vfov / ((h_h - y) - H * m_vfov * player.yaw);
 		mapx = mapz * (h_w - x) / (m_hfov * W);
-		tmp = mapx;	
-	
+		tmp = mapx;			
 		mapx = mapz * player.cos_angl + tmp * player.sin_angl + player.pos.x;
 		mapz = mapz * player.sin_angl - tmp * player.cos_angl + player.pos.y;
-
 		tx = mapx * 50;
 		txtz = mapz * 50;
-		//tx = tx >= src->w ? src->w - 1 : tx;
-		//txtz = txtz >= src->h ? src->h - 1 : txtz;
-	/*
-		pix = get_pixel(src, tx % src->w , txtz % src->h);
-		put_pixel(dst, x, y, pix);*/
-		float ceilDist = distance3D((t_vector){lightSource.x, lightSource.y, lightSource.z},  (t_vector){mapx, mapz, sect->ceil});
-   // 	float floorDist = distance3D((t_vector){lightSource.x, lightSource.y, lightSource.z}, (t_vector){mapx, mapz, sect->floor});
-    //	if (hei == yceil/* && ceilDist < maxDist*/){
-    	 Uint8 r;
-    	 Uint8 g;
-    	 Uint8 b;
-    	 float brightness = 0.2;
-    	/* for (int i = 0; i < projCount; i++){ 
-    	  if (!projectiles[i].alive)
-    	   continue ;
-    	 float dist_to_proj = distance3D(projectiles[i].pos.x, projectiles[i].pos.y, projectiles[i].pos.z,  mapx, mapz, sect->ceil);
-    	 brightness += 1.0f - (clamp(dist_to_proj, 0, maxDist) - 0) / (maxDist - 0.0f) * (1.0f - 0.0f) + 0.0f;
-    	 }*/
-    	 float dist_to_light = ceilDist;
-    	 brightness += 1.0f - clamp(dist_to_light, 0, 5.3f) / 5.3f;
-    	 SDL_GetRGB(get_pixel(src, tx % src->w, txtz % src->h), src->format, &r, &g, &b);
-    	/* surfacePix[y * W + x] */ put_pixel(dst, x, y, SDL_MapRGB(src->format, min(r * brightness, 255), min(g * brightness, 255), min(b * brightness, 255)));
-    //	}
-    //	else if (hei == yfloor/* && floorDist < maxDist*/){
-    /*	 Uint8 r;
-    	 Uint8 g;
-    	 Uint8 b;
-    	 float brightness = 0.3;
-    	 for (int i = 0; i < projCount; i++){ 
-    	  if (!projectiles[i].alive)
-    	   continue ;
-    	 float dist_to_proj = distance3D(projectiles[i].pos.x, projectiles[i].pos.y, projectiles[i].pos.z,  mapx, mapz, sect->floor);
-    	 brightness += 1.5f - (clamp(dist_to_proj, 0, maxDist) - 0) / (maxDist - 0.0f) * (1.5f - 0.0f) + 0.0f;
-    	 }
-    	 float dist_to_light = floorDist;
-    	 brightness += 1.5f - (clamp(dist_to_light, 0, maxDist) - 0) / (maxDist - 0.0f) * (1.5f - 0.0f) + 0.0f;
-    	 SDL_GetRGB(getpixel(floorTexture, tx % floorTexture->w, txtz % floorTexture->h), floorTexture->format, &r, &g, &b);
-    	 surfacePix[y * W + x] = SDL_MapRGB(floorTexture->format, clamp(r * brightness, 0, 255), clamp(g * brightness, 0, 255), clamp(b * brightness, 0, 255));
-    	}*/
+		
+		dist_to_light = distance3D((t_vector){lightSource.x, lightSource.y, lightSource.z},  (t_vector){mapx, mapz, sect->ceil});
+		if (dist_to_light < 15)
+		 	brightness += 1.0f - clamp(dist_to_light, 0, 5.3f) / 5.3f;
+		SDL_GetRGB(get_pixel(src, tx % src->w, txtz % src->h), src->format, &r, &g, &b);
+		put_pixel(dst, x, y, SDL_MapRGB(src->format, min(r * brightness, 255), min(g * brightness, 255), min(b * brightness, 255)));
 		++y;
 	}
 }
@@ -101,6 +72,7 @@ void 			textLine(int x, int y1, int y2, struct Scaler ty, unsigned txtx, t_secto
 	pix += y1 * W + x;
 	Uint8 r, g, b;
 	float brightness;
+	float dist_to_light;
 	float scale = image->h * scaleH;
 	float sect_height = sect->ceil - sect->floor;
 	
@@ -116,8 +88,9 @@ void 			textLine(int x, int y1, int y2, struct Scaler ty, unsigned txtx, t_secto
  		 float dist_to_proj = distance3D(tex_pos.x, tex_pos.y, texZ / 2.737, projectiles[i].pos.x, projectiles[i].pos.y, projectiles[i].pos.z / 2.737);
  		 brightness += 1.0f - (clamp(dist_to_proj, 0, maxDist) - 0) / (maxDist - 0.0f) * (1.0f - 0.0f) + 0.0f;
  		}*/
-		float dist_to_light = distance3D((t_vector){tex_pos.x, tex_pos.y, texZ / 2}, (t_vector){lightSource.x, lightSource.y, lightSource.z / 2});
-		brightness += 1.0f - clamp(dist_to_light, 0, maxDist) / maxDist;
+		dist_to_light = distance3D((t_vector){tex_pos.x, tex_pos.y, texZ / 2}, (t_vector){lightSource.x, lightSource.y, lightSource.z});
+		if (dist_to_light < maxDist)
+			brightness += 1.0f - clamp(dist_to_light, 0, maxDist) / maxDist;
 		SDL_GetRGB(get_pixel(image, txtx, (int)txty % image->h), image->format, &r, &g, &b);
  		*pix = SDL_MapRGB(image->format, min(r * brightness, 255), min(g * brightness, 255), min(b * brightness, 255));
  		pix += W;
