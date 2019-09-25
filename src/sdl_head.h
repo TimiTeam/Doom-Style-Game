@@ -89,7 +89,6 @@ void				set_text(t_pr *m, char *text, t_sdl *sdl);
 void				renderallshit(t_pr *m);
 void				down_action(t_pr *m);
 void				up_action(t_pr *m);
-void				rest_of_the_action_shit(t_pr *m, Uint8 *menu, t_sdl *sdl);
 SDL_Rect			change_size(SDL_Rect rect);
 SDL_Rect			reset_size(SDL_Rect rect);
 

@@ -14,9 +14,9 @@
 
 void			set_text(t_pr *m, char *text, t_sdl *sdl)
 {
-	SDL_Color color = {123, 123, 123, 255};
-	printf("r:%hhu\ng:%hhu\nb:%hhu\n", color.r, color.g, color.b);
-	m->font_texture = TTF_RenderText_Solid(m->font, text, color);
+	SDL_Color color = {255, 255, 255, 100};
+	// printf("r:%hhu\ng:%hhu\nb:%hhu\n", color.r, color.g, color.b);
+	m->font_texture = TTF_RenderText_Blended(m->font, text, color);
 	//m->font_texture = SDL_CreateTextureFromSurface(sdl->ren, m->texture);
 }
 
@@ -48,10 +48,10 @@ void			initialize_sdl_win(t_pr *m)
 	m->exit_rect.y = m->win_h / 2 + 150;
 	m->exit_rect.w = 500;
 	m->exit_rect.h = 170;
-	m->logo_rect.x = 215;
-	m->logo_rect.y = -80;
 	m->logo_rect.w = 900;
 	m->logo_rect.h = 450;
+	m->logo_rect.x = m->win_w / 2 - m->logo_rect.w / 2;
+	m->logo_rect.y = -80;
 	m->choose_level_rect.x = m->win_w / 2 - 250;
 	m->choose_level_rect.y = m->win_h / 2;
 	m->choose_level_rect.w = 500;
@@ -63,31 +63,3 @@ void			initialize_sdl_win(t_pr *m)
 	m->play_rect = change_size(m->play_rect);
 	m->sw = 0;
 }
-
-// int				main(void)
-// {
-// 	t_pr		m;
-
-// 	m.i = 0;
-// 	m.win_h = 720;
-// 	m.win_w = 1280;
-// 	initialize_sdl_win(&m);
-// 	load_textures(&m);
-// 	readdirec(&m);
-// 	while (!m.done)
-// 	{
-// 		renderallshit(&m);
-// 		while (SDL_PollEvent(&m.event))
-// 		{
-// 			if (m.event.type == SDL_QUIT)
-// 				m.done = SDL_TRUE;
-// 			if (m.event.type == SDL_KEYDOWN)
-// 			{
-// 				down_action(&m);
-// 				up_action(&m);
-// 				rest_of_the_action_shit(&m);
-// 			}
-// 		}
-// 	}
-// 	return (0);
-// }

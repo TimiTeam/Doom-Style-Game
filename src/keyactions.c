@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 
 #include "sdl_head.h"
-
+#include "sectors.h"
 
 void	down_action(t_pr *m)
 {
@@ -52,12 +52,14 @@ void	up_action(t_pr *m)
 	}
 }
 
-void	rest_of_the_action_shit(t_pr *m, Uint8 *menu, t_sdl *sdl)
+void	rest_of_the_action_shit(t_pr *m, Uint8 *menu, t_sdl *sdl, t_read_holder *holder)
 {
 	if (m->event.key.keysym.sym == SDLK_RETURN)
 	{
-		if (m->sw == 0)
+		if (m->sw == 0){
 			*menu = 0; //start_game(char *m->maps[i]); !!!!!IMPORTANT!!!!! m->maps[i] - choosed map
+			holder->curr_map = m->i;
+		}
 		if (m->sw == 2)
 			exit(0);
 	}

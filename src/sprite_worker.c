@@ -126,7 +126,7 @@ void    		draw_enemy_sprite(t_item *obj, t_draw_data data, t_player player, SDL_
 		size.x = clamp(0, size.x, 1500);
 		size.y = clamp(0, size.y, 1500);
 	}
-	screen_pos.x = ob_pos.x - size.x;
+	screen_pos.x = ob_pos.x - size.x / 2;
 	screen_pos.y = ob_pos.y - size.y;
 	if (player.shooting && obj->curr_state != die && player.current_gun->type != plasmagun && 
 		data.start < player.half_win_size.x && data.end > player.half_win_size.x &&
@@ -185,7 +185,7 @@ void    		move_enemy_to_player(t_item *enemy, t_vector player_pos)
 		return ;
 	step = (t_vector){enemy->pos.x - player_pos.x, enemy->pos.y - player_pos.y};
 	dist = sqrtf(step.x * step.x + step.y * step.y);
-	dx = (dist - 0.3f) / dist;
+	dx = (dist - enemy->speed) / dist;
 	new_pos.x = step.x * dx + player_pos.x;
 	new_pos.y = step.y * dx + player_pos.y;
 	if (move_enemy(enemy, new_pos))
@@ -195,7 +195,7 @@ void    		move_enemy_to_player(t_item *enemy, t_vector player_pos)
 	}
 }
 
-void   draw_projectile(t_projectile *proj, t_draw_data data, t_player player, SDL_Surface *surface)
+void	draw_projectile(t_projectile *proj, t_draw_data data, t_player player, SDL_Surface *surface)
 {
 	t_vector ob_pos;
 	t_vector scale;
@@ -219,4 +219,16 @@ void   draw_projectile(t_projectile *proj, t_draw_data data, t_player player, SD
 	if (dist < 3)
 	 return ;
 	draw_image_with_criteria(surface, proj->sprite, screen_pos.x, screen_pos.y, size, size, data);
+}
+
+void	output_text(SDL_Surface *dst, char *text, int x, int y, int width, int height, SDL_Color color)
+{
+	SDL_Surface *text_surf;
+	TTF_Font *font;
+
+	font = TTF_OpenFont("amazdoom/AmazDooMLeft.ttf", 256);
+	text_surf = TTF_RenderText_Blended(font, text, color);
+	draw_image(dst, text_surf, x, y, width, height);
+	SDL_FreeSurface(text_surf);
+	TTF_CloseFont(font);
 }

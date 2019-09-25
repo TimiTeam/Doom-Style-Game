@@ -22,13 +22,12 @@ void				free_player(t_player *player)
 
 
 
-t_player				*new_t_player(int pos_x, int pos_y, t_point win_size)
+t_player				*new_t_player(t_point win_size)
 {
 	t_player			*player;
 
 	player  = (t_player*)malloc(sizeof(t_player));
 	*player = (t_player){};
-	player->pos = (t_vector){pos_x, pos_y, 0};
 	player->half_win_size = (t_point) {win_size.x / 2, win_size.y / 2};
 	player->yaw = 0;
 	player->hfov = win_size.x * m_hfov;

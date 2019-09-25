@@ -2,6 +2,8 @@
 Path: Maps/
 1) map_one
 2) map_two
+3) dungeon.txt
+4) new_level_0.txt
 ###
 
 #Textures 10

@@ -129,7 +129,7 @@ int 			read_game_config_file(t_read_holder *holder, char *info_file_path)
 	return (0);
 }
 
-t_sector		*read_map(char *pth, t_read_holder *holder)
+t_sector		*read_map(char *pth, t_read_holder *holder, t_vector *player_pos)
 {
 	t_sector	*sectors;
 	t_vector	*vectors;
@@ -146,6 +146,9 @@ t_sector		*read_map(char *pth, t_read_holder *holder)
 	ft_memdel((void**)&vectors);
 	sectors = make_sectors_list(fd, holder);
 	delete_walls(holder->walls, holder->wall_count);
+	player_pos->x = 3;
+	player_pos->y = 3;
+	player_pos->z = 0;
 	close(fd);
 	return (sectors);
 }

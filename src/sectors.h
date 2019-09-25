@@ -12,10 +12,11 @@ typedef struct 		s_read_holder
 	int				text_count;
 	int				vect_count;
 	int				wall_count;
+	int				curr_map;
 }					t_read_holder;
 
 int 				read_game_config_file(t_read_holder *holder, char *info_file_path);
-t_sector			*read_map(char *pth, t_read_holder *holder);
+t_sector			*read_map(char *pth, t_read_holder *holder, t_vector *player_pos);
 int					get_num_from_str(char *str);
 char				*skip_row_number(char *line);
 void				get_count_struct_arrays(int fd, int *vect_count, int *wall_count);
@@ -31,5 +32,9 @@ t_item				*make_items(char *data, t_item *all_items);
 
 void				finde_close_doors(t_wall **walls, unsigned short size);
 t_wall				**create_sector_walls(t_sector *sector, t_read_holder *holder, char *data, int wall_size);
+
+
+//MENU
+void				rest_of_the_action_shit(t_pr *m, Uint8 *menu, t_sdl *sdl, t_read_holder *holder);
 
 #endif

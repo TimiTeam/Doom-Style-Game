@@ -6,8 +6,8 @@
 # include "sdl_head.h"
 # include "sectors.h"
 
-#define W 1240
-#define H 980
+#define W 1600
+#define H 900
 #define EyeHeight  5
 #define DuckHeight 2.5
 #define HeadMargin 1
@@ -78,14 +78,21 @@ typedef struct		s_plyer
 	char			sit;
 	unsigned char 	has_key;
 	unsigned char	shooting;
+	int				dead;
 }					t_player;
 
 typedef struct 		s_super_data
 {
+	int 			start_x;
+	int 			end_x;
 	t_sector		*sect;
-	t_wall 			wall;
+	t_wall 			drawing_line;
+	t_wall			wall;
 	t_player 		player;
-	t_draw_data 	data;
+	int 			u0, u1;
+	float 			scaleL;
+	float 			scaleH ;
+	t_draw_data 	*data;
 	SDL_Surface		*main_screen;
 	SDL_Surface		*floor_texture;
 	SDL_Surface		*ceil_texture;
@@ -127,7 +134,7 @@ typedef struct 		Scaler {
 
 #define Yaw(y,z) (y + z * player.yaw)
 
-t_player				*new_t_player(int pos_x, int pos_y, t_point wid_size);
+t_player				*new_t_player(t_point wid_size);
 
 void					free_player(t_player *player);
 
@@ -146,6 +153,8 @@ void 					textLine(int x, int y1, int y2, struct Scaler ty, unsigned txtx, t_sec
 void 					draw_floor_or_ceil(SDL_Surface *dst, SDL_Surface *src, int x, int y, int end_y, int diff_height, t_player player, t_vector lightSource, t_sector *sect);
 
 void					draw_enemy_sprite(t_item *obj, t_draw_data data, t_player player, SDL_Surface *surface);
+
+void					output_text(SDL_Surface *dst, char *text, int x, int y, int width, int height, SDL_Color color);
 
 void    				move_enemy_to_player(t_item *enemy, t_vector player_pos);
 
