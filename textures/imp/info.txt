@@ -1,0 +1,28 @@
+Properties{
+health 100
+damage 15
+}
+waiting{
+textures/imp/imp_attacking_2.png
+}
+walk{
+textures/imp/imp_walking_1.png
+textures/imp/imp_walking_2.png
+textures/imp/imp_walking_3.png
+textures/imp/imp_walking_4.png
+}
+action{
+textures/imp/imp_attacking_1.png
+textures/imp/imp_attacking_2.png
+textures/imp/imp_attacking_3.png
+}
+taking_damage{
+textures/imp/imp_taking_damage.png
+textures/imp/imp_standing_1.png
+}
+die{
+textures/imp/imp_dying_1.png
+textures/imp/imp_dying_2.png
+textures/imp/imp_dying_3.png
+textures/imp/imp_dying_4.png
+}

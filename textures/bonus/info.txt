@@ -1,0 +1,9 @@
+waiting{
+textures/bonus/bonus.png
+}
+walk{
+}
+action{
+}
+die{
+}

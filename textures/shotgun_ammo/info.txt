@@ -1,0 +1,13 @@
+Properties{
+shotgun
+ammo 24
+}
+waiting{
+textures/shotgun_ammo/shotgun_ammo.png
+}
+walk{
+}
+action{
+}
+die{
+}

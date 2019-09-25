@@ -1,0 +1,14 @@
+waiting{
+textures/torch/torch_1.png
+textures/torch/torch_2.png
+textures/torch/torch_3.png
+textures/torch/torch_4.png
+}
+walk{
+}
+action{
+}
+taking_damage{
+}
+die{
+}

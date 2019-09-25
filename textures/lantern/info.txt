@@ -1,0 +1,13 @@
+waiting{
+textures/lantern/lantern_1.png
+textures/lantern/lantern_2.png
+textures/lantern/lantern_3.png
+}
+walk{
+}
+action{
+}
+taking_damage{
+}
+die{
+}

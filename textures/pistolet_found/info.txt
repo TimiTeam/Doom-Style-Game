@@ -1,0 +1,12 @@
+Properties{
+pistol
+}
+waiting{
+textures/pistolet_found/pistolet_found.png
+}
+walk{
+}
+action{
+}
+die{
+}

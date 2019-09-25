@@ -1,0 +1,11 @@
+waiting{
+textures/broken_tree/broken_tree.png
+}
+walk{
+}
+action{
+}
+taking_damage{
+}
+die{
+}
