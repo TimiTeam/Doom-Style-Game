@@ -212,24 +212,24 @@ void 			*thread_draw_sector(void *param)
 
 		txtx = (super->u0 * ((cp.end.x - x) * cp.end.y) + super->u1 * ((x - cp.start.x) * cp.start.y)) / ((cp.end.x - x) * cp.end.y + (x - cp.start.x) * cp.start.y);
 		
-		draw_floor_or_ceil(super->main_screen, super->ceil_texture, x, super->data->ytop[x], cya, super->data->diff_ceil, super->player, (t_vector){5,5,10}, super->sect);
+		draw_floor_or_ceil(super->main_screen, super->ceil_texture, x, super->data->ytop[x], cya, super->data->diff_ceil, super->player, super->sect, data->light_source);
 
-		draw_floor_or_ceil(super->main_screen, super->floor_texture, x, cyb, super->data->ybottom[x], super->data->diff_floor, super->player, (t_vector){5,5,10}, super->sect);
+		draw_floor_or_ceil(super->main_screen, super->floor_texture, x, cyb, super->data->ybottom[x], super->data->diff_floor, super->player, super->sect, data->light_source);
 		mapped = txtx / (scale_width_texture) * dist;
 		dx = (dist - mapped) / dist;
 		t_vector tex_pos = {vec.x * dx + super->wall.end.x, vec.y * dx + super->wall.end.y};
 		if (super->wall.type != empty_wall)
-			textLine(x, cya, cyb, (struct Scaler)Scaler_Init(ya, cya, yb, 0, fabsf(sec->floor - sec->ceil) * super->scaleH), txtx, sec, super->main_screen, super->wall.texture, tex_pos, super->scaleL, super->scaleH, maxDist, (t_vector){5,5,10});
+			textLine(x, cya, cyb, (struct Scaler)Scaler_Init(ya, cya, yb, 0, fabsf(sec->floor - sec->ceil) * super->scaleH), txtx, sec, super->main_screen, super->wall.texture, tex_pos, super->scaleL, super->scaleH, data->light_source);
 		else
 		{
 			nya = (x - cp.start.x) * (data->n_ceil_height) / x_lenght + data->n_ceil_y_s;
 			nyb = (x - cp.start.x) * (data->n_floor_height) / x_lenght + data->n_floor_y_s;
 			n_cya = clamp((x - cp.start.x) * (data->n_ceil_height) / x_lenght + data->n_ceil_y_s, data->ytop[x], data->ybottom[x]);
 			n_cyb = clamp((x - cp.start.x) * (data->n_floor_height) / x_lenght + data->n_floor_y_s, data->ytop[x], data->ybottom[x]);
-			if (nya - 1 != ya)
-    	 		textLine(x, cya, n_cya - 1, (struct Scaler)Scaler_Init(ya, cya, yb, 0, fabsf(sec->floor - sec->ceil) * super->scaleH), txtx, sec, super->main_screen, super->wall.texture, tex_pos, super->scaleL, super->scaleH, maxDist, (t_vector){5,5,10});
-        	if (yb - 1 !=  nyb)
-      			textLine(x, n_cyb + 1, cyb, (struct Scaler)Scaler_Init(ya, cya, yb, 0, fabsf(sec->floor - sec->ceil) * super->scaleH), txtx, sec, super->main_screen, super->wall.texture, tex_pos, super->scaleL, super->scaleH, maxDist, (t_vector){5,5,10});
+			if (nya - 1 != ya && cya != n_cya)
+    	 		textLine(x, cya, n_cya - 1, (struct Scaler)Scaler_Init(ya, cya, nya - 1, 0, super->scaleH * 10), txtx, sec, super->main_screen, super->wall.texture, tex_pos, super->scaleL, super->scaleH, data->light_source);
+        	if (yb - 1 !=  nyb && n_cyb != cyb)
+      			textLine(x, n_cyb + 1, cyb, (struct Scaler)Scaler_Init(nyb, n_cyb, yb - 1, 0,  super->scaleH * 10), txtx, sec, super->main_screen, super->wall.texture, tex_pos, super->scaleL, super->scaleH, data->light_source);
 			data->ytop[x] = n_cya;
 			data->ybottom[x] = n_cyb;
 		}
@@ -297,7 +297,7 @@ void 			draw_world(t_sector *sec, t_wall wall, t_player player, t_sdl *sdl, t_dr
 		data.n_ceil_height = data.n_ceil_y_e - data.n_ceil_y_s;
 
 	}
-	int THREAD_COUNT = 3;
+	int THREAD_COUNT = 4;
 	pthread_t	thread[THREAD_COUNT];
 	t_super_data super[THREAD_COUNT];
 	int step;
@@ -439,6 +439,7 @@ void 			get_gun_to_player(t_player *player, t_gun **guns, enum gun_type gun_type
 	t_gun		*src;
 	t_gun		*dst;
 	int			i;
+
 	if (gun_type > 3)
 	{
 		printf("gun_type error %d\n", gun_type);
@@ -448,25 +449,23 @@ void 			get_gun_to_player(t_player *player, t_gun **guns, enum gun_type gun_type
 	src = guns[gun_type];
 	if (player->gun[gun_type] == NULL)
 	{
-		player->gun[gun_type] = (t_gun*)malloc(sizeof(t_gun));
-		*player->gun[gun_type] = (t_gun){};
+		dst = (t_gun*)malloc(sizeof(t_gun));
+		*dst = (t_gun){};
 		i = 0;
 		while (i < 10)
 		{
-			player->gun[gun_type]->frame[i] = src->frame[i];
+			dst->frame[i] = src->frame[i];
 			i++;
 		}
-		player->gun[gun_type]->damage = src->damage;
-		player->gun[gun_type]->icon = src->icon;
-		player->gun[gun_type]->type = src->type;
-		printf("New player gun : %p\n", player->gun[gun_type]);
-		player->current_gun = player->gun[gun_type];
+		dst->damage = src->damage;
+		dst->icon = src->icon;
+		dst->type = src->type;
+//		printf("New player gun : %p\n", player->gun[gun_type]);
+		player->current_gun = dst;
+		player->gun[gun_type] = dst;
+		printf("New player gun : %p\n", player->gun[gun_type] );
 	}
 	player->gun[gun_type]->ammo += src->ammo;
-	
-	//dst = player->gun[gun_type];
-	//dst->ammo += src->ammo;
-//	player->current_gun = dst;
 }
 
 void 			draw_sector_items(t_item **items, t_player *player, t_draw_data data, SDL_Surface *screen)
@@ -501,12 +500,12 @@ void 			draw_sector_items(t_item **items, t_player *player, t_draw_data data, SD
 				continue ;
 			}
 		}
-		if (it->dist_to_player <= 1.5f && it->type != object && it->type != enemy)
+		if (it->dist_to_player <= 1.2f && it->type != object && it->type != enemy)
 		{
-			if (it->type == gun )
+
+			if (it->type == gun)
 			{
 				get_gun_to_player(player, all_guns, it->gun_type);
-				printf("getting gun\n");
 				tmp = it->next;
 				delete_item_by_ptr(items, it);
 				it = tmp;
@@ -533,7 +532,7 @@ void 			draw_sector_items(t_item **items, t_player *player, t_draw_data data, SD
 					continue ;
 				}
 			}
-			else
+			else 
 				from_list_to_another_list(items, &player->inventar, it);
 		}
 		else
@@ -562,29 +561,24 @@ void			draw_sectors(t_sector *sec, t_player *player, t_sdl *sdl, t_draw_data dat
 	int			d;
 	int			p;
 	t_wall		*w;
-	t_draw_data		spr;
 
-	d = 0;
-	i = 0;
+	d = -1;
+	i = -1;
 	p = -1;
 	data.diff_ceil = sec->ceil - data.player_current_height;
 	data.diff_floor = sec->floor - data.player_current_height;
 	if (data.diff_ceil < 0)
 		player->fall = 1;
-	while (i < MAX_PORTALS && (w = sec->only_walls[i]))
+	while (++i < MAX_PORTALS && (w = sec->only_walls[i]))
 	{
-//		w = sec->wall[i];
-//		if(w->type == filled_wall)
-			draw_world(sec, *w, *player, sdl, data);
-		i++;
+		draw_world(sec, *w, *player, sdl, data);
 	}
 	while (++p < MAX_PORTALS && (w = sec->portals[p]))
 	{
 		if (!w->close)
 			draw_world(sec, *w, *player, sdl, data);
 	}
-	i = -1;
-	while (++i < MAX_PORTALS && (w = sec->doors[i]))
+	while (++d < MAX_PORTALS && (w = sec->doors[d]))
 	{
 		if (w->opening)
 			open_door(w, player, sec);
@@ -596,7 +590,7 @@ void			draw_sectors(t_sector *sec, t_player *player, t_sdl *sdl, t_draw_data dat
 	draw_projectiles(&sec->projectiles, *player, data, sdl->surf, sec->items);
 }
 
-void				run_with_buff(t_player *player, t_sdl *sdl, unsigned int win_x)
+void				run_with_buff(t_player *player, t_sdl *sdl, unsigned int win_x, t_light *light_source)
 { 
 	unsigned 		x;
 	int 			ytop[win_x];
@@ -610,6 +604,7 @@ void				run_with_buff(t_player *player, t_sdl *sdl, unsigned int win_x)
 		draw_data.ytop[x] = 0;
 		x++;
 	}
+	draw_data.light_source = light_source;
 	draw_data.start = 0;
 	draw_data.end = win_x;
 	draw_data.player_current_height = (player->pos.z + player->jump + (player->curr_sector->ceil - player->curr_sector->floor <= player->height + player->jump + player->sit ? -3 : player->sit));
@@ -731,7 +726,7 @@ void 				check_door(t_player *player, t_sector *sectors)
 			j = 0;
 			walls[i]->opening = 1;
 			walls[i]->portal_ptr->close = 0;
-			door_two = find_door_in_next_sector(sectors, walls[i]);
+			door_two = find_door_in_next_sector(player->curr_sector == walls[i]->sectors[0] ? walls[i]->sectors[1] : walls[i]->sectors[0], walls[i]);
 			door_two->opening = 1;
 			door_two->portal_ptr->close = 0;
 			return ;
@@ -774,10 +769,6 @@ int					hook_event(t_player *player, unsigned char move[4], t_sector *sectors)
 				move[0] = e.type == SDL_KEYDOWN;
 			else if (e.key.keysym.sym == SDLK_s || e.key.keysym.sym == SDLK_DOWN)
 				move[1] = e.type == SDL_KEYDOWN;
-	/*		else if (e.key.keysym.sym == 'p')
-				scaleH++;
-			else if (e.key.keysym.sym == 'm')
-				scaleH--;*/
 			else if (e.key.keysym.sym == SDLK_a)
 				move[2] = e.type == SDL_KEYDOWN;
 			else if (e.key.keysym.sym == SDLK_d)
@@ -794,7 +785,7 @@ int					hook_event(t_player *player, unsigned char move[4], t_sector *sectors)
 				player->current_gun = player->gun[pistol];
 			else if (e.key.keysym.sym == SDLK_2 && player->gun[shotgun])
 				player->current_gun = player->gun[shotgun];
-			else if (e.key.keysym.sym == SDLK_3 && player->gun[plasmagun])
+			else if (e.key.keysym.sym == SDLK_3 )
 				player->current_gun = player->gun[plasmagun];
 			
 		}
@@ -857,7 +848,7 @@ void 				print_player_gun(t_sdl *sdl, t_player *pla)
 	draw_image(sdl->surf, surf, pos.x, pos.y, surf->w, surf->h);
 }
 
-void                game_loop(t_sdl *sdl, t_player *player, t_sector *sectors)
+void                game_loop(t_sdl *sdl, t_player *player, t_sector *sectors, t_light *light_source)
 {
     int				run;
     SDL_Texture		*tex;
@@ -887,7 +878,7 @@ void                game_loop(t_sdl *sdl, t_player *player, t_sector *sectors)
         SDL_RenderClear(sdl->ren);
         SDL_FillRect(sdl->surf, NULL, 0x00);
 
-        run_with_buff(player, sdl, sdl->win_size.x);
+        run_with_buff(player, sdl, sdl->win_size.x, light_source);
 		player->has_key = has_key(player->inventar);
 		if(player->current_gun)
 			print_player_gun(sdl, player);
@@ -943,7 +934,17 @@ void 				free_data_holder(t_read_holder *holder)
 		i++;
 	}
 	ft_memdel((void**)&holder->textures);
-	//ft_memdel((void**)&holder);
+}
+
+t_sector			*get_player_sector(t_sector *sectors, int sec_num)
+{
+	while(sectors)
+	{
+		if (sectors->sector == sec_num)
+			return (sectors);
+		sectors = sectors->next;
+	}
+	return (NULL);
 }
 
 int					main(int argc, char **argv)
@@ -952,30 +953,38 @@ int					main(int argc, char **argv)
 	t_sector		*sectors;
 	t_player		*player;
 	t_sdl			*sdl;
+	t_vector		player_pos;
 
-	//holder = (t_read_holder*)malloc(sizeof(t_read_holder));
 	holder = (t_read_holder){};
 
 	read_game_config_file(&holder, "game_info.txt");
-	if (holder.maps_path[0])
-		sectors = read_map(holder.maps_path[0], &holder);
+	if (holder.maps_path[1])
+	{
+		sectors = read_map(holder.maps_path[0], &holder, &player_pos);
+		printf("name: %s\n", holder.maps_path[0]);
+	}
+	printf("");
 	if (!sectors)
 		exit(1);
 	list_sectors(sectors);
 
-	sdl = new_t_sdl(W, H, "doom-nukem.");
+	sdl = new_t_sdl(W, H, "doom-nukem");
 	init_sdl(sdl);
 	SDL_ShowCursor(SDL_DISABLE);
 	SDL_SetRelativeMouseMode(SDL_TRUE);
+
 	player = new_t_player(3, 3, sdl->win_size);
+
+	player->pos = holder.player_pos;
 	player->height = EyeHeight;
-	player->curr_sector = sectors;
+
+	player->curr_sector = get_player_sector(sectors, holder.player_sector_id);
 	player->pos.z = player->curr_sector->floor + player->height;
 	
 	all_guns = (t_gun**)malloc(sizeof(t_gun*) * 3);
 	load_gun(all_guns);
 
-	game_loop(sdl, player, sectors);
+	game_loop(sdl, player, sectors, holder.light_source);
 
 	list_items(player->inventar);
 
@@ -983,5 +992,6 @@ int					main(int argc, char **argv)
 	delete_sectors(sectors);
 	free_data_holder(&holder);
 	free_t_sdl(&sdl);
+
 	system("leaks -q doom-nukem");
 }

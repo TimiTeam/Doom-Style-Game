@@ -23,6 +23,7 @@ static int h_h = H >> 1;
 
 typedef struct		s_draw_data
 {
+	t_light 		*light_source;
 	int 			ytop[W];
 	int				ybottom[W];
 	float 			start;
@@ -41,7 +42,7 @@ typedef struct		s_draw_data
 	int				floor_height;
 	int				ceil_height;
 	int				n_floor_height;
-	int				n_ceil_height;
+	int				n_ceil_height;	
 }					t_draw_data;
 
 typedef struct		s_gun
@@ -50,7 +51,7 @@ typedef struct		s_gun
 	SDL_Surface		*frame[10];
 	SDL_Surface		*icon;
 	enum gun_type	type;
-	int				max_frames;\
+	int				max_frames;
 	int				ammo;
 	float			damage;
 	float			rate_of_fire;
@@ -108,7 +109,7 @@ typedef struct 		s_super_data
          	X = rtx + player.pos.x; Z = rtz + player.pos.y; \
 
 #define Scaler_Init(a,b,c,d,f) \
-    { d + (b-1 - a) * (f-d) / (c-a), ((f<d) ^ (c<a)) ? -1 : 1, \
+    { d + (b-1 - a) * (f - d) / (c-a), ((f < d) ^ (c<a)) ? -1 : 1, \
       fabs(f-d), abs(c-a), (int)((b-1-a) * abs((int)(f-d))) % abs(c-a) }
 
 typedef struct 		Scaler {
@@ -145,11 +146,11 @@ int 					Scaler_Next(Scaler *i);
 
 //void 					textLine(int x, int y1,int y2, Scaler ty,unsigned txtx, SDL_Surface *surface, SDL_Surface *image);
 
-void 					textLine(int x, int y1, int y2, struct Scaler ty, unsigned txtx, t_sector *sect, SDL_Surface *surface, SDL_Surface *image, t_vector tex_pos, float scaleL, float scaleH, float maxDist, t_vector lightSource);
+void 					textLine(int x, int y1, int y2, struct Scaler ty, unsigned txtx, t_sector *sect, SDL_Surface *surface, SDL_Surface *image, t_vector tex_pos, float scaleL, float scaleH, t_light *light_source);
 
 //void 					draw_floor_or_ceil(SDL_Surface *dst, SDL_Surface *src, int x, int start_y, int end_y, int diff_height, t_player player);
 
-void 					draw_floor_or_ceil(SDL_Surface *dst, SDL_Surface *src, int x, int y, int end_y, int diff_height, t_player player, t_vector lightSource, t_sector *sect);
+void 					draw_floor_or_ceil(SDL_Surface *dst, SDL_Surface *src, int x, int y, int end_y, int diff_height, t_player player, t_sector *sect, t_light *light_source);
 
 void					draw_enemy_sprite(t_item *obj, t_draw_data data, t_player player, SDL_Surface *surface);
 

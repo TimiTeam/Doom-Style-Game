@@ -7,14 +7,17 @@ typedef struct 		s_read_holder
 	SDL_Surface		**textures;
 	t_wall			**walls;
 	t_item			*all_items;
+	t_light			*light_source;
 	char			*maps_path[5];
+	int 			player_sector_id;
+	t_vector 		player_pos;
 	int				text_count;
 	int				vect_count;
 	int				wall_count;
 }					t_read_holder;
 
 int 				read_game_config_file(t_read_holder *holder, char *info_file_path);
-t_sector			*read_map(char *pth, t_read_holder *holder);
+t_sector			*read_map(char *pth, t_read_holder *holder, t_vector *player_pos);
 int					get_num_from_str(char *str);
 char				*skip_row_number(char *line);
 void				get_count_struct_arrays(int fd, int *vect_count, int *wall_count);

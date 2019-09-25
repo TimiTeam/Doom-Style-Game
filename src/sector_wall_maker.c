@@ -65,7 +65,7 @@ t_wall			**create_sector_walls(t_sector *sector, t_read_holder *holder, char *da
 		if (ft_isdigit(data[i]) && ft_atoi(&data[i]) >= 0)
 		{
 			id = ft_atoi(&data[i]);
-			if (id > 0 && id < holder->wall_count)
+			if (id >= 0 && id < holder->wall_count)
 			{
 				mark_like_neighbors(sector, holder->walls[id]);
 				walls[count] = copy_t_wall_velue(holder->walls[id]);

@@ -57,6 +57,13 @@ typedef	struct			s_vector
 	float				z;
 }						t_vector;
 
+typedef struct 			s_light
+{
+	struct s_light		*next;
+	t_vector			pos;
+	float				max_dist;
+}						t_light;
+
 typedef struct			s_projectile
 {
 	t_vector			pos;

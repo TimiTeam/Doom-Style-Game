@@ -104,7 +104,6 @@ void    		draw_enemy_sprite(t_item *obj, t_draw_data data, t_player player, SDL_
 	t_vector	size;
 	float		tmp_x;
 	t_point		screen_pos;
-	//float 		size;
 
 	ob_pos = (t_vector){obj->pos.x - player.pos.x, obj->pos.y - player.pos.y};
 	tmp_x = ob_pos.x;
@@ -116,9 +115,6 @@ void    		draw_enemy_sprite(t_item *obj, t_draw_data data, t_player player, SDL_
 	scale.y = (H * m_vfov) / (ob_pos.y);
     ob_pos.x = player.half_win_size.x + (int)(-ob_pos.x * scale.x);
 	ob_pos.y = player.half_win_size.y + (int)(-Yaw(obj->pos.z + data.diff_floor, ob_pos.y) * scale.y);
-	//size = 1000 / obj->dist_to_player * obj->size / 4.0f;
-	//size.x = 1000 / obj->dist_to_player * obj->size.x / 4.0f;
-	//size.y = 1000 / obj->dist_to_player * obj->size.y / 4.0f;
 	size.x = (obj->size.x / obj->dist_to_player) * 30;
 	size.y = (obj->size.y / obj->dist_to_player) * 30;
 	if (obj->dist_to_player < 3)
@@ -126,7 +122,7 @@ void    		draw_enemy_sprite(t_item *obj, t_draw_data data, t_player player, SDL_
 		size.x = clamp(0, size.x, 1500);
 		size.y = clamp(0, size.y, 1500);
 	}
-	screen_pos.x = ob_pos.x - size.x;
+	screen_pos.x = ob_pos.x - size.x / 2;
 	screen_pos.y = ob_pos.y - size.y;
 	if (player.shooting && player.current_gun->type != plasmagun && obj->curr_state != die && data.start < player.half_win_size.x && data.end > player.half_win_size.x &&
 			screen_pos.x < player.half_win_size.x && screen_pos.x + size.x > player.half_win_size.x && screen_pos.y < player.half_win_size.y && screen_pos.y + size.y > player.half_win_size.y)
