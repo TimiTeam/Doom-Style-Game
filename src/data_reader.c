@@ -241,6 +241,49 @@ void 			list_t_light(t_light *all)
 	}
 }
 
+static float		len_between_points(t_vector a, t_vector b)
+{
+	return (sqrt((b.x - a.x) * (b.x - a.x) + (b.y - a.y) * (b.y - a.y)));
+}
+
+int				light_catch_sector(t_wall **walls, unsigned arr_size, t_vector light_pos, float max_dist)
+{
+	int 		i;
+	t_wall		*w;
+
+	i = 0;
+	while(i < arr_size && (w = walls[i]))
+	{
+		if (max_dist > len_between_points(w->start, light_pos) || 
+			max_dist > len_between_points(w->end, light_pos))
+			return (1);
+		i++;
+	}
+	return (0);
+}
+
+void 			fill_sectors_light_source(t_sector *sectors, t_light *light_sources)
+{
+	int 		i;
+	t_light		*light;
+	
+	while (sectors)
+	{
+		light = light_sources;
+		i = 0;
+		while (light && i < MAX_LIGHT_SRC)
+		{
+			if (light_catch_sector(sectors->wall, sectors->n_walls, light->pos, light->max_dist))
+			{
+				sectors->sector_light[i] = light;
+				i++;
+			}
+			light = light->next;
+		}
+		sectors = sectors->next;
+	}
+}
+
 t_sector		*read_map(char *pth, t_read_holder *holder, t_vector *player_pos)
 {
 	t_sector	*sectors;
@@ -259,8 +302,10 @@ t_sector		*read_map(char *pth, t_read_holder *holder, t_vector *player_pos)
 	holder->walls = get_walls(fd, holder->wall_count, vectors, holder->textures);
 	ft_memdel((void**)&vectors);
 	sectors = make_sectors_list(fd, holder);
-	holder->light_source = create_all_light_source(fd);
-	list_t_light(holder->light_source);
+	light_source = create_all_light_source(fd);
+	list_t_light(light_source);
+	fill_sectors_light_source(sectors, light_source);
+	holder->light_source = light_source;
 	get_player_pos(fd, &holder->player_pos, &holder->player_sector_id);
 	delete_walls(holder->walls, holder->wall_count);
 	close(fd);

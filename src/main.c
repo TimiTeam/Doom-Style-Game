@@ -212,14 +212,14 @@ void 			*thread_draw_sector(void *param)
 
 		txtx = (super->u0 * ((cp.end.x - x) * cp.end.y) + super->u1 * ((x - cp.start.x) * cp.start.y)) / ((cp.end.x - x) * cp.end.y + (x - cp.start.x) * cp.start.y);
 		
-		draw_floor_or_ceil(super->main_screen, super->ceil_texture, x, super->data->ytop[x], cya, super->data->diff_ceil, super->player, super->sect, data->light_source);
+		draw_floor_or_ceil(super->main_screen, super->ceil_texture, x, super->data->ytop[x], cya, super->data->diff_ceil, super->player, super->sect, super->sect->sector_light);
 
-		draw_floor_or_ceil(super->main_screen, super->floor_texture, x, cyb, super->data->ybottom[x], super->data->diff_floor, super->player, super->sect, data->light_source);
+		draw_floor_or_ceil(super->main_screen, super->floor_texture, x, cyb, super->data->ybottom[x], super->data->diff_floor, super->player, super->sect, super->sect->sector_light);
 		mapped = txtx / (scale_width_texture) * dist;
 		dx = (dist - mapped) / dist;
 		t_vector tex_pos = {vec.x * dx + super->wall.end.x, vec.y * dx + super->wall.end.y};
 		if (super->wall.type != empty_wall)
-			textLine(x, cya, cyb, (struct Scaler)Scaler_Init(ya, cya, yb, 0, fabsf(sec->floor - sec->ceil) * super->scaleH), txtx, sec, super->main_screen, super->wall.texture, tex_pos, super->scaleL, super->scaleH, data->light_source);
+			textLine(x, cya, cyb, (struct Scaler)Scaler_Init(ya, cya, yb, 0, fabsf(sec->floor - sec->ceil) * super->scaleH), txtx, sec, super->main_screen, super->wall.texture, tex_pos, super->scaleL, super->scaleH, super->sect->sector_light);
 		else
 		{
 			nya = (x - cp.start.x) * (data->n_ceil_height) / x_lenght + data->n_ceil_y_s;
@@ -227,9 +227,9 @@ void 			*thread_draw_sector(void *param)
 			n_cya = clamp((x - cp.start.x) * (data->n_ceil_height) / x_lenght + data->n_ceil_y_s, data->ytop[x], data->ybottom[x]);
 			n_cyb = clamp((x - cp.start.x) * (data->n_floor_height) / x_lenght + data->n_floor_y_s, data->ytop[x], data->ybottom[x]);
 			if (nya - 1 != ya && cya != n_cya)
-    	 		textLine(x, cya, n_cya - 1, (struct Scaler)Scaler_Init(ya, cya, nya - 1, 0, super->scaleH * 10), txtx, sec, super->main_screen, super->wall.texture, tex_pos, super->scaleL, super->scaleH, data->light_source);
+    	 		textLine(x, cya, n_cya - 1, (struct Scaler)Scaler_Init(ya, cya, nya - 1, 0, super->scaleH * 10), txtx, sec, super->main_screen, super->wall.texture, tex_pos, super->scaleL, super->scaleH, super->sect->sector_light);
         	if (yb - 1 !=  nyb && n_cyb != cyb)
-      			textLine(x, n_cyb + 1, cyb, (struct Scaler)Scaler_Init(nyb, n_cyb, yb - 1, 0,  super->scaleH * 10), txtx, sec, super->main_screen, super->wall.texture, tex_pos, super->scaleL, super->scaleH, data->light_source);
+      			textLine(x, n_cyb + 1, cyb, (struct Scaler)Scaler_Init(nyb, n_cyb, yb - 1, 0,  super->scaleH * 10), txtx, sec, super->main_screen, super->wall.texture, tex_pos, super->scaleL, super->scaleH, super->sect->sector_light);
 			data->ytop[x] = n_cya;
 			data->ybottom[x] = n_cyb;
 		}
@@ -551,7 +551,7 @@ void 			draw_sector_items(t_item **items, t_player *player, t_draw_data data, SD
 	{
 		get_damege->health -= player->current_gun->damage;
 		get_damege->curr_state = taking_damage;
-		get_damege->is_dying = 5;
+		get_damege->is_dying = 4;
 	}
 }
 

@@ -146,11 +146,11 @@ int 					Scaler_Next(Scaler *i);
 
 //void 					textLine(int x, int y1,int y2, Scaler ty,unsigned txtx, SDL_Surface *surface, SDL_Surface *image);
 
-void 					textLine(int x, int y1, int y2, struct Scaler ty, unsigned txtx, t_sector *sect, SDL_Surface *surface, SDL_Surface *image, t_vector tex_pos, float scaleL, float scaleH, t_light *light_source);
+void 					textLine(int x, int y1, int y2, struct Scaler ty, unsigned txtx, t_sector *sect, SDL_Surface *surface, SDL_Surface *image, t_vector tex_pos, float scaleL, float scaleH, t_light **light_source);
 
 //void 					draw_floor_or_ceil(SDL_Surface *dst, SDL_Surface *src, int x, int start_y, int end_y, int diff_height, t_player player);
 
-void 					draw_floor_or_ceil(SDL_Surface *dst, SDL_Surface *src, int x, int y, int end_y, int diff_height, t_player player, t_sector *sect, t_light *light_source);
+void 					draw_floor_or_ceil(SDL_Surface *dst, SDL_Surface *src, int x, int y, int end_y, int diff_height, t_player player, t_sector *sect, t_light **light_source);
 
 void					draw_enemy_sprite(t_item *obj, t_draw_data data, t_player player, SDL_Surface *surface);
 

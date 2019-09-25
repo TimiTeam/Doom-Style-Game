@@ -3,6 +3,7 @@
 
 #define	MAX_PORTALS 16
 #define	MAX_TEXTURES 8
+#define	MAX_LIGHT_SRC 4
 #define NON -1
 #include "sdl_head.h"
 #include "libft.h"
@@ -124,6 +125,7 @@ typedef struct			s_sector
 	t_wall				*only_walls[MAX_PORTALS];
 	t_wall				*portals[MAX_PORTALS];
 	t_wall 				*doors[MAX_PORTALS];
+	t_light				*sector_light[MAX_LIGHT_SRC];
 	SDL_Surface			*floor_tex;
 	SDL_Surface			*ceil_tex;
 	t_item				*items;
