@@ -23,7 +23,6 @@ static int h_h = H >> 1;
 
 typedef struct		s_draw_data
 {
-	t_light 		*light_source;
 	int 			ytop[W];
 	int				ybottom[W];
 	float 			start;
@@ -119,7 +118,7 @@ typedef struct 		Scaler {
 
 #define min(a,b)             (((a) < (b)) ? (a) : (b)) // min: Choose smaller of two scalars.
 #define max(a,b)             (((a) > (b)) ? (a) : (b)) // max: Choose greater of two scalars.
-#define clamp(a, mi,ma)      min(max(a,mi),ma)         // clamp: Clamp value into set range.
+#define clamp(a, mi, ma)      min(max(a,mi),ma)         // clamp: Clamp value into set range.
 #define vxs(x0,y0, x1,y1)    ((x0)*(y1) - (x1)*(y0))   // vxs: Vector cross product
 // Overlap:  Determine whether the two number ranges overlap.
 #define Overlap(a0,a1,b0,b1) (min(a0,a1) <= max(b0,b1) && min(b0,b1) <= max(a0,a1))
@@ -166,5 +165,5 @@ Uint8					move_projectile(t_projectile *proj);
 void 					add_projectile(t_projectile **head, t_projectile *new);
 void					draw_projectile(t_projectile *proj, t_draw_data data, t_player player, SDL_Surface *surface);
 void					delete_projectiles(t_projectile *head);
-
+void 					list_light(t_light	**arr, unsigned arr_size);
 #endif

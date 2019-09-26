@@ -21,6 +21,8 @@ static enum item_type	get_item_type(char *type)
 			ret = key;
 		else if(ft_strncmp("enemy", type, ft_strlen("enemy")) == 0)
 			ret = enemy;
+		else if(ft_strncmp("light", type, ft_strlen("light")) == 0)
+			ret = light;
 	}
 	return (ret);
 }

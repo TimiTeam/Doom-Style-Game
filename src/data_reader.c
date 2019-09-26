@@ -152,22 +152,7 @@ void 			get_player_pos(int fd, t_vector *player_pos, int *player_sec_id)
 	ft_strdel(&line);
 }
 
-void 			add_next_t_light(t_light **head, t_light *elem)
-{
-	t_light		*main;
-
-	if (!*head)
-	{
-		*head = elem;
-		return ;
-	}
-	main = *head;
-	while (main->next)
-		main = main->next;
-	main->next = elem;
-}
-
-t_light			*new_t_light(t_vector pos, float max_dist)
+t_light			*new_t_light(t_vector pos, float max_dist, t_sector *cur_sec)
 {
 	t_light		*new;
 
@@ -177,73 +162,39 @@ t_light			*new_t_light(t_vector pos, float max_dist)
 		*new = (t_light){};
 		new->pos = pos;
 		new->max_dist = max_dist;
+		new->sector = cur_sec;
 	}
 	return (new);
 }
 
-t_light 		*make_t_light_from_str(char *line)
+
+t_light			**create_all_light_source(t_sector *sec, unsigned light_count)
 {
-	t_light		*ret;
-	t_vector	pos;
-	int 		power;
+	t_light		**light_source;
+	t_item		*items;
+	t_sector	*sectors;
 	unsigned	i;
 
-	ret = NULL;
-	if (*line)
-	{
-		i = get_numbers(&pos.x, &pos.y, ',', line);
-		power = ft_atoi(&line[i]);
-		ret = new_t_light(pos, power);
-	}
-	return (ret);
-}
-
-t_light			*create_all_light_source(int fd)
-{
-	t_light		*head;
-	t_light 	*elem;
-	char 		*line;
-	unsigned	i;
-	unsigned	ch;
-	char 		*skiped;
-	t_vector	pos;
-
-	line = NULL;
-	head = NULL;
+	sectors = sec;
+	if(light_count < 1 || !sectors ||
+		!(light_source = (t_light**)malloc(sizeof(t_light*) * light_count)))
+		return (NULL);
 	i = 0;
-	while(get_next_line(fd, &line) > 0 && *line != '\0')
+	while(sectors)
 	{
-		if (i == 1 && *line && ft_isdigit(*line))
+		items = sectors->items;
+		while(items)
 		{
-			ch = get_numbers(&pos.x, &pos.y, ',', (skiped = skip_row_number(line)));
-			add_next_t_light(&head, new_t_light(pos, get_num_from_str(&skiped[ch])));
-		//	add_next_t_light(&head, (elem = make_t_light_from_str(skip_row_number(line))));
-
+			if (items->type == light && i < light_count)
+			{
+				light_source[i] = new_t_light(items->pos, 8, items->sector);
+				i++;
+			}
+			items = items->next;
 		}
-		if (ft_strncmp("Light_source", line, ft_strlen("Light_source")) == 0)
-			i = 1;
-		ft_strdel(&line);
+		sectors = sectors->next;
 	}
-	ft_strdel(&line);
-	return (head);
-}
-
-void 			list_t_light(t_light *all)
-{
-	int			i;
-
-	i = 0;
-	while(all)
-	{
-		printf("# %d\npos x = %f, y %f, max_dist %f\n", i, all->pos.x, all->pos.y, all->max_dist);
-		all = all->next;
-		i++;
-	}
-}
-
-static float		len_between_points(t_vector a, t_vector b)
-{
-	return (sqrt((b.x - a.x) * (b.x - a.x) + (b.y - a.y) * (b.y - a.y)));
+	return (light_source);
 }
 
 int				light_catch_sector(t_wall **walls, unsigned arr_size, t_vector light_pos, float max_dist)
@@ -254,41 +205,59 @@ int				light_catch_sector(t_wall **walls, unsigned arr_size, t_vector light_pos,
 	i = 0;
 	while(i < arr_size && (w = walls[i]))
 	{
-		if (max_dist > len_between_points(w->start, light_pos) || 
-			max_dist > len_between_points(w->end, light_pos))
+		if (find_dot_radius_intersect(light_pos, max_dist, w->start, w->end))
 			return (1);
 		i++;
 	}
 	return (0);
 }
 
-void 			fill_sectors_light_source(t_sector *sectors, t_light *light_sources)
+void 			fill_sectors_light_source(t_sector *sec, t_light **light, unsigned array_size)
 {
-	int 		i;
-	t_light		*light;
-	
-	while (sectors)
+	unsigned	i;
+	unsigned	j;
+	t_light		*source;
+	t_sector	*sectors;
+
+	sectors = sec;
+	while(sectors)
 	{
-		light = light_sources;
 		i = 0;
-		while (light && i < MAX_LIGHT_SRC)
+		j = 0;
+		while(i < array_size && (source = light[i]))
 		{
-			if (light_catch_sector(sectors->wall, sectors->n_walls, light->pos, light->max_dist))
-			{
-				sectors->sector_light[i] = light;
-				i++;
+			if (j < MAX_LIGHT_SRC && (source->sector == sectors || light_catch_sector(sectors->portals, MAX_PORTALS, source->pos, source->max_dist / 2)))
+			{/*
+				if(IntersectBox(player->pos.x, player->pos.y, step.x, step.y, wall[i]->start.x, wall[i]->start.y, wall[i]->end.x, wall[i]->end.y)
+       			&& PointSide(step.x, step.y, wall[i]->start.x, wall[i]->start.y, wall[i]->end.x, wall[i]->end.y) < 0)*/
+				sectors->sector_light[j] = source;
+				j++;
 			}
-			light = light->next;
+			i++;
 		}
 		sectors = sectors->next;
 	}
+}
+
+void 			delete_light_source(t_light **light, unsigned array_size)
+{
+	t_light		*l;
+	unsigned	i;
+
+	i = 0;
+	while (i < array_size && (l = light[i]))
+	{
+		ft_memdel((void**)&l);
+		i++;
+	}
+	ft_memdel((void**)&light);
 }
 
 t_sector		*read_map(char *pth, t_read_holder *holder, t_vector *player_pos)
 {
 	t_sector	*sectors;
 	t_vector	*vectors;
-	t_light		*light_source;
+	t_light		**light_source;
 	int 		fd;
 
 	if ((fd = open(pth, O_RDONLY)) < 0)
@@ -302,11 +271,16 @@ t_sector		*read_map(char *pth, t_read_holder *holder, t_vector *player_pos)
 	holder->walls = get_walls(fd, holder->wall_count, vectors, holder->textures);
 	ft_memdel((void**)&vectors);
 	sectors = make_sectors_list(fd, holder);
-	light_source = create_all_light_source(fd);
-	list_t_light(light_source);
-	fill_sectors_light_source(sectors, light_source);
+	list_sectors(sectors);
+
+	light_source = create_all_light_source(sectors, holder->light_count);
+
 	holder->light_source = light_source;
+
+	fill_sectors_light_source(sectors, holder->light_source, holder->light_count);
+
 	get_player_pos(fd, &holder->player_pos, &holder->player_sector_id);
+
 	delete_walls(holder->walls, holder->wall_count);
 	close(fd);
 	return (sectors);

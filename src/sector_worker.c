@@ -82,6 +82,8 @@ void				delete_walls(t_wall **wall, unsigned size)
 void				delete_sectors(t_sector *sectors)
 {
 	t_sector		*next;
+	unsigned		i;
+	t_light			*light;
 
 	if (!sectors)
 		return ;
@@ -124,6 +126,10 @@ void				list_walls(t_wall **walls, int size)
 			ft_putnbr(walls[i]->sectors[1]->sector);
 		}
 		line = w->start;
+		ft_putstr("texture size ");
+		ft_putnbr(w->texture->w);
+		ft_putstr(" x ");
+		ft_putnbr(w->texture->h);
 		ft_putstr("\n\t start: x = ");
 		ft_putnbr(line.x);
 		ft_putstr(", y = ");
@@ -135,6 +141,18 @@ void				list_walls(t_wall **walls, int size)
 		ft_putnbr(line.y);
 		write(1, ".\n", 2);
 		
+		i++;
+	}
+}
+
+void 				list_light(t_light	**arr, unsigned arr_size)
+{
+	int				i;
+
+	i = 0;
+	while (i < arr_size && arr[i])
+	{
+		printf("%d pos %f x %f, radius %f\n", i, arr[i]->pos.x, arr[i]->pos.y, arr[i]->max_dist);
 		i++;
 	}
 }
@@ -156,12 +174,20 @@ void				list_sectors(t_sector *head)
 		ft_putnbr(s->n_walls);
 		ft_putstr("\nfloor height: ");
 		ft_putnbr(s->floor);
-		ft_putstr(", ceil height: ");
-		ft_putnbr(s->ceil);
+		ft_putstr(", text ");
+		ft_putnbr(s->floor_tex->w);
+		ft_putstr(" x ");
+		ft_putnbr(s->floor_tex->h);
+		ft_putstr("; ceil height: ");
+		ft_putnbr(s->ceil);ft_putstr(", text ");
+		ft_putnbr(s->ceil_tex->w);
+		ft_putstr(" x ");
+		ft_putnbr(s->ceil_tex->h);
 		write(1, "\n", 1);
 		list_walls(s->wall, s->n_walls);
 		list_items(s->items);
 		write(1,"\n", 1);
+		list_light(s->sector_light, MAX_LIGHT_SRC);
 		write(1, "\n", 1);
 		i++;
 		s = s->next;

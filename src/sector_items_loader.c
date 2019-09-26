@@ -60,7 +60,7 @@ t_item			*create_item(char *data, t_item *all_items)
 	return (item);
 }
 
-t_item			*make_items(char *data, t_item *all_items)
+t_item			*make_items(char *data, t_item *all_items, t_read_holder *holder)
 {
 	t_item		*list;
 	t_item		*next;
@@ -77,6 +77,8 @@ t_item			*make_items(char *data, t_item *all_items)
 		{
 			next = create_item(&data[i], all_items);
 			add_next_item(&list, next);
+			if (next->type == light)
+				holder->light_count++;
 		}
 		i++;
 	}

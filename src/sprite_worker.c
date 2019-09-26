@@ -160,6 +160,9 @@ int						move_enemy(t_item *enemy, t_vector step)
 				next = wall[i]->sectors[0];
 			else if (wall[i]->sectors[1] && sector->sector != wall[i]->sectors[1]->sector)
 				next = wall[i]->sectors[1];
+			if (enemy->pos.z + 8 > next->ceil)
+				return (0);
+			printf("enemy->pos.z  %f, next->ceil %f\n", enemy->pos.z, next->ceil);
 			from_list_to_another_list(&enemy->sector->items, &next->items, enemy);
 			enemy->sector = next;
 			break;

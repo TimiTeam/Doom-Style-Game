@@ -24,6 +24,7 @@ t_sector		*crate_and_fill_sector_by_data(t_read_holder *holder, char *data)
 	int			i;
 
 	sect = new_sector();
+	sect->door = ft_strncmp(data, "Door", ft_strlen("Door")) == 0 ? 1 : 0;
 	i = fill_floor_and_ceil(sect, holder->textures, data);
 	while (data[i] && data[i] != '\'' && data[i + 1])
 		i++;
@@ -32,8 +33,7 @@ t_sector		*crate_and_fill_sector_by_data(t_read_holder *holder, char *data)
 	while (data[i] && !ft_isalpha(data[i]))
 		i++;
 	if (ft_strncmp(&data[i], "items", ft_strlen("items")) == 0)
-		sect->items = make_items(&data[i], holder->all_items);
-	finde_close_doors(sect->wall, sect->n_walls);
+		sect->items = make_items(&data[i], holder->all_items, holder);
 	return (sect);
 }
 
@@ -49,22 +49,18 @@ void 			set_sector_ptr_to_items(t_item *items, t_sector *sector)
 	}
 }
 
-void			mark_all_neighbors(t_sector *sectors, t_wall **all)
+void			mark_all_neighbors(t_sector *sec, t_wall **all)
 {
-	t_sector	*sec;
 	t_wall		*wall;
 	t_vector	tmp;
 	int			i;
 	int			p;
-	int			d;
 	int 		w;
 
-	sec = sectors;
 	while (sec)
 	{
 		i = 0;
 		p = 0;
-		d = 0;
 		w = 0;
 		while (i < sec->n_walls)
 		{
@@ -79,8 +75,6 @@ void			mark_all_neighbors(t_sector *sectors, t_wall **all)
 			sec->wall[i]->sectors[1] = wall->sectors[1];
 			if (sec->wall[i]->type == empty_wall && p < MAX_PORTALS)
 				sec->portals[p++] = sec->wall[i];
-			else if (sec->wall[i]->type == door && d < MAX_PORTALS)
-				sec->doors[d++] = sec->wall[i];
 			else if (sec->wall[i]->type == filled_wall && w < MAX_PORTALS)
 				sec->only_walls[w++] = sec->wall[i];
 			i++;

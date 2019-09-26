@@ -1,19 +1,17 @@
 #ifndef __SECTOR_WORKER_H
 #define __SECTOR_WORKER_H
 
-#define	MAX_PORTALS 16
-#define	MAX_TEXTURES 8
-#define	MAX_LIGHT_SRC 4
-#define NON -1
-#include "sdl_head.h"
-#include "libft.h"
-#include <fcntl.h>
+# define	MAX_PORTALS 16
+# define	MAX_TEXTURES 8
+# define	MAX_LIGHT_SRC 4
+# include "sdl_head.h"
+# include "libft.h"
+# include <fcntl.h>
 
 enum 					wall_type
 {
 	filled_wall,
-	empty_wall,
-	door
+	empty_wall
 };
 
 enum 					gun_type
@@ -26,6 +24,7 @@ enum 					gun_type
 enum 					item_type
 {
 	object,
+	light,
 	coin,
 	super_bonus,
 	health,
@@ -60,9 +59,9 @@ typedef	struct			s_vector
 
 typedef struct 			s_light
 {
-	struct s_light		*next;
 	t_vector			pos;
 	float				max_dist;
+	struct s_sector		*sector;
 }						t_light;
 
 typedef struct			s_projectile
@@ -114,9 +113,6 @@ typedef	struct			s_wall
 	t_vector			end;
 	enum wall_type		type;
 	unsigned short		id;
-	struct s_wall		*portal_ptr;
-	unsigned char		close;
-	unsigned char		opening;
 }						t_wall;
 
 typedef struct			s_sector
@@ -124,7 +120,8 @@ typedef struct			s_sector
 	t_wall				**wall;
 	t_wall				*only_walls[MAX_PORTALS];
 	t_wall				*portals[MAX_PORTALS];
-	t_wall 				*doors[MAX_PORTALS];
+	unsigned			door;
+	unsigned			opening;
 	t_light				*sector_light[MAX_LIGHT_SRC];
 	SDL_Surface			*floor_tex;
 	SDL_Surface			*ceil_tex;

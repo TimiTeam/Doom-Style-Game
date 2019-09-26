@@ -44,39 +44,10 @@ static t_wall	*make_wall(char *line, t_vector *vectors, SDL_Surface **textures)
 		i++;
 	if (!ft_strncmp(&line[i], "empty", ft_strlen("empty")))
 		ret->type = empty_wall;
-	else if (!ft_strncmp(&line[i], "door", ft_strlen("door")))
-  		ret->type = door;
 	else
   		ret->type = filled_wall;
 	ret->texture = textures[get_num_from_str(&line[i])];
 	return (ret);
-}
-
-void			finde_close_doors(t_wall **walls, unsigned short size)
-{
-	unsigned short	i;
-	t_wall			*w;
-	t_wall			*d;
-
-	i = -1;
-	while (++i < size)
-	{
-		w = walls[i];
-		d = NULL;
-		if (w->type != empty_wall)
-			continue ;
-		if (i > 0 && walls[i - 1]->type == door)
-			d = walls[i - 1];
-		else if (i < size - 1 && walls[i + 1]->type == door)
-			d = walls[i + 1];
-		if (d)
-		{
-			d->opening = 0;
-			d->close = 1;
-			d->portal_ptr = w;
-			w->close = 1;
-		}
-	}
 }
 
 t_wall			**get_walls(int fd, int wall_size, t_vector *vectors, SDL_Surface **textures)

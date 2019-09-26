@@ -45,7 +45,6 @@ static t_wall	*copy_t_wall_velue(t_wall *src)
 	dst->type = src->type;
 	dst->start = src->start;
 	dst->end = src->end;
-	dst->close = src->close;
 	dst->sectors[0] = src->sectors[0];
 	dst->sectors[1] = src->sectors[1];
 	dst->texture = src->texture;
