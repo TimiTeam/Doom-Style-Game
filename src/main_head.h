@@ -58,6 +58,7 @@ typedef struct		s_gun
 
 typedef struct		s_plyer
 {	
+	SDL_Surface		*sky;
 	t_sector 		*curr_sector;
 	t_item			*inventar;
 	t_gun			*gun[3];
@@ -71,13 +72,19 @@ typedef struct		s_plyer
 	float			cos_angl;
 	float 			hfov;
 	float 			vfov;
+	float			velocity;
 	int				height;
 	int				health;
-	char			fall;
+	unsigned char	fall;
 	unsigned short	jump;
 	char			sit;
 	unsigned char 	has_key;
 	unsigned char	shooting;
+	char			curr_map;
+	float			skyW;
+	float			skyH;
+	Uint8			falling;
+	Uint8			menu;
 }					t_player;
 
 typedef struct 		s_super_data
@@ -96,6 +103,33 @@ typedef struct 		s_super_data
 	SDL_Surface		*floor_texture;
 	SDL_Surface		*ceil_texture;
 }					t_super_data;
+
+typedef struct		s_pr
+{
+	SDL_Surface		*texture;
+	SDL_Surface		*background;
+	SDL_Surface		*play_button;
+	SDL_Surface		*exit_button;
+	SDL_Surface		*logo;
+	SDL_Surface		*choose_level_button;
+	SDL_Surface		*font_texture;
+	SDL_Rect		play_rect;
+	SDL_Rect		exit_rect;
+	SDL_Rect		logo_rect;
+	SDL_Rect		choose_level_rect;
+	SDL_Rect		font_rect;
+	SDL_Color		font_color;
+	TTF_Font		*font;
+	char			**maps;
+	int				sw;
+	SDL_Event		event;
+	int				i;
+	int				maxi;
+	int				win_h;
+	int				win_w;
+}					t_pr;
+
+
 
 #define CeilingFloorScreenCoordinatesToMapCoordinates(mapY, screenX, screenY, X, Z, player) \
             Z = (mapY)* H * m_hfov /  ((h_h - (screenY))); \
@@ -133,6 +167,19 @@ typedef struct 		Scaler {
 
 #define Yaw(y,z) (y + z * player.yaw)
 
+//MENU
+void				initialize_sdl_win(t_pr *m);
+void				load_textures(t_pr *m, t_sdl *sdl, t_read_holder *holder);
+//void				readdirec(t_pr *m, t_sdl *sdl, char **maps, int max_maps);
+void				set_text(t_pr *m, char *text);
+void				renderallshit(t_pr *m);
+void				down_action(t_pr *m);
+void				up_action(t_pr *m);
+SDL_Rect			change_size(SDL_Rect rect);
+SDL_Rect			reset_size(SDL_Rect rect);
+
+
+
 t_player				*new_t_player(int pos_x, int pos_y, t_point wid_size);
 
 void					free_player(t_player *player);
@@ -159,6 +206,9 @@ void 					quickSort(t_item **headRef, t_player *player);
 
 void					line(SDL_Surface *surface, t_point start, t_point end, int color);
 
+
+void					rest_of_the_action_shit(t_pr *m, Uint8 *menu, t_sdl *sdl, t_read_holder *holder);
+
 t_projectile			*create_projectile(t_player player);
 void					delete_projectile(t_projectile **head, t_projectile *proj);
 Uint8					move_projectile(t_projectile *proj);
@@ -166,4 +216,5 @@ void 					add_projectile(t_projectile **head, t_projectile *new);
 void					draw_projectile(t_projectile *proj, t_draw_data data, t_player player, SDL_Surface *surface);
 void					delete_projectiles(t_projectile *head);
 void 					list_light(t_light	**arr, unsigned arr_size);
+void					draw_skybox(SDL_Surface *dst, SDL_Surface *src, int x, int y, int end_y, t_player player);
 #endif

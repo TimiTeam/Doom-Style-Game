@@ -5,9 +5,12 @@
 typedef struct 		s_read_holder
 {
 	SDL_Surface		**textures;
+	t_sector		*all;
 	t_wall			**walls;
 	t_item			*all_items;
 	char			*maps_path[5];
+	uint8_t			curr_map;
+	uint8_t			maps_count;
 	t_light			**light_source;
 	int 			player_sector_id;
 	t_vector 		player_pos;

@@ -1,5 +1,31 @@
 #include "main_head.h"
 
+uint8_t menu = 1;
+
+
+void 				free_data_holder(t_read_holder *holder)
+{
+	int				i;
+	
+	if(!holder)
+		return ;
+	delete_sectors(holder->all);
+	delete_items_list_with_animation(holder->all_items);
+	i = 0;
+	while (i < 5 && holder->maps_path[i])
+	{
+		ft_strdel(&holder->maps_path[i]);
+		i++;
+	}
+	i = 0;
+	while( i < holder->text_count && holder->textures[i])
+	{
+		SDL_FreeSurface(holder->textures[i]);
+		i++;
+	}
+	ft_memdel((void**)&holder->textures);
+}
+
 void 					load_gun(t_gun **gun)
 {
 	gun[pistol] = (t_gun*)malloc(sizeof(t_gun));
@@ -162,8 +188,10 @@ void 			*thread_draw_sector(void *param)
 
 		txtx = (super->u0 * ((cp.end.x - x) * cp.end.y) + super->u1 * ((x - cp.start.x) * cp.start.y)) / ((cp.end.x - x) * cp.end.y + (x - cp.start.x) * cp.start.y);
 		
-		draw_floor_or_ceil(super->main_screen, super->ceil_texture, x, super->data->ytop[x], cya, super->data->diff_ceil, super->player, super->sect, super->sect->sector_light);
-
+	//	if (sec->door)
+			draw_floor_or_ceil(super->main_screen, super->ceil_texture, x, super->data->ytop[x], cya, super->data->diff_ceil, super->player, super->sect, super->sect->sector_light);
+	//	else
+	//		draw_skybox(super->main_screen, super->player.sky, x, super->data->ytop[x], cya, super->player);
 		draw_floor_or_ceil(super->main_screen, super->floor_texture, x, cyb, super->data->ybottom[x], super->data->diff_floor, super->player, super->sect, super->sect->sector_light);
 		mapped = txtx / (scale_width_texture) * dist;
 		dx = (dist - mapped) / dist;
@@ -177,7 +205,12 @@ void 			*thread_draw_sector(void *param)
 			n_cya = clamp((x - cp.start.x) * (data->n_ceil_height) / x_lenght + data->n_ceil_y_s, data->ytop[x], data->ybottom[x]);
 			n_cyb = clamp((x - cp.start.x) * (data->n_floor_height) / x_lenght + data->n_floor_y_s, data->ytop[x], data->ybottom[x]);
 			if (nya - 1 != ya && cya != n_cya)
-    	 		textLine(x, cya, n_cya - 1, (struct Scaler)Scaler_Init(ya, cya, nya - 1, 0, super->scaleH * 10), txtx, sec, super->main_screen, super->wall.texture, tex_pos, super->scaleL, super->scaleH, super->sect->sector_light);
+    	 	{
+			//	if (!sec->door)
+			//		draw_skybox(super->main_screen, super->player.sky, x, cya, n_cya - 1, super->player);
+			//	else
+					textLine(x, cya, n_cya - 1, (struct Scaler)Scaler_Init(ya, cya, nya - 1, 0, super->scaleH * 10), txtx, sec, super->main_screen, super->wall.texture, tex_pos, super->scaleL, super->scaleH, super->sect->sector_light);
+			}
         	if (yb - 1 !=  nyb && n_cyb != cyb)
       			textLine(x, n_cyb + 1, cyb, (struct Scaler)Scaler_Init(nyb, n_cyb, yb - 1, 0,  super->scaleH * 10), txtx, sec, super->main_screen, super->wall.texture, tex_pos, super->scaleL, super->scaleH, super->sect->sector_light);
 			data->ytop[x] = n_cya;
@@ -791,6 +824,7 @@ int					hook_event(t_player *player, unsigned char move[4], t_sector *sectors)
 	SDL_GetRelativeMouseState(&x, &y);
 	y = -y;
     player->angle += x * 0.01;
+	player->skyW += x * (player->sky->w / 360.0f);
 	player->cos_angl = cos(player->angle);
 	player->sin_angl = sin(player->angle);
     yaw = clamp(player->yaw - y * 0.05f, -5, 5);
@@ -799,6 +833,8 @@ int					hook_event(t_player *player, unsigned char move[4], t_sector *sectors)
 		add_projectile(&player->curr_sector->projectiles, create_projectile(*player));
 	return (1);
 }
+
+
 
 void 				print_player_gun(t_sdl *sdl, t_player *pla)
 {
@@ -820,7 +856,170 @@ void 				print_player_gun(t_sdl *sdl, t_player *pla)
 	draw_image(sdl->surf, surf, pos.x, pos.y, surf->w, surf->h);
 }
 
-void                game_loop(t_sdl *sdl, t_player *player, t_sector *sectors)
+
+void			draw_rect(SDL_Surface *surf, t_point pos, t_point size, int color, Uint8 filled)
+{
+	int	*pix = (int*)surf->pixels;
+	int i;
+	int j;
+
+	i = -1;
+	if (filled)
+	{
+		while (++i < size.y)
+		{
+			j = -1;
+			while (++j < size.x)
+				pix[pos.x + j + surf->w * (pos.y + i)] = color;
+		}
+	}
+	else
+	{
+		j = -1;
+		while (++j < size.x)
+			if (pos.x + j < surf->w && pos.x + j >0 && pos.y >= 0 && pos.y < surf->h)
+				pix[pos.x + j + surf->w * pos.y] = color;
+		while (++i < size.y)
+			if (pos.x + size.x - 1 < surf->w && pos.x + size.x >= 0 && (pos.y + i) >= 0 && (pos.y + i) < surf->h)
+				pix[pos.x + size.x - 1 + surf->w * (pos.y + i)] = color;
+		while (--j >= 0)
+			if (pos.x + j < surf->w && pos.x + j >= 0 && (pos.y + size.y - 1) >= 0 && (pos.y + size.y - 1) < surf->h)
+				pix[pos.x + j + surf->w * (pos.y + size.y - 1)] = color;
+		while (--i >= 0)
+			if (pos.x < surf->w && pos.x >= 0 && (pos.y + i) >= 0 && (pos.y + i) < surf->h)
+				pix[pos.x + surf->w * (pos.y + i)] = color;
+	}
+}
+
+int				render_menu(t_pr *m, t_sdl *sdl)
+{
+	draw_image(sdl->surf, m->background, 0, 0, sdl->win_size.x, sdl->win_size.y);
+	draw_image(sdl->surf, m->logo, m->logo_rect.x, m->logo_rect.y, m->logo_rect.w, m->logo_rect.h);
+	draw_image(sdl->surf, m->play_button, m->play_rect.x, m->play_rect.y, m->play_rect.w, m->play_rect.h);
+	draw_image(sdl->surf, m->choose_level_button, m->choose_level_rect.x,
+		m->choose_level_rect.y, m->choose_level_rect.w, m->choose_level_rect.h);
+	draw_image(sdl->surf, m->font_texture, m->font_rect.x, m->font_rect.y, m->font_rect.w, m->font_rect.h);
+	draw_image(sdl->surf, m->exit_button, m->exit_rect.x, m->exit_rect.y, m->exit_rect.w, m->exit_rect.h);
+	return (1);
+}
+
+
+void				apply_filter(SDL_Surface *surface, float intensity)
+{
+	Uint8 r, g, b;
+	int y;
+	int x;
+
+	y = -1;
+	while (++y < H)
+	{
+		x = -1;
+		while (++x < W)
+		{
+			SDL_GetRGB(get_pixel(surface, x, y), surface->format, &r, &g, &b);
+			put_pixel(surface, x, y, SDL_MapRGB(surface->format, r * intensity, g * intensity, b * intensity));
+		}
+	}
+}
+
+void 				left_right(t_pr *m)
+{
+	if ((m->event.key.keysym.sym == SDLK_RIGHT ||
+		m->event.key.keysym.sym == SDLK_d) && m->sw == 1)
+	{
+		if (m->i != m->maxi)
+			m->i++;
+		else
+			m->i = 0;
+		set_text(m, m->maps[m->i]);
+	}
+	if ((m->event.key.keysym.sym == SDLK_LEFT ||
+		m->event.key.keysym.sym == SDLK_a) && m->sw == 1)
+	{
+		if (m->i != 0)
+			m->i--;
+		else
+			m->i = m->maxi;
+		set_text(m, m->maps[m->i]);
+	}
+}
+
+int 				menu_hooks(t_pr *m, t_read_holder *holder)
+{
+	while (SDL_PollEvent(&m->event))
+	{
+		if (m->event.type == SDL_QUIT)
+			return (0);
+		if (m->event.type == SDL_KEYDOWN)
+		{
+			printf("Event\n");
+			down_action(m);
+			up_action(m);
+			left_right(m);
+			if (m->event.key.keysym.sym == SDLK_RETURN || m->event.key.keysym.sym == SDLK_ESCAPE)
+			{
+				if (m->sw == 2 || m->event.key.keysym.sym == SDLK_ESCAPE)
+					return (-1);
+				if (m->sw == 0)
+				{
+					//*menu = 0; //start_game(char *m->maps[i]); !!!!!IMPORTANT!!!!! m->maps[i] - choosed map
+					holder->curr_map = m->i;
+					return (1);
+				}
+			}
+		}
+	}
+	return (0);
+}
+/*
+void				menu_loop(t_pr *m, t_sector *sectors, t_sdl *sdl, t_read_holder *holder)
+{
+	SDL_Texture *tex;
+	int				menu;
+	
+	menu = 1;
+	while(menu)
+    {
+		render_menu(m, sdl, sectors, holder);
+		SDL_SetRenderDrawColor(sdl->ren, 255, 255, 255, 255);
+		SDL_RenderClear(sdl->ren);
+		//SDL_FillRect(sdl->surf, NULL, 0x00);
+		tex = SDL_CreateTextureFromSurface(sdl->ren, sdl->surf);
+		sdl_render(sdl->ren, tex, NULL, NULL);
+		menu = menu_hooks(m, holder);
+		SDL_DestroyTexture(tex);
+		SDL_RenderPresent(sdl->ren);
+    }
+	SDL_DestroyTexture(tex);
+}
+
+void				reload_map(t_read_holder *holder, t_sector *sectors, t_player *player, int curr_map)
+{
+	free_data_holder(holder);
+	*holder = (t_read_holder){};
+	holder->curr_map = curr_map;
+	read_game_config_file(holder, "game_info.txt");
+	//delete_sectors(sectors);
+	if (holder->maps_path[holder->curr_map])
+		sectors = read_map(holder->maps_path[holder->curr_map], holder, &player->pos);
+	// if (!sectors){
+	// 	printf("Can't load sectors\n");
+	// 	exit(1);
+	// }
+	player->curr_sector = sectors;
+	player->pos.z = player->curr_sector->floor + player->height;
+	player->health = 100;
+	player->yaw = 0;
+}
+*/
+void				draw_healthbar(SDL_Surface *surf, t_point pos, t_point size, int health)
+{
+	draw_rect(surf, pos, size, 0x00, 1);
+	if (health > 0)
+		draw_rect(surf, (t_point){pos.x + 4, pos.y + 4}, (t_point){(size.x - 8) * health / 100.0f, size.y - 8}, 0x00ff0000, 1);
+}
+
+int					game_loop(t_sdl *sdl, t_player *player, t_sector *sectors)
 {
     int				run;
     SDL_Texture		*tex;
@@ -849,7 +1048,6 @@ void                game_loop(t_sdl *sdl, t_player *player, t_sector *sectors)
         SDL_SetRenderDrawColor(sdl->ren, 0, 0, 0, 255);
         SDL_RenderClear(sdl->ren);
         SDL_FillRect(sdl->surf, NULL, 0x00);
-
         run_with_buff(player, sdl, sdl->win_size.x);
 		player->has_key = has_key(player->inventar);
 		if(player->current_gun)
@@ -859,8 +1057,8 @@ void                game_loop(t_sdl *sdl, t_player *player, t_sector *sectors)
 
         SDL_DestroyTexture(tex);
 
-        if((sdl->fps = (float)sdl->frame_id / (get_ticks(timer) / 1000.f)) > 2000000)
-            sdl->fps = 0;
+      //  if((sdl->fps = (float)sdl->frame_id / (get_ticks(timer) / 1000.f)) > 2000000)
+        //    sdl->fps = 0;
 		max = sdl->fps > max ? sdl->fps : max;
         sdl->frame_id++;
         sprintf(str, "fps:  %f", sdl->fps);
@@ -884,29 +1082,9 @@ void                game_loop(t_sdl *sdl, t_player *player, t_sector *sectors)
 
     SDL_DestroyTexture(tex);
 
+	return (run);
 }
 
-void 				free_data_holder(t_read_holder *holder)
-{
-	int				i;
-	
-	if(!holder)
-		return ;
-	delete_items_list_with_animation(holder->all_items);
-	i = 0;
-	while (i < 5 && holder->maps_path[i])
-	{
-		ft_strdel(&holder->maps_path[i]);
-		i++;
-	}
-	i = 0;
-	while( i < holder->text_count && holder->textures[i])
-	{
-		SDL_FreeSurface(holder->textures[i]);
-		i++;
-	}
-	ft_memdel((void**)&holder->textures);
-}
 
 t_sector			*get_player_sector(t_sector *sectors, int sec_num)
 {
@@ -919,6 +1097,77 @@ t_sector			*get_player_sector(t_sector *sectors, int sec_num)
 	return (NULL);
 }
 
+void	load_textures(t_pr *m, t_sdl *sdl, t_read_holder *holder)
+{
+	m->background = load_jpg_png("textures/background1.jpg");
+	m->play_button = load_jpg_png("textures/play_button.png");
+	m->exit_button = load_jpg_png("textures/exit_button.png");
+	m->logo = load_jpg_png("textures/logo.png");
+	m->choose_level_button = load_jpg_png("textures/choose_level_button.png");
+	m->font = TTF_OpenFont("amazdoom/AmazDooMLeft2.ttf", 256);
+	m->maps = holder->maps_path;
+	m->maxi = holder->maps_count - 1;
+	m->i = 0;
+	set_text(m, holder->maps_path[m->i]);
+	m->font_color.r = 255;
+	m->font_color.g = 255;
+	m->font_color.b = 255;
+	m->font_color.a = 255;
+}
+
+
+int 				load_game(t_player *player, t_read_holder *holder)
+{
+	t_sector		*sectors;
+
+	if (holder->curr_map >= holder->maps_count)
+		return (error_message("Invalid map"));
+	delete_sectors(holder->all);
+	delete_light_source(holder->light_source, holder->light_count);
+	sectors = read_map(holder->maps_path[holder->curr_map], holder, &player->pos);
+	if (!sectors)
+		return(error_message(holder->maps_path[holder->curr_map]));
+	holder->all = sectors;
+//	player->pos = holder->player_pos;
+	player->height = EyeHeight;
+	if (!(player->curr_sector = get_player_sector(sectors, holder->player_sector_id)))
+		return (error_message("Sector Not Found"));
+	player->pos.z = player->curr_sector->floor + player->height;
+	player->yaw = 0;
+	player->curr_map = holder->curr_map;
+	return (1);
+}
+
+void				run_game(t_sdl *sdl, t_player *player, t_pr *m, t_read_holder *holder)
+{
+	int				in_game;
+	SDL_Texture		*tex;
+
+	in_game = 0;
+	while (1)
+	{
+		if (in_game > 0)
+		{
+			if (player->curr_map != holder->curr_map)
+				if (!load_game(player, holder))
+					error_message("Nooo");
+			in_game = game_loop(sdl, player, holder->all);
+		}
+		render_menu(m, sdl);
+		SDL_SetRenderDrawColor(sdl->ren, 255, 255, 255, 255);
+		SDL_RenderClear(sdl->ren);
+		//SDL_FillRect(sdl->surf, NULL, 0x00);
+		tex = SDL_CreateTextureFromSurface(sdl->ren, sdl->surf);
+		sdl_render(sdl->ren, tex, NULL, NULL);
+		SDL_DestroyTexture(tex);
+		SDL_RenderPresent(sdl->ren);
+		if ((in_game = menu_hooks(m, holder)) < 0)
+			break ;
+	}
+	SDL_DestroyTexture(tex);
+}
+
+
 int					main(int argc, char **argv)
 {
 	t_read_holder	holder;
@@ -926,47 +1175,44 @@ int					main(int argc, char **argv)
 	t_player		*player;
 	t_sdl			*sdl;
 	t_vector		player_pos;
+	t_pr			m;
 
 	holder = (t_read_holder){};
+	m = (t_pr){};
 
-	if ((read_game_config_file(&holder, "game_info.txt")) && holder.maps_path[0])
-	{
-		sectors = read_map(holder.maps_path[0], &holder, &player_pos);
-		printf("name: %s\n", holder.maps_path[0]);
-	}
-	if (!sectors)
-	{
-		printf("Sector not found in map: %s\n", holder.maps_path[0]);
-		exit(1);
-	}
-	list_sectors(sectors);
-
-	sdl = new_t_sdl(W, H, "doom-nukem");
-	init_sdl(sdl);
-	SDL_ShowCursor(SDL_DISABLE);
-	SDL_SetRelativeMouseMode(SDL_TRUE);
-
-	player = new_t_player(3, 3, sdl->win_size);
-
-	player->pos = holder.player_pos;
-	player->height = EyeHeight;
-
-	player->curr_sector = get_player_sector(sectors, holder.player_sector_id);
-	player->pos.z = player->curr_sector->floor + player->height;
+	m.i = 0;
+	m.win_h = H;
+	m.win_w = W;
 	
-	all_guns = (t_gun**)malloc(sizeof(t_gun*) * 3);
-	load_gun(all_guns);
+	if (read_game_config_file(&holder, "game_info.txt"))
+	{
 
-	game_loop(sdl, player, sectors);
+		sdl = new_t_sdl(W, H, "doom-nukem");
+		init_sdl(sdl);
 
-	list_items(player->inventar);
+		SDL_ShowCursor(SDL_DISABLE);
+		SDL_SetRelativeMouseMode(SDL_TRUE);
 
-	free_player(player);
-	delete_sectors(sectors);
-	list_light(holder.light_source, holder.light_count);
-	delete_light_source(holder.light_source, holder.light_count);
+		load_textures(&m, sdl, &holder);
+		initialize_sdl_win(&m);
+
+		player = new_t_player(3, 3, sdl->win_size);
+		player->sky = load_jpg_png("textures/skybox.png");
+
+		all_guns = (t_gun**)malloc(sizeof(t_gun*) * 3);
+		load_gun(all_guns);
+
+		run_game(sdl, player, &m, &holder);
+
+		free_player(player);
+	
+		delete_sectors(sectors);
+		//list_light(holder.light_source, holder.light_count);
+		delete_light_source(holder.light_source, holder.light_count);
+		free_t_sdl(&sdl);
+	}
+
 	free_data_holder(&holder);
-	free_t_sdl(&sdl);
 
 	system("leaks -q doom-nukem");
 }

@@ -18,7 +18,7 @@ char			*get_path(int fd)
 	return (pth);
 }
 
-void 			read_maps_path(int fd, char **array, int arr_size)
+int 			read_maps_path(int fd, char **array, int arr_size)
 {
 	char		*file_name;
 	char		*path;
@@ -28,7 +28,7 @@ void 			read_maps_path(int fd, char **array, int arr_size)
 	i = 0;
 	file_name = NULL;
 	if(!(path = get_path(fd)))
-		return ;
+		return (0);
 	while (get_next_line(fd, &file_name) > 0 && i < arr_size)
 	{
 		if (ft_isdigit(*file_name))
@@ -44,6 +44,7 @@ void 			read_maps_path(int fd, char **array, int arr_size)
 	}
 	ft_strdel(&path);
 	ft_strdel(&file_name);
+	return (i);
 }
 
 
@@ -114,7 +115,7 @@ int 			read_game_config_file(t_read_holder *holder, char *info_file_path)
 		while (get_next_line(fd, &line) > 0)
 		{
 			if (ft_strcmp(line, "#Levels") == 0)
-				read_maps_path(fd, &holder->maps_path[0], 5);
+				holder->maps_count = read_maps_path(fd, &holder->maps_path[0], 5);
 			else if (ft_strncmp(line, "#Textures", ft_strlen("#Textures")) == 0)
 				holder->textures = load_img_array_from_file(fd, (holder->text_count = get_num_from_str(line)));
 			else if (ft_strcmp(line, "#Items") == 0)
@@ -242,6 +243,8 @@ void 			delete_light_source(t_light **light, unsigned array_size)
 	t_light		*l;
 	unsigned	i;
 
+	if (!light || !*light)
+		return ;
 	i = 0;
 	while (i < array_size && (l = light[i]))
 	{
@@ -267,17 +270,16 @@ t_sector		*read_map(char *pth, t_read_holder *holder, t_vector *player_pos)
 	get_count_struct_arrays(fd, &holder->vect_count, &holder->wall_count);
 	vectors = get_vectors(fd, holder->vect_count);
 	holder->walls = get_walls(fd, holder->wall_count, vectors, holder->textures);
+
 	ft_memdel((void**)&vectors);
 	sectors = make_sectors_list(fd, holder);
 	list_sectors(sectors);
 
 	light_source = create_all_light_source(sectors, holder->light_count);
-
 	holder->light_source = light_source;
 
 	fill_sectors_light_source(sectors, holder->light_source, holder->light_count);
-
-	get_player_pos(fd, &holder->player_pos, &holder->player_sector_id);
+	get_player_pos(fd, player_pos, &holder->player_sector_id);
 
 	delete_walls(holder->walls, holder->wall_count);
 	close(fd);
