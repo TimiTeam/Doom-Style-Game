@@ -38,5 +38,6 @@ t_player				*new_t_player(t_point win_size)
 	player->inventar = NULL;
 	player->height = EyeHeight;
 	player->health = 100;
+	player->skybox = load_img("textures/skybox.png");
 	return (player);
 }

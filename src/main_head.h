@@ -17,7 +17,6 @@
 
 static float m_vfov = 0.2f;
 static float m_hfov = 0.73f*H/W;
-static int farz = H/W;
 static int h_w = W >> 1;
 static int h_h = H >> 1;
 
@@ -36,8 +35,8 @@ typedef struct		s_draw_data
 	float			n_ceil_y_e;
 	float			n_floor_y_s;
 	float			n_floor_y_e;
-	int 			diff_ceil;
-	int 			diff_floor;
+	float 			diff_ceil;
+	float 			diff_floor;
 	int				floor_height;
 	int				ceil_height;
 	int				n_floor_height;
@@ -79,6 +78,11 @@ typedef struct		s_plyer
 	unsigned char 	has_key;
 	unsigned char	shooting;
 	int				dead;
+	float			skyW;
+	float			skyH;
+	SDL_Surface		*skybox;
+	Uint8			falling;
+	float			velocity;
 }					t_player;
 
 typedef struct 		s_super_data
@@ -146,11 +150,13 @@ int 					Scaler_Next(Scaler *i);
 
 //void 					textLine(int x, int y1,int y2, Scaler ty,unsigned txtx, SDL_Surface *surface, SDL_Surface *image);
 
-void 					textLine(int x, int y1, int y2, struct Scaler ty, unsigned txtx, t_sector *sect, SDL_Surface *surface, SDL_Surface *image, t_vector tex_pos, float scaleL, float scaleH, float maxDist, t_vector lightSource);
+void 					textLine(int x, int y1, int y2, struct Scaler ty, unsigned txtx, t_sector *sect, SDL_Surface *surface, SDL_Surface *image, t_vector tex_pos, float scaleL, float scaleH, t_light **light_source);
 
 //void 					draw_floor_or_ceil(SDL_Surface *dst, SDL_Surface *src, int x, int start_y, int end_y, int diff_height, t_player player);
 
-void 					draw_floor_or_ceil(SDL_Surface *dst, SDL_Surface *src, int x, int y, int end_y, int diff_height, t_player player, t_vector lightSource, t_sector *sect);
+void 					draw_floor_or_ceil(SDL_Surface *dst, SDL_Surface *src, int x, int y, int end_y, float diff_height, t_player player, t_sector *sect, t_light **light_source);
+
+void					draw_skybox(SDL_Surface *dst, SDL_Surface *src, int x, int y, int end_y, t_player player);
 
 void					draw_enemy_sprite(t_item *obj, t_draw_data data, t_player player, SDL_Surface *surface);
 

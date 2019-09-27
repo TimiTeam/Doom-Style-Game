@@ -3,6 +3,7 @@
 
 #define	MAX_PORTALS 16
 #define	MAX_TEXTURES 8
+#define	MAX_LIGHT_SRC 4
 #define NON -1
 #include "sdl_head.h"
 #include "libft.h"
@@ -111,12 +112,20 @@ typedef	struct			s_wall
 	unsigned char		opening;
 }						t_wall;
 
+typedef struct    s_light
+{
+	struct s_light  *next;
+	t_vector   pos;
+	float    max_dist;
+}      t_light;
+
 typedef struct			s_sector
 {
 	t_wall				**wall;
 	t_wall				*only_walls[MAX_PORTALS];
 	t_wall				*portals[MAX_PORTALS];
 	t_wall 				*doors[MAX_PORTALS];
+	t_light				*sector_light[MAX_LIGHT_SRC];
 	SDL_Surface			*floor_tex;
 	SDL_Surface			*ceil_tex;
 	t_item				*items;
@@ -126,6 +135,7 @@ typedef struct			s_sector
 	float				ceil;
 	unsigned short 		sector;
 	unsigned short		n_walls;
+	Uint8				skybox;
 }						t_sector;
 
 t_sector				*new_sector();

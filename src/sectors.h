@@ -13,6 +13,9 @@ typedef struct 		s_read_holder
 	int				vect_count;
 	int				wall_count;
 	int				curr_map;
+	t_vector		player_pos;
+	t_light			*light_source;
+	int				player_sector_id;
 }					t_read_holder;
 
 int 				read_game_config_file(t_read_holder *holder, char *info_file_path);

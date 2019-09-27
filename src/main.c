@@ -64,10 +64,10 @@ static void 			make_intersect(t_wall *wall)
 {
 	t_vector 	i1;
 	t_vector 	i2;
-	float 		nearz = 1e-4f, nearside = 1e-5f, farside = 1000.f;
+	float 		nearz = 1e-4f, nearside = 1e-5f, farz = 5, farside = 1000.f;
 
-	i1 = Intersect(wall->start.x, wall->start.y, wall->end.x, wall->end.y, -nearside,nearz, -farside,farz);
-    i2 = Intersect(wall->start.x, wall->start.y, wall->end.x, wall->end.y,  nearside,nearz,  farside,farz);
+	i1 = Intersect(wall->start.x, wall->start.y, wall->end.x, wall->end.y, -nearside, nearz, -farside, farz);
+    i2 = Intersect(wall->start.x, wall->start.y, wall->end.x, wall->end.y,  nearside, nearz,  farside, farz);
 	if(wall->start.y < nearz) 
 	{
 		if(i1.y > 0)
@@ -99,7 +99,6 @@ static void 			make_intersect(t_wall *wall)
 void			draw_sectors(t_sector *sectors, t_player *player, t_sdl *sdl, t_draw_data data);
 
 int t = 1;
-
 
 static int			calc_floor_ceil(unsigned half_win_size_y, float floor_or_ceil_diff, float scale_y)
 {
@@ -216,24 +215,26 @@ void 			*thread_draw_sector(void *param)
 
 		txtx = (super->u0 * ((cp.end.x - x) * cp.end.y) + super->u1 * ((x - cp.start.x) * cp.start.y)) / ((cp.end.x - x) * cp.end.y + (x - cp.start.x) * cp.start.y);
 		
-		draw_floor_or_ceil(super->main_screen, super->ceil_texture, x, super->data->ytop[x], cya, super->data->diff_ceil, super->player, (t_vector){5,5,10}, super->sect);
-
-		draw_floor_or_ceil(super->main_screen, super->floor_texture, x, cyb, super->data->ybottom[x], super->data->diff_floor, super->player, (t_vector){5,5,10}, super->sect);
+		if (!sec->skybox)
+			draw_floor_or_ceil(super->main_screen, super->ceil_texture, x, super->data->ytop[x], cya, super->data->diff_ceil, super->player, super->sect, super->sect->sector_light);
+		else
+			draw_skybox(super->main_screen, super->player.skybox, x, super->data->ytop[x], cya, super->player);
+		draw_floor_or_ceil(super->main_screen, super->floor_texture, x, cyb, super->data->ybottom[x], super->data->diff_floor, super->player, super->sect, super->sect->sector_light);
 		mapped = txtx / (scale_width_texture) * dist;
 		dx = (dist - mapped) / dist;
 		t_vector tex_pos = {vec.x * dx + super->wall.end.x, vec.y * dx + super->wall.end.y};
 		if (super->wall.type != empty_wall)
-			textLine(x, cya, cyb, (struct Scaler)Scaler_Init(ya, cya, yb, 0, fabsf(sec->floor - sec->ceil) * super->scaleH), txtx, sec, super->main_screen, super->wall.texture, tex_pos, super->scaleL, super->scaleH, maxDist, (t_vector){5,5,10});
+			textLine(x, cya, cyb, (struct Scaler)Scaler_Init(ya, cya, yb, 0, super->wall.texture->h * super->scaleH / 20.0f), txtx, sec, super->main_screen, super->wall.texture, tex_pos, super->scaleL, super->scaleH, super->sect->sector_light);
 		else
 		{
 			nya = (x - cp.start.x) * (data->n_ceil_height) / x_lenght + data->n_ceil_y_s;
 			nyb = (x - cp.start.x) * (data->n_floor_height) / x_lenght + data->n_floor_y_s;
 			n_cya = clamp((x - cp.start.x) * (data->n_ceil_height) / x_lenght + data->n_ceil_y_s, data->ytop[x], data->ybottom[x]);
 			n_cyb = clamp((x - cp.start.x) * (data->n_floor_height) / x_lenght + data->n_floor_y_s, data->ytop[x], data->ybottom[x]);
-			if (nya != ya)
-    	 		textLine(x, cya, n_cya - 1, (struct Scaler)Scaler_Init(ya, cya, nya - 1, 0, super->wall.texture->h / 2), txtx, sec, super->main_screen, super->wall.texture, tex_pos, super->scaleL, super->scaleH, maxDist, (t_vector){5,5,10});
-        	if (yb !=  nyb)
-      			textLine(x, n_cyb + 1, cyb, (struct Scaler)Scaler_Init(nyb, n_cyb, yb - 1, 0, super->wall.texture->h / 2), txtx, sec, super->main_screen, super->wall.texture, tex_pos, super->scaleL, super->scaleH, maxDist, (t_vector){5,5,10});
+			if (nya - 1 != ya && cya != n_cya)
+    	 		textLine(x, cya, n_cya - 1, (struct Scaler)Scaler_Init(ya, cya, nya - 1, 0, super->scaleH * 10), txtx, sec, super->main_screen, super->wall.texture, tex_pos, super->scaleL, super->scaleH, super->sect->sector_light);
+        	if (yb - 1 !=  nyb && n_cyb != cyb)
+      			textLine(x, n_cyb + 1, cyb, (struct Scaler)Scaler_Init(nyb, n_cyb, yb - 1, 0,  super->scaleH * 10), txtx, sec, super->main_screen, super->wall.texture, tex_pos, super->scaleL, super->scaleH, super->sect->sector_light);
 			data->ytop[x] = n_cya;
 			data->ybottom[x] = n_cyb;
 		}
@@ -301,7 +302,7 @@ void 			draw_world(t_sector *sec, t_wall wall, t_player player, t_sdl *sdl, t_dr
 		data.n_ceil_height = data.n_ceil_y_e - data.n_ceil_y_s;
 
 	}
-	int THREAD_COUNT = 5;
+	int THREAD_COUNT = 4;
 	pthread_t	thread[THREAD_COUNT];
 	t_super_data super[THREAD_COUNT];
 	int step;
@@ -558,7 +559,7 @@ void 			draw_sector_items(t_item **items, t_player *player, t_draw_data data, SD
 	{
 		get_damege->health -= player->current_gun->damage;
 		get_damege->curr_state = taking_damage;
-		get_damege->is_dying = 5;
+		get_damege->is_dying = 4;
 	}
 }
 
@@ -644,15 +645,19 @@ void			move_player(t_player *player, float sin_angle, float cos_angle)
 				next = wall[i]->sectors[0];
 			else if (wall[i]->sectors[1] && player->curr_sector->sector != wall[i]->sectors[1]->sector)
 				next = wall[i]->sectors[1];
-			if ((int)(next->ceil - next->floor) <= (int)(player->height + player->jump + player->sit) || next->floor - player->curr_sector->floor > 3)
+			if (max(player->curr_sector->floor, next->floor) > player->pos.z - player->height || min(player->curr_sector->ceil, next->ceil) < player->pos.z)
 				return ;
+			if (next->floor < player->curr_sector->floor)
+			 	player->falling = 1;
 			player->curr_sector = next;
-			step.z = player->height + player->curr_sector->floor;
+			//step.z = player->height + player->curr_sector->floor;
 			break;
         }
 		i++;
 	}
-	step.z = player->height + player->curr_sector->floor;
+	// if (next->floor < player->curr_sector->floor)
+	//  	player->falling = 1;
+	step.z = player->pos.z;
 	player->pos = step;
 }
 
@@ -790,14 +795,19 @@ int					hook_event(t_player *player, unsigned char move[4], t_sector *sectors)
 				move[2] = e.type == SDL_KEYDOWN;
 			else if (e.key.keysym.sym == SDLK_d)
 				move[3] = e.type == SDL_KEYDOWN;
-			else if (e.key.keysym.sym == SDLK_ESCAPE)
-				menu = 1;
+			else if (e.key.keysym.sym == SDLK_ESCAPE){
+				if (menu)
+					menu = 0;
+				else
+					menu = 1;
+			}
 			else if (e.key.keysym.sym == SDLK_LSHIFT && e.type == SDL_KEYDOWN)
 				player->speed = 1.5f;
 			else if (e.key.keysym.sym == SDLK_LSHIFT && e.type == SDL_KEYUP)
 				player->speed = 0.6;
-			else if (e.key.keysym.sym == SDLK_SPACE && !player->jump)
-				player->jump = 1;
+			else if (e.key.keysym.sym == SDLK_SPACE && !player->jump){
+				//if (player->pos.z - player->height - 2 <= player->curr_sector->floor)
+					player->velocity += 0.5;}
 			else if (e.key.keysym.sym == SDLK_1 && player->gun[pistol])
 				player->current_gun = player->gun[pistol];
 			else if (e.key.keysym.sym == SDLK_2 && player->gun[shotgun])
@@ -840,6 +850,7 @@ int					hook_event(t_player *player, unsigned char move[4], t_sector *sectors)
 	SDL_GetRelativeMouseState(&x, &y);
 	y = -y;
     player->angle += x * 0.01;
+	player->skyW += x * (player->skybox->w / 360.0f);
 	player->cos_angl = cos(player->angle);
 	player->sin_angl = sin(player->angle);
     yaw = clamp(player->yaw - y * 0.05f, -5, 5);
@@ -847,15 +858,6 @@ int					hook_event(t_player *player, unsigned char move[4], t_sector *sectors)
 	if (player->current_gun && player->current_gun->state == 0.33f && player->current_gun->type == plasmagun)
 		add_projectile(&player->curr_sector->projectiles, create_projectile(*player));
 	return (1);
-}
-
-t_sector		*reload_map(t_sector **sectors, t_read_holder *holder, t_vector *player_pos)
-{
-	holder->curr_map++;
-	delete_sectors(*sectors);
-	t_sector *tmp;
-	tmp = read_map(holder->maps_path[holder->curr_map], holder, player_pos);
-	return (tmp);
 }
 
 int				render_menu(t_pr *m, t_sdl *sdl, t_sector *sectors, t_read_holder *holder)
@@ -962,6 +964,26 @@ void				menu_loop(t_pr *m, t_sector *sectors, t_sdl *sdl, t_read_holder *holder)
     }
 }
 
+void				reload_map(t_read_holder *holder, t_sector *sectors, t_player *player)
+{
+	int	tmp;
+
+	tmp = holder->curr_map;
+	free_data_holder(holder);
+	*holder = (t_read_holder){};
+	holder->curr_map = tmp + 1;
+	read_game_config_file(holder, "game_info.txt");
+	//delete_sectors(sectors);
+	if (holder->maps_path[holder->curr_map])
+		sectors = read_map(holder->maps_path[holder->curr_map], holder, &player->pos);
+	// if (!sectors){
+	// 	printf("Can't load sectors\n");
+	// 	exit(1);
+	// }
+	player->curr_sector = sectors;
+	player->pos.z = player->curr_sector->floor + player->height;
+	player->yaw = 0;
+}
 void                game_loop(t_sdl *sdl, t_player *player, t_sector *sectors, t_pr *m, t_read_holder *holder)
 {
     int				run;
@@ -988,11 +1010,24 @@ void                game_loop(t_sdl *sdl, t_player *player, t_sector *sectors, t
     start_timer(&timer);
     while(run)
     {
+		printf("pos.z: %f\nfloor: %f\n", player->pos.z, player->curr_sector->floor);
 		if (menu)
 			menu_loop(m, sectors, sdl, holder);
-		SDL_SetRenderDrawColor(sdl->ren, 0, 0, 0, 255);
-		SDL_RenderClear(sdl->ren);
-		SDL_FillRect(sdl->surf, NULL, 0x00);
+			// if (player->falling)
+			// {
+			// 	velocity -= 0.05;
+			// 	if (player->pos.z <= player->curr_sector->floor + player->height){
+			// 		player->falling = 0;
+			// 		velocity = 0;
+			// 	}
+			// }
+		if (/*player->pos.z + player->velocity > player->curr_sector->floor + player->height && */player->pos.z + player->velocity >= player->curr_sector->ceil)
+			player->velocity = 0;
+		player->pos.z += player->velocity;
+		if (player->pos.z - player->height > player->curr_sector->floor)
+			player->velocity -= 0.05;
+		else
+			player->velocity = 0;
 		run_with_buff(player, sdl, sdl->win_size.x);
 		player->has_key = has_key(player->inventar);
 		if(player->current_gun)
@@ -1011,43 +1046,35 @@ void                game_loop(t_sdl *sdl, t_player *player, t_sector *sectors, t
 			player->dead++;
 			apply_filter(sdl->surf, 1.0f - (1.0f / 50) * player->dead);
 			output_text(sdl->surf, "YOU DIED", W / 2 - 200, H / 2 - 100, 400, 200, (SDL_Color){255, 30, 30, 255});
-			//player->yaw -= 5.0f/ 50.0f;
-			player->height -= 6.0f / 50;
+			player->yaw -= 3.0f/ 50.0f;
+			player->pos.z -= 3.0f / 50;
 			if (player->dead > 49){
 				player->dead = 0;
 				mapReload = 1;
 			}	
 		}
-		printf("%f\n", player->pos.z);
+		//printf("%f\n", player->pos.z);
 		tex = SDL_CreateTextureFromSurface(sdl->ren, sdl->surf);
 		sdl_render(sdl->ren, tex, NULL, NULL);
 		SDL_DestroyTexture(tex);
 		SDL_RenderPresent(sdl->ren);
-		run = hook_event(player, move, sectors);
 		if (mapReload)
 		{
 			mapReload = 0;
-			// //reload_map(&sectors, holder, &player->pos);
-			// //list_sectors(sectors);
-			// player->curr_sector = reload_map(&sectors, holder, &player->pos);
+			reload_map(holder, sectors, player);
+			// *holder = (t_read_holder){};
+			// holder->curr_map++;
+			// read_game_config_file(holder, "game_info.txt");
+			// if (holder->maps_path[holder->curr_map])
+			// 	sectors = read_map(holder->maps_path[holder->curr_map], holder, &player->pos);
+			// if (!sectors){
+			// 	printf("Can't load sectors\n");
+			// 	exit(1);
+			// }	
+			// player->curr_sector = sectors;
 			// player->pos.z = player->curr_sector->floor + player->height;
-			t_pr			m;
-			//holder = (t_read_holder*)malloc(sizeof(t_read_holder));
-			*holder = (t_read_holder){};
-			holder->curr_map++;
-			read_game_config_file(holder, "game_info.txt");
-			//player = new_t_player(sdl->win_size);
-			//delete_sectors(sectors);
-			if (holder->maps_path[holder->curr_map])
-				sectors = read_map(holder->maps_path[holder->curr_map], holder, &player->pos);
-			if (!sectors){
-				printf("Can't load sectors\n");
-				exit(1);
-			}	
-			player->height = EyeHeight;
-			player->curr_sector = sectors;
-			player->pos.z = player->curr_sector->floor + player->height;
 		}
+		run = hook_event(player, move, sectors);
     }
 
 	printf("\n\n\t\t---- MAX FPS  %f ----\n\n", max);
