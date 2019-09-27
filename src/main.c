@@ -16,6 +16,7 @@ void 					load_gun(t_gun **gun)
 	gun[pistol]->frame[1] = load_jpg_png("textures/guns/pistol/pistol2.png");
 	gun[pistol]->frame[2] = load_jpg_png("textures/guns/pistol/pistol3.png");
 	gun[pistol]->frame[3] = load_jpg_png("textures/guns/pistol/pistol4.png");
+	gun[pistol]->icon = load_jpg_png("textures/pistolet_found/pistolet_found.png");
 	gun[shotgun] = (t_gun*)malloc(sizeof(t_gun));
 	*gun[shotgun]= (t_gun){};
 	gun[shotgun]->ammo = 12;
@@ -28,6 +29,7 @@ void 					load_gun(t_gun **gun)
 	gun[shotgun]->frame[3] = load_jpg_png("textures/guns/shotgun/shotgun_frame_4.png");
 	gun[shotgun]->frame[4] = load_jpg_png("textures/guns/shotgun/shotgun_frame_3.png");
 	gun[shotgun]->frame[5] = load_jpg_png("textures/guns/shotgun/shotgun_frame_2.png");
+	gun[shotgun]->icon = load_jpg_png("textures/shotgun_found/shotgun_found.png");
 	gun[plasmagun] = (t_gun*)malloc(sizeof(t_gun));
 	*gun[plasmagun]= (t_gun){};
 	gun[plasmagun]->ammo = 20;
@@ -37,6 +39,7 @@ void 					load_gun(t_gun **gun)
 	gun[plasmagun]->frame[0] = load_jpg_png("textures/guns/plasmagun/plasmagun_1.png");
 	gun[plasmagun]->frame[1] = load_jpg_png("textures/guns/plasmagun/plasmagun_2.png");
 	gun[plasmagun]->frame[2] = load_jpg_png("textures/guns/plasmagun/plasmagun_3.png");
+	gun[plasmagun]->icon = load_jpg_png("textures/plasmagun_found/plasmagun_found.png");
 }
 
 t_gun			**all_guns;
@@ -219,7 +222,7 @@ void 			*thread_draw_sector(void *param)
 			draw_floor_or_ceil(super->main_screen, super->ceil_texture, x, super->data->ytop[x], cya, super->data->diff_ceil, super->player, super->sect, super->sect->sector_light);
 		else
 			draw_skybox(super->main_screen, super->player.skybox, x, super->data->ytop[x], cya, super->player);
-		draw_floor_or_ceil(super->main_screen, super->floor_texture, x, cyb, super->data->ybottom[x], super->data->diff_floor, super->player, super->sect, super->sect->sector_light);
+		draw_floor_or_ceil(super->main_screen, super->floor_texture, x, cyb, super->data->ybottom[x] + 1, super->data->diff_floor, super->player, super->sect, super->sect->sector_light);
 		mapped = txtx / (scale_width_texture) * dist;
 		dx = (dist - mapped) / dist;
 		t_vector tex_pos = {vec.x * dx + super->wall.end.x, vec.y * dx + super->wall.end.y};
@@ -495,7 +498,7 @@ void 			draw_sector_items(t_item **items, t_player *player, t_draw_data data, SD
 				player->health -= it->damage;
 				printf("\tYour hp: %d\n", player->health);
 			}
-			if (player->health <= 0){
+			if (player->health <= 0 && !player->dead){
 				printf("\tHey, You die!!\n");
 				player->dead = 1;
 			}
@@ -860,6 +863,40 @@ int					hook_event(t_player *player, unsigned char move[4], t_sector *sectors)
 	return (1);
 }
 
+void			draw_rect(SDL_Surface *surf, t_point pos, t_point size, int color, Uint8 filled)
+{
+	int	*pix = (int*)surf->pixels;
+	int i;
+	int j;
+
+	i = -1;
+	if (filled)
+	{
+		while (++i < size.y)
+		{
+			j = -1;
+			while (++j < size.x)
+				pix[pos.x + j + surf->w * (pos.y + i)] = color;
+		}
+	}
+	else
+	{
+		j = -1;
+		while (++j < size.x)
+			if (pos.x + j < surf->w && pos.x + j >0 && pos.y >= 0 && pos.y < surf->h)
+				pix[pos.x + j + surf->w * pos.y] = color;
+		while (++i < size.y)
+			if (pos.x + size.x - 1 < surf->w && pos.x + size.x >= 0 && (pos.y + i) >= 0 && (pos.y + i) < surf->h)
+				pix[pos.x + size.x - 1 + surf->w * (pos.y + i)] = color;
+		while (--j >= 0)
+			if (pos.x + j < surf->w && pos.x + j >= 0 && (pos.y + size.y - 1) >= 0 && (pos.y + size.y - 1) < surf->h)
+				pix[pos.x + j + surf->w * (pos.y + size.y - 1)] = color;
+		while (--i >= 0)
+			if (pos.x < surf->w && pos.x >= 0 && (pos.y + i) >= 0 && (pos.y + i) < surf->h)
+				pix[pos.x + surf->w * (pos.y + i)] = color;
+	}
+}
+
 int				render_menu(t_pr *m, t_sdl *sdl, t_sector *sectors, t_read_holder *holder)
 {
 		draw_image(sdl->surf, m->background, 0, 0, sdl->win_size.x, sdl->win_size.y);
@@ -964,14 +1001,11 @@ void				menu_loop(t_pr *m, t_sector *sectors, t_sdl *sdl, t_read_holder *holder)
     }
 }
 
-void				reload_map(t_read_holder *holder, t_sector *sectors, t_player *player)
+void				reload_map(t_read_holder *holder, t_sector *sectors, t_player *player, int curr_map)
 {
-	int	tmp;
-
-	tmp = holder->curr_map;
 	free_data_holder(holder);
 	*holder = (t_read_holder){};
-	holder->curr_map = tmp + 1;
+	holder->curr_map = curr_map;
 	read_game_config_file(holder, "game_info.txt");
 	//delete_sectors(sectors);
 	if (holder->maps_path[holder->curr_map])
@@ -982,8 +1016,17 @@ void				reload_map(t_read_holder *holder, t_sector *sectors, t_player *player)
 	// }
 	player->curr_sector = sectors;
 	player->pos.z = player->curr_sector->floor + player->height;
+	player->health = 100;
 	player->yaw = 0;
 }
+
+void				draw_healthbar(SDL_Surface *surf, t_point pos, t_point size, int health)
+{
+	draw_rect(surf, pos, size, 0x00, 1);
+	if (health > 0)
+		draw_rect(surf, (t_point){pos.x + 4, pos.y + 4}, (t_point){(size.x - 8) * health / 100.0f, size.y - 8}, 0x00ff0000, 1);
+}
+
 void                game_loop(t_sdl *sdl, t_player *player, t_sector *sectors, t_pr *m, t_read_holder *holder)
 {
     int				run;
@@ -1030,8 +1073,14 @@ void                game_loop(t_sdl *sdl, t_player *player, t_sector *sectors, t
 			player->velocity = 0;
 		run_with_buff(player, sdl, sdl->win_size.x);
 		player->has_key = has_key(player->inventar);
-		if(player->current_gun)
+		draw_healthbar(sdl->surf, (t_point){W / 2 - 100, 20}, (t_point){200, 20}, player->health);
+		if(player->current_gun){
 			print_player_gun(sdl, player);
+			char	*ammo = ft_itoa(player->current_gun->ammo);
+			SDL_Surface *ammo_surf = TTF_RenderText_Blended(m->font, ammo, (SDL_Color){255, 255, 255});
+			draw_image(sdl->surf, ammo_surf, 0, 130, 50, 50);
+			draw_image(sdl->surf, player->current_gun->icon, 0, 20, 200, 100);
+		}
 		if((sdl->fps = (float)sdl->frame_id / (get_ticks(timer) / 1000.f)) > 2000000)
 			sdl->fps = 0;
 		max = sdl->fps > max ? sdl->fps : max;
@@ -1047,10 +1096,11 @@ void                game_loop(t_sdl *sdl, t_player *player, t_sector *sectors, t
 			apply_filter(sdl->surf, 1.0f - (1.0f / 50) * player->dead);
 			output_text(sdl->surf, "YOU DIED", W / 2 - 200, H / 2 - 100, 400, 200, (SDL_Color){255, 30, 30, 255});
 			player->yaw -= 3.0f/ 50.0f;
-			player->pos.z -= 3.0f / 50;
+			player->pos.z -= 6.0f / 50;
 			if (player->dead > 49){
 				player->dead = 0;
 				mapReload = 1;
+				printf("FULLY DEAD\n");
 			}	
 		}
 		//printf("%f\n", player->pos.z);
@@ -1061,7 +1111,7 @@ void                game_loop(t_sdl *sdl, t_player *player, t_sector *sectors, t
 		if (mapReload)
 		{
 			mapReload = 0;
-			reload_map(holder, sectors, player);
+			reload_map(holder, sectors, player, holder->curr_map);
 			// *holder = (t_read_holder){};
 			// holder->curr_map++;
 			// read_game_config_file(holder, "game_info.txt");
