@@ -109,3 +109,12 @@ int 			find_dot_radius_intersect(t_vector light_pos, float radius, t_vector star
     else
 		return 1;
 }
+
+void swap(int *a, int *b)
+{
+    int tmp;
+
+    tmp = *a;
+    *a = *b;
+    *b = tmp;
+}

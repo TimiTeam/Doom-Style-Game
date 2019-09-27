@@ -14,15 +14,6 @@ typedef struct	s_color
 	int			b;
 }				t_color;
 
-void swap(int *a, int *b)
-{
-    int tmp;
-
-    tmp = *a;
-    *a = *b;
-    *b = tmp;
-}
-
 float   fNumberPart(float n)
 {
     if (n > 0)

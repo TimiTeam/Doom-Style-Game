@@ -371,7 +371,6 @@ void 			get_gun_to_player(t_player *player, t_gun **guns, enum gun_type gun_type
 		dst->damage = src->damage;
 		dst->icon = src->icon;
 		dst->type = src->type;
-//		printf("New player gun : %p\n", player->gun[gun_type]);
 		player->current_gun = dst;
 		player->gun[gun_type] = dst;
 		printf("New player gun : %p\n", player->gun[gun_type] );
@@ -513,31 +512,136 @@ void				run_with_buff(t_player *player, t_sdl *sdl, unsigned int win_x)
 	draw_sectors(player->curr_sector, player, sdl, draw_data);
 }
 
+int 			intersect_lines(t_vector one_start, t_vector one_end, t_vector two_start, t_vector two_end)
+{
+	float 		d;
+	float		a;
+	float		b;
+	float 		Ua;
+	float 		Ub;
+
+	d = (two_end.y-two_start.y)*(one_start.x-one_end.x)-(two_end.x-two_start.x)*(one_start.y-one_end.y);
+    if (d == 0){
+        if ((one_start.x*one_end.y-one_end.x*one_start.y)*(two_end.x-two_start.x) - (two_start.x*two_end.y-two_end.x*two_start.y)*(one_end.x-one_start.x) == 0 && (one_start.x*one_end.y-one_end.x*one_start.y)*(two_end.y-two_start.y) - (two_start.x*two_end.y-two_end.x*two_start.y)*(one_end.y-one_start.y) == 0)
+            return (1);
+        else 
+			return (0);
+    }
+    else{
+        a = (two_end.x-one_end.x) * (two_end.y-two_start.y) - (two_end.x-two_start.x) * (two_end.y-one_end.y);
+        b = (one_start.x - one_end.x) * (two_end.y - one_end.y) - (two_end.x-one_end.x) * (one_start.y-one_end.y);
+        Ua = a / d;
+        Ub = b / d;
+        if (Ua >= 0 && Ua <=1 && Ub >= 0 && Ub <= 1)
+			return (1);
+    }
+    return 0;
+}
+
+int area(t_vector a, t_vector b, t_vector c) {
+	return (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x);
+}
+
+int intersect_1 (int a, int b, int c, int d) {
+	if (a > b)  swap(&a, &b);
+	if (c > d)  swap(&c, &d);
+	return max(a,c) <= min(b,d);
+}
+ 
+int intersect (t_vector a, t_vector b, t_vector c, t_vector d) {
+	return ((intersect_1 (a.x, b.x, c.x, d.x) && intersect_1 (a.y, b.y, c.y, d.y) && area(a,b,c) * area(a,b,d) <= 0
+		&& area(c, d, a) * area(c, d, b) <= 0) ? 1 : 0);
+}
+
+/*
+unsigned short		dot_inside_sector(int x, int y, t_wall  **wall, int arr_size)
+{
+	int     		i;
+	int     		j;
+	unsigned short	odd;	
+	i = -1;
+	j = arr_size - 1;
+	odd = 0;
+	while(++i < arr_size)
+	{
+		if ((wall[i]->start.y < y && p[j].y >= y) || (p[j].y < y && p[i].y >= y) )
+		{
+			if (p[i].x + (float)(y - p[i].y) / (p[j].y - p[i].y) * (p[j].x - p[i].x) < x)
+				odd = odd == 0 ? 1 : 0;
+		}
+		j = i;
+	}
+	return (odd);
+}*/
+
+unsigned short   	dot_inside_sector(t_vector player_pos, t_wall **walls, unsigned arr_size)
+{
+	int				i;
+	unsigned char	odd;
+	t_wall			*curr;
+
+	i = -1;
+	odd = 0;
+	while(++i < arr_size)
+	{
+		curr = walls[i];
+		if ((curr->start.y < player_pos.y && curr->end.y >= player_pos.y) || (curr->end.y < player_pos.y && curr->start.y >= player_pos.y) )
+		{
+			if (curr->start.x + (float)(player_pos.y - curr->start.y) / (curr->end.y - curr->start.y) * (curr->end.x - curr->start.x) < player_pos.x)
+				odd = odd == 0 ? 1 : 0;
+		}
+	}
+	return (odd);
+}
+
+t_sector			*get_new_player_sector(t_vector player_pos, t_sector *intersect_sector)
+{
+	unsigned char 	i;
+	t_wall			*w;
+
+	if (!intersect_sector)
+		return (NULL);
+	i = 0;
+	while (i < MAX_PORTALS && (w = intersect_sector->portals[i]))
+	{
+		if (w->sectors[0] && dot_inside_sector(player_pos, w->sectors[0]->wall, w->sectors[0]->n_walls))
+			return (w->sectors[0]);
+		if (w->sectors[1] && dot_inside_sector(player_pos, w->sectors[1]->wall, w->sectors[1]->n_walls))
+			return (w->sectors[1]);
+		i++;
+	}
+	return (NULL);
+}
+
 void			move_player(t_player *player, float sin_angle, float cos_angle)
 {
 	int			i;
 	t_vector	step;
 	t_wall		**wall;
 	t_sector	*next;
+	t_sector	*new;
 
 	i = 0;
 	step = (t_vector){player->pos.x + cos_angle * player->speed, player->pos.y + sin_angle * player->speed};
 	wall = player->curr_sector->wall;
+	float step_len = len_between_points(player->pos,step);
 	while (i < player->curr_sector->n_walls)
 	{
 		if(IntersectBox(player->pos.x, player->pos.y, step.x, step.y, wall[i]->start.x, wall[i]->start.y, wall[i]->end.x, wall[i]->end.y)
         && PointSide(step.x, step.y, wall[i]->start.x, wall[i]->start.y, wall[i]->end.x, wall[i]->end.y) < 0)
-        {
-			if (wall[i]->type != empty_wall)
+		{
+			if (wall[i]->type == filled_wall)
 				return;
-			if (wall[i]->sectors[0] && player->curr_sector->sector != wall[i]->sectors[0]->sector)
+			if (wall[i]->sectors[0] && player->curr_sector!= wall[i]->sectors[0])
 				next = wall[i]->sectors[0];
-			else if (wall[i]->sectors[1] && player->curr_sector->sector != wall[i]->sectors[1]->sector)
+			else if (wall[i]->sectors[1] && player->curr_sector != wall[i]->sectors[1])
 				next = wall[i]->sectors[1];
 			if (!next || (int)(next->ceil - next->floor) <= (int)(player->height + player->jump + player->sit))
 				return ;
-			player->curr_sector = next;
-			step.z = player->height + player->curr_sector->floor;
+			new = get_new_player_sector(step, next);
+			if (!new || (int)(new->ceil - new->floor) <= (int)(player->height + player->jump + player->sit))
+				return ;
+			player->curr_sector = new;
 			break;
         }
 		i++;
@@ -654,7 +758,7 @@ int					hook_event(t_player *player, unsigned char move[4], t_sector *sectors)
 			else if (e.key.keysym.sym == SDLK_3 )
 				player->current_gun = player->gun[plasmagun];
 			else if (e.key.keysym.sym == SDLK_i)
-				printf("%f, %f\n", player->pos.x, player->pos.y);
+				printf("sector: %d, %f, %f\n", player->curr_sector ? player->curr_sector->sector : -1,  player->pos.x, player->pos.y);
 			
 		}
 		if (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_e)

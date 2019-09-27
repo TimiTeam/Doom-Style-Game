@@ -26,8 +26,8 @@ Path: textures/
 2) super_bonus bonus
 3) enemy demon
 4) enemy imp
-5) object burning_barrel
-6) object lantern
+5) light burning_barrel
+6) light lantern
 7) health big_medkit
 8) health medkit
 9) gun pistolet_found
@@ -36,7 +36,7 @@ Path: textures/
 12) ammo pistolet_ammo
 13) ammo shotgun_ammo
 14) ammo plasmagun_ammo
-15) object torch
+15) light torch
 16) object tree_one
 17) object tree_two
 18) object dead_man

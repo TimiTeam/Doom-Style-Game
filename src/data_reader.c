@@ -227,9 +227,7 @@ void 			fill_sectors_light_source(t_sector *sec, t_light **light, unsigned array
 		while(i < array_size && (source = light[i]))
 		{
 			if (j < MAX_LIGHT_SRC && (source->sector == sectors || light_catch_sector(sectors->portals, MAX_PORTALS, source->pos, source->max_dist / 2)))
-			{/*
-				if(IntersectBox(player->pos.x, player->pos.y, step.x, step.y, wall[i]->start.x, wall[i]->start.y, wall[i]->end.x, wall[i]->end.y)
-       			&& PointSide(step.x, step.y, wall[i]->start.x, wall[i]->start.y, wall[i]->end.x, wall[i]->end.y) < 0)*/
+			{
 				sectors->sector_light[j] = source;
 				j++;
 			}

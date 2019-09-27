@@ -35,4 +35,5 @@ t_item				*make_items(char *data, t_item *all_items, t_read_holder *holder);
 t_wall				**create_sector_walls(t_sector *sector, t_read_holder *holder, char *data, int wall_size);
 void 				delete_light_source(t_light **light, unsigned array_size);
 int 				find_dot_radius_intersect(t_vector light_pos, float radius, t_vector start, t_vector end);
+void				swap(int *a, int *b);
 #endif
