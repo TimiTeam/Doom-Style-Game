@@ -1,107 +1,12 @@
 #include "main_head.h"
 
-int		transparent_pixel(Uint32 pixel, SDL_PixelFormat *format)
-{
-	Uint8	r;
-	Uint8	g;
-	Uint8	b;
-	Uint8	a;
-
-	SDL_GetRGBA(pixel, format, &r, &g, &b, &a);
-	if (a != 0)
-		return (1);
-	return (0);
-}
-
-void 			draw_image(SDL_Surface *screen, SDL_Surface *img, int x, int y, int width, int height)
-{
-	int 		i;
-	int		j;
-	Uint32		pix;
-	t_vector	img_point;
-	t_vector	step;
-	
-	step.x = (float)img->w / width;
-	step.y = (float)img->h / height;
-	img_point = (t_vector){};
-	i = 0;
-	while (i < height)
-	{
-		j = 0;
-		img_point.x = 0;
-		while (j < width)
-		{
-			pix = get_pixel(img, (int)img_point.x, (int)img_point.y); 
-			if (j + x > 0 && j + x < screen->w && i + y > 0 && i + y < screen->h && transparent_pixel(pix, img->format))
-				put_pixel(screen, j + x, i + y, pix);
-			img_point.x += step.x;
-			j++;
-		}
-		img_point.y += step.y;
-		i++;
-	}
-}
-
-void    draw_crosshair(SDL_Surface *surface)
-{
-    t_point start1;
-    t_point start2;
-    t_point end1;
-    t_point end2;
-    start1.x = W / 2 - 30;
-    start1.y = H / 2;
-    end1.x = W / 2 + 30;
-    end1.y = H / 2;
-    start2.x = W / 2;
-    start2.y = H / 2 - 30;
-    end2.x = W / 2;
-    end2.y = H / 2 + 30;
-    line(surface, start1, end1, 0xffffffff);
-    line(surface, start2, end2, 0xffffffff);
-}
-
-void 			draw_image_with_criteria(SDL_Surface *screen, SDL_Surface *img, int x, int y, int width, int height, t_draw_data data)
-{
-	int 		i;
-	int			j;
-	Uint32		pix;
-	t_vector	img_point;
-	t_vector	step;
-	
-	step.x = (float)img->w / width;
-	step.y = (float)img->h / height;
-	img_point = (t_vector){};
-	i = 0;
-	draw_crosshair(screen);
-	while (i < height)
-	{
-		j = 0;
-		img_point.x = 0;
-		while (j < width)
-		{
-			pix = get_pixel(img, (int)img_point.x, (int)img_point.y); 
-			if (j + x > data.start && j + x < data.end && i + y > data.ytop[j + x] && i + y < data.ybottom[j + x]
-					&& transparent_pixel(pix, img->format))
-				put_pixel(screen, j + x, i + y, pix);
-			img_point.x += step.x;
-			j++;
-		}
-		img_point.y += step.y;
-		i++;
-	}
-}	
-
-static float            len_between_points(t_vector a, t_vector b)
-{
-    return (sqrt((b.x - a.x) * (b.x - a.x) + (b.y - a.y) * (b.y - a.y)));
-}
 
 
 void    		draw_enemy_sprite(t_item *obj, t_draw_data data, t_player player, SDL_Surface *surface)
 {
 	t_vector	ob_pos;
 	t_vector	scale;
-	t_vector	size;
+	t_point		size;
 	float		tmp_x;
 	t_point		screen_pos;
 
@@ -124,7 +29,7 @@ void    		draw_enemy_sprite(t_item *obj, t_draw_data data, t_player player, SDL_
 	}
 	screen_pos.x = ob_pos.x - size.x / 2;
 	screen_pos.y = ob_pos.y - size.y;
-	if (player.shooting && player.current_gun->type != plasmagun && obj->curr_state != die && data.start < player.half_win_size.x && data.end > player.half_win_size.x &&
+	if (player.shooting && player.current_gun && player.current_gun->type != plasmagun && obj->curr_state != die && data.start < player.half_win_size.x && data.end > player.half_win_size.x &&
 			screen_pos.x < player.half_win_size.x && screen_pos.x + size.x > player.half_win_size.x && screen_pos.y < player.half_win_size.y && screen_pos.y + size.y > player.half_win_size.y)
 	{
 		obj->players_hit = 1;
@@ -133,9 +38,8 @@ void    		draw_enemy_sprite(t_item *obj, t_draw_data data, t_player player, SDL_
 	anim = &obj->states[obj->curr_state];
 	
 	if (anim->texture[(int)obj->curr_frame])
-		draw_image_with_criteria(surface, anim->texture[(int)obj->curr_frame], screen_pos.x, screen_pos.y, size.x, size.y, data);
+		draw_image_with_criteria(surface, anim->texture[(int)obj->curr_frame], screen_pos, size, data);
 }
-
 
 int						move_enemy(t_item *enemy, t_vector step)
 {		
@@ -198,7 +102,7 @@ void   			draw_projectile(t_projectile *proj, t_draw_data data, t_player player,
 	t_vector	ob_pos;
 	t_vector	scale;
 	float		tmp_x;
-	t_vector	screen_pos;
+	t_point		screen_pos;
 	float		size;
 
 	ob_pos = (t_vector){proj->pos.x - player.pos.x, proj->pos.y - player.pos.y};
@@ -217,5 +121,5 @@ void   			draw_projectile(t_projectile *proj, t_draw_data data, t_player player,
 	screen_pos.x = ob_pos.x - 1000 / dist / 2;
 	screen_pos.y = ob_pos.y - 1000 / dist / 2;
 	size = 1000 / dist;
-	draw_image_with_criteria(surface, proj->sprite, screen_pos.x, screen_pos.y, size, size, data);
+	draw_image_with_criteria(surface, proj->sprite, screen_pos, (t_point){size, size}, data);
 }

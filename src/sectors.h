@@ -40,6 +40,7 @@ t_wall				**create_sector_walls(t_sector *sector, t_read_holder *holder, char *d
 t_light				**create_all_light_source(t_sector *sec, unsigned light_count);
 void 				fill_sectors_light_source(t_sector *sec, t_light **light, unsigned array_size);
 void 				delete_light_source(t_light **light, unsigned array_size);
+float            	len_between_points(t_vector a, t_vector b);
 int 				find_dot_radius_intersect(t_vector light_pos, float radius, t_vector start, t_vector end);
 void				swap(int *a, int *b);
 char				*get_path(int fd);

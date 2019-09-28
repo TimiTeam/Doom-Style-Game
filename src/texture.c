@@ -15,17 +15,6 @@ static float		distance3D(t_vector a, t_vector b)
 	return (sqrt(dx * dx + dy * dy + dz * dz));
 }
 
-
-float		len_between_points(t_vector a, t_vector b)
-{
-	float			dx;
-	float 			dy;
-
-	dx = b.x - a.x;
-	dy = b.y - a.y;
-	return (sqrt((dx) * (dx) + (dy) * (dy)));
-}
-
 void 			draw_floor_or_ceil(SDL_Surface *dst, SDL_Surface *src, int x, int y, int end_y, int diff_height, t_player player, t_sector *sect, t_light **light_source_arr)
 {
 	float		mapx;

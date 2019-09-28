@@ -10,39 +10,17 @@ void 				print_player_gun(t_sdl *sdl, t_player *pla)
 	{
 		pla->current_gun->state = 0;
 		pla->current_gun->ammo--;
+		printf("current_gun->ammo : %d\n", pla->current_gun->ammo);
 	}
 	surf = pla->current_gun->frame[(int)pla->current_gun->state];
-	if ((pla->shooting || pla->current_gun->state > 0) && pla->current_gun->ammo > 0)
+	if ((pla->shooting || pla->current_gun->state) && pla->current_gun->ammo > 0)
 		pla->current_gun->state += 0.44;
 	pos.x = pla->half_win_size.x - surf->w / 2;
 	pos.y = sdl->win_size.y - surf->h;
-	draw_image(sdl->surf, surf, pos.x, pos.y, surf->w, surf->h);
+	draw_image(sdl->surf, surf, pos, (t_point){surf->w, surf->h});
 }
 
-void            draw_frame(SDL_Surface *surf, t_point pos, t_point size, int color)
-{
-	int	*pix;
-	int i;
-	int j;
-
-	pix = (int*)surf->pixels;
-	i = -1;
-	j = -1;
-	while (++j < size.x)
-		if (pos.x + j < surf->w && pos.x + j >0 && pos.y >= 0 && pos.y < surf->h)
-			pix[pos.x + j + surf->w * pos.y] = color;
-	while (++i < size.y)
-		if (pos.x + size.x - 1 < surf->w && pos.x + size.x >= 0 && (pos.y + i) >= 0 && (pos.y + i) < surf->h)
-			pix[pos.x + size.x - 1 + surf->w * (pos.y + i)] = color;
-	while (--j >= 0)
-		if (pos.x + j < surf->w && pos.x + j >= 0 && (pos.y + size.y - 1) >= 0 && (pos.y + size.y - 1) < surf->h)
-			pix[pos.x + j + surf->w * (pos.y + size.y - 1)] = color;
-	while (--i >= 0)
-		if (pos.x < surf->w && pos.x >= 0 && (pos.y + i) >= 0 && (pos.y + i) < surf->h)
-			pix[pos.x + surf->w * (pos.y + i)] = color;
-}
-
-void			draw_rect(SDL_Surface *surf, t_point pos, t_point size, int color, Uint8 filled)
+void			draw_rect(SDL_Surface *surf, t_point pos, t_point size, int color)
 {
 	int			*pix;
 	int			i;
@@ -50,51 +28,85 @@ void			draw_rect(SDL_Surface *surf, t_point pos, t_point size, int color, Uint8 
 
 	pix = (int*)surf->pixels;
 	i = -1;
-	if (filled)
+	while (++i < size.y)
 	{
-		while (++i < size.y)
-		{
-			j = -1;
-			while (++j < size.x)
-				pix[pos.x + j + surf->w * (pos.y + i)] = color;
-		}
+		j = -1;
+		while (++j < size.x)
+			pix[pos.x + j + surf->w * (pos.y + i)] = color;
 	}
-	else
-        draw_frame(surf, pos, size, color);
 }
 
 void				draw_healthbar(SDL_Surface *surf, t_point pos, t_point size, int health)
 {
-	draw_rect(surf, pos, size, 0x00, 1);
+	draw_rect(surf, pos, size, 0x00);
 	if (health > 0)
-		draw_rect(surf, (t_point){pos.x + 4, pos.y + 4}, (t_point){(size.x - 8) * health / 100.0f, size.y - 8}, 0x00ff0000, 1);
+		draw_rect(surf, (t_point){pos.x + 4, pos.y + 4}, (t_point){(size.x - 8) * health / 100.0f, size.y - 8}, 0x00ff0000);
 }
 
-void				draw_hud(t_sdl *sdl, t_player *player, TTF_Font *font)
+void				count_items(t_sdl *sdl, t_player *player, int *keys, int *coins)
 {
 	t_item			*curr_item;
+	t_item			*head;
+	t_point			size;
+
+	head = player->inventar;
+	*coins = 0;
+	*keys = 0;
+	curr_item = player->inventar;
+	size = (t_point){100, 100};
+	while (curr_item)
+	{
+		if (curr_item->type == key){
+			(*keys)++;
+			draw_image(sdl->surf, curr_item->states[0].texture[0], (t_point) {20, H - 120}, size);
+		}
+		else if (curr_item->type == coin){
+			(*coins)++;
+			draw_image(sdl->surf, curr_item->states[0].texture[0], (t_point){140 , H - 120}, size);
+		}
+		curr_item = curr_item->next;
+	}
+	player->inventar = head;
+}
+
+void				draw_items(t_sdl *sdl, t_player *player)
+{
+	int				items[2];
+	SDL_Surface		*item_surface[2];
+	char			*amount[2];
+	int				i;
+
+	i = -1;
+	count_items(sdl, player, &items[0], &items[1]);
+	while (++i < 2)
+	{
+		if (items[i])
+		{
+			amount[i] = ft_itoa(items[i]);
+			item_surface[i] = TTF_RenderText_Blended(sdl->font, amount[i], (SDL_Color){255, 255, 255});
+			draw_image(sdl->surf, item_surface[i], (t_point){20 + 120 * i, H - 190}, (t_point){50, 50});
+			free(amount[i]);
+			SDL_FreeSurface(item_surface[i]);
+		}
+	}
+}
+
+void				draw_hud(t_sdl *sdl, t_player *player)
+{
 	int				startx;
-	SDL_Surface		*cur_text;
+	char			*ammo;
+	SDL_Surface		*ammo_surf;
 
 	startx = 20;
-	curr_item = player->inventar;
-	draw_healthbar(sdl->surf, (t_point){player->half_win_size.x - 125, 30}, (t_point){250, 30}, player->health);
+	draw_healthbar(sdl->surf, (t_point){W / 2 - 150, 30}, (t_point){300, 30}, player->health);
 	if(player->current_gun){
 		print_player_gun(sdl, player);
-		char	*ammo = ft_itoa(player->current_gun->ammo);
-		SDL_Surface *ammo_surf = TTF_RenderText_Blended(font, ammo, (SDL_Color){255, 255, 255});
-		draw_image(sdl->surf, ammo_surf, 0, 130, 50, 50);
-		if (player->current_gun->icon)
-			draw_image(sdl->surf, player->current_gun->icon, 0, 20, 200, 100);
+		ammo = ft_itoa(player->current_gun->ammo);
+		ammo_surf = TTF_RenderText_Blended(sdl->font, ammo, (SDL_Color){255, 255, 255});
+		draw_image(sdl->surf, ammo_surf, (t_point){0, 130}, (t_point){50, 50});
+		draw_image(sdl->surf, player->current_gun->icon, (t_point){0, 20}, (t_point){200, 100});
 		ft_strdel(&ammo);
 		SDL_FreeSurface(ammo_surf);
 	}
-	while (curr_item)
-	{
-		cur_text = curr_item->states[0].texture[0];
-		if (curr_item)
-			draw_image(sdl->surf, cur_text, startx, H - 120,  100, 100);
-		startx += 120;
-		curr_item = curr_item->next;
-	}
+	draw_items(sdl, player);
 }

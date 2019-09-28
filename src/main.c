@@ -60,11 +60,6 @@ void 					load_gun(t_gun **gun)
 
 t_gun			**all_guns;
 
-static float		len_between_points(t_vector a, t_vector b)
-{
-	return (sqrt((b.x - a.x) * (b.x - a.x) + (b.y - a.y) * (b.y - a.y)));
-}
-
 int 				has_key(t_item *items)
 {
 	t_item			*all;
@@ -569,42 +564,6 @@ int 			intersect_lines(t_vector one_start, t_vector one_end, t_vector two_start,
     return 0;
 }
 
-int area(t_vector a, t_vector b, t_vector c) {
-	return (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x);
-}
-
-int intersect_1 (int a, int b, int c, int d) {
-	if (a > b)  swap(&a, &b);
-	if (c > d)  swap(&c, &d);
-	return max(a,c) <= min(b,d);
-}
- 
-int intersect (t_vector a, t_vector b, t_vector c, t_vector d) {
-	return ((intersect_1 (a.x, b.x, c.x, d.x) && intersect_1 (a.y, b.y, c.y, d.y) && area(a,b,c) * area(a,b,d) <= 0
-		&& area(c, d, a) * area(c, d, b) <= 0) ? 1 : 0);
-}
-
-/*
-unsigned short		dot_inside_sector(int x, int y, t_wall  **wall, int arr_size)
-{
-	int     		i;
-	int     		j;
-	unsigned short	odd;	
-	i = -1;
-	j = arr_size - 1;
-	odd = 0;
-	while(++i < arr_size)
-	{
-		if ((wall[i]->start.y < y && p[j].y >= y) || (p[j].y < y && p[i].y >= y) )
-		{
-			if (p[i].x + (float)(y - p[i].y) / (p[j].y - p[i].y) * (p[j].x - p[i].x) < x)
-				odd = odd == 0 ? 1 : 0;
-		}
-		j = i;
-	}
-	return (odd);
-}*/
-
 unsigned short   	dot_inside_sector(t_vector player_pos, t_wall **walls, unsigned arr_size)
 {
 	int				i;
@@ -718,7 +677,7 @@ void 				check_door(t_player *player, t_sector *sectors)
 	t_wall		**walls;
 
 	i = -1;
-	if (!player->has_key)
+	if (!has_key(player->inventar))
 	{
 		printf("You dont have a key\n");
 		return ;
@@ -735,7 +694,6 @@ void 				check_door(t_player *player, t_sector *sectors)
 				if (!se->opening)
 				{
 					use_key(player);
-					player->has_key = has_key(player->inventar);
 				}
 				se->opening = 1;
 			}
@@ -744,6 +702,38 @@ void 				check_door(t_player *player, t_sector *sectors)
 	} 
 	printf("There is no door\n");
 }
+
+int					guess_event(SDL_Keycode code, t_player *player, unsigned char move[4], SDL_EventType type)
+{
+	if (code == SDLK_w || code == SDLK_UP)
+		move[0] = type == SDL_KEYDOWN;
+	else if (code == SDLK_s || code == SDLK_DOWN)
+		move[1] = type == SDL_KEYDOWN;
+	else if (code == SDLK_a)
+		move[2] = type == SDL_KEYDOWN;
+	else if (code == SDLK_d)
+		move[3] = type == SDL_KEYDOWN;
+	else if (code == SDLK_LSHIFT && type == SDL_KEYDOWN && !player->sit)
+		player->speed = 1.2f;
+	else if (code == SDLK_LSHIFT && type == SDL_KEYUP)
+		player->speed = 0.6;
+	else if (code == SDLK_SPACE && !player->jump && type == SDL_KEYDOWN)
+		player->jump = 1;
+	else if (code == SDLK_1 && type == SDL_KEYDOWN)
+		player->current_gun = player->gun[pistol];
+	else if (code == SDLK_2 && type == SDL_KEYDOWN)
+		player->current_gun = player->gun[shotgun];
+	else if (code == SDLK_3 && type == SDL_KEYDOWN)
+		player->current_gun = player->gun[plasmagun];
+	else if (type == SDL_KEYDOWN && code == SDLK_e)
+			check_door(player, player->curr_sector);
+	if (type == SDL_KEYDOWN && code == SDLK_LCTRL)
+		player->sit = -3;
+	if (type == SDL_KEYUP && code == SDLK_LCTRL)
+		player->sit = 0;
+	return (1);
+}
+
 
 int					hook_event(t_player *player, unsigned char move[4], t_sector *sectors)
 {
@@ -762,62 +752,27 @@ int					hook_event(t_player *player, unsigned char move[4], t_sector *sectors)
 		player->fall = 0;
 	while(SDL_PollEvent(&e))
 	{
-		if (e.type == SDL_QUIT)
+		if (e.type == SDL_QUIT || (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_ESCAPE))
 			return (0);
 		else if (e.type == SDL_KEYDOWN || e.type == SDL_KEYUP)
 		{
-			if (e.key.keysym.sym == SDLK_w || e.key.keysym.sym == SDLK_UP)
-				move[0] = e.type == SDL_KEYDOWN;
-			else if (e.key.keysym.sym == SDLK_s || e.key.keysym.sym == SDLK_DOWN)
-				move[1] = e.type == SDL_KEYDOWN;
-			else if (e.key.keysym.sym == SDLK_a)
-				move[2] = e.type == SDL_KEYDOWN;
-			else if (e.key.keysym.sym == SDLK_d)
-				move[3] = e.type == SDL_KEYDOWN;
-			else if (e.key.keysym.sym == SDLK_ESCAPE)
-				return (0);
-			else if (e.key.keysym.sym == SDLK_LSHIFT && e.type == SDL_KEYDOWN)
-				player->speed = 1.5f;
-			else if (e.key.keysym.sym == SDLK_LSHIFT && e.type == SDL_KEYUP)
-				player->speed = 0.6;
-			else if (e.key.keysym.sym == SDLK_SPACE && !player->jump)
-				player->jump = 1;
-			else if (e.key.keysym.sym == SDLK_1 && player->gun[pistol])
-				player->current_gun = player->gun[pistol];
-			else if (e.key.keysym.sym == SDLK_2 && player->gun[shotgun])
-				player->current_gun = player->gun[shotgun];
-			else if (e.key.keysym.sym == SDLK_3 )
-				player->current_gun = player->gun[plasmagun];
-			else if (e.key.keysym.sym == SDLK_i)
-				printf("sector: %d, %f, %f\n", player->curr_sector ? player->curr_sector->sector : -1,  player->pos.x, player->pos.y);
-			
+			if (!player->dead)
+				guess_event(e.key.keysym.sym, player, move, e.type);
 		}
-		if (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_e)
-				check_door(player, player->curr_sector);
-		if (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_LCTRL)
-			player->sit = -3;
-		if (e.type == SDL_KEYUP && e.key.keysym.sym == SDLK_LCTRL)
-			player->sit = 0;
-		if (e.type == SDL_MOUSEBUTTONDOWN && player->current_gun)
-		{
-			if (e.button.button == SDL_BUTTON_LEFT && player->current_gun->ammo > 0){
+		else if (e.type == SDL_MOUSEBUTTONDOWN && player->current_gun && e.button.button == SDL_BUTTON_LEFT
+		&& player->current_gun->ammo > 0 && !player->dead)
 				player->shooting = 1;
-			}
-		}
-		else if (e.type == SDL_MOUSEBUTTONUP)
-		{
-			if (e.button.button == SDL_BUTTON_LEFT){
+		else if (e.type == SDL_MOUSEBUTTONUP && e.button.button == SDL_BUTTON_LEFT)
 				player->shooting = 0;
-			}
-		}
+		
 	}
-	if (move[0])
+	if (move[0] && !player->dead)
 		move_player(player, player->sin_angl, player->cos_angl);
-	if (move[1])
+	if (move[1] && !player->dead)
 		move_player(player, -player->sin_angl, -player->cos_angl);
-	if (move[2])
+	if (move[2] && !player->dead)
 		move_player(player, -player->cos_angl, player->sin_angl);
-	if (move[3])
+	if (move[3] && !player->dead)
 		move_player(player, player->cos_angl, -player->sin_angl);
 	SDL_GetRelativeMouseState(&x, &y);
 	y = -y;
@@ -832,23 +787,7 @@ int					hook_event(t_player *player, unsigned char move[4], t_sector *sectors)
 	return (1);
 }
 
-void				apply_filter(SDL_Surface *surface, float intensity)
-{
-	Uint8 r, g, b;
-	int y;
-	int x;
 
-	y = -1;
-	while (++y < H)
-	{
-		x = -1;
-		while (++x < W)
-		{
-			SDL_GetRGB(get_pixel(surface, x, y), surface->format, &r, &g, &b);
-			put_pixel(surface, x, y, SDL_MapRGB(surface->format, r * intensity, g * intensity, b * intensity));
-		}
-	}
-}
 
 int					game_loop(t_sdl *sdl, t_player *player, t_sector *sectors)
 {
@@ -856,31 +795,44 @@ int					game_loop(t_sdl *sdl, t_player *player, t_sector *sectors)
     SDL_Texture		*tex;
     char			str[100];
 	unsigned char	move[4];
+	SDL_Surface		*dead_text;
 
 	ft_memset(move, 0, sizeof(move) * 4);
     player->cos_angl = cos(player->angle);
     player->sin_angl = sin(player->angle);
     run = 1;
-    while(run)
+	dead_text = get_text_surfcae(sdl->font, "YOU DIED", (SDL_Color){255, 30, 30, 255});
+    while(run > 0)
     {
         SDL_SetRenderDrawColor(sdl->ren, 0, 0, 0, 255);
         SDL_RenderClear(sdl->ren);
         SDL_FillRect(sdl->surf, NULL, 0x00);
         run_with_buff(player, sdl, sdl->win_size.x);
-		player->has_key = has_key(player->inventar);
-		draw_hud(sdl, player, sdl->font);
+		draw_hud(sdl, player);
+		run = hook_event(player, move, sectors);
+		if (player->dead)
+		{
+			player->dead++;
+			apply_filter(sdl->surf, 1.0f - (1.0f / 50) * player->dead);
+			draw_image(sdl->surf, dead_text, (t_point){player->half_win_size.x - 200, player->half_win_size.y - 100}, (t_point){400, 200});
+			player->yaw -= 3.0f/ 50.0f;
+			player->pos.z -= 6.0f / 50;
+			if (player->dead > 49)
+			{
+				player->dead = 0;
+				run = 0;
+				player->curr_map = -1;
+			}
+		}
         tex = SDL_CreateTextureFromSurface(sdl->ren, sdl->surf);
         sdl_render(sdl->ren, tex, NULL, NULL);
         SDL_DestroyTexture(tex);
         SDL_RenderPresent(sdl->ren);
-        run = hook_event(player, move, sectors);
     }
     SDL_DestroyTexture(tex);
+	SDL_FreeSurface(dead_text);
 	return (run);
 }
-
-
-
 
 void				run_game(t_sdl *sdl, t_player *player, t_pr *m, t_read_holder *holder)
 {
@@ -890,6 +842,8 @@ void				run_game(t_sdl *sdl, t_player *player, t_pr *m, t_read_holder *holder)
 	in_game = 0;
 	while (1)
 	{
+		if ((in_game = menu_hooks(m, holder)) < 0)
+			break ;
 		if (in_game > 0)
 		{
 			if (player->curr_map != holder->curr_map)
@@ -900,13 +854,10 @@ void				run_game(t_sdl *sdl, t_player *player, t_pr *m, t_read_holder *holder)
 		render_menu(m, sdl);
 		SDL_SetRenderDrawColor(sdl->ren, 255, 255, 255, 255);
 		SDL_RenderClear(sdl->ren);
-		//SDL_FillRect(sdl->surf, NULL, 0x00);
 		tex = SDL_CreateTextureFromSurface(sdl->ren, sdl->surf);
 		sdl_render(sdl->ren, tex, NULL, NULL);
 		SDL_DestroyTexture(tex);
 		SDL_RenderPresent(sdl->ren);
-		if ((in_game = menu_hooks(m, holder)) < 0)
-			break ;
 	}
 	SDL_DestroyTexture(tex);
 }
@@ -948,7 +899,6 @@ int					main(int argc, char **argv)
 		run_game(sdl, player, &m, &holder);
 
 		free_player(player);
-	//	delete_sectors(holder.all);
 		delete_light_source(holder.light_source, holder.light_count);
 		free_t_sdl(&sdl);
 		free_menu(&m);

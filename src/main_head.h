@@ -78,9 +78,8 @@ typedef struct		s_plyer
 	unsigned char	fall;
 	unsigned char	jump;
 	char			sit;
-	unsigned char 	has_key;
 	unsigned char	shooting;
-	unsigned char	dead;
+	char			dead;
 	char			curr_map;
 	float			skyW;
 	float			skyH;
@@ -169,7 +168,7 @@ typedef struct 		Scaler {
 //MENU
 void					initialize_sdl_win(t_pr *m);
 void					load_textures(t_pr *m, t_sdl *sdl, t_read_holder *holder);
-SDL_Surface				*get_text_surfcae(t_pr *m, char *text);
+SDL_Surface				*get_text_surfcae(TTF_Font *font, char *text, SDL_Color color);
 void					renderallshit(t_pr *m);
 int						render_menu(t_pr *m, t_sdl *sdl);
 int 					load_game(t_player *player, t_read_holder *holder);
@@ -177,14 +176,13 @@ int 					menu_hooks(t_pr *m, t_read_holder *holder);
 SDL_Rect				change_size(SDL_Rect rect);
 SDL_Rect				reset_size(SDL_Rect rect);
 void 					free_menu(t_pr *menu);
-
+void					apply_filter(SDL_Surface *surface, float intensity);
 
 t_player				*new_t_player(int pos_x, int pos_y, t_point wid_size);
 void					free_player(t_player *player);
 
 void 					draw_scaled_image(SDL_Surface *screen, SDL_Surface *img, t_point pos, t_point size);
 
-void 					draw_image(SDL_Surface *screen, SDL_Surface *img, int x, int y, int width, int height);
 
 int 					Scaler_Next(Scaler *i);
 
@@ -205,12 +203,16 @@ void 					quickSort(t_item **headRef, t_player *player);
 void					line(SDL_Surface *surface, t_point start, t_point end, int color);
 
 void					rest_of_the_action_shit(t_pr *m, Uint8 *menu, t_sdl *sdl, t_read_holder *holder);
-void					draw_hud(t_sdl *sdl, t_player *player, TTF_Font *font);
+void					draw_hud(t_sdl *sdl, t_player *player);
 t_projectile			*create_projectile(t_player player);
 void					delete_projectile(t_projectile **head, t_projectile *proj);
 Uint8					move_projectile(t_projectile *proj);
 void 					add_projectile(t_projectile **head, t_projectile *new);
 void					draw_projectile(t_projectile *proj, t_draw_data data, t_player player, SDL_Surface *surface);
+
+void 					draw_image(SDL_Surface *screen, SDL_Surface *img, t_point pos, t_point size);
+void 					draw_image_with_criteria(SDL_Surface *screen, SDL_Surface *img, t_point pos, t_point size, t_draw_data data);
+
 void					delete_projectiles(t_projectile *head);
 void 					list_light(t_light	**arr, unsigned arr_size);
 void					draw_skybox(SDL_Surface *dst, SDL_Surface *src, int x, int y, int end_y, t_player player);

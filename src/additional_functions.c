@@ -42,3 +42,13 @@ void swap(int *a, int *b)
     *a = *b;
     *b = tmp;
 }
+
+float		len_between_points(t_vector a, t_vector b)
+{
+	float			dx;
+	float 			dy;
+
+	dx = b.x - a.x;
+	dy = b.y - a.y;
+	return (sqrt((dx) * (dx) + (dy) * (dy)));
+}

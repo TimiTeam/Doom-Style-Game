@@ -71,7 +71,7 @@ t_player				*new_t_player(int pos_x, int pos_y, t_point win_size)
 	player->vfov = win_size.y * m_vfov;
 	player->fall = 0;
 	player->jump = 0;
-	player->speed = 0.5f;
+	player->speed = 0.6f;
 	player->inventar = NULL;
 	player->height = EyeHeight;
 	player->health = 100;

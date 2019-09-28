@@ -12,14 +12,15 @@
 
 #include "main_head.h"
 
-SDL_Surface			*get_text_surfcae(t_pr *m, char *text)
+SDL_Surface			*get_text_surfcae(TTF_Font *font, char *text, SDL_Color	color)
 {
 	SDL_Surface		*ret;
-	SDL_Color		color; 
 
 	ret = NULL;
-	color = (SDL_Color){255, 255, 255, 100};
-	ret = TTF_RenderText_Blended(m->font, text, color);
+	if (font && text)
+	{
+		ret = TTF_RenderText_Blended(font, text, color);
+	}
 	return (ret);
 }
 
@@ -34,7 +35,6 @@ void	load_textures(t_pr *m, t_sdl *sdl, t_read_holder *holder)
 	m->maps = holder->maps_path;
 	m->maxi = holder->maps_count - 1;
 	m->i = 0;
-//	set_text(m, holder->maps_path[m->i]);
 	m->font_color.r = 255;
 	m->font_color.g = 255;
 	m->font_color.b = 255;

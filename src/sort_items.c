@@ -1,10 +1,5 @@
 #include "main_head.h"
 
-static float		len_between_points(t_vector a, t_vector b)
-{
-	return (sqrt((b.x - a.x) * (b.x - a.x) + (b.y - a.y) * (b.y - a.y)));
-}
-
 t_item *getTail(t_item *cur) 
 { 
     while (cur != NULL && cur->next != NULL) 
