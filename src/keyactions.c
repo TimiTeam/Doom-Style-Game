@@ -62,7 +62,6 @@ void 				left_right(t_pr *m)
 			m->i++;
 		else
 			m->i = 0;
-		set_text(m, m->maps[m->i]);
 	}
 	if ((m->event.key.keysym.sym == SDLK_LEFT ||
 		m->event.key.keysym.sym == SDLK_a) && m->sw == 1)
@@ -71,7 +70,6 @@ void 				left_right(t_pr *m)
 			m->i--;
 		else
 			m->i = m->maxi;
-		set_text(m, m->maps[m->i]);
 	}
 }
 

@@ -112,7 +112,6 @@ typedef struct		s_pr
 	SDL_Surface		*exit_button;
 	SDL_Surface		*logo;
 	SDL_Surface		*choose_level_button;
-	SDL_Surface		*font_texture;
 	SDL_Rect		play_rect;
 	SDL_Rect		exit_rect;
 	SDL_Rect		logo_rect;
@@ -170,14 +169,14 @@ typedef struct 		Scaler {
 //MENU
 void					initialize_sdl_win(t_pr *m);
 void					load_textures(t_pr *m, t_sdl *sdl, t_read_holder *holder);
-void					set_text(t_pr *m, char *text);
+SDL_Surface				*get_text_surfcae(t_pr *m, char *text);
 void					renderallshit(t_pr *m);
 int						render_menu(t_pr *m, t_sdl *sdl);
 int 					load_game(t_player *player, t_read_holder *holder);
 int 					menu_hooks(t_pr *m, t_read_holder *holder);
 SDL_Rect				change_size(SDL_Rect rect);
 SDL_Rect				reset_size(SDL_Rect rect);
-
+void 					free_menu(t_pr *menu);
 
 
 t_player				*new_t_player(int pos_x, int pos_y, t_point wid_size);

@@ -12,7 +12,7 @@ void 				print_player_gun(t_sdl *sdl, t_player *pla)
 		pla->current_gun->ammo--;
 	}
 	surf = pla->current_gun->frame[(int)pla->current_gun->state];
-	if ((pla->shooting || pla->current_gun->state) && pla->current_gun->ammo > 0)
+	if ((pla->shooting || pla->current_gun->state > 0) && pla->current_gun->ammo > 0)
 		pla->current_gun->state += 0.44;
 	pos.x = pla->half_win_size.x - surf->w / 2;
 	pos.y = sdl->win_size.y - surf->h;
@@ -74,22 +74,26 @@ void				draw_hud(t_sdl *sdl, t_player *player, TTF_Font *font)
 {
 	t_item			*curr_item;
 	int				startx;
+	SDL_Surface		*cur_text;
 
 	startx = 20;
 	curr_item = player->inventar;
-	draw_healthbar(sdl->surf, (t_point){W / 2 - 100, 20}, (t_point){200, 20}, player->health);
+	draw_healthbar(sdl->surf, (t_point){player->half_win_size.x - 125, 30}, (t_point){250, 30}, player->health);
 	if(player->current_gun){
 		print_player_gun(sdl, player);
 		char	*ammo = ft_itoa(player->current_gun->ammo);
 		SDL_Surface *ammo_surf = TTF_RenderText_Blended(font, ammo, (SDL_Color){255, 255, 255});
 		draw_image(sdl->surf, ammo_surf, 0, 130, 50, 50);
-		draw_image(sdl->surf, player->current_gun->icon, 0, 20, 200, 100);
+		if (player->current_gun->icon)
+			draw_image(sdl->surf, player->current_gun->icon, 0, 20, 200, 100);
 		ft_strdel(&ammo);
 		SDL_FreeSurface(ammo_surf);
 	}
 	while (curr_item)
 	{
-		draw_image(sdl->surf, curr_item->states[0].texture[0], startx, H - 120,  100, 100);
+		cur_text = curr_item->states[0].texture[0];
+		if (curr_item)
+			draw_image(sdl->surf, cur_text, startx, H - 120,  100, 100);
 		startx += 120;
 		curr_item = curr_item->next;
 	}

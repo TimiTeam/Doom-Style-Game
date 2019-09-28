@@ -24,12 +24,30 @@ int 				load_game(t_player *player, t_read_holder *holder)
 
 int				render_menu(t_pr *m, t_sdl *sdl)
 {
+	SDL_Surface	*level_choice;
+
+	level_choice = NULL;
 	draw_image(sdl->surf, m->background, 0, 0, sdl->win_size.x, sdl->win_size.y);
 	draw_image(sdl->surf, m->logo, m->logo_rect.x, m->logo_rect.y, m->logo_rect.w, m->logo_rect.h);
 	draw_image(sdl->surf, m->play_button, m->play_rect.x, m->play_rect.y, m->play_rect.w, m->play_rect.h);
 	draw_image(sdl->surf, m->choose_level_button, m->choose_level_rect.x,
 		m->choose_level_rect.y, m->choose_level_rect.w, m->choose_level_rect.h);
-	draw_image(sdl->surf, m->font_texture, m->font_rect.x, m->font_rect.y, m->font_rect.w, m->font_rect.h);
+	level_choice = get_text_surfcae(m, m->maps[m->i]);
+	if (level_choice)
+	{
+		draw_image(sdl->surf, level_choice, m->font_rect.x, m->font_rect.y, m->font_rect.w, m->font_rect.h);
+		SDL_FreeSurface(level_choice);
+	}
 	draw_image(sdl->surf, m->exit_button, m->exit_rect.x, m->exit_rect.y, m->exit_rect.w, m->exit_rect.h);
 	return (1);
+}
+
+void 					free_menu(t_pr *menu)
+{
+	SDL_FreeSurface(menu->background);
+	SDL_FreeSurface(menu->play_button);
+	SDL_FreeSurface(menu->exit_button);
+	SDL_FreeSurface(menu->logo);
+	SDL_FreeSurface(menu->choose_level_button);
+	TTF_CloseFont(menu->font);
 }

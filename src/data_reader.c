@@ -130,7 +130,6 @@ t_sector		*read_map(char *pth, t_read_holder *holder, t_vector *player_pos)
 	holder->walls = get_walls(fd, holder->wall_count, vectors, holder->textures);
 	ft_memdel((void**)&vectors);
 	sectors = make_sectors_list(fd, holder);
-	list_sectors(sectors);
 	light_source = create_all_light_source(sectors, holder->light_count);
 	holder->light_source = light_source;
 	fill_sectors_light_source(sectors, holder->light_source, holder->light_count);

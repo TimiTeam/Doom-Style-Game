@@ -1,8 +1,5 @@
 #include "main_head.h"
 
-uint8_t menu = 1;
-
-
 void 				free_data_holder(t_read_holder *holder)
 {
 	int				i;
@@ -18,7 +15,7 @@ void 				free_data_holder(t_read_holder *holder)
 		i++;
 	}
 	i = 0;
-	while( i < holder->text_count && holder->textures[i])
+	while(i < holder->text_count && holder->textures[i])
 	{
 		SDL_FreeSurface(holder->textures[i]);
 		i++;
@@ -954,6 +951,7 @@ int					main(int argc, char **argv)
 	//	delete_sectors(holder.all);
 		delete_light_source(holder.light_source, holder.light_count);
 		free_t_sdl(&sdl);
+		free_menu(&m);
 	}
 
 	free_data_holder(&holder);
