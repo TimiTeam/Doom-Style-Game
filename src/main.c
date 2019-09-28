@@ -451,14 +451,17 @@ void 			draw_sector_items(t_item **items, t_player *player, t_draw_data data, SD
 				it = tmp;
 				continue ;
 			}
-			else if (it->type == health && player->health < 100)
+			else if (it->type == health)
 			{
-				player->health += it->health;
-				player->health = player->health > 100 ? 100 : player->health;
-				tmp = it->next;
-				delete_item_by_ptr(items, it);
-				it = tmp;
-				continue ;
+				if(player->health < 100)
+				{
+					player->health += it->health;
+					player->health = player->health > 100 ? 100 : player->health;
+					tmp = it->next;
+					delete_item_by_ptr(items, it);
+					it = tmp;
+					continue ;
+				}
 			}
 			else if (it->type == ammo)
 			{
@@ -934,7 +937,7 @@ int					game_loop(t_sdl *sdl, t_player *player, t_sector *sectors)
 		player->has_key = has_key(player->inventar);
 		if(player->current_gun)
 			print_player_gun(sdl, player);
-		draw_healthbar(sdl->surf, (t_point){10,10}, (t_point){player->health, 30}, player->health);
+		draw_healthbar(sdl->surf, (t_point){10,10}, (t_point){250, 30}, player->health);
         tex = SDL_CreateTextureFromSurface(sdl->ren, sdl->surf);
         sdl_render(sdl->ren, tex, NULL, NULL);
         SDL_DestroyTexture(tex);
