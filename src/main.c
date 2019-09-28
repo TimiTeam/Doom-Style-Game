@@ -225,8 +225,8 @@ void 			draw_world(t_sector *sec, t_wall wall, t_player player, t_sdl *sdl, t_dr
 	int			u1;
 	float 		scaleL;
 
-	line.start = (t_vector){wall.start.x - player.pos.x, wall.start.y - player.pos.y, wall.start.z - player.pos.z};
-	line.end = (t_vector){wall.end.x - player.pos.x, wall.end.y - player.pos.y, wall.end.z - player.pos.z};
+	line.start = (t_vector){wall.start.x - player.pos.x, wall.start.y - player.pos.y, 0/*wall.start.z - player.pos.z*/};
+	line.end = (t_vector){wall.end.x - player.pos.x, wall.end.y - player.pos.y, 0/*wall.end.z - player.pos.z*/};
 
 	line.start = (t_vector){line.start.x * player.sin_angl - line.start.y * player.cos_angl,
 				line.start.x * player.cos_angl + line.start.y * player.sin_angl, .z = line.start.y};
@@ -535,6 +535,7 @@ void				run_with_buff(t_player *player, t_sdl *sdl, unsigned int win_x)
 	draw_data.start = 0;
 	draw_data.end = win_x;
 	draw_data.player_current_height = (player->pos.z + (player->curr_sector->ceil - player->curr_sector->floor <= player->height + player->sit ? -3 : player->sit));
+//	draw_data.player_current_height = player->pos.z + player->height;
 	draw_sectors(player->curr_sector, player, sdl, draw_data);
 }
 
@@ -612,7 +613,7 @@ void			move_player(t_player *player, float sin_angle, float cos_angle)
 	t_sector	*new;
 
 	i = 0;
-	step = (t_vector){player->pos.x + cos_angle * player->speed, player->pos.y + sin_angle * player->speed};
+	step = (t_vector){player->pos.x + cos_angle * player->speed, player->pos.y + sin_angle * player->speed, 0};
 	wall = player->curr_sector->wall;
 	float step_len = len_between_points(player->pos,step);
 	while (i < player->curr_sector->n_walls)
@@ -631,12 +632,18 @@ void			move_player(t_player *player, float sin_angle, float cos_angle)
 			new = get_new_player_sector(step, next);
 			if (!new || (int)(new->ceil - new->floor) <= (int)(player->height + player->sit))
 				return ;
+			if (player->pos.z - player->height < next->floor)
+     			step.z += next->floor - player->curr_sector->floor;
+		//	player->velocity = 0.0f;
+		//	player->pos.z += player->velocity;
+		//	step.z = /*player->pos.z - player->curr_sector->floor */ player->height + new->floor;
 			player->curr_sector = new;
+			printf("player z = %f\n", player->pos.z);
 			break;
         }
 		i++;
 	}
-	step.z = player->pos.z;
+	step.z += player->pos.z;
 	player->pos = step;
 }
 

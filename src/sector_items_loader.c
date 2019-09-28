@@ -14,14 +14,18 @@ void			copy_all_t_iteam_states(t_item *dst, t_item *src)
 	}
 }
 
-void 			copy_t_item_value_by_id(t_item *dst, t_item *all, unsigned src_item_id)
+int 			copy_t_item_value_by_id(t_item *dst, t_item *all, unsigned src_item_id)
 {
+	int			finde;
+
+	finde = 0;
 	if (!dst || !all)
-		return ;
+		return (print_error_message("Error source items",""));
 	while (all)
 	{
 		if (src_item_id == all->id)
 		{
+			finde = 1;
 			copy_all_t_iteam_states(dst, all);
 			dst->ammo = all->ammo;
 			dst->health = all->health;
@@ -35,6 +39,7 @@ void 			copy_t_item_value_by_id(t_item *dst, t_item *all, unsigned src_item_id)
 		}
 		all = all->next;
 	}
+	return (finde);
 }
 
 t_item			*create_item(char *data, t_item *all_items)
@@ -43,12 +48,14 @@ t_item			*create_item(char *data, t_item *all_items)
 	unsigned	i;
 	float		x;
 	float		y;
+	int			index;
 
 	i = get_numbers(&x, &y, ',', data);
 	if(!(item = create_new_item((int)x, (int)y)))
 		return (0);
-	copy_t_item_value_by_id(item, all_items, ft_atoi(&data[i]));
-
+	index = ft_atoi(&data[i]);
+	if (!copy_t_item_value_by_id(item, all_items, index))
+		return (print_error_message_null("Error item not found: ", &data[i]));
 	item->size.x = item->states[0].texture[0]->w ;
 	item->size.y = item->states[0].texture[0]->h ;
 	if(item->size.x > 150 && item->size.y > 150)
@@ -75,7 +82,11 @@ t_item			*make_items(char *data, t_item *all_items, t_read_holder *holder)
 	{
 		if (data[i] == '(')
 		{
-			next = create_item(&data[i], all_items);
+			if (!(next = create_item(&data[i], all_items)))
+			{
+				delete_item(&list);
+				return (print_error_message_null("Error cerating items list",""));
+			}
 			add_next_item(&list, next);
 			if (next->type == light)
 				holder->light_count++;

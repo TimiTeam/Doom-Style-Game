@@ -16,7 +16,6 @@ int				get_num_from_str(char *str)
 	return (0);
 }
 
-
 char			*skip_row_number(char *line)
 {
 	unsigned	p;
