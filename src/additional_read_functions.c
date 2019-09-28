@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   additional_read_functions.c                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: tbujalo <marvin@42.fr>                     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/09/28 23:10:56 by tbujalo           #+#    #+#             */
+/*   Updated: 2019/09/28 23:11:43 by tbujalo          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "sectors.h"
 
 int				get_num_from_str(char *str)
@@ -72,6 +84,8 @@ unsigned		get_numbers(float *one, float *two, char delimiter, char *line)
 	i += ft_strlen(num);
 	*one = nb;
 	if (line[i] && line[i] == delimiter)
+		i++;
+	while (line[i] && !ft_isdigit(line[i]))
 		i++;
 	ft_strdel(&num);
 	nb = (float)ft_atoi(&line[i]);

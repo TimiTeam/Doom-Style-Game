@@ -84,17 +84,13 @@ static void		read_properties(t_item *item, int fd)
 	ft_strdel(&line);
 }
 
-static void		create_animations(t_item *it, char *file_pth)
+static int		create_animations(t_item *it, char *file_pth)
 {
 	int			fd;
 	char		*line;
 
-	fd = open(file_pth, O_RDONLY);
-	if (fd < 1)
-	{
-		printf("ERROR reading file: %s", file_pth);
-		exit(1);
-	}
+	if ((fd = open(file_pth, O_RDONLY)) < 1)
+		return(print_error_message("Reading file: ", file_pth));
 	while(get_next_line(fd, &line) > 0 && *line)
 	{
 		if (ft_strcmp(line, "Properties{") == 0)
@@ -113,6 +109,7 @@ static void		create_animations(t_item *it, char *file_pth)
 	}
 	close(fd);
 	ft_strdel(&line);
+	return (1);
 }
 
 t_item			*make_item_ftom_str(char *line, char *directory_pth)
@@ -131,8 +128,12 @@ t_item			*make_item_ftom_str(char *line, char *directory_pth)
 		i++;
 	if ((full_name = clip_n_str(directory_pth, &line[i], "/info.txt")))
 	{
-		create_animations(item, full_name);
-		ft_memdel((void**)&full_name);
+		if (!create_animations(item, full_name))
+		{
+			ft_memdel((void**)&item);
+			item = NULL;
+		}
+		ft_strdel(&full_name);
 	}
 	return (item);
 }

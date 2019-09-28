@@ -93,11 +93,16 @@ t_sector			*make_sectors_list(int fd, t_read_holder *holder)
 	t_sector	*new;
 
 	head = NULL;
-	while (get_next_line(fd, &line) > 0 && *line != '\0' && *line != '\n')
+	while (get_next_line(fd, &line) > 0 && ft_strcmp(line, ""))
 	{
-		if (ft_isdigit(line[0]))
+		if (ft_isdigit(*line))
 		{
-			new = crate_and_fill_sector_by_data(holder, skip_row_number(line));
+			if(!(new = crate_and_fill_sector_by_data(holder, skip_row_number(line))))
+			{
+				delete_sectors(head);
+				head = NULL;
+				break ;
+			}
 			add_next_sector(&head, new);
 		}
 		ft_strdel(&line);

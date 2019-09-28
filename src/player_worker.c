@@ -22,28 +22,24 @@ void				free_player(t_player *player)
 	ft_memdel((void**)&player);
 }
 
-void 			get_player_pos(int fd, t_vector *player_pos, int *player_sec_id)
+int 			get_player_pos(int fd, t_vector *player_pos, int *player_sec_id)
 {
 	char 		*line;
 	char		*skiped;
-	int			i;
 	unsigned	p;
+	int 		ret;
 
 	line = NULL;
-	i = 0;
-	while(get_next_line(fd, &line) > 0)
+	ret = 1;
+	if (get_next_line(fd, &line) > 0)
 	{
-		if (i == 1)
-		{
-			p = get_numbers(&player_pos->x, &player_pos->y, ',', (skiped = skip_row_number(line)));
-			*player_sec_id = get_num_from_str(&skiped[p]);
-			break ;
-		}
-		else if (ft_strcmp(line, "Player") == 0)
-			i = 1;
-		ft_strdel(&line);
+		p = get_numbers(&player_pos->x, &player_pos->y, ',', (skiped = skip_row_number(line)));
+		*player_sec_id = get_num_from_str(&skiped[p]);
 	}
+	else
+		ret = print_error_message("player pos is undefine at row", line);
 	ft_strdel(&line);
+	return (ret);
 }
 
 t_sector			*get_player_sector(t_sector *sectors, int sec_num)

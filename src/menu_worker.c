@@ -30,15 +30,14 @@ int 				load_game(t_player *player, t_read_holder *holder)
 	t_sector		*sectors;
 
 	if (holder->curr_map >= holder->maps_count)
-		return (error_message("Invalid map"));
+		return (error_message("Map is not exist"));
 	delete_sectors(holder->all);
 	delete_light_source(holder->light_source, holder->light_count);
 	if (player->curr_map < holder->curr_map || player->dead)
 		clear_player(player);
 	holder->light_count = 0;
-	sectors = read_map(holder->maps_path[holder->curr_map], holder, &player->pos);
-	if (!sectors)
-		return(error_message(holder->maps_path[holder->curr_map]));
+	if (!(sectors = read_map(holder->maps_path[holder->curr_map], holder, &player->pos)))
+		return (0);
 	holder->all = sectors;
 	player->height = EyeHeight;
 	if (!(player->curr_sector = get_player_sector(sectors, holder->player_sector_id)))

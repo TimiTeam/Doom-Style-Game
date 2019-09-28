@@ -15,7 +15,7 @@ void 				free_data_holder(t_read_holder *holder)
 		i++;
 	}
 	i = 0;
-	while(i < holder->text_count && holder->textures[i])
+	while(holder->textures && i < holder->text_count && holder->textures[i])
 	{
 		SDL_FreeSurface(holder->textures[i]);
 		i++;
@@ -634,11 +634,7 @@ void			move_player(t_player *player, float sin_angle, float cos_angle)
 				return ;
 			if (player->pos.z - player->height < next->floor)
      			step.z += next->floor - player->curr_sector->floor;
-		//	player->velocity = 0.0f;
-		//	player->pos.z += player->velocity;
-		//	step.z = /*player->pos.z - player->curr_sector->floor */ player->height + new->floor;
 			player->curr_sector = new;
-			printf("player z = %f\n", player->pos.z);
 			break;
         }
 		i++;
@@ -846,7 +842,7 @@ int					game_loop(t_sdl *sdl, t_player *player, t_sector *sectors)
 	return (run);
 }
 
-void				run_game(t_sdl *sdl, t_player *player, t_pr *m, t_read_holder *holder)
+int				run_game(t_sdl *sdl, t_player *player, t_pr *m, t_read_holder *holder)
 {
 	int				in_game;
 	SDL_Texture		*tex;
@@ -860,7 +856,7 @@ void				run_game(t_sdl *sdl, t_player *player, t_pr *m, t_read_holder *holder)
 		{
 			if (player->curr_map != holder->curr_map)
 				if (!load_game(player, holder))
-					error_message("Nooo");
+					return(error_message("Can't create game"));
 			in_game = game_loop(sdl, player, holder->all);
 		}
 		render_menu(m, sdl);
@@ -872,6 +868,7 @@ void				run_game(t_sdl *sdl, t_player *player, t_pr *m, t_read_holder *holder)
 		SDL_RenderPresent(sdl->ren);
 	}
 	SDL_DestroyTexture(tex);
+	return (0);
 }
 
 
@@ -894,22 +891,16 @@ int					main(void)
 	{
 		sdl = new_t_sdl(W, H, "doom-nukem");
 		init_sdl(sdl);
-
 		SDL_ShowCursor(SDL_DISABLE);
 		SDL_SetRelativeMouseMode(SDL_TRUE);
-
 		load_textures(&m, sdl, &holder);
 		initialize_sdl_win(&m);
-
 		sdl->font = m.font;
 		player = new_t_player(3, 3, sdl->win_size);
 		player->sky = load_jpg_png("textures/skybox.png");
-
 		all_guns = (t_gun**)malloc(sizeof(t_gun*) * 3);
 		load_gun(all_guns);
-
 		run_game(sdl, player, &m, &holder);
-
 		free_player(player);
 		delete_light_source(holder.light_source, holder.light_count);
 		free_t_sdl(&sdl);

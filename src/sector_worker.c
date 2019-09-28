@@ -8,7 +8,6 @@ t_sector			*new_sector()
 	i = 0;
 	sec = (t_sector*)malloc(sizeof(t_sector));
 	*sec = (t_sector){};
-	printf("Created\n");
 	return (sec);
 }
 
@@ -58,13 +57,13 @@ void				add_next_sector(t_sector **main, t_sector *next)
 	head->next = next;
 }
 
-void				delete_walls(t_wall **wall, unsigned size)
+void				*delete_walls(t_wall **wall, unsigned size)
 {
 	int				i;
 	t_wall			*ptr;
 	
 	if (!wall)
-		return ;
+		return (NULL);
 	i = 0;
 	while (i < size)
 	{
@@ -77,6 +76,7 @@ void				delete_walls(t_wall **wall, unsigned size)
 		i++;
 	}
 	ft_memdel((void**)&wall);
+	return (NULL);
 }
 
 void				delete_sectors(t_sector *sectors)
@@ -96,7 +96,6 @@ void				delete_sectors(t_sector *sectors)
 		delete_items_list(next->items);
 		delete_projectiles(next->projectiles);
 		ft_memdel((void**)&next);
-		printf("Destroyed\n");
 	}
 }
 
