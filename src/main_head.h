@@ -206,7 +206,7 @@ void 					quickSort(t_item **headRef, t_player *player);
 void					line(SDL_Surface *surface, t_point start, t_point end, int color);
 
 void					rest_of_the_action_shit(t_pr *m, Uint8 *menu, t_sdl *sdl, t_read_holder *holder);
-
+void					draw_hud(t_sdl *sdl, t_player *player, TTF_Font *font);
 t_projectile			*create_projectile(t_player player);
 void					delete_projectile(t_projectile **head, t_projectile *proj);
 Uint8					move_projectile(t_projectile *proj);

@@ -38,6 +38,7 @@ typedef	struct		s_sdl
 	SDL_Window		*win;
 	SDL_Renderer	*ren;
 	SDL_Surface		*surf;
+	TTF_Font		*font;
 	float			fps;
 	unsigned        frame_id;
 }					t_sdl;

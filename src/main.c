@@ -378,7 +378,7 @@ void 			check_enemy_state(t_item *enemy, t_vector player_pos)
 }
 
 
-void 			get_gun_to_player(t_player *player, t_gun **guns, enum gun_type gun_type)
+void 			get_gun_to_player(t_player *player, t_gun **guns, enum gun_type gun_type, SDL_Surface *icon)
 {
 	t_gun		*src;
 	t_gun		*dst;
@@ -406,6 +406,7 @@ void 			get_gun_to_player(t_player *player, t_gun **guns, enum gun_type gun_type
 		dst->type = src->type;
 		player->current_gun = dst;
 		player->gun[gun_type] = dst;
+		player->gun[gun_type]->icon = icon;
 		printf("New player gun : %p\n", player->gun[gun_type] );
 	}
 	player->gun[gun_type]->ammo += src->ammo;
@@ -445,7 +446,7 @@ void 			draw_sector_items(t_item **items, t_player *player, t_draw_data data, SD
 
 			if (it->type == gun)
 			{
-				get_gun_to_player(player, all_guns, it->gun_type);
+				get_gun_to_player(player, all_guns, it->gun_type, it->states[waiting].texture[0]);
 				tmp = it->next;
 				delete_item_by_ptr(items, it);
 				it = tmp;
@@ -834,63 +835,6 @@ int					hook_event(t_player *player, unsigned char move[4], t_sector *sectors)
 	return (1);
 }
 
-
-
-void 				print_player_gun(t_sdl *sdl, t_player *pla)
-{
-	t_point			pos;
-	t_point			size;
-	SDL_Surface		*surf;
-
-	if (!pla->current_gun->frame[(int)pla->current_gun->state])
-	{
-		pla->current_gun->state = 0;
-		pla->current_gun->ammo--;
-		printf("current_gun->ammo : %d\n", pla->current_gun->ammo);
-	}
-	surf = pla->current_gun->frame[(int)pla->current_gun->state];
-	if ((pla->shooting || pla->current_gun->state) && pla->current_gun->ammo > 0)
-		pla->current_gun->state += 0.44f;
-	pos.x = pla->half_win_size.x - surf->w / 2;
-	pos.y = sdl->win_size.y - surf->h;
-	draw_image(sdl->surf, surf, pos.x, pos.y, surf->w, surf->h);
-}
-
-
-void			draw_rect(SDL_Surface *surf, t_point pos, t_point size, int color, Uint8 filled)
-{
-	int	*pix = (int*)surf->pixels;
-	int i;
-	int j;
-
-	i = -1;
-	if (filled)
-	{
-		while (++i < size.y)
-		{
-			j = -1;
-			while (++j < size.x)
-				pix[pos.x + j + surf->w * (pos.y + i)] = color;
-		}
-	}
-	else
-	{
-		j = -1;
-		while (++j < size.x)
-			if (pos.x + j < surf->w && pos.x + j >0 && pos.y >= 0 && pos.y < surf->h)
-				pix[pos.x + j + surf->w * pos.y] = color;
-		while (++i < size.y)
-			if (pos.x + size.x - 1 < surf->w && pos.x + size.x >= 0 && (pos.y + i) >= 0 && (pos.y + i) < surf->h)
-				pix[pos.x + size.x - 1 + surf->w * (pos.y + i)] = color;
-		while (--j >= 0)
-			if (pos.x + j < surf->w && pos.x + j >= 0 && (pos.y + size.y - 1) >= 0 && (pos.y + size.y - 1) < surf->h)
-				pix[pos.x + j + surf->w * (pos.y + size.y - 1)] = color;
-		while (--i >= 0)
-			if (pos.x < surf->w && pos.x >= 0 && (pos.y + i) >= 0 && (pos.y + i) < surf->h)
-				pix[pos.x + surf->w * (pos.y + i)] = color;
-	}
-}
-
 void				apply_filter(SDL_Surface *surface, float intensity)
 {
 	Uint8 r, g, b;
@@ -907,14 +851,6 @@ void				apply_filter(SDL_Surface *surface, float intensity)
 			put_pixel(surface, x, y, SDL_MapRGB(surface->format, r * intensity, g * intensity, b * intensity));
 		}
 	}
-}
-
-
-void				draw_healthbar(SDL_Surface *surf, t_point pos, t_point size, int health)
-{
-	draw_rect(surf, pos, size, 0x00, 1);
-	if (health > 0)
-		draw_rect(surf, (t_point){pos.x + 4, pos.y + 4}, (t_point){(size.x - 8) * health / 100.0f, size.y - 8}, 0x00ff0000, 1);
 }
 
 int					game_loop(t_sdl *sdl, t_player *player, t_sector *sectors)
@@ -935,9 +871,7 @@ int					game_loop(t_sdl *sdl, t_player *player, t_sector *sectors)
         SDL_FillRect(sdl->surf, NULL, 0x00);
         run_with_buff(player, sdl, sdl->win_size.x);
 		player->has_key = has_key(player->inventar);
-		if(player->current_gun)
-			print_player_gun(sdl, player);
-		draw_healthbar(sdl->surf, (t_point){10,10}, (t_point){250, 30}, player->health);
+		draw_hud(sdl, player, sdl->font);
         tex = SDL_CreateTextureFromSurface(sdl->ren, sdl->surf);
         sdl_render(sdl->ren, tex, NULL, NULL);
         SDL_DestroyTexture(tex);
@@ -1007,6 +941,7 @@ int					main(int argc, char **argv)
 		load_textures(&m, sdl, &holder);
 		initialize_sdl_win(&m);
 
+		sdl->font = m.font;
 		player = new_t_player(3, 3, sdl->win_size);
 		player->sky = load_jpg_png("textures/skybox.png");
 
