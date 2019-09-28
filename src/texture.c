@@ -16,15 +16,13 @@ static float		distance3D(t_vector a, t_vector b)
 }
 
 
-static float		len_between_points(t_vector a, t_vector b)
+float		len_between_points(t_vector a, t_vector b)
 {
 	float			dx;
 	float 			dy;
 
 	dx = b.x - a.x;
 	dy = b.y - a.y;
-//	dx *= dx;
-//	dy *= dy;
 	return (sqrt((dx) * (dx) + (dy) * (dy)));
 }
 

@@ -432,8 +432,11 @@ void 			draw_sector_items(t_item **items, t_player *player, t_draw_data data, SD
 				player->health -= it->damage;
 				printf("\tYour hp: %d\n", player->health);
 			}
-			if (player->health <= 0)
+			if (player->health <= 0 && !player->dead)
+			{
 				printf("\tHey, You die!!\n");
+				player->dead = 1;
+			}
 			it->curr_frame = 0;
 			if (it->type == enemy && it->curr_state == die)
 			{
@@ -891,19 +894,6 @@ void			draw_rect(SDL_Surface *surf, t_point pos, t_point size, int color, Uint8 
 	}
 }
 
-int				render_menu(t_pr *m, t_sdl *sdl)
-{
-	draw_image(sdl->surf, m->background, 0, 0, sdl->win_size.x, sdl->win_size.y);
-	draw_image(sdl->surf, m->logo, m->logo_rect.x, m->logo_rect.y, m->logo_rect.w, m->logo_rect.h);
-	draw_image(sdl->surf, m->play_button, m->play_rect.x, m->play_rect.y, m->play_rect.w, m->play_rect.h);
-	draw_image(sdl->surf, m->choose_level_button, m->choose_level_rect.x,
-		m->choose_level_rect.y, m->choose_level_rect.w, m->choose_level_rect.h);
-	draw_image(sdl->surf, m->font_texture, m->font_rect.x, m->font_rect.y, m->font_rect.w, m->font_rect.h);
-	draw_image(sdl->surf, m->exit_button, m->exit_rect.x, m->exit_rect.y, m->exit_rect.w, m->exit_rect.h);
-	return (1);
-}
-
-
 void				apply_filter(SDL_Surface *surface, float intensity)
 {
 	Uint8 r, g, b;
@@ -922,96 +912,7 @@ void				apply_filter(SDL_Surface *surface, float intensity)
 	}
 }
 
-void 				left_right(t_pr *m)
-{
-	if ((m->event.key.keysym.sym == SDLK_RIGHT ||
-		m->event.key.keysym.sym == SDLK_d) && m->sw == 1)
-	{
-		if (m->i != m->maxi)
-			m->i++;
-		else
-			m->i = 0;
-		set_text(m, m->maps[m->i]);
-	}
-	if ((m->event.key.keysym.sym == SDLK_LEFT ||
-		m->event.key.keysym.sym == SDLK_a) && m->sw == 1)
-	{
-		if (m->i != 0)
-			m->i--;
-		else
-			m->i = m->maxi;
-		set_text(m, m->maps[m->i]);
-	}
-}
 
-int 				menu_hooks(t_pr *m, t_read_holder *holder)
-{
-	while (SDL_PollEvent(&m->event))
-	{
-		if (m->event.type == SDL_QUIT)
-			return (0);
-		if (m->event.type == SDL_KEYDOWN)
-		{
-			printf("Event\n");
-			down_action(m);
-			up_action(m);
-			left_right(m);
-			if (m->event.key.keysym.sym == SDLK_RETURN || m->event.key.keysym.sym == SDLK_ESCAPE)
-			{
-				if (m->sw == 2 || m->event.key.keysym.sym == SDLK_ESCAPE)
-					return (-1);
-				if (m->sw == 0)
-				{
-					//*menu = 0; //start_game(char *m->maps[i]); !!!!!IMPORTANT!!!!! m->maps[i] - choosed map
-					holder->curr_map = m->i;
-					return (1);
-				}
-			}
-		}
-	}
-	return (0);
-}
-/*
-void				menu_loop(t_pr *m, t_sector *sectors, t_sdl *sdl, t_read_holder *holder)
-{
-	SDL_Texture *tex;
-	int				menu;
-	
-	menu = 1;
-	while(menu)
-    {
-		render_menu(m, sdl, sectors, holder);
-		SDL_SetRenderDrawColor(sdl->ren, 255, 255, 255, 255);
-		SDL_RenderClear(sdl->ren);
-		//SDL_FillRect(sdl->surf, NULL, 0x00);
-		tex = SDL_CreateTextureFromSurface(sdl->ren, sdl->surf);
-		sdl_render(sdl->ren, tex, NULL, NULL);
-		menu = menu_hooks(m, holder);
-		SDL_DestroyTexture(tex);
-		SDL_RenderPresent(sdl->ren);
-    }
-	SDL_DestroyTexture(tex);
-}
-
-void				reload_map(t_read_holder *holder, t_sector *sectors, t_player *player, int curr_map)
-{
-	free_data_holder(holder);
-	*holder = (t_read_holder){};
-	holder->curr_map = curr_map;
-	read_game_config_file(holder, "game_info.txt");
-	//delete_sectors(sectors);
-	if (holder->maps_path[holder->curr_map])
-		sectors = read_map(holder->maps_path[holder->curr_map], holder, &player->pos);
-	// if (!sectors){
-	// 	printf("Can't load sectors\n");
-	// 	exit(1);
-	// }
-	player->curr_sector = sectors;
-	player->pos.z = player->curr_sector->floor + player->height;
-	player->health = 100;
-	player->yaw = 0;
-}
-*/
 void				draw_healthbar(SDL_Surface *surf, t_point pos, t_point size, int health)
 {
 	draw_rect(surf, pos, size, 0x00, 1);
@@ -1032,17 +933,17 @@ int					game_loop(t_sdl *sdl, t_player *player, t_sector *sectors)
 	unsigned char	move[4];
 
 	max = 0;
-    font = TTF_OpenFont("font.ttf", 100);
-    fps_area = (SDL_Rect){20, 20, 150, 55};
+ //   font = TTF_OpenFont("font.ttf", 100);
+   // fps_area = (SDL_Rect){20, 20, 150, 55};
 
 	ft_memset(move, 0, sizeof(move) * 4);
 	
     player->cos_angl = cos(player->angle);
     player->sin_angl = sin(player->angle);
     run = 1;
-    sdl->frame_id = 0;
-    timer = init_timer();
-    start_timer(&timer);
+//    sdl->frame_id = 0;
+  //  timer = init_timer();
+    //start_timer(&timer);
     while(run)
     {
         SDL_SetRenderDrawColor(sdl->ren, 0, 0, 0, 255);
@@ -1056,7 +957,7 @@ int					game_loop(t_sdl *sdl, t_player *player, t_sector *sectors)
         sdl_render(sdl->ren, tex, NULL, NULL);
 
         SDL_DestroyTexture(tex);
-
+/*
       //  if((sdl->fps = (float)sdl->frame_id / (get_ticks(timer) / 1000.f)) > 2000000)
         //    sdl->fps = 0;
 		max = sdl->fps > max ? sdl->fps : max;
@@ -1064,7 +965,7 @@ int					game_loop(t_sdl *sdl, t_player *player, t_sector *sectors)
         sprintf(str, "fps:  %f", sdl->fps);
 
 		text = make_black_text_using_ttf_font(sdl->ren, font, str);
-
+*/
         SDL_RenderCopy(sdl->ren, text, NULL, &fps_area);
 
         SDL_DestroyTexture(text);
@@ -1076,9 +977,7 @@ int					game_loop(t_sdl *sdl, t_player *player, t_sector *sectors)
 			SDL_Delay(20);
     }
 
-	printf("\n\n\t\t---- MAX FPS  %f ----\n\n", max);
-
-    TTF_CloseFont(font);
+//    TTF_CloseFont(font);
 
     SDL_DestroyTexture(tex);
 
@@ -1086,57 +985,7 @@ int					game_loop(t_sdl *sdl, t_player *player, t_sector *sectors)
 }
 
 
-t_sector			*get_player_sector(t_sector *sectors, int sec_num)
-{
-	while(sectors)
-	{
-		if (sectors->sector == sec_num)
-			return (sectors);
-		sectors = sectors->next;
-	}
-	return (NULL);
-}
 
-void	load_textures(t_pr *m, t_sdl *sdl, t_read_holder *holder)
-{
-	m->background = load_jpg_png("textures/background1.jpg");
-	m->play_button = load_jpg_png("textures/play_button.png");
-	m->exit_button = load_jpg_png("textures/exit_button.png");
-	m->logo = load_jpg_png("textures/logo.png");
-	m->choose_level_button = load_jpg_png("textures/choose_level_button.png");
-	m->font = TTF_OpenFont("amazdoom/AmazDooMLeft2.ttf", 256);
-	m->maps = holder->maps_path;
-	m->maxi = holder->maps_count - 1;
-	m->i = 0;
-	set_text(m, holder->maps_path[m->i]);
-	m->font_color.r = 255;
-	m->font_color.g = 255;
-	m->font_color.b = 255;
-	m->font_color.a = 255;
-}
-
-
-int 				load_game(t_player *player, t_read_holder *holder)
-{
-	t_sector		*sectors;
-
-	if (holder->curr_map >= holder->maps_count)
-		return (error_message("Invalid map"));
-	delete_sectors(holder->all);
-	delete_light_source(holder->light_source, holder->light_count);
-	sectors = read_map(holder->maps_path[holder->curr_map], holder, &player->pos);
-	if (!sectors)
-		return(error_message(holder->maps_path[holder->curr_map]));
-	holder->all = sectors;
-//	player->pos = holder->player_pos;
-	player->height = EyeHeight;
-	if (!(player->curr_sector = get_player_sector(sectors, holder->player_sector_id)))
-		return (error_message("Sector Not Found"));
-	player->pos.z = player->curr_sector->floor + player->height;
-	player->yaw = 0;
-	player->curr_map = holder->curr_map;
-	return (1);
-}
 
 void				run_game(t_sdl *sdl, t_player *player, t_pr *m, t_read_holder *holder)
 {
@@ -1171,7 +1020,6 @@ void				run_game(t_sdl *sdl, t_player *player, t_pr *m, t_read_holder *holder)
 int					main(int argc, char **argv)
 {
 	t_read_holder	holder;
-	t_sector		*sectors;
 	t_player		*player;
 	t_sdl			*sdl;
 	t_vector		player_pos;
@@ -1205,9 +1053,7 @@ int					main(int argc, char **argv)
 		run_game(sdl, player, &m, &holder);
 
 		free_player(player);
-	
-		delete_sectors(sectors);
-		//list_light(holder.light_source, holder.light_count);
+		delete_sectors(holder.all);
 		delete_light_source(holder.light_source, holder.light_count);
 		free_t_sdl(&sdl);
 	}

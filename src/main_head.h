@@ -76,15 +76,15 @@ typedef struct		s_plyer
 	int				height;
 	int				health;
 	unsigned char	fall;
-	unsigned short	jump;
+	unsigned char	jump;
 	char			sit;
 	unsigned char 	has_key;
 	unsigned char	shooting;
+	unsigned char	dead;
 	char			curr_map;
 	float			skyW;
 	float			skyH;
-	Uint8			falling;
-	Uint8			menu;
+	unsigned char	falling;
 }					t_player;
 
 typedef struct 		s_super_data
@@ -168,20 +168,19 @@ typedef struct 		Scaler {
 #define Yaw(y,z) (y + z * player.yaw)
 
 //MENU
-void				initialize_sdl_win(t_pr *m);
-void				load_textures(t_pr *m, t_sdl *sdl, t_read_holder *holder);
-//void				readdirec(t_pr *m, t_sdl *sdl, char **maps, int max_maps);
-void				set_text(t_pr *m, char *text);
-void				renderallshit(t_pr *m);
-void				down_action(t_pr *m);
-void				up_action(t_pr *m);
-SDL_Rect			change_size(SDL_Rect rect);
-SDL_Rect			reset_size(SDL_Rect rect);
+void					initialize_sdl_win(t_pr *m);
+void					load_textures(t_pr *m, t_sdl *sdl, t_read_holder *holder);
+void					set_text(t_pr *m, char *text);
+void					renderallshit(t_pr *m);
+int						render_menu(t_pr *m, t_sdl *sdl);
+int 					load_game(t_player *player, t_read_holder *holder);
+int 					menu_hooks(t_pr *m, t_read_holder *holder);
+SDL_Rect				change_size(SDL_Rect rect);
+SDL_Rect				reset_size(SDL_Rect rect);
 
 
 
 t_player				*new_t_player(int pos_x, int pos_y, t_point wid_size);
-
 void					free_player(t_player *player);
 
 void 					draw_scaled_image(SDL_Surface *screen, SDL_Surface *img, t_point pos, t_point size);
@@ -205,7 +204,6 @@ void    				move_enemy_to_player(t_item *enemy, t_vector player_pos);
 void 					quickSort(t_item **headRef, t_player *player);
 
 void					line(SDL_Surface *surface, t_point start, t_point end, int color);
-
 
 void					rest_of_the_action_shit(t_pr *m, Uint8 *menu, t_sdl *sdl, t_read_holder *holder);
 

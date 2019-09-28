@@ -17,7 +17,7 @@ void	put_custom_pixel(SDL_Surface *screen, SDL_Surface *image, int x, int y, int
 
 void			draw_skybox(SDL_Surface *dst, SDL_Surface *src, int x, int y, int end_y, t_player player)
 {
-	struct Scaler scalH = Scaler_Init(-5, player.yaw, 5, 0, src->h / 2);
+	struct Scaler scalH = Scaler_Init(-5, player.yaw, 5, 0.f, (float)(src->h / 2));
 	player.skyH = scalH.result;
 	while(y < end_y)
 	{

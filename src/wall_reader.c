@@ -13,7 +13,7 @@ t_vector		*get_vectors(int fd, int vec_size)
 	i = 0;
 	while (get_next_line(fd, &line) > 0 && i < vec_size)
 	{
-		if (ft_strcmp(line, "Walls:") == 0)
+		if (ft_strcmp(line, "Walls:") == 0 || *line == '\n')
 			break ;
 		if (ft_isdigit(line[0]))
 		{
