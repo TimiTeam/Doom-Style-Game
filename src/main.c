@@ -428,15 +428,9 @@ void 			draw_sector_items(t_item **items, t_player *player, t_draw_data data, SD
 		if ((it->curr_frame += it->speed) >= it->states[it->curr_state].max_textures)
 		{
 			if (it->curr_state == action)
-			{
 				player->health -= it->damage;
-				printf("\tYour hp: %d\n", player->health);
-			}
 			if (player->health <= 0 && !player->dead)
-			{
-				printf("\tHey, You die!!\n");
 				player->dead = 1;
-			}
 			it->curr_frame = 0;
 			if (it->type == enemy && it->curr_state == die)
 			{
@@ -457,10 +451,10 @@ void 			draw_sector_items(t_item **items, t_player *player, t_draw_data data, SD
 				it = tmp;
 				continue ;
 			}
-			else if (it->type == health)
+			else if (it->type == health && player->health < 100)
 			{
 				player->health += it->health;
-				printf("Your Health %d\n", player->health);
+				player->health = player->health > 100 ? 100 : player->health;
 				tmp = it->next;
 				delete_item_by_ptr(items, it);
 				it = tmp;
