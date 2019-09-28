@@ -924,26 +924,13 @@ int					game_loop(t_sdl *sdl, t_player *player, t_sector *sectors)
 {
     int				run;
     SDL_Texture		*tex;
-    TTF_Font		*font;
-    t_timer			timer;
     char			str[100];
-    SDL_Texture		*text;
-    SDL_Rect		fps_area;
-	float			max;
 	unsigned char	move[4];
 
-	max = 0;
- //   font = TTF_OpenFont("font.ttf", 100);
-   // fps_area = (SDL_Rect){20, 20, 150, 55};
-
 	ft_memset(move, 0, sizeof(move) * 4);
-	
     player->cos_angl = cos(player->angle);
     player->sin_angl = sin(player->angle);
     run = 1;
-//    sdl->frame_id = 0;
-  //  timer = init_timer();
-    //start_timer(&timer);
     while(run)
     {
         SDL_SetRenderDrawColor(sdl->ren, 0, 0, 0, 255);
@@ -953,34 +940,14 @@ int					game_loop(t_sdl *sdl, t_player *player, t_sector *sectors)
 		player->has_key = has_key(player->inventar);
 		if(player->current_gun)
 			print_player_gun(sdl, player);
+		draw_healthbar(sdl->surf, (t_point){10,10}, (t_point){player->health, 30}, player->health);
         tex = SDL_CreateTextureFromSurface(sdl->ren, sdl->surf);
         sdl_render(sdl->ren, tex, NULL, NULL);
-
         SDL_DestroyTexture(tex);
-/*
-      //  if((sdl->fps = (float)sdl->frame_id / (get_ticks(timer) / 1000.f)) > 2000000)
-        //    sdl->fps = 0;
-		max = sdl->fps > max ? sdl->fps : max;
-        sdl->frame_id++;
-        sprintf(str, "fps:  %f", sdl->fps);
-
-		text = make_black_text_using_ttf_font(sdl->ren, font, str);
-*/
-        SDL_RenderCopy(sdl->ren, text, NULL, &fps_area);
-
-        SDL_DestroyTexture(text);
-
         SDL_RenderPresent(sdl->ren);
-
         run = hook_event(player, move, sectors);
-		if (sdl->fps > 30)
-			SDL_Delay(20);
     }
-
-//    TTF_CloseFont(font);
-
     SDL_DestroyTexture(tex);
-
 	return (run);
 }
 
@@ -1034,7 +1001,6 @@ int					main(int argc, char **argv)
 	
 	if (read_game_config_file(&holder, "game_info.txt"))
 	{
-
 		sdl = new_t_sdl(W, H, "doom-nukem");
 		init_sdl(sdl);
 
@@ -1053,7 +1019,7 @@ int					main(int argc, char **argv)
 		run_game(sdl, player, &m, &holder);
 
 		free_player(player);
-		delete_sectors(holder.all);
+	//	delete_sectors(holder.all);
 		delete_light_source(holder.light_source, holder.light_count);
 		free_t_sdl(&sdl);
 	}
