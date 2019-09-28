@@ -80,8 +80,8 @@ static void 			make_intersect(t_wall *wall)
 	t_vector 	i2;
 	float 		nearz = 1e-4f, nearside = 1e-5f, farside = 1000.f;
 
-	i1 = Intersect(wall->start.x, wall->start.y, wall->end.x, wall->end.y, -nearside,nearz, -farside,farz);
-    i2 = Intersect(wall->start.x, wall->start.y, wall->end.x, wall->end.y,  nearside,nearz,  farside,farz);
+	i1 = point_of_intersec(wall->start, wall->end, (t_vector) {-nearside,nearz},(t_vector) {-farside,5});
+    i2 = point_of_intersec(wall->start, wall->end, (t_vector) {nearside,nearz}, (t_vector) {farside,5});
 	if(wall->start.y < nearz) 
 	{
 		if(i1.y > 0)
@@ -189,7 +189,10 @@ void 			*thread_draw_sector(void *param)
 		dx = (dist - mapped) / dist;
 		t_vector tex_pos = {vec.x * dx + super->wall.end.x, vec.y * dx + super->wall.end.y};
 		if (super->wall.type == filled_wall)
-			textLine(x, cya, cyb, (struct Scaler)Scaler_Init(ya, cya, yb, 0, fabsf(sec->floor - sec->ceil) * super->scaleH), txtx, sec, super->main_screen, super->wall.texture, tex_pos, super->scaleL, super->scaleH, super->sect->sector_light);
+		//	if (super->sect->door)
+		//		textLine(x, cya, cyb, init_scaler(cya, (t_point){ya, yb}, (t_point){0, super->wall.texture->h * 15.0f / 20.0f}), txtx, sec, super->main_screen, super->wall.texture, tex_pos, super->scaleL, super->scaleH, super->sect->sector_light);
+		//	else
+				textLine(x, cya, cyb, init_scaler(cya, (t_point){ya, yb}, (t_point){0, super->wall.texture->h * super->scaleH / 20.0f}), txtx, sec, super->main_screen, super->wall.texture, tex_pos, super->scaleL, super->scaleH, super->sect->sector_light);
 		else
 		{
 			nya = (x - cp.start.x) * (data->n_ceil_height) / x_lenght + data->n_ceil_y_s;
@@ -201,10 +204,10 @@ void 			*thread_draw_sector(void *param)
 			//	if (!sec->door)
 			//		draw_skybox(super->main_screen, super->player.sky, x, cya, n_cya - 1, super->player);
 			//	else
-					textLine(x, cya, n_cya - 1, (struct Scaler)Scaler_Init(ya, cya, nya - 1, 0, super->scaleH * 10), txtx, sec, super->main_screen, super->wall.texture, tex_pos, super->scaleL, super->scaleH, super->sect->sector_light);
+					textLine(x, cya, n_cya - 1, init_scaler(cya, (t_point){ya, nya - 1}, (t_point){0, super->scaleH * 10}), txtx, sec, super->main_screen, super->wall.texture, tex_pos, super->scaleL, super->scaleH, super->sect->sector_light);
 			}
         	if (yb - 1 !=  nyb && n_cyb != cyb)
-      			textLine(x, n_cyb + 1, cyb, (struct Scaler)Scaler_Init(nyb, n_cyb, yb - 1, 0,  super->scaleH * 10), txtx, sec, super->main_screen, super->wall.texture, tex_pos, super->scaleL, super->scaleH, super->sect->sector_light);
+      			textLine(x, n_cyb + 1, cyb, init_scaler(n_cyb, (t_point){nyb, yb - 1}, (t_point){0, super->scaleH * 10}), txtx, sec, super->main_screen, super->wall.texture, tex_pos, super->scaleL, super->scaleH, super->sect->sector_light);
 			data->ytop[x] = n_cya;
 			data->ybottom[x] = n_cyb;
 		}
@@ -378,10 +381,8 @@ void 			get_gun_to_player(t_player *player, t_gun **guns, enum gun_type gun_type
 
 	if (gun_type > 3)
 	{
-		printf("gun_type error %d\n", gun_type);
 		return ;
 	}
-	printf("gun_type %d\n", gun_type);
 	src = guns[gun_type];
 	if (player->gun[gun_type] == NULL)
 	{
@@ -399,7 +400,6 @@ void 			get_gun_to_player(t_player *player, t_gun **guns, enum gun_type gun_type
 		player->current_gun = dst;
 		player->gun[gun_type] = dst;
 		player->gun[gun_type]->icon = icon;
-		printf("New player gun : %p\n", player->gun[gun_type] );
 	}
 	player->gun[gun_type]->ammo += src->ammo;
 }
@@ -534,7 +534,7 @@ void				run_with_buff(t_player *player, t_sdl *sdl, unsigned int win_x)
 	}
 	draw_data.start = 0;
 	draw_data.end = win_x;
-	draw_data.player_current_height = (player->pos.z + player->jump + (player->curr_sector->ceil - player->curr_sector->floor <= player->height + player->jump + player->sit ? -3 : player->sit));
+	draw_data.player_current_height = (player->pos.z + (player->curr_sector->ceil - player->curr_sector->floor <= player->height + player->sit ? -3 : player->sit));
 	draw_sectors(player->curr_sector, player, sdl, draw_data);
 }
 
@@ -617,8 +617,8 @@ void			move_player(t_player *player, float sin_angle, float cos_angle)
 	float step_len = len_between_points(player->pos,step);
 	while (i < player->curr_sector->n_walls)
 	{
-		if(IntersectBox(player->pos.x, player->pos.y, step.x, step.y, wall[i]->start.x, wall[i]->start.y, wall[i]->end.x, wall[i]->end.y)
-        && PointSide(step.x, step.y, wall[i]->start.x, wall[i]->start.y, wall[i]->end.x, wall[i]->end.y) < 0)
+		if(box_intersection(player->pos, step, wall[i]->start, wall[i]->end)
+        && side_of_a_point(step, wall[i]->start, wall[i]->end) < 0)
 		{
 			if (wall[i]->type == filled_wall)
 				return;
@@ -626,17 +626,17 @@ void			move_player(t_player *player, float sin_angle, float cos_angle)
 				next = wall[i]->sectors[0];
 			else if (wall[i]->sectors[1] && player->curr_sector != wall[i]->sectors[1])
 				next = wall[i]->sectors[1];
-			if (!next || (int)(next->ceil - next->floor) <= (int)(player->height + player->jump + player->sit))
+			if (!next || (int)(next->ceil - next->floor) <= (int)(player->height  + player->sit))
 				return ;
 			new = get_new_player_sector(step, next);
-			if (!new || (int)(new->ceil - new->floor) <= (int)(player->height + player->jump + player->sit))
+			if (!new || (int)(new->ceil - new->floor) <= (int)(player->height + player->sit))
 				return ;
 			player->curr_sector = new;
 			break;
         }
 		i++;
 	}
-	step.z = player->height + player->curr_sector->floor;
+	step.z = player->pos.z;
 	player->pos = step;
 }
 
@@ -717,8 +717,8 @@ int					guess_event(SDL_Keycode code, t_player *player, unsigned char move[4], S
 		player->speed = 1.2f;
 	else if (code == SDLK_LSHIFT && type == SDL_KEYUP)
 		player->speed = 0.6;
-	else if (code == SDLK_SPACE && !player->jump && type == SDL_KEYDOWN)
-		player->jump = 1;
+	else if (code == SDLK_SPACE && type == SDL_KEYDOWN)
+		player->velocity += 0.8f;
 	else if (code == SDLK_1 && type == SDL_KEYDOWN)
 		player->current_gun = player->gun[pistol];
 	else if (code == SDLK_2 && type == SDL_KEYDOWN)
@@ -731,6 +731,8 @@ int					guess_event(SDL_Keycode code, t_player *player, unsigned char move[4], S
 		player->sit = -3;
 	if (type == SDL_KEYUP && code == SDLK_LCTRL)
 		player->sit = 0;
+	if (type == SDL_KEYDOWN && code == SDLK_i)
+		printf("sec# %d, %f %f\n", player->curr_sector->sector, player->pos.x, player->pos.y);
 	return (1);
 }
 
@@ -742,14 +744,6 @@ int					hook_event(t_player *player, unsigned char move[4], t_sector *sectors)
 	int				y;
 	float			yaw;
 
-	if (player->jump > 0 && player->jump < 10 && !player->fall)
-		player->jump += 2;
-	else if (player->jump >= 10)
-		player->fall = 1;
-	if (player->jump > 0 && player->fall)
-		player->jump--;
-	else if (player->jump == 0 && player->fall)
-		player->fall = 0;
 	while(SDL_PollEvent(&e))
 	{
 		if (e.type == SDL_QUIT || (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_ESCAPE))
@@ -787,6 +781,16 @@ int					hook_event(t_player *player, unsigned char move[4], t_sector *sectors)
 	return (1);
 }
 
+void				move_player_vertically(t_player *player)
+{
+	if (player->pos.z + player->velocity >= player->curr_sector->ceil)
+		player->velocity = 0;
+	player->pos.z += player->velocity;
+	if (player->pos.z - player->height > player->curr_sector->floor)
+		player->velocity -= 0.08;
+	else
+		player->velocity = 0;
+}
 
 
 int					game_loop(t_sdl *sdl, t_player *player, t_sector *sectors)
@@ -810,6 +814,7 @@ int					game_loop(t_sdl *sdl, t_player *player, t_sector *sectors)
         run_with_buff(player, sdl, sdl->win_size.x);
 		draw_hud(sdl, player);
 		run = hook_event(player, move, sectors);
+		move_player_vertically(player);
 		if (player->dead)
 		{
 			player->dead++;
@@ -863,7 +868,7 @@ void				run_game(t_sdl *sdl, t_player *player, t_pr *m, t_read_holder *holder)
 }
 
 
-int					main(int argc, char **argv)
+int					main(void)
 {
 	t_read_holder	holder;
 	t_player		*player;
@@ -903,8 +908,6 @@ int					main(int argc, char **argv)
 		free_t_sdl(&sdl);
 		free_menu(&m);
 	}
-
 	free_data_holder(&holder);
-
 	system("leaks -q doom-nukem");
 }

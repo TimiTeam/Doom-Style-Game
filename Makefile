@@ -6,7 +6,7 @@ SRCS	:= sdl_worker.c sdl_create.c sdl_exit.c sdl_texture.c img_loader.c \
 			line.c additional_functions.c data_reader.c item_loader.c wall_reader.c \
 			sector_items_loader.c projectiles.c sector_wall_maker.c skybox.c \
 			menu_main.c keyactions.c additional_read_functions.c error_exit_and_message.c \
-			light_source_worker.c menu_worker.c hud.c drawing_image.c
+			light_source_worker.c menu_worker.c hud.c drawing_image.c math.c
 
 DIR_SRC := $(CURDIR)/src
 DIR_OBJ := $(CURDIR)/obj

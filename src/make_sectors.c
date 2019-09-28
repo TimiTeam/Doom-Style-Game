@@ -13,6 +13,8 @@ static unsigned	fill_floor_and_ceil(t_sector *sector, SDL_Surface **textures, ch
 	sector->floor_tex = textures[(int)text];
 	i += get_numbers(&height, &text, ' ', &line[i]);
 	sector->ceil = height;
+	if (sector->floor == sector->ceil)
+		sector->ceil += 0.2;
 	sector->ceil_tex = textures[(int)text];
 	return (i);
 }
@@ -24,7 +26,7 @@ t_sector		*crate_and_fill_sector_by_data(t_read_holder *holder, char *data)
 	int			i;
 
 	sect = new_sector();
-	sect->door = ft_strncmp(data, "Door", ft_strlen("Door")) == 0 ? 1 : 0;
+	sect->door = ft_strncmp(data, "door", ft_strlen("door")) == 0 ? 1 : 0;
 	i = fill_floor_and_ceil(sect, holder->textures, data);
 	while (data[i] && data[i] != '\'' && data[i + 1])
 		i++;

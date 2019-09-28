@@ -15,7 +15,7 @@ static float		distance3D(t_vector a, t_vector b)
 	return (sqrt(dx * dx + dy * dy + dz * dz));
 }
 
-void 			draw_floor_or_ceil(SDL_Surface *dst, SDL_Surface *src, int x, int y, int end_y, int diff_height, t_player player, t_sector *sect, t_light **light_source_arr)
+void 			draw_floor_or_ceil(SDL_Surface *dst, SDL_Surface *src, int x, int y, int end_y, float diff_height, t_player player, t_sector *sect, t_light **light_source_arr)
 {
 	float		mapx;
 	float		mapz;
@@ -59,14 +59,14 @@ void 			draw_floor_or_ceil(SDL_Surface *dst, SDL_Surface *src, int x, int y, int
 }
 
 
-int				Scaler_Next(struct Scaler* i)
+int				scaler_next(t_scaler *i)
 {
 	for(i->cache += i->fd; i->cache >= i->ca; i->cache -= i->ca)
 		i->result += i->bop;
 	return i->result;
 }
 
-void 			textLine(int x, int y1, int y2, struct Scaler ty, unsigned txtx, t_sector *sect, SDL_Surface *surface, SDL_Surface *image, t_vector tex_pos, float scaleL, float scaleH, t_light **light_source_arr)
+void 			textLine(int x, int y1, int y2, t_scaler ty, unsigned txtx, t_sector *sect, SDL_Surface *surface, SDL_Surface *image, t_vector tex_pos, float scaleL, float scaleH, t_light **light_source_arr)
 {
 	int 		*pix;
 	y1 = clamp(y1, 0, H	- 1);
@@ -89,7 +89,7 @@ void 			textLine(int x, int y1, int y2, struct Scaler ty, unsigned txtx, t_secto
 	for(int y = y1; y <= y2; ++y)
     {
  		brightness = 0.3;
-		float txty = Scaler_Next(&ty);
+		float txty = scaler_next(&ty);
 		if (txty < 0)
 			break ;
  		float texZ = sect_height - txty / scale * sect_height;

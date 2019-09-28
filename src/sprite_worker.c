@@ -29,8 +29,9 @@ void    		draw_enemy_sprite(t_item *obj, t_draw_data data, t_player player, SDL_
 	}
 	screen_pos.x = ob_pos.x - size.x / 2;
 	screen_pos.y = ob_pos.y - size.y;
-	if (player.shooting && player.current_gun && player.current_gun->type != plasmagun && obj->curr_state != die && data.start < player.half_win_size.x && data.end > player.half_win_size.x &&
-			screen_pos.x < player.half_win_size.x && screen_pos.x + size.x > player.half_win_size.x && screen_pos.y < player.half_win_size.y && screen_pos.y + size.y > player.half_win_size.y)
+	if (player.shooting && player.current_gun && player.current_gun->type != plasmagun && player.current_gun->state < 2 &&
+		obj->curr_state != die && data.start < player.half_win_size.x && data.end > player.half_win_size.x &&
+		screen_pos.x < player.half_win_size.x && screen_pos.x + size.x > player.half_win_size.x && screen_pos.y < player.half_win_size.y && screen_pos.y + size.y > player.half_win_size.y)
 	{
 		obj->players_hit = 1;
 	}
@@ -55,8 +56,8 @@ int						move_enemy(t_item *enemy, t_vector step)
 	i = 0;
 	while (i < sector->n_walls)
 	{
-		if(IntersectBox(enemy->pos.x, enemy->pos.y, step.x, step.y, wall[i]->start.x, wall[i]->start.y, wall[i]->end.x, wall[i]->end.y)
-        && PointSide(step.x, step.y, wall[i]->start.x, wall[i]->start.y, wall[i]->end.x, wall[i]->end.y) < 0)
+		if(box_intersection(enemy->pos, step, wall[i]->start, wall[i]->end)
+        && side_of_a_point(step, wall[i]->start, wall[i]->end) < 0)
         {
 			if (wall[i]->type != empty_wall)
 				return (0);

@@ -123,7 +123,6 @@ Uint8						move_projectile(t_projectile *proj)
 	t_sector			*next;
 	t_vector			step;
 
-	//printf("Moved\n");
 	if (!proj)
 		return (0);
 	step = (t_vector){proj->pos.x + proj->speed * proj->anglecos, proj->pos.y + proj->speed * proj->anglesin, proj->pos.z - proj->yaw * proj->speed};
@@ -132,8 +131,8 @@ Uint8						move_projectile(t_projectile *proj)
 	i = 0;
 	while (i < sector->n_walls)
 	{
-		if(IntersectBox(proj->pos.x, proj->pos.y, step.x, step.y, wall[i]->start.x, wall[i]->start.y, wall[i]->end.x, wall[i]->end.y)
-        && PointSide(step.x, step.y, wall[i]->start.x, wall[i]->start.y, wall[i]->end.x, wall[i]->end.y) < 0)
+		if(box_intersection(proj->pos, step, wall[i]->start, wall[i]->end)
+        && side_of_a_point(step, wall[i]->start, wall[i]->end) < 0)
         {
 			if (wall[i]->type != empty_wall)
 				return (0);
