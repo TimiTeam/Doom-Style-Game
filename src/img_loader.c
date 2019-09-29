@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   img_loader.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: tbujalo <marvin@42.fr>                     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/09/29 06:12:28 by tbujalo           #+#    #+#             */
+/*   Updated: 2019/09/29 06:14:31 by tbujalo          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "sdl_head.h"
 
 SDL_Surface				*load_jpg_png(const char *file_name)
@@ -22,7 +34,7 @@ SDL_Surface				*load_bmp(const char *file_name)
 
 SDL_Surface				*load_optimize_bmp(const char *file_name)
 {
-	SDL_Surface			*surf;	
+	SDL_Surface			*surf;
 	SDL_Surface			*opt;
 
 	opt = NULL;
@@ -43,4 +55,4 @@ SDL_Surface				*load_img(const char *file_name)
 	else
 		surf = load_jpg_png(file_name);
 	return (surf);
-}	
+}

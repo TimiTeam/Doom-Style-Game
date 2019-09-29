@@ -21,6 +21,8 @@ typedef struct 		s_read_holder
 
 int 				read_game_config_file(t_read_holder *holder, char *info_file_path);
 t_sector			*read_map(char *pth, t_read_holder *holder, t_vector *player_pos);
+SDL_Surface			**load_img_array_from_file(int fd, unsigned size);
+enum gun_type		get_gun_type(char *type);
 int					get_num_from_str(char *str);
 char				*skip_row_number(char *line);
 int					get_count_struct_arrays(int fd, int *vect_count, int *wall_count);
@@ -47,4 +49,5 @@ void				swap(int *a, int *b);
 char				*get_path(int fd);
 int 				check_sectors(t_sector *sector);
 void				mark_all_neighbors(t_sector *sec, t_wall **all);
+
 #endif

@@ -6,7 +6,7 @@
 /*   By: tbujalo <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/28 23:10:56 by tbujalo           #+#    #+#             */
-/*   Updated: 2019/09/28 23:11:43 by tbujalo          ###   ########.fr       */
+/*   Updated: 2019/09/29 05:44:13 by tbujalo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,20 +37,21 @@ char			*skip_row_number(char *line)
 	{
 		if (line[p] == ')' && line[p + 1] == ' ')
 		{
-			while(line[++p] && line[p] == ' ')
+			while (line[++p] && line[p] == ' ')
 				;
 			return (&line[p]);
 		}
 		p++;
 	}
-	return(NULL);
+	return (NULL);
 }
 
-int				get_count_struct_arrays(int fd, int *vect_count, int *wall_count)
+int				get_count_struct_arrays(int fd,
+		int *vect_count, int *wall_count)
 {
-	char			*vec;
-	char			*wall;
-	int				ret;
+	char		*vec;
+	char		*wall;
+	int			ret;
 
 	vec = NULL;
 	wall = NULL;
@@ -104,7 +105,8 @@ char			*get_path(int fd)
 
 	pth = NULL;
 	skip_len = ft_strlen("Path: ");
-	if (get_next_line(fd, &line) > 0 && ft_strncmp(line, "Path: ", skip_len) == 0)
+	if (get_next_line(fd, &line) > 0 &&
+			ft_strncmp(line, "Path: ", skip_len) == 0)
 	{
 		pth = ft_strsub(line, skip_len, ft_strlen(line) - skip_len);
 		if (!*pth)

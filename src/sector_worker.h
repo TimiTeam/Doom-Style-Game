@@ -107,8 +107,8 @@ typedef struct 			s_item
 
 typedef	struct			s_wall
 {
-	struct s_sector		*sectors[2];
 	SDL_Surface			*texture;
+	struct s_sector		*sectors[2];
 	t_vector			start;
 	t_vector			end;
 	enum wall_type		type;
