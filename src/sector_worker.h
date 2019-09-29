@@ -1,27 +1,39 @@
-#ifndef __SECTOR_WORKER_H
-#define __SECTOR_WORKER_H
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   sector_worker.h                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: atabala <marvin@42.fr>                     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/09/29 13:59:26 by atabala           #+#    #+#             */
+/*   Updated: 2019/09/29 14:05:44 by atabala          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-# define	MAX_PORTALS 16
-# define	MAX_TEXTURES 8
-# define	MAX_LIGHT_SRC 4
+#ifndef __SECTOR_WORKER_H
+# define __SECTOR_WORKER_H
+
+# define MAX_PORTALS 16
+# define MAX_TEXTURES 8
+# define MAX_LIGHT_SRC 4
 # include "sdl_head.h"
 # include "libft.h"
 # include <fcntl.h>
 
-enum 					wall_type
+enum					e_wall_type
 {
 	filled_wall,
 	empty_wall
 };
 
-enum 					gun_type
+enum					e_gun_type
 {
 	pistol,
 	shotgun,
 	plasmagun
 };
 
-enum 					item_type
+enum					e_item_type
 {
 	object,
 	light,
@@ -34,7 +46,7 @@ enum 					item_type
 	enemy
 };
 
-enum 					item_state
+enum					e_item_state
 {
 	waiting,
 	walk,
@@ -43,7 +55,6 @@ enum 					item_state
 	die
 };
 
-
 typedef struct			s_line
 {
 	t_point				start;
@@ -51,13 +62,13 @@ typedef struct			s_line
 }						t_line;
 
 typedef	struct			s_vector
-{	
+{
 	float				x;
 	float				y;
 	float				z;
 }						t_vector;
 
-typedef struct 			s_light
+typedef struct			s_light
 {
 	struct s_sector		*sector;
 	t_vector			pos;
@@ -77,14 +88,14 @@ typedef struct			s_projectile
 	struct s_projectile	*next;
 }						t_projectile;
 
-typedef	struct 			s_animation
+typedef	struct			s_animation
 {
 	SDL_Surface			*texture[MAX_TEXTURES];
 	float				current_text;
-	unsigned char 		max_textures;
+	unsigned char		max_textures;
 }						t_animation;
 
-typedef struct 			s_item
+typedef struct			s_item
 {
 	t_animation			states[5];
 	float				curr_frame;
@@ -96,9 +107,9 @@ typedef struct 			s_item
 	int					ammo;
 	struct s_item		*next;
 	t_vector			pos;
-	enum item_state		curr_state;
-	enum item_type 		type;
-	enum gun_type		gun_type;
+	enum e_item_state	curr_state;
+	enum e_item_type	type;
+	enum e_gun_type		gun_type;
 	unsigned			id;
 	float				dist_to_player;
 	unsigned char		is_dying;
@@ -111,7 +122,7 @@ typedef	struct			s_wall
 	struct s_sector		*sectors[2];
 	t_vector			start;
 	t_vector			end;
-	enum wall_type		type;
+	enum e_wall_type	type;
 	unsigned short		id;
 }						t_wall;
 
@@ -130,7 +141,7 @@ typedef struct			s_sector
 	t_projectile		*projectiles;
 	float				floor;
 	float				ceil;
-	unsigned short 		sector;
+	unsigned short		sector;
 	unsigned short		n_walls;
 }						t_sector;
 
@@ -138,21 +149,22 @@ t_sector				*new_sector();
 t_sector				*crate_new_sector(float	floor, float ceil);
 t_item					*new_item();
 t_item					*create_new_item(int x, int y);
-	
+
 void					add_next_sector(t_sector **main, t_sector *next);
-void 					add_next_item(t_item **head, t_item *new); 
-void 					from_list_to_another_list(t_item **current_list, t_item **next_list, t_item *elem);
-	
+void					add_next_item(t_item **head, t_item *new);
+void					from_list_to_another_list(t_item **current_list,
+							t_item **next_list, t_item *elem);
+
 void					*delete_sectors(t_sector *sec);
 void					*delete_walls(t_wall **wals, unsigned count);
 void					delete_items_list(t_item *items);
 void					delete_items_list_with_animation(t_item *items);
-void 					delete_item(t_item **item);
+void					delete_item(t_item **item);
 void					delete_item_by_ptr(t_item **head, t_item *item);
-	
+
 void					list_sectors(t_sector *head);
 void					list_walls(t_wall **walls, int size);
 void					list_items(t_item *items);
-void 					swap_items(t_item *elem1, t_item *elem2);
+void					swap_items(t_item *elem1, t_item *elem2);
 
 #endif

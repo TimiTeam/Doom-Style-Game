@@ -49,9 +49,9 @@ SDL_Surface			**load_img_array_from_file(int fd, unsigned size)
 	return (i < size ? free_array_surfcae_(array, i) : array);
 }
 
-enum gun_type		get_gun_type(char *type)
+enum e_gun_type		get_gun_type(char *type)
 {
-	enum gun_type	ret;
+	enum e_gun_type	ret;
 
 	ret = 0;
 	if (type)

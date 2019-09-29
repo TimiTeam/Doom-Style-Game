@@ -12,8 +12,7 @@
 
 #include "sectors.h"
 
-
-int 			check_sectors(t_sector *sector)
+int				check_sectors(t_sector *sector)
 {
 	int			i;
 	t_sector	*sec;
@@ -25,8 +24,10 @@ int 			check_sectors(t_sector *sector)
 		while (i < MAX_PORTALS && sec->portals[i])
 		{
 			if (!sec->portals[i]->sectors[0] || !sec->portals[i]->sectors[1])
+			{
 				return (print_error_message("Error map!",
-							"The empty wall must be closed by all side"));
+						"The empty wall must be closed by all side"));
+			}
 			i++;
 		}
 		sec = sec->next;

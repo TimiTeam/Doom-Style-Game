@@ -14,7 +14,7 @@
 #include "main_head.h"
 
 void			put_skybox_pixel(SDL_Surface *screen, SDL_Surface *skybox,
-												t_point pos, t_point im_pos)
+												t_point pos, t_vector im_pos)
 {
 	float		tx;
 	float		ty;
@@ -42,7 +42,7 @@ void			draw_skybox(SDL_Surface *dst, t_point pos,
 	while (pos.y < end_y)
 	{
 		put_skybox_pixel(dst, player.sky, pos,
-					(t_point){player.skyW, player.skyH});
+					(t_vector){player.skyW, player.skyH});
 		++pos.y;
 	}
 }

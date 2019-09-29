@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   draw_world.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ohavryle <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/09/29 17:15:52 by ohavryle          #+#    #+#             */
+/*   Updated: 2019/09/29 17:15:53 by ohavryle         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "main_head.h"
 
 void			again(t_again a)
@@ -84,18 +96,18 @@ void			get_rotated(t_rot r)
 	if (r.line.start.y <= 0 || r.line.end.y <= 0)
 		make_intersect(&(r.line));
 	if (fabsf(r.wall.start.x - r.wall.end.x)
-			> fabsf(r.wall.start.y - r.wall.end.y))
+		> fabsf(r.wall.start.y - r.wall.end.y))
 		scale_l = fabsf(r.wall.start.x - r.wall.end.x) / 10;
 	else
 		scale_l = fabsf(r.wall.start.y - r.wall.end.y) / 10;
 	if (fabs(r.line.end.x - r.line.start.x)
 		> fabs(r.line.end.y - r.line.start.y))
-		maping_wall_texture(&u0, &u1, r.line.start.x - org1.x,
-		r.line.end.x - org1.x, ((r.wall.texture->w) * scale_l - 1)
+		map_wall_text(&u0, &u1, (t_vector){r.line.start.x - org1.x,
+		r.line.end.x - org1.x}, ((r.wall.texture->w) * scale_l - 1)
 		/ (org2.x - org1.x));
 	else
-		maping_wall_texture(&u0, &u1, r.line.start.y - org1.y, r.line.end.y
-		- org1.y, ((r.wall.texture->w) * scale_l - 1) / (org2.y - org1.y));
+		map_wall_text(&u0, &u1, (t_vector){r.line.start.y - org1.y, r.line.end.y
+		- org1.y}, ((r.wall.texture->w) * scale_l - 1) / (org2.y - org1.y));
 	draw_projected((t_proj){r.sec, r.wall, r.player,
 	r.sdl, r.data, r.line, u0, u1, scale_l, r.thread_draw_sector});
 }

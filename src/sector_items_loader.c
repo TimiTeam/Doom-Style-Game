@@ -85,10 +85,10 @@ t_item				*create_item(char *data, t_item *all_items)
 t_item				*make_items(char *data, t_item *all_items,
 		t_read_holder *holder)
 {
-	t_item			*list;
-	t_item			*next;
-	enum item_type	type;
-	int				i;
+	t_item				*list;
+	t_item				*next;
+	enum e_item_type	type;
+	int					i;
 
 	i = 0;
 	list = NULL;

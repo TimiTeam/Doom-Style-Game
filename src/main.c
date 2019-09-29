@@ -1,35 +1,26 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ohavryle <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/09/29 17:17:21 by ohavryle          #+#    #+#             */
+/*   Updated: 2019/09/29 17:17:22 by ohavryle         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "main_head.h"
 
-void 				free_data_holder(t_read_holder *holder)
+void				map_wall_text(int *u0, int *u1,
+					t_vector diff, float scaled_tex)
 {
-	int				i;
-	
-	if(!holder)
-		return ;
-	delete_sectors(holder->all);
-	delete_items_list_with_animation(holder->all_items);
-	i = 0;
-	while (i < 5 && holder->maps_path[i])
-	{
-		ft_strdel(&holder->maps_path[i]);
-		i++;
-	}
-	i = 0;
-	while(holder->textures && i < holder->text_count && holder->textures[i])
-	{
-		SDL_FreeSurface(holder->textures[i]);
-		i++;
-	}
-	ft_memdel((void**)&holder->textures);
+	*u0 = diff.x * scaled_tex;
+	*u1 = diff.y * scaled_tex;
 }
 
-void			maping_wall_texture(int *u0, int *u1, float diff_start, float diff_end, float scaled_tex)
-{
-	*u0 = diff_start * scaled_tex;
-	*u1 = diff_end * scaled_tex;
-}
-
-int				run_game(t_sdl *sdl, t_player *player, t_pr *m, t_read_holder *holder)
+int					run_game(t_sdl *sdl, t_player *player,
+							t_pr *m, t_read_holder *holder)
 {
 	int				in_game;
 	SDL_Texture		*tex;
@@ -43,7 +34,7 @@ int				run_game(t_sdl *sdl, t_player *player, t_pr *m, t_read_holder *holder)
 		{
 			if (player->curr_map != holder->curr_map)
 				if (!load_game(player, holder))
-					return(error_message("Can't create game"));
+					return (error_message("Can't create game"));
 			in_game = game_loop(sdl, player, holder->all);
 		}
 		render_menu(m, sdl);

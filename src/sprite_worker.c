@@ -48,6 +48,11 @@ t_point			calculate_size(t_item *obj, t_player player,
 	+ (int)(-Yaw(obj->pos.z + data.diff_floor, ob_pos->y) * scale.y);
 	size.x = (obj->size.x / obj->dist_to_player) * 30;
 	size.y = (obj->size.y / obj->dist_to_player) * 30;
+	if (obj->type == key)
+	{
+		size.x = (obj->size.x / obj->dist_to_player) * 5;
+		size.y = (obj->size.y / obj->dist_to_player) * 5;
+	}
 	return (size);
 }
 
@@ -105,4 +110,27 @@ void			draw_projectile(t_projectile *proj, t_draw_data data,
 	size = 1000 / tmp_x;
 	draw_image_with_criteria(surface, proj->sprite,
 	(t_rect){screen_pos, (t_point){size, size}}, data);
+}
+
+void			free_data_holder(t_read_holder *holder)
+{
+	int			i;
+
+	if (!holder)
+		return ;
+	delete_sectors(holder->all);
+	delete_items_list_with_animation(holder->all_items);
+	i = 0;
+	while (i < 5 && holder->maps_path[i])
+	{
+		ft_strdel(&holder->maps_path[i]);
+		i++;
+	}
+	i = 0;
+	while (holder->textures && i < holder->text_count && holder->textures[i])
+	{
+		SDL_FreeSurface(holder->textures[i]);
+		i++;
+	}
+	ft_memdel((void**)&holder->textures);
 }

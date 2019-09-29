@@ -1,7 +1,19 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   interactions.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ohavryle <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/09/29 17:16:31 by ohavryle          #+#    #+#             */
+/*   Updated: 2019/09/29 17:16:31 by ohavryle         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "main_head.h"
 
 void				get_gun_to_player(t_player *player,
-						enum gun_type gun_type, SDL_Surface *icon)
+						enum e_gun_type gun_type, SDL_Surface *icon)
 {
 	t_gun			*src;
 	t_gun			*dst;

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   draw_sectors.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ohavryle <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/09/29 17:15:45 by ohavryle          #+#    #+#             */
+/*   Updated: 2019/09/29 17:15:46 by ohavryle         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "main_head.h"
 
 void				draw_line(t_screen_inf inf, t_super_data *super)
@@ -40,11 +52,8 @@ void				*thread_draw_sector(void *param)
 	while (inf.x < inf.end)
 	{
 		calculate_frame(&inf, cp, super);
-	//	if (super->sect->door)
-			draw_ceil(inf, super);
-	//	else
-	//		draw_skybox(super->main_screen, super->player.sky, inf.x, super->data->ytop[x], inf.cya, super->player);
-			draw_floor(inf, super);
+		draw_ceil(inf, super);
+		draw_floor(inf, super);
 		find_tex_pos(&inf, super);
 		if (super->wall.type == filled_wall)
 			draw_line(inf, super);

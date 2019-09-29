@@ -14,6 +14,8 @@
 #define KneeHeight 2
 #define THREADS 4
 #define DELETE 	{tmp->next = all->next; ft_memdel((void**)&all); return ;}
+# define DEL tmp = curr->next;delete_projectile(projectiles, curr);curr = tmp;
+# define CON {DEL; continue;}
 
 typedef struct  	s_rect
 {
@@ -58,7 +60,7 @@ typedef struct		s_gun
 	float 			state;
 	SDL_Surface		*frame[10];
 	SDL_Surface		*icon;
-	enum gun_type	type;
+	enum e_gun_type	type;
 	int				max_frames;
 	int				ammo;
 	float			damage;
@@ -314,7 +316,7 @@ int						box_intersection(t_vector p1, t_vector p2, t_vector p3, t_vector p4);
 t_scaler				init_scaler(int n, t_point curr, t_point dst);
 void					make_intersect(t_wall *wall);
 unsigned short			dot_inside_sector(t_vector player_pos, t_wall **walls, unsigned arr_size);
-void					get_gun_to_player(t_player *player, enum gun_type gun_type, SDL_Surface *icon);
+void					get_gun_to_player(t_player *player, enum e_gun_type gun_type, SDL_Surface *icon);
 void					rest_of_the_action_shit(t_pr *m, Uint8 *menu, t_sdl *sdl, t_read_holder *holder);
 void					draw_hud(t_sdl *sdl, t_player *player);
 t_projectile			*create_projectile(t_player player);
@@ -333,7 +335,7 @@ void					fill_super_data(t_super_data *super, t_sector *sec, t_draw_data *data, 
 void 					fill_super_data_2(t_super_data *super,t_draw_data data, int step, int i);
 void 					fill_super_data_3(t_super_data *super, t_sector *sec, t_player player, t_sdl *sdl);
 void					draw_sectors(t_sector *sec, t_player *player, t_sdl *sdl, t_draw_data data);
-void					maping_wall_texture(int *u0, int *u1, float diff_start, float diff_end, float scaled_tex);
+void					map_wall_text(int *u0, int *u1, t_vector diff, float scaled_tex);
 void					floor_and_ceil_calculation(t_draw_data *data, t_player player, t_wall line, t_vector scale);
 void					neighbour_calculation(t_draw_data *data, t_n n);
 t_screen_inf			fill_inf(t_super_data *super, t_wall cp);
@@ -348,4 +350,5 @@ void 					draw_sector_items(t_item **items, t_player *player, t_draw_data data, 
 int						game_loop(t_sdl *sdl, t_player *player, t_sector *sectors);
 void					*thread_draw_sector(void *param);
 void					draw_sectors(t_sector *sec, t_player *player, t_sdl *sdl, t_draw_data data);
+void 					free_data_holder(t_read_holder *holder);
 #endif

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   thread_drawing_help.c                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ohavryle <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/09/29 17:17:00 by ohavryle          #+#    #+#             */
+/*   Updated: 2019/09/29 17:17:03 by ohavryle         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "main_head.h"
 
 t_screen_inf		fill_inf(t_super_data *super, t_wall cp)
@@ -52,10 +64,6 @@ void				render_neighbours(t_screen_inf inf,
 	calculate_neighbours(&inf, cp, super->data);
 	if (inf.nya - 1 != inf.ya && inf.cya != inf.n_cya)
 	{
-	//	if (!super->sect->door)
-	//		draw_skybox(super->main_screen, super->player.sky,
-	//					inf.x, inf.cya, inf.n_cya - 1, super->player);
-	//	else
 		text_line((t_text_inf){inf.x, inf.cya, inf.n_cya - 1,
 		init_scaler(inf.cya, (t_point){inf.ya, inf.nya - 1},
 		(t_point){0, super->scaleH * 10}), inf.txtx,
