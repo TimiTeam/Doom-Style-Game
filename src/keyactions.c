@@ -10,10 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "sdl_head.h"
-#include "sectors.h"
+#include "main_head.h"
 
-void	down_action(t_pr *m)
+void				down_action(t_pr *m)
 {
 	if (m->event.key.keysym.sym == SDLK_s ||
 		m->event.key.keysym.sym == SDLK_DOWN)
@@ -33,7 +32,7 @@ void	down_action(t_pr *m)
 	}
 }
 
-void	up_action(t_pr *m)
+void				up_action(t_pr *m)
 {
 	if (m->event.key.keysym.sym == SDLK_w || m->event.key.keysym.sym == SDLK_UP)
 	{
@@ -52,17 +51,8 @@ void	up_action(t_pr *m)
 	}
 }
 
-void	rest_of_the_action_shit(t_pr *m, Uint8 *menu, t_sdl *sdl, t_read_holder *holder)
+void				left_right(t_pr *m)
 {
-	if (m->event.key.keysym.sym == SDLK_RETURN)
-	{
-		if (m->sw == 0){
-			*menu = 0; //start_game(char *m->maps[i]); !!!!!IMPORTANT!!!!! m->maps[i] - choosed map
-			holder->curr_map = m->i;
-		}
-		if (m->sw == 2)
-			exit(0);
-	}
 	if ((m->event.key.keysym.sym == SDLK_RIGHT ||
 		m->event.key.keysym.sym == SDLK_d) && m->sw == 1)
 	{
@@ -70,7 +60,6 @@ void	rest_of_the_action_shit(t_pr *m, Uint8 *menu, t_sdl *sdl, t_read_holder *ho
 			m->i++;
 		else
 			m->i = 0;
-		set_text(m, m->maps[m->i], sdl);
 	}
 	if ((m->event.key.keysym.sym == SDLK_LEFT ||
 		m->event.key.keysym.sym == SDLK_a) && m->sw == 1)
@@ -79,6 +68,32 @@ void	rest_of_the_action_shit(t_pr *m, Uint8 *menu, t_sdl *sdl, t_read_holder *ho
 			m->i--;
 		else
 			m->i = m->maxi;
-		set_text(m, m->maps[m->i], sdl);
 	}
+}
+
+int					menu_hooks(t_pr *m, t_read_holder *holder)
+{
+	while (SDL_PollEvent(&m->event))
+	{
+		if (m->event.type == SDL_QUIT)
+			return (0);
+		if (m->event.type == SDL_KEYDOWN)
+		{
+			down_action(m);
+			up_action(m);
+			left_right(m);
+			if (m->event.key.keysym.sym == SDLK_RETURN
+				|| m->event.key.keysym.sym == SDLK_ESCAPE)
+			{
+				if (m->sw == 2 || m->event.key.keysym.sym == SDLK_ESCAPE)
+					return (-1);
+				if (m->sw == 0)
+				{
+					holder->curr_map = m->i;
+					return (1);
+				}
+			}
+		}
+	}
+	return (0);
 }

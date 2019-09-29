@@ -33,6 +33,8 @@ Uint32			get_pixel(SDL_Surface *src, int x, int y)
 	int			bpp;
 	Uint8		*p;
 
+	if (x < 0 || x >= src->w || y < 0 || y >= src->h)
+		return (0);
 	bpp = src->format->BytesPerPixel;
 	p = (Uint8*)src->pixels + y * src->pitch + x * bpp;
 	if (bpp == 1)

@@ -6,38 +6,48 @@ typedef struct 		s_read_holder
 {
 	SDL_Surface		**textures;
 	t_wall			**walls;
+	t_light			**light_source;
+	t_sector		*all;
 	t_item			*all_items;
 	char			*maps_path[5];
-	int				maps_count;
+	uint8_t			curr_map;
+	uint8_t			maps_count;
+	int 			player_sector_id;
+	int 			light_count;
 	int				text_count;
 	int				vect_count;
 	int				wall_count;
-	int				curr_map;
-	t_vector		player_pos;
-	t_light			*light_source;
-	int				player_sector_id;
 }					t_read_holder;
 
 int 				read_game_config_file(t_read_holder *holder, char *info_file_path);
 t_sector			*read_map(char *pth, t_read_holder *holder, t_vector *player_pos);
+SDL_Surface			**load_img_array_from_file(int fd, unsigned size);
+enum gun_type		get_gun_type(char *type);
 int					get_num_from_str(char *str);
 char				*skip_row_number(char *line);
-void				get_count_struct_arrays(int fd, int *vect_count, int *wall_count);
+int					get_count_struct_arrays(int fd, int *vect_count, int *wall_count);
 unsigned			get_numbers(float *one, float *two, char delimiter, char *line);
 char 				*clip_n_str(char *s1, char *s2, char *s3);
 int					get_wall_count(char *str);
 t_item				*make_item_ftom_str(char *line, char *directory_pth);
-
+int 				get_player_pos(int fd, t_vector *player_pos, int *player_sec_id);
+t_sector			*get_player_sector(t_sector *sectors, int sec_num);
 t_vector			*get_vectors(int fd, int vec_size);
-t_wall				**get_walls(int fd, int wall_size, t_vector *vectors, SDL_Surface **textures);
+t_wall				**get_walls(int fd, t_read_holder *holder, t_vector *vectors);
 t_sector			*make_sectors_list(int fd, t_read_holder *holder);
-t_item				*make_items(char *data, t_item *all_items);
-
-void				finde_close_doors(t_wall **walls, unsigned short size);
+t_item				*make_items(char *data, t_item *all_items, t_read_holder *holder);
+void				*print_error_message_null(char *mess, char *error_obj);
+int					print_error_message(char *mess, char *error_obj);
+void				*free_array_surfcae_(SDL_Surface **array, unsigned size);
 t_wall				**create_sector_walls(t_sector *sector, t_read_holder *holder, char *data, int wall_size);
-
-
-//MENU
-void				rest_of_the_action_shit(t_pr *m, Uint8 *menu, t_sdl *sdl, t_read_holder *holder);
+t_light				**create_all_light_source(t_sector *sec, unsigned light_count);
+void 				fill_sectors_light_source(t_sector *sec, t_light **light, unsigned array_size);
+void 				delete_light_source(t_light **light, unsigned array_size);
+float            	len_between_points(t_vector a, t_vector b);
+int 				find_dot_radius_intersect(t_vector light_pos, float radius, t_vector start, t_vector end);
+void				swap(int *a, int *b);
+char				*get_path(int fd);
+int 				check_sectors(t_sector *sector);
+void				mark_all_neighbors(t_sector *sec, t_wall **all);
 
 #endif

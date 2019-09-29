@@ -1,19 +1,17 @@
 #ifndef __SECTOR_WORKER_H
 #define __SECTOR_WORKER_H
 
-#define	MAX_PORTALS 16
-#define	MAX_TEXTURES 8
-#define	MAX_LIGHT_SRC 4
-#define NON -1
-#include "sdl_head.h"
-#include "libft.h"
-#include <fcntl.h>
+# define	MAX_PORTALS 16
+# define	MAX_TEXTURES 8
+# define	MAX_LIGHT_SRC 4
+# include "sdl_head.h"
+# include "libft.h"
+# include <fcntl.h>
 
 enum 					wall_type
 {
 	filled_wall,
-	empty_wall,
-	door
+	empty_wall
 };
 
 enum 					gun_type
@@ -26,6 +24,7 @@ enum 					gun_type
 enum 					item_type
 {
 	object,
+	light,
 	coin,
 	super_bonus,
 	health,
@@ -57,6 +56,13 @@ typedef	struct			s_vector
 	float				y;
 	float				z;
 }						t_vector;
+
+typedef struct 			s_light
+{
+	struct s_sector		*sector;
+	t_vector			pos;
+	float				max_dist;
+}						t_light;
 
 typedef struct			s_projectile
 {
@@ -101,30 +107,21 @@ typedef struct 			s_item
 
 typedef	struct			s_wall
 {
-	struct s_sector		*sectors[2];
 	SDL_Surface			*texture;
+	struct s_sector		*sectors[2];
 	t_vector			start;
 	t_vector			end;
 	enum wall_type		type;
 	unsigned short		id;
-	struct s_wall		*portal_ptr;
-	unsigned char		close;
-	unsigned char		opening;
 }						t_wall;
-
-typedef struct    s_light
-{
-	struct s_light  *next;
-	t_vector   pos;
-	float    max_dist;
-}      t_light;
 
 typedef struct			s_sector
 {
 	t_wall				**wall;
 	t_wall				*only_walls[MAX_PORTALS];
 	t_wall				*portals[MAX_PORTALS];
-	t_wall 				*doors[MAX_PORTALS];
+	unsigned			door;
+	unsigned			opening;
 	t_light				*sector_light[MAX_LIGHT_SRC];
 	SDL_Surface			*floor_tex;
 	SDL_Surface			*ceil_tex;
@@ -135,7 +132,6 @@ typedef struct			s_sector
 	float				ceil;
 	unsigned short 		sector;
 	unsigned short		n_walls;
-	Uint8				skybox;
 }						t_sector;
 
 t_sector				*new_sector();
@@ -147,8 +143,8 @@ void					add_next_sector(t_sector **main, t_sector *next);
 void 					add_next_item(t_item **head, t_item *new); 
 void 					from_list_to_another_list(t_item **current_list, t_item **next_list, t_item *elem);
 	
-void					delete_sectors(t_sector *sec);
-void					delete_walls(t_wall **wals, unsigned count);
+void					*delete_sectors(t_sector *sec);
+void					*delete_walls(t_wall **wals, unsigned count);
 void					delete_items_list(t_item *items);
 void					delete_items_list_with_animation(t_item *items);
 void 					delete_item(t_item **item);

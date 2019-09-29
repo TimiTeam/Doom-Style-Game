@@ -1,108 +1,93 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   sort_items.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ohavryle <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/09/29 05:11:31 by ohavryle          #+#    #+#             */
+/*   Updated: 2019/09/29 05:11:32 by ohavryle         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "main_head.h"
 
-static float		len_between_points(t_vector a, t_vector b)
+t_item		*tail_of(t_item *cur)
 {
-	return (sqrt((b.x - a.x) * (b.x - a.x) + (b.y - a.y) * (b.y - a.y)));
+	while (cur != NULL && cur->next != NULL)
+		cur = cur->next;
+	return (cur);
 }
 
-t_item *getTail(t_item *cur) 
-{ 
-    while (cur != NULL && cur->next != NULL) 
-        cur = cur->next; 
-    return cur; 
-} 
-  
-// Partitions the list taking the last element as the pivot 
-t_item *partition(t_item *head, t_item *end, 
-                       t_item **newHead, t_item **newEnd, t_player *player) 
-{ 
-    t_item *pivot = end; 
-    t_item *prev = NULL, *cur = head, *tail = pivot;
-    // During partition, both the head and end of the list might change 
-    // which is updated in the newHead and newEnd variables 
-    while (cur != pivot) 
-    {
-        if ((cur->dist_to_player = len_between_points(player->pos, cur->pos)) > (pivot->dist_to_player = len_between_points(player->pos, pivot->pos)))
-        { 
-            // First node that has a value less than the pivot - becomes 
-            // the new head 
-            if ((*newHead) == NULL) 
-                (*newHead) = cur; 
-  
-            prev = cur;   
-            cur = cur->next; 
-        } 
-        else // If cur node is greater than pivot 
-        { 
-            // Move cur node to next of tail, and change tail 
-            if (prev) 
-                prev->next = cur->next; 
-            t_item *tmp = cur->next; 
-            cur->next = NULL; 
-            tail->next = cur; 
-            tail = cur; 
-            cur = tmp; 
-        } 
-    } 
-  
-    // If the pivot data is the smallest element in the current list, 
-    // pivot becomes the head 
-    if ((*newHead) == NULL) 
-        (*newHead) = pivot; 
-  
-    // Update newEnd to the current last node 
-    (*newEnd) = tail; 
-  
-    // Return the pivot node 
-    return pivot; 
-} 
-  
-  
-//here the sorting happens exclusive of the end node 
-t_item *quickSortRecur(t_item *head, t_item *end, t_player *player) 
-{ 
-    // base condition 
-    if (!head || head == end) 
-        return head; 
-  
-    t_item *newHead = NULL, *newEnd = NULL; 
-  
-    // Partition the list, newHead and newEnd will be updated 
-    // by the partition function 
-    t_item *pivot = partition(head, end, &newHead, &newEnd, player); 
-  
-    // If pivot is the smallest element - no need to recur for 
-    // the left part. 
-    if (newHead != pivot) 
-    { 
-        // Set the node before the pivot node as NULL 
-        t_item *tmp = newHead; 
-        while (tmp->next != pivot) 
-            tmp = tmp->next; 
-        tmp->next = NULL; 
-  
-        // Recur for the list before pivot 
-        newHead = quickSortRecur(newHead, tmp, player); 
-  
-        // Change next of last node of the left half to pivot 
-        tmp = getTail(newHead); 
-        tmp->next =  pivot; 
-    } 
-  
-    // Recur for the list after the pivot element 
-    pivot->next = quickSortRecur(pivot->next, newEnd, player); 
-	head->dist_to_player = len_between_points(head->pos, player->pos);
-    return newHead; 
-} 
-  
-// The main function for quick sort. This is a wrapper over recursive 
-// function quickSortRecur() 
-void  quickSort(t_item **headRef, t_player *player) 
+void		swap_tail(t_item **cur, t_item **prev, t_item **tmp, t_item **tail)
 {
-	if (!headRef || !*headRef)
-		return;
-	(*headRef)->dist_to_player = len_between_points((*headRef)->pos, player->pos);
+	if (*prev)
+		(*prev)->next = (*cur)->next;
+	*tmp = (*cur)->next;
+	(*cur)->next = NULL;
+	(*tail)->next = *cur;
+	*tail = *cur;
+	*cur = *tmp;
+}
 
-    (*headRef) = quickSortRecur(*headRef, getTail(*headRef), player); 
-    return ; 
+void		proceed(t_item **cur, t_item **prev, t_item **new_head)
+{
+	if (*new_head == NULL)
+		*new_head = *cur;
+	*prev = *cur;
+	*cur = (*cur)->next;
+}
+
+t_item		*partition(t_item *head, t_item **new_head,
+						t_item **new_end, t_player *player)
+{
+	t_item	*pivot;
+	t_item	*prev;
+	t_item	*cur;
+	t_item	*tail;
+	t_item	*tmp;
+
+	pivot = tail_of(head);
+	prev = NULL;
+	cur = head;
+	tail = pivot;
+	while (cur != pivot)
+	{
+		if ((cur->dist_to_player = len_between_points(player->pos, cur->pos))
+	> (pivot->dist_to_player = len_between_points(player->pos, pivot->pos)))
+			proceed(&cur, &prev, new_head);
+		else
+			swap_tail(&cur, &prev, &tmp, &tail);
+	}
+	if (*new_head == NULL)
+		*new_head = pivot;
+	*new_end = tail;
+	return (pivot);
+}
+
+t_item		*quick_sort_recur(t_item *head, t_item *end, t_player *player)
+{
+	t_item	*new_head;
+	t_item	*new_end;
+	t_item	*pivot;
+	t_item	*tmp;
+
+	if (!head || head == end)
+		return (head);
+	new_head = NULL;
+	new_end = NULL;
+	pivot = partition(head, &new_head, &new_end, player);
+	if (new_head != pivot)
+	{
+		tmp = new_head;
+		while (tmp->next != pivot)
+			tmp = tmp->next;
+		tmp->next = NULL;
+		new_head = quick_sort_recur(new_head, tmp, player);
+		tmp = tail_of(new_head);
+		tmp->next = pivot;
+	}
+	pivot->next = quick_sort_recur(pivot->next, new_end, player);
+	head->dist_to_player = len_between_points(head->pos, player->pos);
+	return (new_head);
 }

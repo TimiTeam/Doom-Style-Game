@@ -19,5 +19,6 @@ typedef struct 		Scaler {
 	int result, bop, fd, ca, cache; 
 } 					Scaler;
 
+Uint32      	getpixel(SDL_Surface *surface, int x, int y);
 
 #endif

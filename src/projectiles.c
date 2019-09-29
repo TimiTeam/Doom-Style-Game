@@ -1,13 +1,24 @@
-#include "sdl_head.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   projectiles.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ohavryle <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/09/29 05:10:55 by ohavryle          #+#    #+#             */
+/*   Updated: 2019/09/29 05:10:56 by ohavryle         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "main_head.h"
 
-t_projectile			*create_projectile(t_player player)
+t_projectile		*create_projectile(t_player player)
 {
-	t_projectile 	*projectile;
-	
-	if(!(projectile = (t_projectile*)ft_memalloc(sizeof(t_projectile))))
+	t_projectile	*projectile;
+
+	if (!(projectile = (t_projectile*)ft_memalloc(sizeof(t_projectile))))
 		return (NULL);
-	*projectile = (t_projectile){};
+	*projectile = (t_projectile){0};
 	projectile->pos.x = player.pos.x + 1 * player.cos_angl;
 	projectile->pos.y = player.pos.y + 1 * player.sin_angl;
 	projectile->pos.z = player.pos.z - player.yaw - 3;
@@ -21,9 +32,9 @@ t_projectile			*create_projectile(t_player player)
 	return (projectile);
 }
 
-void 				add_projectile(t_projectile **head, t_projectile *new)
+void				add_projectile(t_projectile **head, t_projectile *new)
 {
-	t_projectile			*main;
+	t_projectile	*main;
 
 	if (!*head)
 	{
@@ -36,11 +47,11 @@ void 				add_projectile(t_projectile **head, t_projectile *new)
 	main->next = new;
 }
 
-
-void 					swap_proj_sectors(t_projectile **current_list, t_projectile **next_list, t_projectile *elem)
+void				swap_proj_sectors(t_projectile **current_list,
+							t_projectile **next_list, t_projectile *elem)
 {
-	t_projectile		*curr;
-	t_projectile		*prev;
+	t_projectile	*curr;
+	t_projectile	*prev;
 
 	if (*current_list == elem)
 	{
@@ -51,7 +62,7 @@ void 					swap_proj_sectors(t_projectile **current_list, t_projectile **next_lis
 	}
 	curr = (*current_list)->next;
 	prev = *current_list;
-	while(curr)
+	while (curr)
 	{
 		if (curr == elem)
 		{
@@ -65,88 +76,49 @@ void 					swap_proj_sectors(t_projectile **current_list, t_projectile **next_lis
 	}
 }
 
-void 				free_proj(t_projectile *proj)
+int					proj_collisions(t_projectile *proj,
+							t_wall **wall, t_vector step)
 {
-	if (!proj)
-		return ;
-	SDL_FreeSurface(proj->sprite);	
-	free(proj);
-}
+	int				i;
+	t_sector		*next;
 
-
-void				delete_projectiles(t_projectile *head)
-{
-	t_projectile *tmp;
-
-	while (head)
+	i = -1;
+	while (++i < proj->curr_sector->n_walls)
 	{
-		tmp = head->next;
-		free_proj(head);
-		head = tmp;
-	}
-}
-
-void				delete_projectile(t_projectile **head, t_projectile *proj)
-{
-	t_projectile	*curr;
-	t_projectile	*prev;
-	
-	
-	if (!(*head) || !proj || !head)
-		return ;
-	curr = (*head)->next;
-	prev = *head;
-	if (proj == *head)
-	{
-		*head = proj->next;
-		free_proj(proj);
-		return ;
-	}
-	while(curr)
-	{
-		if (proj == curr)
+		if (box_intersection(proj->pos, step, wall[i]->start, wall[i]->end)
+		&& side_of_a_point(step, wall[i]->start, wall[i]->end) < 0)
 		{
-			prev->next = curr->next;
-			free_proj(curr);
-			return ;
-		}
-		prev = curr;
-		curr = curr->next;
-	}
-}
-
-Uint8						move_projectile(t_projectile *proj)
-{		
-	t_wall				**wall;
-	int					i;
-	t_sector			*sector;
-	t_sector			*next;
-	t_vector			step;
-
-	//printf("Moved\n");
-	if (!proj)
-		return (0);
-	step = (t_vector){proj->pos.x + proj->speed * proj->anglecos, proj->pos.y + proj->speed * proj->anglesin, proj->pos.z - proj->yaw * proj->speed};
-	sector = proj->curr_sector;
-	wall = sector->wall;
-	i = 0;
-	while (i < sector->n_walls)
-	{
-		if(IntersectBox(proj->pos.x, proj->pos.y, step.x, step.y, wall[i]->start.x, wall[i]->start.y, wall[i]->end.x, wall[i]->end.y)
-        && PointSide(step.x, step.y, wall[i]->start.x, wall[i]->start.y, wall[i]->end.x, wall[i]->end.y) < 0)
-        {
 			if (wall[i]->type != empty_wall)
 				return (0);
-			if (wall[i]->sectors[0] && sector->sector != wall[i]->sectors[0]->sector)
+			if (wall[i]->sectors[0]
+				&& proj->curr_sector->sector != wall[i]->sectors[0]->sector)
 				next = wall[i]->sectors[0];
-			else if (wall[i]->sectors[1] && sector->sector != wall[i]->sectors[1]->sector)
+			else if (wall[i]->sectors[1]
+					&& proj->curr_sector->sector != wall[i]->sectors[1]->sector)
 				next = wall[i]->sectors[1];
-			swap_proj_sectors(&proj->curr_sector->projectiles, &next->projectiles, proj);
+			swap_proj_sectors(&proj->curr_sector->projectiles,
+									&next->projectiles, proj);
 			proj->curr_sector = next;
-			break;
-        }
-		i++;
+			break ;
+		}
 	}
+	return (1);
+}
+
+Uint8				move_projectile(t_projectile *proj)
+{
+	t_wall			**wall;
+	t_sector		*next;
+	t_vector		step;
+
+	if (!proj)
+		return (0);
+	step = (t_vector){proj->pos.x + proj->speed * proj->anglecos,
+						proj->pos.y + proj->speed * proj->anglesin,
+						proj->pos.z - proj->yaw * proj->speed};
+	wall = proj->curr_sector->wall;
+	if (!proj_collisions(proj, wall, step))
+		return (0);
 	proj->pos = step;
 	return (1);
 }
