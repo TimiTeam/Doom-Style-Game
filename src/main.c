@@ -23,6 +23,28 @@ void 				free_data_holder(t_read_holder *holder)
 	ft_memdel((void**)&holder->textures);
 }
 
+void 					delete_guns(t_gun **all)
+{
+	enum gun_type		i;
+	int					j;
+
+	i = pistol;
+	if (!all)
+		return ;
+	while (i <= plasmagun && all[i])
+	{
+		j = 0;
+		while (j < all[i]->max_frames)
+		{
+			SDL_FreeSurface(all[i]->frame[j]);
+			j++;
+		}
+		ft_memdel((void**)&all[i]);
+		i++;
+	}
+	ft_memdel((void**)&all);
+}
+
 void 					load_gun(t_gun **gun)
 {
 	gun[pistol] = (t_gun*)malloc(sizeof(t_gun));
@@ -265,7 +287,7 @@ void 			draw_world(t_sector *sec, t_wall wall, t_player player, t_sdl *sdl, t_dr
 	data.floor_y_e = calc_floor_ceil(player.half_win_size.y, Yaw(data.diff_floor, line.end.y), scale2.y);
 	data.floor_height = data.floor_y_e - data.floor_y_s;
 	data.ceil_height = data.ceil_y_e - data.ceil_y_s;
-	if(wall.type != filled_wall)
+	if(wall.type != filled_wall && wall.sectors[1] && wall.sectors[0])
 	{
 		data.n_ceil_y_s = calc_floor_ceil(player.half_win_size.y, Yaw(min(wall.sectors[0]->ceil, wall.sectors[1]->ceil) - data.player_current_height, line.start.y), scale1.y);
 		data.n_ceil_y_e = calc_floor_ceil(player.half_win_size.y, Yaw(min(wall.sectors[0]->ceil, wall.sectors[1]->ceil) - data.player_current_height, line.end.y),scale2.y);
@@ -301,7 +323,7 @@ void 			draw_world(t_sector *sec, t_wall wall, t_player player, t_sdl *sdl, t_dr
 	{
 		pthread_join(thread[i], NULL);
 	}
-	if (wall.type != filled_wall)
+	if (wall.type != filled_wall && wall.sectors[1] && wall.sectors[0])
 	{
 		if (wall.sectors[0]->sector != player.curr_sector->sector && wall.sectors[0]->sector != sec->sector)
 			draw_sectors(wall.sectors[0], &player, sdl, data);
@@ -461,7 +483,6 @@ void 			draw_sector_items(t_item **items, t_player *player, t_draw_data data, SD
 				if (player->gun[it->gun_type])
 				{
 					player->gun[it->gun_type]->ammo += it->ammo;
-					printf("player->gun[it->gun_type]->ammo %d\n", player->gun[it->gun_type]->ammo);
 					tmp = it->next;
 					delete_item_by_ptr(items, it);
 					it = tmp;
@@ -513,7 +534,7 @@ void			draw_sectors(t_sector *sec, t_player *player, t_sdl *sdl, t_draw_data dat
 	{
 		draw_world(sec, *w, *player, sdl, data);
 	}
-	quickSort(&sec->items, player);
+	quicksort(&sec->items, player);
 	draw_sector_items(&sec->items, player, data, sdl->surf);
 	draw_projectiles(&sec->projectiles, *player, data, sdl->surf, sec->items);
 }
@@ -681,16 +702,12 @@ void 				check_door(t_player *player, t_sector *sectors)
 
 	i = -1;
 	if (!has_key(player->inventar))
-	{
-		printf("You dont have a key\n");
 		return ;
-	}
 	walls = player->curr_sector->portals;
 	while (++i < MAX_PORTALS && walls[i])
 	{
 		if (find_dot_radius_intersect(player->pos, 3, walls[i]->start, walls[i]->end))
         {
-			printf("Opening door...\n");
 			t_sector *se = player->curr_sector == walls[i]->sectors[0] ? walls[i]->sectors[1] : walls[i]->sectors[0];
 			if (se->door)
 			{
@@ -702,8 +719,7 @@ void 				check_door(t_player *player, t_sector *sectors)
 			}
 			return ;
         }
-	} 
-	printf("There is no door\n");
+	}
 }
 
 int					guess_event(SDL_Keycode code, t_player *player, unsigned char move[4], SDL_EventType type)
@@ -808,7 +824,7 @@ int					game_loop(t_sdl *sdl, t_player *player, t_sector *sectors)
     player->cos_angl = cos(player->angle);
     player->sin_angl = sin(player->angle);
     run = 1;
-	dead_text = get_text_surfcae(sdl->font, "YOU DIED", (SDL_Color){255, 30, 30, 255});
+	dead_text = txt_surf(sdl->font, "YOU DIED", (SDL_Color){255, 30, 30, 255});
     while(run > 0)
     {
         SDL_SetRenderDrawColor(sdl->ren, 0, 0, 0, 255);
@@ -900,7 +916,10 @@ int					main(void)
 		player->sky = load_jpg_png("textures/skybox.png");
 		all_guns = (t_gun**)malloc(sizeof(t_gun*) * 3);
 		load_gun(all_guns);
+
 		run_game(sdl, player, &m, &holder);
+
+		delete_guns(all_guns);
 		free_player(player);
 		delete_light_source(holder.light_source, holder.light_count);
 		free_t_sdl(&sdl);

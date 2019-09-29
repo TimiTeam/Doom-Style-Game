@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   sdl_texture.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ohavryle <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/09/29 05:11:13 by ohavryle          #+#    #+#             */
+/*   Updated: 2019/09/29 05:11:14 by ohavryle         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "sdl_head.h"
 
 SDL_Texture				*texture_from_surf(SDL_Surface *surf, SDL_Renderer *ren)
@@ -5,7 +17,7 @@ SDL_Texture				*texture_from_surf(SDL_Surface *surf, SDL_Renderer *ren)
 	SDL_Texture			*tex;
 
 	if (!surf)
-		return(error_message_null("Missing surface"));
+		return (error_message_null("Missing surface"));
 	if (!ren)
 		return (error_message_null("Missing renderer"));
 	tex = SDL_CreateTextureFromSurface(ren, surf);
@@ -13,7 +25,8 @@ SDL_Texture				*texture_from_surf(SDL_Surface *surf, SDL_Renderer *ren)
 	return (tex);
 }
 
-SDL_Texture				*new_fresh_texture(SDL_Renderer *ren, int width, int height)
+SDL_Texture				*new_fresh_texture(SDL_Renderer *ren,
+											int width, int height)
 {
 	SDL_Texture			*tex;
 	SDL_Surface			*surf;

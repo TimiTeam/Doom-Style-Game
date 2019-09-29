@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   sdl_exit.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ohavryle <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/09/29 05:11:04 by ohavryle          #+#    #+#             */
+/*   Updated: 2019/09/29 05:11:05 by ohavryle         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "sdl_head.h"
 
 int					error_message(const char *error)
@@ -14,7 +26,7 @@ void				*error_message_null(const char *error)
 	return (NULL);
 }
 
-void				quit_sdl()
+void				quit_sdl(void)
 {
 	if (TTF_WasInit())
 		TTF_Quit();
@@ -33,7 +45,7 @@ void				close_t_sdl(t_sdl *s)
 	if (s->win)
 		SDL_DestroyWindow(s->win);
 	s->win = NULL;
-	if(SDL_WasInit(SDL_INIT_AUDIO))
+	if (SDL_WasInit(SDL_INIT_AUDIO))
 		SDL_AudioQuit();
 }
 

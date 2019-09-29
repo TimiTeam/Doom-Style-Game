@@ -63,6 +63,8 @@ static t_wall	*make_wall(char *line, t_vector *vectors,t_read_holder *holder)
 	return (ret);
 }
 
+
+
 t_wall			**get_walls(int fd, t_read_holder *hodle, t_vector *vectors)
 {
 	char		*line;

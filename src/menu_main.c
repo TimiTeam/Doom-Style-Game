@@ -12,7 +12,8 @@
 
 #include "main_head.h"
 
-SDL_Surface			*get_text_surfcae(TTF_Font *font, char *text, SDL_Color	color)
+SDL_Surface			*txt_surf(TTF_Font *font,
+							char *text, SDL_Color color)
 {
 	SDL_Surface		*ret;
 
@@ -24,7 +25,8 @@ SDL_Surface			*get_text_surfcae(TTF_Font *font, char *text, SDL_Color	color)
 	return (ret);
 }
 
-void	load_textures(t_pr *m, t_sdl *sdl, t_read_holder *holder)
+void				load_textures(t_pr *m, t_sdl *sdl,
+									t_read_holder *holder)
 {
 	m->background = load_jpg_png("textures/background1.jpg");
 	m->play_button = load_jpg_png("textures/play_button.png");
@@ -41,8 +43,7 @@ void	load_textures(t_pr *m, t_sdl *sdl, t_read_holder *holder)
 	m->font_color.a = 255;
 }
 
-
-SDL_Rect		change_size(SDL_Rect rect)
+SDL_Rect			change_size(SDL_Rect rect)
 {
 	rect.x -= 60;
 	rect.y -= 20;
@@ -51,7 +52,7 @@ SDL_Rect		change_size(SDL_Rect rect)
 	return (rect);
 }
 
-SDL_Rect		reset_size(SDL_Rect rect)
+SDL_Rect			reset_size(SDL_Rect rect)
 {
 	rect.x += 60;
 	rect.y += 20;
@@ -60,7 +61,7 @@ SDL_Rect		reset_size(SDL_Rect rect)
 	return (rect);
 }
 
-void			initialize_sdl_win(t_pr *m)
+void				initialize_sdl_win(t_pr *m)
 {
 	m->play_rect.x = m->win_w / 2 - 250;
 	m->play_rect.y = m->win_h / 2 - 150;

@@ -12,7 +12,7 @@
 
 #include "main_head.h"
 
-void	down_action(t_pr *m)
+void				down_action(t_pr *m)
 {
 	if (m->event.key.keysym.sym == SDLK_s ||
 		m->event.key.keysym.sym == SDLK_DOWN)
@@ -32,7 +32,7 @@ void	down_action(t_pr *m)
 	}
 }
 
-void	up_action(t_pr *m)
+void				up_action(t_pr *m)
 {
 	if (m->event.key.keysym.sym == SDLK_w || m->event.key.keysym.sym == SDLK_UP)
 	{
@@ -51,9 +51,7 @@ void	up_action(t_pr *m)
 	}
 }
 
-
-
-void 				left_right(t_pr *m)
+void				left_right(t_pr *m)
 {
 	if ((m->event.key.keysym.sym == SDLK_RIGHT ||
 		m->event.key.keysym.sym == SDLK_d) && m->sw == 1)
@@ -73,7 +71,7 @@ void 				left_right(t_pr *m)
 	}
 }
 
-int 				menu_hooks(t_pr *m, t_read_holder *holder)
+int					menu_hooks(t_pr *m, t_read_holder *holder)
 {
 	while (SDL_PollEvent(&m->event))
 	{
@@ -84,7 +82,8 @@ int 				menu_hooks(t_pr *m, t_read_holder *holder)
 			down_action(m);
 			up_action(m);
 			left_right(m);
-			if (m->event.key.keysym.sym == SDLK_RETURN || m->event.key.keysym.sym == SDLK_ESCAPE)
+			if (m->event.key.keysym.sym == SDLK_RETURN
+				|| m->event.key.keysym.sym == SDLK_ESCAPE)
 			{
 				if (m->sw == 2 || m->event.key.keysym.sym == SDLK_ESCAPE)
 					return (-1);

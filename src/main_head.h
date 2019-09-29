@@ -20,6 +20,12 @@ static float m_hfov = 0.73f*H/W;
 static int h_w = W >> 1;
 static int h_h = H >> 1;
 
+typedef struct  	s_rect
+{
+	t_point			pos;
+	t_point			size;
+}     				t_rect;
+
 typedef struct		s_scaler
 {
 	int				result;
@@ -156,7 +162,7 @@ typedef struct		s_pr
 //MENU
 void					initialize_sdl_win(t_pr *m);
 void					load_textures(t_pr *m, t_sdl *sdl, t_read_holder *holder);
-SDL_Surface				*get_text_surfcae(TTF_Font *font, char *text, SDL_Color color);
+SDL_Surface				*txt_surf(TTF_Font *font, char *text, SDL_Color color);
 void					renderallshit(t_pr *m);
 int						render_menu(t_pr *m, t_sdl *sdl);
 int 					load_game(t_player *player, t_read_holder *holder);
@@ -181,9 +187,9 @@ void					draw_enemy_sprite(t_item *obj, t_draw_data data, t_player player, SDL_S
 
 void    				move_enemy_to_player(t_item *enemy, t_vector player_pos);
 
-void 					quickSort(t_item **headRef, t_player *player);
-
-void					line(SDL_Surface *surface, t_point start, t_point end, int color);
+void					quicksort(t_item **headRef, t_player *player);
+t_item					*quick_sort_recur(t_item *head, t_item *end, t_player *player);
+t_item					*tail_of(t_item *cur);
 
 t_vector				point_of_intersec(t_vector p1, t_vector p2, t_vector p3, t_vector p4);
 float					side_of_a_point(t_vector p, t_vector s, t_vector end);
@@ -199,9 +205,8 @@ void 					add_projectile(t_projectile **head, t_projectile *new);
 void					draw_projectile(t_projectile *proj, t_draw_data data, t_player player, SDL_Surface *surface);
 
 void 					draw_image(SDL_Surface *screen, SDL_Surface *img, t_point pos, t_point size);
-void 					draw_image_with_criteria(SDL_Surface *screen, SDL_Surface *img, t_point pos, t_point size, t_draw_data data);
-
+void 					draw_image_with_criteria(SDL_Surface *screen, SDL_Surface *img, t_rect r, t_draw_data data);
 void					delete_projectiles(t_projectile *head);
 void 					list_light(t_light	**arr, unsigned arr_size);
-void					draw_skybox(SDL_Surface *dst, SDL_Surface *src, int x, int y, int end_y, t_player player);
+void					draw_skybox(SDL_Surface *dst, t_point pos,int end_y, t_player player);
 #endif

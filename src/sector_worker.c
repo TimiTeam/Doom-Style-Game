@@ -59,7 +59,7 @@ void				add_next_sector(t_sector **main, t_sector *next)
 
 void				*delete_walls(t_wall **wall, unsigned size)
 {
-	int				i;
+	unsigned		i;
 	t_wall			*ptr;
 	
 	if (!wall)
@@ -79,14 +79,13 @@ void				*delete_walls(t_wall **wall, unsigned size)
 	return (NULL);
 }
 
-void				delete_sectors(t_sector *sectors)
+void				*delete_sectors(t_sector *sectors)
 {
 	t_sector		*next;
-	unsigned		i;
 	t_light			*light;
 
 	if (!sectors)
-		return ;
+		return (NULL);
 	next = sectors;
 	while(sectors)
 	{
@@ -97,6 +96,7 @@ void				delete_sectors(t_sector *sectors)
 		delete_projectiles(next->projectiles);
 		ft_memdel((void**)&next);
 	}
+	return (NULL);
 }
 
 void				list_walls(t_wall **walls, int size)

@@ -1,13 +1,26 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   player_worker.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ohavryle <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/09/29 05:10:50 by ohavryle          #+#    #+#             */
+/*   Updated: 2019/09/29 05:10:51 by ohavryle         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "main_head.h"
 
-void				free_player(t_player *player)
+void			free_player(t_player *player)
 {
-	int				i;
+	int			i;
+
 	if (!player)
 		return ;
 	delete_items_list(player->inventar);
 	i = 0;
-	while(i < 3)
+	while (i < 3)
 	{
 		if (!player->gun[i])
 		{
@@ -22,18 +35,19 @@ void				free_player(t_player *player)
 	ft_memdel((void**)&player);
 }
 
-int 			get_player_pos(int fd, t_vector *player_pos, int *player_sec_id)
+int				get_player_pos(int fd, t_vector *player_pos, int *player_sec_id)
 {
-	char 		*line;
+	char		*line;
 	char		*skiped;
 	unsigned	p;
-	int 		ret;
+	int			ret;
 
 	line = NULL;
 	ret = 1;
 	if (get_next_line(fd, &line) > 0)
 	{
-		p = get_numbers(&player_pos->x, &player_pos->y, ',', (skiped = skip_row_number(line)));
+		p = get_numbers(&player_pos->x, &player_pos->y,
+					',', (skiped = skip_row_number(line)));
 		*player_sec_id = get_num_from_str(&skiped[p]);
 	}
 	else
@@ -42,9 +56,9 @@ int 			get_player_pos(int fd, t_vector *player_pos, int *player_sec_id)
 	return (ret);
 }
 
-t_sector			*get_player_sector(t_sector *sectors, int sec_num)
+t_sector		*get_player_sector(t_sector *sectors, int sec_num)
 {
-	while(sectors)
+	while (sectors)
 	{
 		if (sectors->sector == sec_num)
 			return (sectors);
@@ -53,15 +67,15 @@ t_sector			*get_player_sector(t_sector *sectors, int sec_num)
 	return (NULL);
 }
 
-t_player				*new_t_player(int pos_x, int pos_y, t_point win_size)
+t_player		*new_t_player(int pos_x, int pos_y, t_point win_size)
 {
-	t_player			*player;
+	t_player	*player;
 
-	player  = (t_player*)malloc(sizeof(t_player));
-	*player = (t_player){};
+	player = (t_player*)malloc(sizeof(t_player));
+	*player = (t_player){NULL};
 	player->pos = (t_vector){pos_x, pos_y, 0};
-	player->curr_map= -1;
-	player->half_win_size = (t_point) {win_size.x / 2, win_size.y / 2};
+	player->curr_map = -1;
+	player->half_win_size = (t_point){win_size.x / 2, win_size.y / 2};
 	player->yaw = 0;
 	player->hfov = win_size.x * m_hfov;
 	player->vfov = win_size.y * m_vfov;

@@ -1,18 +1,30 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   item_worker.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ohavryle <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/09/29 05:09:29 by ohavryle          #+#    #+#             */
+/*   Updated: 2019/09/29 05:09:30 by ohavryle         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "sector_worker.h"
 
-t_item				*new_item()
+t_item					*new_item(void)
 {
 	t_item			*i;
 
-	if(!(i = (t_item*)ft_memalloc(sizeof(t_item))))
+	if (!(i = (t_item*)ft_memalloc(sizeof(t_item))))
 		return (NULL);
-	*i = (t_item){};
+	*i = (t_item){NULL};
 	return (i);
 }
 
-t_item				*create_new_item(int x, int y)
+t_item					*create_new_item(int x, int y)
 {
-	t_item			*i;
+	t_item				*i;
 
 	if (!(i = new_item()))
 		return (NULL);
@@ -22,10 +34,10 @@ t_item				*create_new_item(int x, int y)
 	return (i);
 }
 
-void 				add_next_item(t_item **head, t_item *new)
+void					add_next_item(t_item **head, t_item *new)
 {
-	t_item			*main;
-	unsigned		id;
+	t_item				*main;
+	unsigned			id;
 
 	if (!*head)
 	{
@@ -44,16 +56,18 @@ void 				add_next_item(t_item **head, t_item *new)
 	main->next = new;
 }
 
-void				list_items(t_item *items)
+void					list_items(t_item *items)
 {
-	t_item			*it;
+	t_item				*it;
 
 	if (!items)
 		return ;
 	it = items;
 	while (it)
 	{
-		ft_putstr(it->type == enemy ? "Enemies # " : it->type == object ? "Unuseable obj # " : it->type == key ? "Key # " : "Usable obj # ");
+		ft_putstr(it->type == enemy ? "Enemies # " : "");
+		ft_putstr(it->type == object ? "Unuseable obj # " : "");
+		ft_putstr(it->type == key ? "Key # " : "");
 		ft_putnbr(it->id);
 		printf(". item sector ptr %p\n", it->sector);
 		ft_putstr("pos x = ");
@@ -67,90 +81,8 @@ void				list_items(t_item *items)
 	}
 }
 
-void				delete_item_animation(t_animation *anim)
-{
-	unsigned char	i;
-
-	i = 0;
-	while (i < anim->max_textures && anim->texture[i])
-	{
-		SDL_FreeSurface(anim->texture[i]);
-		i++;
-	}
-}
-
-void 				delete_item(t_item **item)
-{
-	int				i;
-
-	if (!*item)
-		return ;
-	i = 0;
-	while(i < 5){
-		delete_item_animation(&(*item)->states[i]);
-		i++;
-	}
-	ft_memdel((void**)item);
-}
-
-void				delete_items_list_with_animation(t_item *items)
-{
-	t_item 			*next;
-
-	if (!items)
-		return ;
-	next = items;
-	while(items)
-	{
-		next = items;
-		items = next->next;
-		delete_item(&next);
-	}
-}
-
-void				delete_items_list(t_item *items)
-{
-	t_item 			*next;
-
-	if (!items)
-		return ;
-	next = items;
-	while(items)
-	{
-		next = items;
-		items = next->next;
-		ft_memdel((void**)&next);
-	}
-}
-
-void				delete_item_by_ptr(t_item **head, t_item *item)
-{
-	t_item	*curr;
-	t_item	*prev;
-	
-	curr = (*head)->next;
-	prev = *head;
-
-	if (item == *head)
-	{
-		*head = item->next;
-		ft_memdel((void**)&item);
-		return ;
-	}
-	while(curr)
-	{
-		if (item == curr)
-		{
-			prev->next = curr->next;
-			ft_memdel((void**)&curr);
-			return ;
-		}
-		prev = curr;
-		curr = curr->next;
-	}
-}
-
-void 					from_list_to_another_list(t_item **current_list, t_item **next_list, t_item *elem)
+void					from_list_to_another_list(t_item **current_list,
+										t_item **next_list, t_item *elem)
 {
 	t_item				*curr;
 	t_item				*prev;
@@ -164,7 +96,7 @@ void 					from_list_to_another_list(t_item **current_list, t_item **next_list, t
 	}
 	curr = (*current_list)->next;
 	prev = *current_list;
-	while(curr)
+	while (curr)
 	{
 		if (curr == elem)
 		{
@@ -178,9 +110,9 @@ void 					from_list_to_another_list(t_item **current_list, t_item **next_list, t
 	}
 }
 
-void 				swap_items(t_item *elem1, t_item *elem2)
+void					swap_items(t_item *elem1, t_item *elem2)
 {
-	t_item			*tmp;
+	t_item				*tmp;
 
 	if (!elem1 || !elem2)
 		return ;

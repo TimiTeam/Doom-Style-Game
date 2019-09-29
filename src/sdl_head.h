@@ -33,8 +33,8 @@ typedef struct		s_point
 
 typedef	struct		s_sdl
 {
-	t_point			win_size;
 	char			*title;
+	t_point			win_size;
 	SDL_Window		*win;
 	SDL_Renderer	*ren;
 	SDL_Surface		*surf;

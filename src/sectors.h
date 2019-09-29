@@ -45,4 +45,6 @@ float            	len_between_points(t_vector a, t_vector b);
 int 				find_dot_radius_intersect(t_vector light_pos, float radius, t_vector start, t_vector end);
 void				swap(int *a, int *b);
 char				*get_path(int fd);
+int 				check_sectors(t_sector *sector);
+void				mark_all_neighbors(t_sector *sec, t_wall **all);
 #endif
