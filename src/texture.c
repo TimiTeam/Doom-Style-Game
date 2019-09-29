@@ -39,13 +39,13 @@ void			apply_light(t_text_inf inf, float txty,
 	{
 		dist_to_light = len_between_points(inf.tex_pos, light->pos);
 		if (dist_to_light < light->max_dist)
-			inf.brightness += 1.0f - clamp(dist_to_light, 0, light->max_dist)
+			inf.brightness += 1.0f - CLAMP(dist_to_light, 0, light->max_dist)
 															/ light->max_dist;
 	}
 	SDL_GetRGB(get_pixel(inf.image, inf.txtx, (int)txty % inf.image->h),
 											inf.image->format, &r, &g, &b);
-	*pix = SDL_MapRGB(inf.image->format, min(r * inf.brightness, 255),
-				min(g * inf.brightness, 255), min(b * inf.brightness, 255));
+	*pix = SDL_MapRGB(inf.image->format, MIN(r * inf.brightness, 255),
+				MIN(g * inf.brightness, 255), MIN(b * inf.brightness, 255));
 }
 
 void			text_line(t_text_inf inf)
@@ -57,11 +57,11 @@ void			text_line(t_text_inf inf)
 
 	if (!inf.surface || !inf.image || inf.image->w == 0 || inf.image->h == 0)
 		return ;
-	inf.y1 = clamp(inf.y1, 0, H - 1);
-	inf.y2 = clamp(inf.y2, 0, H - 1);
+	inf.y1 = CLAMP(inf.y1, 0, H - 1);
+	inf.y2 = CLAMP(inf.y2, 0, H - 1);
 	pix = (int*)inf.surface->pixels;
 	pix += inf.y1 * W + inf.x;
-	scale = inf.image->h * inf.scaleH;
+	scale = inf.image->h * inf.scale_h;
 	inf.txtx %= inf.image->w;
 	y = inf.y1;
 	while (y <= inf.y2)

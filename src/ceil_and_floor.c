@@ -32,15 +32,15 @@ void			apply_ceil_light(t_ceil_inf inf, t_light *light)
 		dist_to_light = len_between_points(light->pos,
 								(t_vector){inf.mapx, inf.mapz});
 		if (dist_to_light < light->max_dist)
-			inf.brightness += 1.0f - clamp(dist_to_light, 0, light->max_dist)
+			inf.brightness += 1.0f - CLAMP(dist_to_light, 0, light->max_dist)
 															/ light->max_dist;
 	}
 	SDL_GetRGB(get_pixel(inf.src, inf.tx % inf.src->w, inf.txtz % inf.src->h),
 												inf.src->format, &r, &g, &b);
 	put_pixel(inf.dst, inf.x, inf.y, SDL_MapRGB(inf.src->format,
-						min(r * inf.brightness, 255),
-						min(g * inf.brightness, 255),
-						min(b * inf.brightness, 255)));
+						MIN(r * inf.brightness, 255),
+						MIN(g * inf.brightness, 255),
+						MIN(b * inf.brightness, 255)));
 }
 
 void			draw_floor_or_ceil(t_ceil_inf inf)
@@ -75,13 +75,13 @@ void			floor_and_ceil_calculation(t_draw_data *data,
 			t_player player, t_wall line, t_vector scale)
 {
 	data->ceil_y_s = calc_floor_ceil(player.half_win_size.y,
-		Yaw(data->diff_ceil, line.start.y), scale.x);
+		YAW(data->diff_ceil, line.start.y), scale.x);
 	data->ceil_y_e = calc_floor_ceil(player.half_win_size.y,
-		Yaw(data->diff_ceil, line.end.y), scale.y);
+		YAW(data->diff_ceil, line.end.y), scale.y);
 	data->floor_y_s = calc_floor_ceil(player.half_win_size.y,
-		Yaw(data->diff_floor, line.start.y), scale.x);
+		YAW(data->diff_floor, line.start.y), scale.x);
 	data->floor_y_e = calc_floor_ceil(player.half_win_size.y,
-		Yaw(data->diff_floor, line.end.y), scale.y);
+		YAW(data->diff_floor, line.end.y), scale.y);
 	data->floor_height = data->floor_y_e - data->floor_y_s;
 	data->ceil_height = data->ceil_y_e - data->ceil_y_s;
 }
@@ -92,16 +92,16 @@ void			neighbour_calculation(t_draw_data *data, t_n n)
 
 	player = n.player;
 	data->n_ceil_y_s = calc_floor_ceil(n.player.half_win_size.y,
-			Yaw(min(n.wall.sectors[0]->ceil, n.wall.sectors[1]->ceil)
+			YAW(MIN(n.wall.sectors[0]->ceil, n.wall.sectors[1]->ceil)
 			- data->player_current_height, n.line.start.y), n.scale1);
 	data->n_ceil_y_e = calc_floor_ceil(n.player.half_win_size.y,
-			Yaw(min(n.wall.sectors[0]->ceil, n.wall.sectors[1]->ceil)
+			YAW(MIN(n.wall.sectors[0]->ceil, n.wall.sectors[1]->ceil)
 			- data->player_current_height, n.line.end.y), n.scale2);
 	data->n_floor_y_s = calc_floor_ceil(n.player.half_win_size.y,
-			Yaw(max(n.wall.sectors[0]->floor, n.wall.sectors[1]->floor)
+			YAW(MAX(n.wall.sectors[0]->floor, n.wall.sectors[1]->floor)
 			- data->player_current_height, n.line.start.y), n.scale1);
 	data->n_floor_y_e = calc_floor_ceil(n.player.half_win_size.y,
-			Yaw(max(n.wall.sectors[0]->floor, n.wall.sectors[1]->floor)
+			YAW(MAX(n.wall.sectors[0]->floor, n.wall.sectors[1]->floor)
 			- data->player_current_height, n.line.end.y), n.scale2);
 	data->n_floor_height = data->n_floor_y_e - data->n_floor_y_s;
 	data->n_ceil_height = data->n_ceil_y_e - data->n_ceil_y_s;

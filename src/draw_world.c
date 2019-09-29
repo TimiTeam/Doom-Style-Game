@@ -38,8 +38,8 @@ void			threads(t_proj t)
 	int				i;
 
 	i = -1;
-	t.data.start = max(t.line.start.x, t.data.start);
-	t.data.end = min(t.line.end.x, t.data.end);
+	t.data.start = MAX(t.line.start.x, t.data.start);
+	t.data.end = MIN(t.line.end.x, t.data.end);
 	step = (t.data.end - t.data.start) / THREADS;
 	while (++i < THREADS)
 	{

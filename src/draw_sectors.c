@@ -16,10 +16,10 @@ void				draw_line(t_screen_inf inf, t_super_data *super)
 {
 	text_line((t_text_inf){inf.x, inf.cya, inf.cyb,
 			init_scaler(inf.cya, (t_point){inf.ya, inf.yb},
-			(t_point){0, super->wall.texture->h * super->scaleH / 20.0f}),
+			(t_point){0, super->wall.texture->h * super->scale_h / 20.0f}),
 			inf.txtx, super->sect, super->main_screen,
 			super->wall.texture, inf.tex_pos, super->scale_l,
-			super->scaleH, super->sect->sector_light});
+			super->scale_h, super->sect->sector_light});
 }
 
 void				draw_ceil(t_screen_inf inf, t_super_data *super)

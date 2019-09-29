@@ -53,7 +53,7 @@ int				load_game(t_player *player, t_read_holder *holder)
 	if (!sectors)
 		return (error_message(holder->maps_path[holder->curr_map]));
 	holder->all = sectors;
-	player->height = EyeHeight;
+	player->height = EYEHEIGHT;
 	if (!(player->curr_sector = get_player_sector(sectors,
 										holder->player_sector_id)))
 		return (error_message("Sector Not Found"));

@@ -84,7 +84,7 @@ t_player		*new_t_player(int pos_x, int pos_y, t_point win_size)
 	player->fall = 0;
 	player->speed = 0.6f;
 	player->inventar = NULL;
-	player->height = EyeHeight;
+	player->height = EYEHEIGHT;
 	player->health = 100;
 	return (player);
 }

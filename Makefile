@@ -10,7 +10,7 @@ SRCS	:= sdl_worker.c sdl_create.c sdl_exit.c sdl_texture.c img_loader.c \
 			delete_projectiles.c enemy_movement.c items_deletion.c ceil_and_floor.c \
 			player_movement.c math2.c interactions.c gun_worker.c proj_render.c \
 			draw_world.c fill_super_data.c thread_drawing_help.c events.c draw_items.c \
-			game_loop.c draw_sectors.c
+			game_loop.c draw_sectors.c check_enemy_state.c
 
 DIR_SRC := $(CURDIR)/src
 DIR_OBJ := $(CURDIR)/obj
@@ -27,9 +27,8 @@ SDL_INCL =	-I $(CURDIR)/frameworks/SDL2.framework/Headers/ \
 			-I $(CURDIR)/frameworks/SDL2_ttf.framework/Headers/ \
 			-I $(CURDIR)/frameworks/SDL2_image.framework/Headers/
 
-FLAG_W = -Wall -Wextra -Werror 
-
-FLAG_W =
+ 
+FLAG_W = 
 
 SANIT_F = -fsanitize=address 
 

@@ -34,5 +34,5 @@ void			fill_super_data_3(t_super_data *super,
 	super->main_screen = sdl->surf;
 	super->player = player;
 	super->sect = sec;
-	super->scaleH = sec->ceil - sec->floor;
+	super->scale_h = sec->ceil - sec->floor;
 }

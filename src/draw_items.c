@@ -3,43 +3,53 @@
 /*                                                        :::      ::::::::   */
 /*   draw_items.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ohavryle <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: tbujalo <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/09/29 17:15:39 by ohavryle          #+#    #+#             */
-/*   Updated: 2019/09/29 17:15:40 by ohavryle         ###   ########.fr       */
+/*   Created: 2019/09/29 17:47:30 by tbujalo           #+#    #+#             */
+/*   Updated: 2019/09/29 17:54:06 by tbujalo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "main_head.h"
 
-void 			check_enemy_state(t_item *enemy, t_vector player_pos)
+t_item		*get_item_to_player(t_item **items,
+t_item *curr, t_player *player)
 {
-	if (enemy->health > 0)
+	if (curr->type == gun)
 	{
-		enemy->speed = 0.22;
-		if (enemy->is_dying)
-			enemy->is_dying--;
-		else if (enemy->dist_to_player < 30 && enemy->dist_to_player > 5)
-		{
-			enemy->curr_state = walk;
-			enemy->speed = 0.44;
-			move_enemy_to_player(enemy, player_pos);
-		}
-		else if (enemy->dist_to_player <= 5)
-			enemy->curr_state = action;
-		else
-			enemy->curr_state = waiting;
+		get_gun_to_player(player, curr->gun_type,
+		curr->states[waiting].texture[0]);
+		return (del_cur_item_and_get_next(items, curr));
 	}
-	else if (enemy->curr_state != die)
+	else if (curr->type == health && player->health < 100)
 	{
-		enemy->curr_state = die;
-		enemy->curr_frame = 0;
+		player->health += curr->health;
+		player->health = player->health > 100 ? 100 : player->health;
+		return (del_cur_item_and_get_next(items, curr));
+	}
+	else if (curr->type == ammo && player->gun[curr->gun_type])
+	{
+		player->gun[curr->gun_type]->ammo += curr->ammo;
+		return (del_cur_item_and_get_next(items, curr));
+	}
+	else if (curr->type != ammo && curr->type != health)
+		from_list_to_another_list(items, &player->inventar, curr);
+	return (curr);
+}
+
+void		is_player_hit(t_item *get_damege, t_player *player)
+{
+	if (get_damege && get_damege->type == enemy)
+	{
+		get_damege->health -= player->current_gun->damage;
+		get_damege->curr_state = taking_damage;
+		get_damege->is_dying = 4;
 	}
 }
 
-void 			draw_sector_items(t_item **items, t_player *player, t_draw_data data, SDL_Surface *screen)
+void		draw_sector_items(t_item **items, t_player *player,
+		t_draw_data data, SDL_Surface *screen)
 {
-	t_item 	*tmp;
 	t_item	*get_damege;
 	float	closer;
 	t_item	*it;
@@ -47,63 +57,12 @@ void 			draw_sector_items(t_item **items, t_player *player, t_draw_data data, SD
 	closer = 1000.f;
 	it = *items;
 	get_damege = NULL;
-	while (it)
+	while ((it = change_item_animations(items, player, it)))
 	{
-		if (it->type == enemy)
-			check_enemy_state(it, player->pos);
-		if ((it->curr_frame += it->speed) >= it->states[it->curr_state].max_textures)
-		{
-			if (it->curr_state == action)
-				player->health -= it->damage;
-			if (player->health <= 0 && !player->dead)
-				player->dead = 1;
-			it->curr_frame = 0;
-			if (it->type == enemy && it->curr_state == die)
-			{
-				tmp = it->next;
-				delete_item_by_ptr(items, it);
-				it = tmp;
-				continue ;
-			}
-		}
-		if (it->dist_to_player <= 1.2f && it->type != object && it->type != enemy & it->type != light)
-		{
-
-			if (it->type == gun)
-			{
-				get_gun_to_player(player, it->gun_type, it->states[waiting].texture[0]);
-				tmp = it->next;
-				delete_item_by_ptr(items, it);
-				it = tmp;
-				continue ;
-			}
-			else if (it->type == health)
-			{
-				if(player->health < 100)
-				{
-					player->health += it->health;
-					player->health = player->health > 100 ? 100 : player->health;
-					tmp = it->next;
-					delete_item_by_ptr(items, it);
-					it = tmp;
-					continue ;
-				}
-			}
-			else if (it->type == ammo)
-			{
-				if (player->gun[it->gun_type])
-				{
-					player->gun[it->gun_type]->ammo += it->ammo;
-					tmp = it->next;
-					delete_item_by_ptr(items, it);
-					it = tmp;
-					continue ;
-				}
-			}
-			else 
-				from_list_to_another_list(items, &player->inventar, it);
-		}
-		else
+		if (it->dist_to_player <= 1.2f && it->type != object
+		&& it->type != enemy & it->type != light)
+			it = get_item_to_player(items, it, player);
+		if (it)
 		{
 			draw_enemy_sprite(it, data, *player, screen);
 			if (it->players_hit && closer > it->dist_to_player)
@@ -112,13 +71,8 @@ void 			draw_sector_items(t_item **items, t_player *player, t_draw_data data, SD
 				closer = it->dist_to_player;
 				get_damege = it;
 			}
+			it = it->next;
 		}
-		it = it->next;
 	}
-	if (get_damege && get_damege->type == enemy)
-	{
-		get_damege->health -= player->current_gun->damage;
-		get_damege->curr_state = taking_damage;
-		get_damege->is_dying = 4;
-	}
+	is_player_hit(get_damege, player);
 }

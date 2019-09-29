@@ -38,11 +38,11 @@ void			draw_skybox(SDL_Surface *dst, t_point pos,
 
 	scalh = init_scaler(player.yaw, (t_point){-5, 5},
 							(t_point){0, player.sky->h / 2});
-	player.skyH = scalh.result;
+	player.sky_h = scalh.result;
 	while (pos.y < end_y)
 	{
 		put_skybox_pixel(dst, player.sky, pos,
-					(t_vector){player.skyW, player.skyH});
+					(t_vector){player.sky_w, player.sky_h});
 		++pos.y;
 	}
 }
