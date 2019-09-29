@@ -26,17 +26,10 @@ int					run_game(t_sdl *sdl, t_player *player,
 	SDL_Texture		*tex;
 
 	in_game = 0;
-	while (1)
+	while (in_game >= 0)
 	{
 		if ((in_game = menu_hooks(m, holder)) < 0)
 			break ;
-		if (in_game > 0)
-		{
-			if (player->curr_map != holder->curr_map)
-				if (!load_game(player, holder))
-					return (error_message("Can't create game"));
-			in_game = game_loop(sdl, player, holder->all);
-		}
 		render_menu(m, sdl);
 		SDL_SetRenderDrawColor(sdl->ren, 255, 255, 255, 255);
 		SDL_RenderClear(sdl->ren);
@@ -44,6 +37,13 @@ int					run_game(t_sdl *sdl, t_player *player,
 		sdl_render(sdl->ren, tex, NULL, NULL);
 		SDL_DestroyTexture(tex);
 		SDL_RenderPresent(sdl->ren);
+		if (in_game > 0)
+		{
+			if (player->curr_map != holder->curr_map)
+				if (!load_game(player, holder))
+					return (error_message("Can't create game"));
+			in_game = game_loop(sdl, player, holder->all);
+		}
 	}
 	SDL_DestroyTexture(tex);
 	return (0);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   player_movement.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ohavryle <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: tbujalo <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/09/29 17:16:42 by ohavryle          #+#    #+#             */
-/*   Updated: 2019/09/29 17:16:43 by ohavryle         ###   ########.fr       */
+/*   Created: 2019/09/29 18:55:55 by tbujalo           #+#    #+#             */
+/*   Updated: 2019/09/29 18:56:25 by tbujalo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,13 +51,25 @@ int				check_next_sec(t_wall *wall, t_player *player, t_sector **next)
 	return (1);
 }
 
+int				player_in_new_sector(t_player *player,
+		t_wall *wall, t_vector *step)
+{
+	t_sector	*next;
+	t_sector	*new;
+
+	if (!check_next_sec(wall, player, &next))
+		return (0);
+	new = get_new_player_sector(*step, next);
+	if (!change_player(new, player, step, next))
+		return (0);
+	return (1);
+}
+
 void			move_player(t_player *player, float sin_angle, float cos_angle)
 {
 	int			i;
 	t_vector	step;
 	t_wall		**wall;
-	t_sector	*next;
-	t_sector	*new;
 
 	i = -1;
 	step = (t_vector){player->pos.x + cos_angle * player->speed,
@@ -68,14 +80,14 @@ void			move_player(t_player *player, float sin_angle, float cos_angle)
 		if (box_intersection(player->pos, step, wall[i]->start, wall[i]->end)
 		&& side_of_a_point(step, wall[i]->start, wall[i]->end) < 0)
 		{
-			if (!check_next_sec(wall[i], player, &next))
-				return ;
-			new = get_new_player_sector(step, next);
-			if (!change_player(new, player, &step, next))
+			if (!player_in_new_sector(player, wall[i], &step))
 				return ;
 			break ;
 		}
 	}
 	step.z += player->pos.z;
 	player->pos = step;
+	if (player->end_sec == player->curr_sector->sector
+	&& len_between_points(player->pos, player->end_pos) < 5)
+		player->win = 1;
 }

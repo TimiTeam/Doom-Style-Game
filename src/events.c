@@ -34,7 +34,9 @@ int				guess_event(SDL_Keycode code,
 		player->speed = 1.2f;
 	else if (code == SDLK_LSHIFT && type == SDL_KEYUP)
 		player->speed = 0.6;
-	else if (code == SDLK_SPACE && type == SDL_KEYDOWN)
+	else if (code == SDLK_SPACE && type == SDL_KEYDOWN
+			&& (player->pos.z - player->height <= player->curr_sector->floor
+			|| player->jetpack))
 		player->velocity += 0.8f;
 	else if (code == SDLK_1 && type == SDL_KEYDOWN && player->gun[pistol])
 		player->current_gun = player->gun[pistol];
@@ -86,6 +88,9 @@ int				hook_event(t_player *player,
 	{
 		if (e.type == SDL_QUIT || (e.type == SDL_KEYDOWN
 		&& e.key.keysym.sym == SDLK_ESCAPE))
+			return (-1);
+		else if (e.type == SDL_KEYDOWN &&
+			e.key.keysym.sym == SDLK_BACKSPACE)
 			return (0);
 		else if (e.type == SDL_KEYDOWN || e.type == SDL_KEYUP)
 		{

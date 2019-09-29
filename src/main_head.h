@@ -83,6 +83,7 @@ typedef struct		s_player
 	t_gun			**all_guns;
 	t_gun			*gun[3];
 	t_vector		pos;
+	t_vector		end_pos;
 	t_point			half_win_size;
 	t_gun			*current_gun;
 	float			speed;
@@ -97,6 +98,7 @@ typedef struct		s_player
 	float			velocity;
 	int				height;
 	int				health;
+	int				end_sec;
 	unsigned char	fall;
 	char			sit;
 	unsigned char	shooting;
@@ -105,6 +107,8 @@ typedef struct		s_player
 	float			sky_w;
 	float			sky_h;
 	unsigned char	falling;
+	int				win;
+	int				jetpack;
 }					t_player;
 
 typedef struct		s_super_data

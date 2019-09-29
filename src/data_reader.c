@@ -136,6 +136,7 @@ t_sector		*read_map(char *pth, t_read_holder *holder, t_vector *p_pos)
 	if (!get_count_struct_arrays(fd, &holder->vect_count, &holder->wall_count))
 		return (print_error_message_null("Error reading map:", pth));
 	load_data_from_map(fd, holder, p_pos);
+	get_player_pos(fd, &holder->player_end, &holder->player_end_sect);
 	delete_walls(holder->walls, holder->wall_count);
 	close(fd);
 	return (holder->all);

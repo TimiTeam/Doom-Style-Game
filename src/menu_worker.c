@@ -45,11 +45,14 @@ int				load_game(t_player *player, t_read_holder *holder)
 		return (error_message("Invalid map"));
 	delete_sectors(holder->all);
 	delete_light_source(holder->light_source, holder->light_count);
-	if (player->curr_map < holder->curr_map || player->dead)
+	if ((player->curr_map != holder->curr_map || player->dead)
+		&& !player->win)
 		clear_player(player);
 	holder->light_count = 0;
 	sectors = read_map(holder->maps_path[holder->curr_map],
 										holder, &player->pos);
+	player->end_pos = holder->player_end;
+	player->end_sec = holder->player_end_sect;
 	if (!sectors)
 		return (error_message(holder->maps_path[holder->curr_map]));
 	holder->all = sectors;

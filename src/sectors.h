@@ -29,6 +29,8 @@ typedef struct		s_read_holder
 	int				text_count;
 	int				vect_count;
 	int				wall_count;
+	t_vector		player_end;
+	int				player_end_sect;
 }					t_read_holder;
 
 int					read_game_config_file(t_read_holder *holder,
