@@ -17,32 +17,34 @@ int				get_num_from_str(char *str)
 	int			i;
 
 	i = 0;
-	if (!str)
-		return (0);
+	if (!str || !*str)
+		return (-1);
 	while (str[i])
 	{
 		if (ft_isdigit(str[i]))
 			return (ft_atoi(&str[i]));
 		i++;
 	}
-	return (0);
+	return (-1);
 }
 
 char			*skip_row_number(char *line)
 {
 	unsigned	p;
+	unsigned	b;
 
+	b = 0;
 	p = 0;
-	while (line[p] && line[p + 1])
+	while (line[p] && ft_isdigit(line[p]))
+		p++;
+	while (line[p] && (line[p] == ')' || line[p] == ' '))
 	{
-		if (line[p] == ')' && line[p + 1] == ' ')
-		{
-			while (line[++p] && line[p] == ' ')
-				;
-			return (&line[p]);
-		}
+		if (line[p] == ')')
+			b = 1;
 		p++;
 	}
+	if (p >= 2 && b)
+		return (&line[p]);
 	return (NULL);
 }
 
@@ -86,13 +88,17 @@ unsigned		get_numbers(float *one, float *two, char delimiter, char *line)
 	*one = nb;
 	if (line[i] && line[i] == delimiter)
 		i++;
-	while (line[i] && !ft_isdigit(line[i]))
-		i++;
 	ft_strdel(&num);
 	nb = (float)ft_atoi(&line[i]);
+	*two = nb;
+	if (!ft_isdigit(line[i]))
+	{
+		*two = 0;
+		*one = 0;
+		return (0);
+	}
 	num = ft_itoa(nb);
 	i += ft_strlen(num);
-	*two = nb;
 	ft_strdel(&num);
 	return (i);
 }

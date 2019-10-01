@@ -48,9 +48,11 @@ static t_wall	*make_wall(char *line, t_vector *vectors, t_read_holder *holder)
 	float		start;
 	float		end;
 
+	if (!line || !*line)
+		return (print_error_message_null("Can't create t_wall:","error reading map"));
 	i = get_numbers(&start, &end, '-', line);
-	if (start > holder->vect_count || end > holder->vect_count)
-		return (print_error_message_null("Vectors not exist ", line));
+	if (start > holder->vect_count || end > holder->vect_count || (!start && !end))
+		return (print_error_message_null("Vectors not exist at line:", line));
 	ret = (t_wall*)malloc(sizeof(t_wall));
 	*ret = (t_wall){NULL};
 	ret->start = vectors[(int)start];
@@ -58,7 +60,7 @@ static t_wall	*make_wall(char *line, t_vector *vectors, t_read_holder *holder)
 	while (line[i] && !ft_isalpha(line[i]))
 		i++;
 	ret->type = ft_strncmp(&line[i], "empty", ft_strlen("empty")) == 0 ? 1 : 0;
-	if ((text = get_num_from_str(&line[i])) > holder->text_count)
+	if ((text = get_num_from_str(&line[i])) > holder->text_count || text < 0)
 	{
 		ft_memdel((void**)&ret);
 		return (print_error_message_null("Wrong index of texture ", &line[i]));

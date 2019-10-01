@@ -12,59 +12,125 @@
 
 #include "sectors.h"
 
-static unsigned		fill_floor_and_ceil(t_sector *sector,
+
+char			*get_data_from_line(char *line, char *fill_from, float *one, float *two)
+{
+	int				i;
+
+	i = 0;
+	while (*line && !ft_isalpha(*line))
+		line++;
+	if (ft_strncmp(line, fill_from, ft_strlen(fill_from)) ||
+		!(line = skip_line_with_word(line, fill_from)))
+		return (print_error_message_null("Can't create: '", fill_from));
+	if(!(i = get_numbers(one, two, ' ', line)))
+		return (print_error_message_null("Can't fill: '", fill_from));
+	while (line[i] && !ft_isalpha(line[i]))
+		i++;
+	return (&line[i]);
+}
+
+static char			*fill_floor_and_ceil(t_sector *sector,
 		SDL_Surface **textures, char *line, int max_tex)
 {
-	unsigned		i;
-	float			height;
 	float			text;
+	char			*orig;
 
 	if (!sector || !line || !textures)
 		return (0);
-	i = get_numbers(&height, &text, ' ', line);
-	sector->floor = height;
-	if (text > max_tex)
-		text = print_error_message("Use default val 0! Wrong item:", &line[i]);
+	if (!(line = get_data_from_line((orig = line), "floor", &sector->floor, &text)) || text > max_tex)
+		return (print_error_message_null("Wrong line: ", orig));
 	sector->floor_tex = textures[(int)text];
-	i += get_numbers(&height, &text, ' ', &line[i]);
-	sector->ceil = height;
+	if (!(line = get_data_from_line((orig = line), "ceil", &sector->ceil, &text)) || text > max_tex)
+		return (print_error_message_null("Wrong line: ", orig));
+	sector->ceil_tex = textures[(int)text];
 	if (sector->ceil < sector->floor)
 		sector->ceil = sector->floor;
 	if (sector->floor == sector->ceil)
 		sector->ceil += 0.2;
-	if (text > max_tex)
-		text = print_error_message("Use default val 0! Wrong item:", &line[i]);
 	sector->ceil = sector->ceil < 1000 ? sector->ceil : 1000;
 	sector->floor = sector->floor < 1000 ? sector->floor : 1000;
-	sector->ceil_tex = textures[(int)text];
-	return (i);
+	return (line);
+}
+
+void				*error_free_t_sector(t_sector **sect, char *message, char *line)
+{
+	t_sector		**ptr;
+
+	if (*sect)
+	{
+		ptr = sect;
+		delete_sectors(*sect);
+		ptr = NULL;
+	}
+	return (print_error_message_null(message, line));
+}
+
+char				*skip_line_with_word(char *line, char *word)
+{
+	int				i;
+	int				j;
+
+	if (!line || !word)
+		return (NULL);
+	i = -1;
+	j = 0;
+	while (*line)
+	{
+		while (*line && *word && *line == *word)
+		{
+			line++;
+			word++;
+			if (j == ft_strlen(word))
+				return (line);
+		}
+		line++;
+	}
+	return (NULL);
+}
+
+static char 		*door_or_sky(char *line, t_sector *current)
+{
+	int				i;
+
+	i = 0;
+	if (ft_strncmp(line, "door", ft_strlen("door")) == 0)
+	{
+		current->door = 1;
+		return (skip_line_with_word(line, "door"));
+	}
+	if (ft_strncmp(line, "sky", ft_strlen("sky")) == 0)
+	{
+		current->sky = 1;
+		return (skip_line_with_word(line, "sky"));
+	}
+	return (line);
 }
 
 static t_sector		*crate_and_fill_sector_by_data(
 	t_read_holder *holder, char *data)
 {
 	t_sector		*sect;
-	t_wall			*wall;
-	int				i;
 
+	if (!data || !*data)
+		return (print_error_message_null("", "Wrong line"));
 	sect = new_sector();
-	sect->door = ft_strncmp(data, "door", ft_strlen("door")) == 0 ? 1 : 0;
-	i = fill_floor_and_ceil(sect, holder->textures, data, holder->text_count);
-	while (data[i] && ft_strncmp(&data[i], "items",
-				ft_strlen("items")) && data[i + 1])
+	data = door_or_sky(data, sect);
+	if (!(data = fill_floor_and_ceil(sect, holder->textures, data, holder->text_count)))
+		return (error_free_t_sector(&sect, "Can't create sector!", "Error filling floor/ceil"));
+	if ((data = skip_line_with_word(data, "walls")))
 	{
-		if (ft_strncmp(&data[i], "walls", ft_strlen("walls")) == 0)
-		{
-			sect->n_walls = get_wall_count(&data[++i]);
-			sect->wall = create_sector_walls(sect, holder,
-					&data[i], sect->n_walls);
-		}
-		i++;
+		if ((sect->n_walls = get_wall_count(data)) < 3)
+			return (error_free_t_sector(&sect, "Worng sector wall count : ", data));
+		if (!(sect->wall = create_sector_walls(sect, holder, data, sect->n_walls)))
+			return (error_free_t_sector(&sect, "Creating sector walls:", data));
 	}
-	while (data[i] && ft_strncmp(&data[i], "items", ft_strlen("items")))
-		i++;
-	if (ft_strncmp(&data[i], "items", ft_strlen("items")) == 0)
-		sect->items = make_items(&data[i], holder->all_items, holder);
+	else
+		return (error_free_t_sector(&sect, "'walls'", "Didn't detected"));
+	if ((data = skip_line_with_word(data, "items")))
+		sect->items = make_items(data, holder->all_items, holder);
+	else
+		return (error_free_t_sector(&sect, "'items'", "Didn't detected"));
 	return (sect);
 }
 
@@ -82,6 +148,11 @@ t_sector			*make_sectors_list(int fd, t_read_holder *holder)
 			if ((new = crate_and_fill_sector_by_data(holder,
 							skip_row_number(line))))
 				add_next_sector(&head, new);
+			else
+			{
+				ft_strdel(&line);
+				return (error_free_t_sector(&head, "t_sector is ", "NULL"));
+			}
 		}
 		ft_strdel(&line);
 	}

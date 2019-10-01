@@ -58,19 +58,21 @@ int					copy_t_item_value_by_id(t_item *dst, t_item *all,
 t_item				*create_item(char *data, t_item *all_items)
 {
 	t_item			*item;
-	unsigned		i;
-	float			x;
-	float			y;
+	int				i;
 	int				index;
 
-	i = get_numbers(&x, &y, ',', data);
-	if (!(item = create_new_item((int)x, (int)y)))
+	if(!data || !*data || !(item = create_new_item(0,0)))
 		return (0);
+	if (!(i = get_numbers(&item->pos.x, &item->pos.y, ',', data)))
+	{
+		ft_memdel((void**)&item);
+		return (print_error_message_null("Failed to read item", data));
+	}
 	index = ft_atoi(&data[i]);
 	if (!copy_t_item_value_by_id(item, all_items, index))
 	{
-		index = print_error_message("Use default val 0! Wrong item:", &data[i]);
-		copy_t_item_value_by_id(item, all_items, index);
+		ft_memdel((void**)&item);
+		return (print_error_message_null("Failed to create item", &data[i]));
 	}
 	item->size.x = item->states[0].texture[0]->w;
 	item->size.y = item->states[0].texture[0]->h;
@@ -85,25 +87,25 @@ t_item				*create_item(char *data, t_item *all_items)
 t_item				*make_items(char *data, t_item *all_items,
 		t_read_holder *holder)
 {
-	t_item			*list;
-	t_item			*next;
-	enum item_type	type;
-	int				i;
+	t_item				*list;
+	t_item				*next;
+	enum e_item_type	type;
 
-	i = 0;
 	list = NULL;
-	while (data[i] && data[i] != '\'')
-		i++;
-	while (data[i])
+	while (*data && *data != '\'')
+		data++;
+	while (*data)
 	{
-		if (data[i] == '(')
+		if (*data == '(')
 		{
-			if ((next = create_item(&data[i], all_items)))
+			if ((next = create_item(data, all_items)))
 				add_next_item(&list, next);
 			if (next && next->type == light)
 				holder->light_count++;
+			while (*data && *data != ')')
+				data++;
 		}
-		i++;
+		data++;
 	}
 	return (list);
 }

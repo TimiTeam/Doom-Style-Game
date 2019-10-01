@@ -6,7 +6,7 @@
 /*   By: ohavryle <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/29 05:10:42 by ohavryle          #+#    #+#             */
-/*   Updated: 2019/09/29 05:10:42 by ohavryle         ###   ########.fr       */
+/*   Updated: 2019/09/30 16:09:00 by tbujalo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,22 @@ void			clear_player(t_player *player)
 	player->inventar = NULL;
 }
 
+int 		prepare_playear(t_player *player, t_read_holder *holder)
+{
+	player->pos = holder->player_start;
+	player->end_pos = holder->player_end;
+	player->end_sec = holder->player_end_sect;
+	player->height = EYEHEIGHT;
+	if (!(player->curr_sector = get_player_sector(holder->all,
+					holder->player_sector_id)))
+		return (error_message("Sector Not Found"));
+	player->pos.z = player->curr_sector->floor + player->height;
+	player->yaw = 0;
+	player->win = 0;
+	player->curr_map = holder->curr_map;
+	return (1);
+}
+
 int				load_game(t_player *player, t_read_holder *holder)
 {
 	t_sector		*sectors;
@@ -45,7 +61,8 @@ int				load_game(t_player *player, t_read_holder *holder)
 		return (error_message("Invalid map"));
 	delete_sectors(holder->all);
 	delete_light_source(holder->light_source, holder->light_count);
-	if (player->curr_map < holder->curr_map || player->dead)
+	if ((player->curr_map != holder->curr_map || player->dead)
+		&& !player->win)
 		clear_player(player);
 	holder->light_count = 0;
 	sectors = read_map(holder->maps_path[holder->curr_map],
@@ -53,13 +70,8 @@ int				load_game(t_player *player, t_read_holder *holder)
 	if (!sectors)
 		return (error_message(holder->maps_path[holder->curr_map]));
 	holder->all = sectors;
-	player->height = EyeHeight;
-	if (!(player->curr_sector = get_player_sector(sectors,
-										holder->player_sector_id)))
-		return (error_message("Sector Not Found"));
-	player->pos.z = player->curr_sector->floor + player->height;
-	player->yaw = 0;
-	player->curr_map = holder->curr_map;
+	if (!prepare_playear(player, holder))
+		return (0);
 	return (1);
 }
 

@@ -15,10 +15,10 @@
 int					print_error_message(char *mess, char *error_obj)
 {
 	ft_putstr("\x1b[31mError: \x1b[33m");
-	ft_putendl(mess);
-	ft_putstr(" ");
-	ft_putendl(error_obj);
-	ft_putstr("\x1b[0m");
+	ft_putstr(mess);
+	ft_putstr(" \x1b[31m");
+	ft_putstr(error_obj);
+	ft_putendl("\x1b[0m");
 	return (0);
 }
 

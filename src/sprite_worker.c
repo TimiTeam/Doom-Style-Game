@@ -41,13 +41,18 @@ t_point			calculate_size(t_item *obj, t_player player,
 	ob_pos->y = tmp_x * player.cos_angl + ob_pos->y * player.sin_angl;
 	if (ob_pos->y <= 0)
 		return ((t_point){-1, -1});
-	scale.x = (W * m_hfov) / (ob_pos->y);
-	scale.y = (H * m_vfov) / (ob_pos->y);
+	scale.x = (W * player.m_hfov) / (ob_pos->y);
+	scale.y = (H * player.m_vfov) / (ob_pos->y);
 	ob_pos->x = player.half_win_size.x + (int)(-ob_pos->x * scale.x);
 	ob_pos->y = player.half_win_size.y
-	+ (int)(-Yaw(obj->pos.z + data.diff_floor, ob_pos->y) * scale.y);
+	+ (int)(-YAW(obj->pos.z + data.diff_floor, ob_pos->y) * scale.y);
 	size.x = (obj->size.x / obj->dist_to_player) * 30;
 	size.y = (obj->size.y / obj->dist_to_player) * 30;
+	if (obj->type == key)
+	{
+		size.x = (obj->size.x / obj->dist_to_player) * 5;
+		size.y = (obj->size.y / obj->dist_to_player) * 5;
+	}
 	return (size);
 }
 
@@ -64,8 +69,8 @@ void			draw_enemy_sprite(t_item *obj, t_draw_data data,
 		return ;
 	if (obj->dist_to_player < 3)
 	{
-		size.x = clamp(0, size.x, 1500);
-		size.y = clamp(0, size.y, 1500);
+		size.x = CLAMP(0, size.x, 1500);
+		size.y = CLAMP(0, size.y, 1500);
 	}
 	screen_pos.x = ob_pos.x - size.x / 2;
 	screen_pos.y = ob_pos.y - size.y;
@@ -92,11 +97,11 @@ void			draw_projectile(t_projectile *proj, t_draw_data data,
 	ob_pos.y = tmp_x * player.cos_angl + ob_pos.y * player.sin_angl;
 	if (ob_pos.y <= 0)
 		return ;
-	scale.x = (W * m_hfov) / (ob_pos.y);
-	scale.y = (H * m_vfov) / (ob_pos.y);
+	scale.x = (W * player.m_hfov) / (ob_pos.y);
+	scale.y = (H * player.m_vfov) / (ob_pos.y);
 	ob_pos.x = player.half_win_size.x + (int)(-ob_pos.x * scale.x);
 	ob_pos.y = player.half_win_size.y
-	+ (int)(-Yaw(proj->pos.z - player.pos.z, ob_pos.y) * scale.y);
+	+ (int)(-YAW(proj->pos.z - player.pos.z, ob_pos.y) * scale.y);
 	tmp_x = len_between_points(player.pos, proj->pos);
 	if (tmp_x < 3)
 		return ;
@@ -105,4 +110,27 @@ void			draw_projectile(t_projectile *proj, t_draw_data data,
 	size = 1000 / tmp_x;
 	draw_image_with_criteria(surface, proj->sprite,
 	(t_rect){screen_pos, (t_point){size, size}}, data);
+}
+
+void			free_data_holder(t_read_holder *holder)
+{
+	int			i;
+
+	if (!holder)
+		return ;
+	delete_sectors(holder->all);
+	delete_items_list_with_animation(holder->all_items);
+	i = 0;
+	while (i < 5 && holder->maps_path[i])
+	{
+		ft_strdel(&holder->maps_path[i]);
+		i++;
+	}
+	i = 0;
+	while (holder->textures && i < holder->text_count && holder->textures[i])
+	{
+		SDL_FreeSurface(holder->textures[i]);
+		i++;
+	}
+	ft_memdel((void**)&holder->textures);
 }

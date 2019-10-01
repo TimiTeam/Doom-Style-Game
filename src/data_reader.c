@@ -6,7 +6,7 @@
 /*   By: tbujalo <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/29 05:45:05 by tbujalo           #+#    #+#             */
-/*   Updated: 2019/09/29 06:11:23 by tbujalo          ###   ########.fr       */
+/*   Updated: 2019/09/30 15:35:56 by tbujalo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,7 +119,7 @@ void			load_data_from_map(int fd, t_read_holder *h, t_vector *p_pos)
 			fill_sectors_light_source(h->all, h->light_source, h->light_count);
 		}
 		else if (ft_strncmp(line, "Player", ft_strlen("Player")) == 0)
-			get_player_pos(fd, p_pos, &h->player_sector_id);
+			player_start_and_end(fd, h);
 		ft_strdel(&line);
 	}
 	if (vectors)

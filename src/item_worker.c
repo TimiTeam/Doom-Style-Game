@@ -56,31 +56,6 @@ void					add_next_item(t_item **head, t_item *new)
 	main->next = new;
 }
 
-void					list_items(t_item *items)
-{
-	t_item				*it;
-
-	if (!items)
-		return ;
-	it = items;
-	while (it)
-	{
-		ft_putstr(it->type == enemy ? "Enemies # " : "");
-		ft_putstr(it->type == object ? "Unuseable obj # " : "");
-		ft_putstr(it->type == key ? "Key # " : "");
-		ft_putnbr(it->id);
-		printf(". item sector ptr %p\n", it->sector);
-		ft_putstr("pos x = ");
-		ft_putnbr(it->pos.x);
-		ft_putstr("; y = ");
-		ft_putnbr(it->pos.y);
-		ft_putstr(". State ");
-		ft_putstr(it->curr_state > 1 ? "shooting" : "waiting");
-		write(1, "\n\n", 1);
-		it = it->next;
-	}
-}
-
 void					from_list_to_another_list(t_item **current_list,
 										t_item **next_list, t_item *elem)
 {

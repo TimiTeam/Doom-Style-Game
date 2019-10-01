@@ -5,18 +5,21 @@ Path: Maps/
 2) fortress.txt
 ###
 
-#Textures 10
+#Textures 13
 Path: textures/
-0) image.jpeg
-1) metal_wall.jpeg
-2) wall.jpeg
-3) wall2.jpeg
-4) wood_ceil.jpg
-5) ceil.jpeg
-6) floor2.jpg
-7) ground.jpeg
-8) metal_floor.jpeg
-9) metal_door.jpg
+0) warrning_wall.jpg
+1) electro_wall2.jpg
+2) meta_wall3.jpg
+3) electro_wall.jpg
+4) wall2.jpg
+5) strong_door.jpg
+6) metal_wall.jpg
+7) simple_wall.jpg
+8) new_door.jpg
+9) doors.jpg
+10) cude_wall.jpg
+11) iluminator.jpg
+12) meta_wall3.jpg
 ###
 
 #Items

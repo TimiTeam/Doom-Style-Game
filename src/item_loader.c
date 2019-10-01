@@ -12,9 +12,9 @@
 
 #include "sectors.h"
 
-static enum item_type	get_item_type(char *type)
+static enum e_item_type	get_item_type(char *type)
 {
-	enum item_type		ret;
+	enum e_item_type		ret;
 
 	ret = object;
 	if (type)

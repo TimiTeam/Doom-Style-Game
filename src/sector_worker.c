@@ -62,11 +62,10 @@ void				*delete_walls(t_wall **wall, unsigned size)
 	if (!wall)
 		return (NULL);
 	i = 0;
-	while (i < size)
+	while (i < size && wall)
 	{
-		if (wall[i])
+		if (wall[i] && (ptr = wall[i]))
 		{
-			ptr = wall[i];
 			ft_memdel((void**)&ptr);
 			wall[i] = NULL;
 		}
