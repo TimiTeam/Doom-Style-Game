@@ -28,7 +28,7 @@ void				*print_error_message_null(char *mess, char *error_obj)
 	return (NULL);
 }
 
-void				*free_array_surfcae_(SDL_Surface **array, unsigned size)
+void				*error_free_array_surf(SDL_Surface **array, unsigned size, char *message)
 {
 	unsigned		i;
 
@@ -41,5 +41,5 @@ void				*free_array_surfcae_(SDL_Surface **array, unsigned size)
 		i++;
 	}
 	ft_memdel((void**)&array);
-	return (NULL);
+	return (print_error_message_null(message, "exit"));
 }
