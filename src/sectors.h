@@ -60,7 +60,7 @@ t_item				*make_items(char *data, t_item *all_items,
 						t_read_holder *holder);
 void				*print_error_message_null(char *mess, char *error_obj);
 int					print_error_message(char *mess, char *error_obj);
-void				*free_array_surfcae_(SDL_Surface **array, unsigned size);
+void				*error_free_array_surf(SDL_Surface **array, unsigned size, char *message);
 t_wall				**create_sector_walls(t_sector *sector,
 						t_read_holder *holder, char *data, int wall_size);
 t_light				**create_all_light_source(t_sector *sec,

@@ -41,13 +41,14 @@ int				get_player_pos(char *line, t_vector *player_pos,
 	char		*skiped;
 	unsigned	p;
 
+	p = 0;
 	if (line)
 	{
 		p = get_numbers(&player_pos->x, &player_pos->y,
 					',', (skiped = skip_row_number(line)));
 		*player_sec_id = get_num_from_str(&skiped[p]);
 	}
-	return (1);
+	return (p);
 }
 
 int 			set_default_pos(t_sector *sector, t_vector *pos,
@@ -76,34 +77,67 @@ int 			set_default_pos(t_sector *sector, t_vector *pos,
 	return (ret);
 }
 
+unsigned char	correct_position_in_sector(t_vector pos, t_sector *supposed)
+{
+	if (!supposed)
+		return (0);
+	return (dot_inside_sector(pos, supposed->wall, supposed->n_walls));	
+}
+
+unsigned char	check_correct_satrt_end(t_read_holder *holder, int start, int end, char *line)
+{
+	t_sector	*s_sect;
+	t_sector	*e_sect;
+	int			res;
+	int			res2;
+
+	res = 1;
+	res2 = 1;
+	if (!holder)
+		return (0);
+	if(!(s_sect = get_player_sector(holder->all, holder->player_sector_id)) ||
+		!(e_sect = get_player_sector(holder->all, holder->player_end_sect)))
+		res2 = 0;
+	if (!start || !correct_position_in_sector(holder->player_start, s_sect))
+	{
+		set_default_pos(holder->all, &holder->player_start, 0, &holder->player_sector_id);
+		res = print_error_message("Wrong start position, use default!", line);
+	}
+	if (!end || !correct_position_in_sector(holder->player_end, e_sect))
+	{
+		set_default_pos(holder->all, &holder->player_end, 1, &holder->player_end_sect);
+		res2 = print_error_message("Wrong end position, use default!", line);
+	}
+	return (res * res2);
+}
+
 int				player_start_and_end(int fd, t_read_holder *holder)
 {
 	char 		*line;
+	int 		s;
+	int			e;
+	int			ret;
 
+	s = 0;
+	e = 0;
 	while (get_next_line(fd, &line) > 0)
 	{
 		if (ft_strncmp(line, "0)", 2) == 0)
-			get_player_pos(line, &holder->player_start, &holder->player_sector_id);
+			s = get_player_pos(line, &holder->player_start, &holder->player_sector_id);
 		if (ft_strncmp(line, "1)", 2) == 0)
-			get_player_pos(line, &holder->player_end, &holder->player_end_sect);
+			e = get_player_pos(line, &holder->player_end, &holder->player_end_sect);
 		ft_strdel(&line);
 	}
+	ret = check_correct_satrt_end(holder, s, e, line);
 	ft_strdel(&line);
-	if (holder->player_start.x == 0 && holder->player_start.y == 0)
-	{
-		set_default_pos(holder->all, &holder->player_start, 0, &holder->player_sector_id);
-		return (print_error_message("Value undefine at row, use default!", line));
-	}
-	if (holder->player_end.x == 0 && holder->player_end.y == 0)
-	{
-		set_default_pos(holder->all, &holder->player_end, 1, &holder->player_end_sect);
-		return (print_error_message("Value undefine, use default!", line));
-	}
-	return (1);
+	return (ret);
 }
 
-t_sector		*get_player_sector(t_sector *sectors, int sec_num)
+t_sector		*get_player_sector(t_sector *all, int sec_num)
 {
+	t_sector	*sectors;
+
+	sectors = all;
 	while (sectors)
 	{
 		if (sectors->sector == sec_num)
