@@ -55,8 +55,12 @@ void				*thread_draw_sector(void *param)
 		draw_ceil(inf, super);
 		draw_floor(inf, super);
 		find_tex_pos(&inf, super);
-		if (super->wall.type == filled_wall)
+		if (super->wall.type != empty_wall)
+		{
+			if (super->wall.type == transparent && (!super->wall.sectors[0] || !super->wall.sectors[1]))
+				draw_skybox(super->main_screen, (t_point){inf.x, inf.cya}, inf.cyb, super->player);
 			draw_line(inf, super);
+		}
 		else
 			render_neighbours(inf, super, cp);
 		inf.x++;

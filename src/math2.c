@@ -21,7 +21,7 @@ unsigned short		dot_inside_sector(t_vector player_pos,
 
 	i = -1;
 	odd = 0;
-	while (++i < arr_size)
+	while (++i < arr_size && walls && walls[i])
 	{
 		curr = walls[i];
 		if ((curr->start.y < player_pos.y && curr->end.y >= player_pos.y)

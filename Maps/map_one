@@ -49,7 +49,7 @@ Vectors:
 
 Walls:
 0) 0-1 filled 5
-1) 1-2 filled 8
+1) 1-2 transparent 13
 2) 2-3 filled 1
 3) 3-4 empty 0
 4) 4-5 filled 1
@@ -122,4 +122,4 @@ Sectors:
 
 Player
 0) 5,12 start 0
-1) 95,47 end 12
+1) 92,47 end 12

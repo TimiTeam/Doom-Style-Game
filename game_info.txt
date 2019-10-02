@@ -5,7 +5,7 @@ Path: Maps/
 2) fortress.txt
 ###
 
-#Textures 13
+#Textures 14
 Path: textures/
 0) warrning_wall.jpg
 1) electro_wall2.jpg
@@ -20,6 +20,7 @@ Path: textures/
 10) cude_wall.jpg
 11) iluminator.jpg
 12) meta_wall3.jpg
+13) window1.png
 ###
 
 #Items

@@ -71,7 +71,8 @@ void				win_animation(t_sdl *sdl, t_player *player,
 
 void				prepare_surf(t_sdl *sdl)
 {
-	SDL_SetRenderDrawColor(sdl->ren, 0, 0, 0, 255);
+	
+	SDL_SetRenderDrawColor(sdl->ren, 0, 200, 0, 255);
 	SDL_RenderClear(sdl->ren);
 	SDL_FillRect(sdl->surf, NULL, 0x00);
 }

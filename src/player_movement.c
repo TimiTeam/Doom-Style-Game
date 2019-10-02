@@ -39,7 +39,7 @@ int				change_player(t_sector *new, t_player *player,
 
 int				check_next_sec(t_wall *wall, t_player *player, t_sector **next)
 {
-	if (wall->type == filled_wall)
+	if (wall->type != empty_wall)
 		return (0);
 	if (wall->sectors[0] && player->curr_sector != wall->sectors[0])
 		*next = wall->sectors[0];

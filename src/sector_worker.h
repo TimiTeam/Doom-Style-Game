@@ -23,7 +23,8 @@
 enum					e_wall_type
 {
 	filled_wall,
-	empty_wall
+	empty_wall,
+	transparent
 };
 
 enum					e_gun_type

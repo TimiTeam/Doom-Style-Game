@@ -28,17 +28,14 @@ void			put_skybox_pixel(SDL_Surface *screen, SDL_Surface *skybox,
 	ty = ((float)imh / screen->h) * pos.y;
 	if (pos.x < screen->w && pos.x >= 0 && pos.y < screen->h && pos.y >= 0)
 		put_pixel(screen, pos.x, pos.y,
-				get_pixel(skybox, (int)tx + im_pos.x, (int)ty + im_pos.y));
+					get_pixel(skybox, abs(((int)tx + (int)im_pos.x) % skybox->w),
+															(int)ty + im_pos.y));
 }
 
 void			draw_skybox(SDL_Surface *dst, t_point pos,
 								int end_y, t_player player)
 {
-	t_scaler	scalh;
-
-	scalh = init_scaler(player.yaw, (t_point){-5, 5},
-							(t_point){0, player.sky->h / 2});
-	player.sky_h = scalh.result;
+	player.sky_h = (player.yaw + 5) / 10 * (player.sky->h / 2);
 	while (pos.y < end_y)
 	{
 		put_skybox_pixel(dst, player.sky, pos,

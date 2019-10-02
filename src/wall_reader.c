@@ -40,6 +40,17 @@ t_vector		*get_vectors(int fd, int vec_size)
 	return (vectors);
 }
 
+static enum e_wall_type	get_wall_type(char *line)
+{
+	if (ft_strncmp(line, "empty", ft_strlen("empty")) == 0)
+		return (empty_wall);
+	if (ft_strncmp(line, "filled", ft_strlen("filled")) == 0)
+		return (filled_wall);
+	if (ft_strncmp(line, "transparent", ft_strlen("transparent")) == 0)
+		return (transparent);
+	return (0);
+}
+
 static t_wall	*make_wall(char *line, t_vector *vectors, t_read_holder *holder)
 {
 	t_wall		*ret;
@@ -59,7 +70,7 @@ static t_wall	*make_wall(char *line, t_vector *vectors, t_read_holder *holder)
 	ret->end = vectors[(int)end];
 	while (line[i] && !ft_isalpha(line[i]))
 		i++;
-	ret->type = ft_strncmp(&line[i], "empty", ft_strlen("empty")) == 0 ? 1 : 0;
+	ret->type = get_wall_type(&line[i]);
 	if ((text = get_num_from_str(&line[i])) > holder->text_count || text < 0)
 	{
 		ft_memdel((void**)&ret);

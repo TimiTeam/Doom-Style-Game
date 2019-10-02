@@ -118,7 +118,7 @@ void			load_data_from_map(int fd, t_read_holder *h, t_vector *p_pos)
 			h->light_source = create_all_light_source(h->all, h->light_count);
 			fill_sectors_light_source(h->all, h->light_source, h->light_count);
 		}
-		else if (ft_strncmp(line, "Player", ft_strlen("Player")) == 0)
+		else if (ft_strncmp(line, "Player", ft_strlen("Player")) == 0 && h->all)
 			player_start_and_end(fd, h);
 		ft_strdel(&line);
 	}

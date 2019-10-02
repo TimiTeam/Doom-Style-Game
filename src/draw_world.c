@@ -19,7 +19,7 @@ void			again(t_again a)
 
 	wall = a.wall;
 	player = a.player;
-	if (wall.type != filled_wall && wall.sectors[1] && wall.sectors[0])
+	if (wall.type == empty_wall && wall.sectors[1] && wall.sectors[0])
 	{
 		if (wall.sectors[0]->sector != player.curr_sector->sector
 				&& wall.sectors[0]->sector != a.sec->sector)
@@ -76,7 +76,7 @@ void			draw_projected(t_proj p)
 		return ;
 	floor_and_ceil_calculation(&(p.data), player,
 							line, (t_vector){scl1.y, scl2.y});
-	if (p.wall.type != filled_wall && p.wall.sectors[1] && p.wall.sectors[0])
+	if (p.wall.type == empty_wall && p.wall.sectors[1] && p.wall.sectors[0])
 		neighbour_calculation(&(p.data), (t_n){player,
 					p.wall, line, scl1.y, scl2.y});
 	threads((t_proj){p.sec, p.wall, player, p.sdl, p.data,

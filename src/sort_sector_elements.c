@@ -71,7 +71,7 @@ void			sort_walls(t_sector *sec, t_wall **all)
 		sec->wall[i]->sectors[1] = wall->sectors[1];
 		if (sec->wall[i]->type == empty_wall && p < MAX_PORTALS)
 			sec->portals[p++] = sec->wall[i];
-		else if (sec->wall[i]->type == filled_wall && w < MAX_PORTALS)
+		else if (sec->wall[i]->type != empty_wall && w < MAX_PORTALS)
 			sec->only_walls[w++] = sec->wall[i];
 	}
 }
