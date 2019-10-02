@@ -60,3 +60,27 @@ int					init_sdl(t_sdl *sdl)
 	SDL_SetRenderDrawColor(sdl->ren, 0xFF, 0xFF, 0xFF, 0xFF);
 	return (OK);
 }
+
+int				init_sound()
+{
+	int			audio_rate;
+	int			audio_channels;
+	int			audio_buffers;
+	Uint16		audio_format;
+	Mix_Chunk	*mus;
+
+	audio_rate = 22050;
+	audio_format = AUDIO_S16SYS;
+	audio_channels = 2;
+	audio_buffers = 4096;
+	if (Mix_OpenAudio(audio_rate, audio_format, audio_channels, audio_buffers) != 0)
+	{
+		fprintf(stderr, "Unable to initialize audio: %s\n", Mix_GetError());
+		exit(1);
+	}
+	if (mus == NULL){
+		printf("Error loading music: %s\n", Mix_GetError());
+		return (0);
+	}
+	return (1);
+}

@@ -68,6 +68,7 @@ typedef struct		s_gun
 	float			state;
 	SDL_Surface		*frame[10];
 	SDL_Surface		*icon;
+	Mix_Chunk		*shot_sound;
 	enum e_gun_type	type;
 	int				max_frames;
 	int				ammo;
@@ -282,8 +283,8 @@ typedef struct		s_p_n_d
 
 void				run_with_buff(t_player *player,
 							t_sdl *sdl, unsigned int win_x);
-void				initialize_sdl_win(t_pr *m);
-void				load_textures(t_pr *m, t_sdl *sdl, t_read_holder *holder);
+void				initialize_menu(t_pr *m);
+int					load_menu_textures(t_pr *m, t_sdl *sdl, t_read_holder *holder);
 SDL_Surface			*txt_surf(TTF_Font *font, char *text, SDL_Color color);
 void				renderallshit(t_pr *m);
 int					render_menu(t_pr *m, t_sdl *sdl);
@@ -385,4 +386,5 @@ void				free_data_holder(t_read_holder *holder);
 t_item				*del_cur_item_and_get_next(t_item **it_list, t_item *curr);
 t_item				*change_item_animations(t_item **items,
 									t_player *player, t_item *it);
+int					init_sound();
 #endif

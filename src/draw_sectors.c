@@ -14,12 +14,21 @@
 
 void				draw_line(t_screen_inf inf, t_super_data *super)
 {
-	text_line((t_text_inf){inf.x, inf.cya, inf.cyb,
+	if (!super->sect->door)
+		text_line((t_text_inf){inf.x, inf.cya, inf.cyb,
 			init_scaler(inf.cya, (t_point){inf.ya, inf.yb},
 			(t_point){0, super->wall.texture->h * super->scale_h / 20.0f}),
 			inf.txtx, super->sect, super->main_screen,
 			super->wall.texture, inf.tex_pos, super->scale_l,
 			super->scale_h, super->sect->sector_light});
+	else
+		text_line((t_text_inf){inf.x, inf.cya, inf.cyb,
+			init_scaler(inf.cya, (t_point){inf.ya, inf.yb},
+			(t_point){super->wall.texture->h * (super->scale_h / 15.0f), 0}),
+			inf.txtx, super->sect, super->main_screen,
+			super->wall.texture, inf.tex_pos, super->scale_l,
+			super->scale_h, super->sect->sector_light});
+	
 }
 
 void				draw_ceil(t_screen_inf inf, t_super_data *super)
@@ -52,7 +61,8 @@ void				*thread_draw_sector(void *param)
 	while (inf.x < inf.end)
 	{
 		calculate_frame(&inf, cp, super);
-		draw_ceil(inf, super);
+		//draw_ceil(inf, super);
+		draw_skybox(super->main_screen, (t_point){inf.x, super->data->ytop[inf.x]}, inf.cya, super->player);
 		draw_floor(inf, super);
 		find_tex_pos(&inf, super);
 		if (super->wall.type == filled_wall)

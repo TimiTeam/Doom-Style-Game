@@ -49,24 +49,36 @@ int					run_game(t_sdl *sdl, t_player *player,
 	return (0);
 }
 
-void				free_all(t_player *player, t_sdl *sdl,
-								t_read_holder holder, t_pr m)
+void				free_all(t_player **player, t_sdl **sdl,
+								t_read_holder *holder, t_pr *m)
 {
-	delete_guns(player->all_guns);
-	free_player(player);
-	delete_light_source(holder.light_source, holder.light_count);
-	free_t_sdl(&sdl);
-	free_menu(&m);
+	if (*player)
+		delete_guns((*player)->all_guns);
+	free_player(*player);
+	*player = NULL;
+	delete_light_source(holder->light_source, holder->light_count);
+	holder->light_source = NULL;
+	free_t_sdl(sdl);
+	*sdl = NULL;
+	free_menu(m);
+	*m = (t_pr){NULL};
 }
 
-void				init(t_sdl **sdl, t_pr *m, t_read_holder *holder)
+int					init(t_sdl **sdl, t_pr *m, t_read_holder *holder)
 {
 	*sdl = new_t_sdl(W, H, "doom-nukem");
-	init_sdl(*sdl);
+	if (!sdl)
+		return (print_error_message("Error initializing sdl\n", ""));
+	if (!init_sdl(*sdl))
+		return (0);
 	SDL_ShowCursor(SDL_DISABLE);
 	SDL_SetRelativeMouseMode(SDL_TRUE);
-	load_textures(m, *sdl, holder);
-	initialize_sdl_win(m);
+	if (!load_menu_textures(m, *sdl, holder))
+		return (print_error_message("Can't load menu resourses\n", ""));
+	if (!init_sound())
+		return (print_error_message("Error initializing sound\n", ""));
+	initialize_menu(m);
+	return (1);
 }
 
 int					main(void)
@@ -82,17 +94,18 @@ int					main(void)
 	m.i = 0;
 	m.win_h = H;
 	m.win_w = W;
-	if (read_game_config_file(&holder, "game_info.txt"))
+	if (read_game_config_file(&holder, "game_info.txt")
+	&& init(&sdl, &m, &holder))
 	{
-		init(&sdl, &m, &holder);
 		sdl->font = m.font;
 		player = new_t_player(3, 3, sdl->win_size);
-		player->sky = load_jpg_png("textures/skybox.png");
+		player->sky = load_jpg_png("textures/skybox.jpg");
 		player->all_guns = (t_gun**)malloc(sizeof(t_gun*) * 3);
 		load_guns(player->all_guns);
 		run_game(sdl, player, &m, &holder);
-		free_all(player, sdl, holder, m);
+		free_all(&player, &sdl, &holder, &m);
 	}
+	free_all(&player, &sdl, &holder, &m);
 	free_data_holder(&holder);
 	system("leaks -q doom-nukem");
 }

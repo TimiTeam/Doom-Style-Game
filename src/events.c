@@ -74,9 +74,11 @@ void			update_player(t_player *player, unsigned char move[4])
 	player->sin_angl = sin(player->angle);
 	player->yaw = CLAMP(player->yaw - y * 0.05f, -5, 5);
 	if (player->current_gun && player->current_gun->state
-	== 0.44f && player->current_gun->type == plasmagun)
+	== 0.44f && player->current_gun->type == plasmagun){
 		add_projectile(&player->curr_sector->projectiles,
 										create_projectile(*player));
+		
+	}
 }
 
 int				hook_event(t_player *player,

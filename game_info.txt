@@ -3,6 +3,7 @@ Path: Maps/
 0) map_one
 1) map_two
 2) fortress.txt
+3) new_level_0.txt
 ###
 
 #Textures 10

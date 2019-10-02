@@ -97,10 +97,18 @@ int				render_menu(t_pr *m, t_sdl *sdl)
 
 void			free_menu(t_pr *menu)
 {
-	SDL_FreeSurface(menu->background);
-	SDL_FreeSurface(menu->play_button);
-	SDL_FreeSurface(menu->exit_button);
-	SDL_FreeSurface(menu->logo);
-	SDL_FreeSurface(menu->choose_level_button);
-	TTF_CloseFont(menu->font);
+	if (!menu)
+		return ;
+	if (menu->background)
+		SDL_FreeSurface(menu->background);
+	if (menu->play_button)
+		SDL_FreeSurface(menu->play_button);
+	if (menu->exit_button)
+		SDL_FreeSurface(menu->exit_button);
+	if (menu->logo)
+		SDL_FreeSurface(menu->logo);
+	if (menu->choose_level_button)
+		SDL_FreeSurface(menu->choose_level_button);
+	if (menu->font)
+		TTF_CloseFont(menu->font);
 }
