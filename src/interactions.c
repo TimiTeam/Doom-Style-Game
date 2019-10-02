@@ -128,6 +128,8 @@ void				check_door(t_player *player, t_sector *sectors)
 					use_key(player);
 				sec->opening = 1;
 			}
+			else
+				continue ;
 			return ;
 		}
 	}

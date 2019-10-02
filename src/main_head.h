@@ -290,6 +290,8 @@ void				renderallshit(t_pr *m);
 int					render_menu(t_pr *m, t_sdl *sdl);
 int					load_game(t_player *player, t_read_holder *holder);
 int					menu_hooks(t_pr *m, t_read_holder *holder);
+void				initialize_menu(t_pr *m);
+int					load_menu_textures(t_pr *m, t_sdl *sdl, t_read_holder *holder);
 SDL_Rect			change_size(SDL_Rect rect);
 SDL_Rect			reset_size(SDL_Rect rect);
 void				free_menu(t_pr *menu);

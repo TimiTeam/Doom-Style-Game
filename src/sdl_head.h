@@ -63,6 +63,11 @@ t_sdl				*new_t_sdl(int win_size_x, int win_size_y,
 int					init_sdl(t_sdl *sdl);
 
 /*
+**					SOUND
+*/
+int					init_sound();
+
+/*
 ** 					INFO
 */
 int					error_message(const char *error);

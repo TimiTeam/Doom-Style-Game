@@ -15,27 +15,9 @@
 SDL_Surface			*get_empty_surface(unsigned width, unsigned height)
 {
 	SDL_Surface		*surface;
-	Uint32			rmask;
-	Uint32			gmask;
-	Uint32			bmask;
-	Uint32			amask;
-#if __gnu_linux__
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-	rmask = 0xff000000;
-	gmask = 0x00ff0000;
-	bmask = 0x0000ff00;
-	amask = 0x000000ff;
-#else
-    	rmask = 0x000000ff;
-	gmask = 0x0000ff00;
-	bmask = 0x00ff0000;
-	amask = 0xff000000;
-#endif
-	surface = SDL_CreateRGBSurface(0, width, height, 32,
-			rmask, gmask, bmask, 0);
+
+	surface = SDL_CreateRGBSurface(0, width, height, 32, 0, 0, 0, 0);
 	return (surface);
-#endif
-	return (SDL_CreateRGBSurface(0, width, height, 32, 0, 0, 0, 0));
 }
 
 t_sdl				*new_t_sdl(int win_size_x, int win_size_y,
@@ -77,4 +59,28 @@ int					init_sdl(t_sdl *sdl)
 		return (error_message("Main Surface is not exist"));
 	SDL_SetRenderDrawColor(sdl->ren, 0xFF, 0xFF, 0xFF, 0xFF);
 	return (OK);
+}
+
+int				init_sound()
+{
+	int			audio_rate;
+	int			audio_channels;
+	int			audio_buffers;
+	Uint16		audio_format;
+	Mix_Chunk	*mus;
+
+	audio_rate = 22050;
+	audio_format = AUDIO_S16SYS;
+	audio_channels = 2;
+	audio_buffers = 4096;
+	if (Mix_OpenAudio(audio_rate, audio_format, audio_channels, audio_buffers) != 0)
+	{
+		fprintf(stderr, "Unable to initialize audio: %s\n", Mix_GetError());
+		exit(1);
+	}
+	if (mus == NULL){
+		printf("Error loading music: %s\n", Mix_GetError());
+		return (0);
+	}
+	return (1);
 }

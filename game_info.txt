@@ -2,7 +2,8 @@
 Path: Maps/
 0) map_one
 1) map_two
-2) fortress.txt
+2) map_three
+3) fortress.txt
 ###
 
 #Textures 14
