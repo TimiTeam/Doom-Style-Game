@@ -55,26 +55,37 @@ int 			set_default_pos(t_sector *sector, t_vector *pos,
 								unsigned sect_id, unsigned *player_sec)
 {
 	t_sector 	*sect;
-	int 		ret;
-
-
-	ret = 0;	
+	t_wall		**wall;
+	t_vector	vect;
+	int			i;
+	
 	if (!sector)
 		return (0);
 	sect = sector;
 	while (sect)
 	{
-		if ((sect_id == 0 || (!sect->next && sect_id)) && sect->wall[0])
+		if (((sect_id == 0 && sect->sector == 0) || (!sect->next && sect_id)) && 
+			(wall = sect->wall))
 		{
-			ret = 1;
+			i = 0;
 			*player_sec = sect->sector;
-			pos->x = sect->wall[0]->start.x;
-			pos->y = sect->wall[0]->start.y;
-			break ;
+			while (i < sect->n_walls && wall[i])
+			{
+				vect = sect->wall[i]->start;
+				vect.x += 2;
+				vect.y += 2;
+				if (dot_inside_sector(vect, wall, sect->n_walls))
+				{
+					pos->x = vect.x;
+					pos->y = vect.y;
+					return (1);
+				}
+				i++;
+			}
 		}
 		sect = sect->next;
 	}
-	return (ret);
+	return (0);
 }
 
 unsigned char	correct_position_in_sector(t_vector pos, t_sector *supposed)
@@ -105,7 +116,8 @@ unsigned char	check_correct_satrt_end(t_read_holder *holder, int start, int end,
 	}
 	if (!end || !correct_position_in_sector(holder->player_end, e_sect))
 	{
-		set_default_pos(holder->all, &holder->player_end, 1, &holder->player_end_sect);
+		if (!set_default_pos(holder->all, &holder->player_end, 1, &holder->player_end_sect))
+			print_error_message("Can't find ", "End position");
 		res2 = print_error_message("Wrong end position, use default!", line);
 	}
 	return (res * res2);

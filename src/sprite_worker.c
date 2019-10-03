@@ -119,17 +119,21 @@ void			free_data_holder(t_read_holder *holder)
 	if (!holder)
 		return ;
 	delete_sectors(holder->all);
+	holder->all = NULL;
 	delete_items_list_with_animation(holder->all_items);
+	holder->all_items = NULL;
 	i = 0;
 	while (i < 5 && holder->maps_path[i])
 	{
 		ft_strdel(&holder->maps_path[i]);
+		holder->maps_path[i] = NULL;
 		i++;
 	}
 	i = 0;
 	while (holder->textures && i < holder->text_count && holder->textures[i])
 	{
 		SDL_FreeSurface(holder->textures[i]);
+		holder->textures[i] = NULL;
 		i++;
 	}
 	ft_memdel((void**)&holder->textures);

@@ -57,17 +57,38 @@ void				win_animation(t_sdl *sdl, t_player *player,
 									SDL_Surface *text, int *run)
 {
 	player->win++;
-	apply_filter(sdl->surf, 1.0f - (1.0f / 50) * player->dead);
+//	apply_filter(sdl->surf, 1.0f - (1.0f / 50) * player->dead);
 	draw_image(sdl->surf, text,
 	(t_point){player->half_win_size.x - 200,
 	player->half_win_size.y - 100}, (t_point){400, 200});
-	if (player->win> 49)
+	if (player->win > 30)
 	{
 		*run = 0;
 		player->curr_map++;
 	}
 }
 
+unsigned			all_death(t_sector *sectors)
+{
+	t_sector		*sect;
+	t_item			*items;
+	unsigned		enemies;
+
+	sect = sectors;
+	enemies = 0;
+	while (sect)
+	{
+		items = sect->items;
+		while (items)
+		{
+			if (items->type == enemy)
+				enemies++;
+			items = items->next;
+		}
+		sect = sect->next;
+	}
+	return (enemies == 0 ? 1 : 0);
+}
 
 void				prepare_surf(t_sdl *sdl)
 {
@@ -100,16 +121,18 @@ int					game_loop(t_sdl *sdl, t_player *player, t_sector *sectors)
 	run = 1;
 	dead_text = txt_surf(sdl->font, "YOU DIED", (SDL_Color){255, 30, 30, 255});
 	win_text = txt_surf(sdl->font, "You Win", (SDL_Color){30, 255, 30, 255});
+	if (!sectors)
+		printf("NO sectors!!\n");
 	while (run > 0)
 	{
 		prepare_surf(sdl);
 		run_with_buff(player, sdl, sdl->win_size.x);
 		draw_hud(sdl, player);
-		run = hook_event(player, move, sectors);
+		run = hook_event(player, move);
 		move_player_vertically(player);
 		if (player->dead)
 			death_animation(sdl, player, dead_text, &run);
-		if(player->win)
+		if(player->win && all_death(sectors))
 			win_animation(sdl, player, win_text, &run);
 		render_tex(sdl);
 	}

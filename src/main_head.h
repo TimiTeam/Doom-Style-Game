@@ -288,7 +288,7 @@ void				load_textures(t_pr *m, t_sdl *sdl, t_read_holder *holder);
 SDL_Surface			*txt_surf(TTF_Font *font, char *text, SDL_Color color);
 void				renderallshit(t_pr *m);
 int					render_menu(t_pr *m, t_sdl *sdl);
-int					load_game(t_player *player, t_read_holder *holder);
+t_sector			*load_game(t_player *player, t_read_holder *holder);
 int					menu_hooks(t_pr *m, t_read_holder *holder);
 void				initialize_menu(t_pr *m);
 int					load_menu_textures(t_pr *m, t_sdl *sdl, t_read_holder *holder);
@@ -377,7 +377,7 @@ void				draw_sectors(t_sector *sectors,
 					t_player *player, t_sdl *sdl, t_draw_data data);
 void				update_player(t_player *player, unsigned char move[4]);
 int					hook_event(t_player *player,
-					unsigned char move[4], t_sector *sectors);
+					unsigned char move[4]);
 void				draw_sector_items(t_item **items,
 					t_player *player, t_draw_data data, SDL_Surface *screen);
 int					game_loop(t_sdl *sdl, t_player *player, t_sector *sectors);

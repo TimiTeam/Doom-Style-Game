@@ -53,26 +53,30 @@ int 		prepare_playear(t_player *player, t_read_holder *holder)
 	return (1);
 }
 
-int				load_game(t_player *player, t_read_holder *holder)
+t_sector			*load_game(t_player *player, t_read_holder *holder)
 {
 	t_sector		*sectors;
 
-	if (holder->curr_map >= holder->maps_count)
-		return (error_message("Invalid map"));
+	if (player->win)
+		holder->curr_map++;
+	if (holder->curr_map >= holder->maps_count && player->win)
+		return (print_error_message_null("Player ","Win!!"));
+	else if (holder->curr_map >= holder->maps_count)
+		return (print_error_message_null("Invalid map","Exit"));
 	delete_sectors(holder->all);
+	holder->all = NULL;
 	delete_light_source(holder->light_source, holder->light_count);
+	holder->light_source = NULL;
+	holder->light_count = 0;
 	if ((player->curr_map != holder->curr_map || player->dead)
 		&& !player->win)
 		clear_player(player);
-	holder->light_count = 0;
-	sectors = read_map(holder->maps_path[holder->curr_map],
-										holder, &player->pos);
-	if (!sectors)
-		return (error_message(holder->maps_path[holder->curr_map]));
-	holder->all = sectors;
+	if(!(sectors = read_map(holder->maps_path[holder->curr_map],
+										holder, &player->pos)))
+		return (print_error_message_null(holder->maps_path[holder->curr_map],"Wrong map"));
 	if (!prepare_playear(player, holder))
-		return (0);
-	return (1);
+		return (print_error_message_null("Player info is","Broken"));
+	return (sectors);
 }
 
 int				render_menu(t_pr *m, t_sdl *sdl)

@@ -80,7 +80,7 @@ void			update_player(t_player *player, unsigned char move[4])
 }
 
 int				hook_event(t_player *player,
-				unsigned char move[4], t_sector *sectors)
+				unsigned char move[4])
 {
 	SDL_Event	e;
 
@@ -97,6 +97,7 @@ int				hook_event(t_player *player,
 			if (!player->dead)
 				guess_event(e.key.keysym.sym, player, move, e.type);
 		}
+		
 		else if (e.type == SDL_MOUSEBUTTONDOWN
 			&& player->current_gun && e.button.button == SDL_BUTTON_LEFT
 			&& player->current_gun->ammo > 0 && !player->dead)

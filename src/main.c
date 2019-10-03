@@ -24,11 +24,12 @@ int					run_game(t_sdl *sdl, t_player *player,
 {
 	int				in_game;
 	SDL_Texture		*tex;
+	t_sector		*ret;
 
 	in_game = 0;
 	while (in_game >= 0)
 	{
-		if ((in_game = menu_hooks(m, holder)) < 0)
+		if (!player->win && (in_game = menu_hooks(m, holder)) < 0)
 			break ;
 		render_menu(m, sdl);
 		SDL_SetRenderDrawColor(sdl->ren, 255, 255, 255, 255);
@@ -37,12 +38,16 @@ int					run_game(t_sdl *sdl, t_player *player,
 		sdl_render(sdl->ren, tex, NULL, NULL);
 		SDL_DestroyTexture(tex);
 		SDL_RenderPresent(sdl->ren);
-		if (in_game > 0)
+		if (in_game > 0 || player->win)
 		{
-			if (player->curr_map != holder->curr_map)
-				if (!load_game(player, holder))
+			if (player->curr_map != holder->curr_map || player->win)
+				if (!(ret = load_game(player, holder)))
 					return (error_message("Can't create game"));
-			in_game = game_loop(sdl, player, holder->all);
+			if (!ret)
+				printf("NO holder->all sectors!!\n");
+			else 
+				printf("Before game loop sectors  exist\n");
+			in_game = game_loop(sdl, player, ret);
 		}
 	}
 	SDL_DestroyTexture(tex);
