@@ -1,3 +1,6 @@
+Properties{
+size 20x100
+}
 waiting{
 textures/lantern/lantern_1.png
 textures/lantern/lantern_2.png

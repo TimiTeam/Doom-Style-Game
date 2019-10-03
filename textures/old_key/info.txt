@@ -1,3 +1,6 @@
+Properties{
+size 60x70
+}
 waiting{
 textures/old_key/card_1.png
 textures/old_key/card_2.png

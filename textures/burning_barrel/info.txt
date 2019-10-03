@@ -1,3 +1,6 @@
+Properties{
+size 50x65
+}
 waiting{
 textures/burning_barrel/burning_barrel_1.png
 textures/burning_barrel/burning_barrel_2.png

@@ -47,4 +47,5 @@ Path: textures/
 18) object dead_man
 19) object broken_tree
 20) object broken_tree_two
+21) enemy hell_king
 ###

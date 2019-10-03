@@ -1,3 +1,6 @@
+Properties{
+size 100x150
+}
 waiting{
 textures/tree_one/tree_one.png
 }

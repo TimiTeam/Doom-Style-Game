@@ -74,12 +74,16 @@ t_item				*create_item(char *data, t_item *all_items)
 		ft_memdel((void**)&item);
 		return (print_error_message_null("Failed to create item", &data[i]));
 	}
-	item->size.x = item->states[0].texture[0]->w;
-	item->size.y = item->states[0].texture[0]->h;
-	if (item->size.x > 150 && item->size.y > 150)
+	if (!item->size.x && !item->size.y)
 	{
-		item->size.x = item->size.x / 5;
-		item->size.y = item->size.y / 5;
+		item->size.x = item->states[0].texture[0]->w;
+		item->size.y = item->states[0].texture[0]->h;
+		if (item->size.x > 150 && item->size.y > 150)
+		{
+			item->size.x = item->size.x / 5;
+			item->size.y = item->size.y / 5;
+		}
+		printf ("%s\n", data);
 	}
 	return (item);
 }

@@ -1,6 +1,7 @@
-Properies{
+Properties{
 plasmagun
 ammo 20
+size 20x15
 }
 waiting{
 textures/plasmagun_ammo/plasmagun_ammo.png

@@ -1,3 +1,6 @@
+Properties{
+size 10x60
+}
 waiting{
 textures/torch/torch_1.png
 textures/torch/torch_2.png

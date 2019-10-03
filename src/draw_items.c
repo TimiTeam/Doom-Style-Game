@@ -73,6 +73,6 @@ void		draw_sector_items(t_item **items, t_player *player,
 			}
 			it = it->next;
 		}
-	}
+	}	
 	is_player_hit(get_damege, player);
 }

@@ -1,3 +1,6 @@
+Properties{
+size 50x70
+}
 waiting{
 textures/broken_tree_two/broken_tree_two.png
 }

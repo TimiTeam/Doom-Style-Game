@@ -1,6 +1,7 @@
 Properties{
 health 200
 damage 10
+size 65x80
 }
 waiting{
 textures/demon/demon_standing_1.png

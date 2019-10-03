@@ -1,5 +1,6 @@
 Properties{
-pistol
+type pistol
+size 15x10
 }
 waiting{
 textures/pistolet_found/pistolet_found.png

@@ -61,7 +61,9 @@ static void				filed_t_animation(t_animation *anim, int fd)
 static void				read_properties(t_item *item, int fd)
 {
 	char				*line;
+	t_vector			size;
 
+	size = (t_vector){};
 	while (get_next_line(fd, &line) > 0)
 	{
 		if (ft_strcmp(line, "}") == 0)
@@ -72,10 +74,14 @@ static void				read_properties(t_item *item, int fd)
 			item->damage = get_num_from_str(line);
 		else if (ft_strncmp(line, "ammo", ft_strlen("ammo")) == 0)
 			item->ammo = get_num_from_str(line);
+		else if (ft_strncmp(line, "size", ft_strlen("size")) == 0)
+			get_numbers(&size.x, &size.y, 'x', line);
 		else if (item->type == gun || item->type == ammo)
 			item->gun_type = get_gun_type(line);
 		ft_strdel(&line);
 	}
+	item->size.x = (int)size.x;
+	item->size.y = (int)size.y;
 	ft_strdel(&line);
 }
 
