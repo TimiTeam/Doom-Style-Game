@@ -47,9 +47,8 @@ void				death_animation(t_sdl *sdl, t_player *player,
 	player->pos.z -= 6.0f / 50;
 	if (player->dead > 49)
 	{
-		player->dead = 0;
+		player->dead = 1;
 		*run = 0;
-		player->curr_map = -1;
 	}
 }
 

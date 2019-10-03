@@ -29,7 +29,7 @@ int					run_game(t_sdl *sdl, t_player *player,
 	in_game = 0;
 	while (in_game >= 0)
 	{
-		if (!player->win && (in_game = menu_hooks(m, holder)) < 0)
+		if (!player->win && !player->dead && (in_game = menu_hooks(m, holder)) < 0)
 			break ;
 		render_menu(m, sdl);
 		SDL_SetRenderDrawColor(sdl->ren, 255, 255, 255, 255);
@@ -38,9 +38,9 @@ int					run_game(t_sdl *sdl, t_player *player,
 		sdl_render(sdl->ren, tex, NULL, NULL);
 		SDL_DestroyTexture(tex);
 		SDL_RenderPresent(sdl->ren);
-		if (in_game > 0 || player->win)
+		if (in_game > 0 || player->win || player->dead)
 		{
-			if (player->curr_map != holder->curr_map || player->win)
+			if (player->curr_map != holder->curr_map || player->win || player->dead)
 				if (!(ret = load_game(player, holder)))
 					return (error_message("Can't create game"));
 			if (!ret)
