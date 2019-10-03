@@ -1,5 +1,7 @@
 NAME := doom-nukem
 
+UNAME := $(shell uname)
+
 SRCS	:= sdl_worker.c sdl_create.c sdl_exit.c sdl_texture.c img_loader.c \
 			sector_worker.c main.c make_sectors.c texture.c additiona_reader_data.c \
 			pixel_worker.c item_worker.c sprite_worker.c player_worker.c sort_items.c \
@@ -32,9 +34,7 @@ FLAG_W =
 
 SANIT_F = -fsanitize=address 
 
-SANIT_F = 
-
-FLAG_F = -F frameworks
+SANIT_F =
 
 LFT_INCL = -I libft/
 
@@ -42,20 +42,28 @@ LIBFT_A = libft/libft.a
 
 SDL_RUN_FLAGS = -rpath frameworks -framework SDL2 -framework SDL2_mixer -framework SDL2_image -framework SDL2_ttf
 
+ifeq ($(UNAME), Linux)
+
+SDL_RUN_FLAGS = -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf
+
+CC := gcc
+
+endif
+
 all: $(NAME)
 
 $(LIBFT_A):
 	@make -C libft/
-
 $(DIR_OBJ):
 	@mkdir -p $(DIR_OBJ)
 
 $(NAME): $(LIBFT_A) $(OBJS)
-	$(CC) -g $(SANIT_F) $(OBJS) $(FLAG_F) $(SDL_RUN_FLAGS) -L libft -lft -o $(NAME)
+	$(CC) -g -pthread $(SANIT_F) $(OBJS) -lm $(SDL_RUN_FLAGS) -L libft -lft -o $(NAME)
 
 
 $(DIR_OBJ)/%.o: $(DIR_SRC)/%.c | $(DIR_OBJ)
-	$(CC) -g $(SANIT_F) $(FLAG_W) -pthread  $(FLAG_F) $(SDL_INCL) $(LFT_INCL) -c $< -o $@ 
+	$(CC) -g -pthread $(SANIT_F) $(FLAG_W) $(SDL_INCL) $(LFT_INCL) -c $< -o $@ 
+
 
 clean:
 	@make -C libft/ clean
