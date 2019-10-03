@@ -57,7 +57,6 @@ void				win_animation(t_sdl *sdl, t_player *player,
 									SDL_Surface *text, int *run)
 {
 	player->win++;
-//	apply_filter(sdl->surf, 1.0f - (1.0f / 50) * player->dead);
 	draw_image(sdl->surf, text,
 	(t_point){player->half_win_size.x - 200,
 	player->half_win_size.y - 100}, (t_point){400, 200});

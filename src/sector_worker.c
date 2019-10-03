@@ -71,7 +71,7 @@ void				*delete_walls(t_wall **wall, unsigned size)
 		}
 		i++;
 	}
-//	ft_memdel((void**)&wall);
+	ft_memdel((void**)&wall);
 	return (NULL);
 }
 
@@ -90,7 +90,6 @@ void				*delete_sectors(t_sector *sectors)
 		if (next->wall)
 		{
 			delete_walls(next->wall, next->n_walls);
-			ft_memdel((void**)&next->wall);
 		}
 		next->wall = NULL;
 		delete_items_list(next->items);
