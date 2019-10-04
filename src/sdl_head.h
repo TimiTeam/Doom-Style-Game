@@ -14,7 +14,6 @@
 # define __SDL_HEAD_H
 
 # include "libft.h"
-
 #ifdef __APPLE__
 # include <SDL.h>
 # include <SDL_mixer.h>
@@ -28,7 +27,6 @@
 # include <SDL2/SDL_ttf.h>
 # include <SDL2/SDL_image.h>
 #endif
-
 # define OK 1
 # define ERROR 0
 
