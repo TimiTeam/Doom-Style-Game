@@ -1,5 +1,5 @@
 Properties{
-size 60x100
+size 40x65
 }
 waiting{
 textures/dead_man/dead_man.png
