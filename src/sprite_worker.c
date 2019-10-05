@@ -41,18 +41,13 @@ t_point			calculate_size(t_item *obj, t_player player,
 	ob_pos->y = tmp_x * player.cos_angl + ob_pos->y * player.sin_angl;
 	if (ob_pos->y <= 0)
 		return ((t_point){-1, -1});
-	scale.x = (W * player.m_hfov) / (ob_pos->y);
-	scale.y = (H * player.m_vfov) / (ob_pos->y);
+	scale.x = (player.hfov) / (ob_pos->y);
+	scale.y = (player.vfov) / (ob_pos->y);
 	ob_pos->x = player.half_win_size.x + (int)(-ob_pos->x * scale.x);
 	ob_pos->y = player.half_win_size.y
 	+ (int)(-YAW(obj->pos.z + data.diff_floor, ob_pos->y) * scale.y);
 	size.x = (obj->size.x / obj->dist_to_player) * 30;
 	size.y = (obj->size.y / obj->dist_to_player) * 30;
-	if (obj->type == key)
-	{
-		size.x = (obj->size.x / obj->dist_to_player) * 5;
-		size.y = (obj->size.y / obj->dist_to_player) * 5;
-	}
 	return (size);
 }
 
@@ -90,13 +85,11 @@ void			draw_enemy_sprite(t_item *obj, t_draw_data data,
 	if (obj->curr_state != die && enemy_hit(player, data, screen_pos, size))
 		obj->players_hit = 1;
 	anim = &obj->states[obj->curr_state];
-	if (obj->type == object)
-		obj->curr_frame = sprite_side(obj->pos, player.pos);
-	obj->curr_frame = obj->curr_frame >= anim->max_textures ? anim->max_textures - 1 : obj->curr_frame;
 	if (anim->texture[(int)obj->curr_frame])
 		draw_image_with_criteria(surface,
 		anim->texture[(int)obj->curr_frame], (t_rect){screen_pos, size}, data);
 }
+
 
 void			draw_projectile(t_projectile *proj, t_draw_data data,
 								t_player player, SDL_Surface *surface)
@@ -113,8 +106,8 @@ void			draw_projectile(t_projectile *proj, t_draw_data data,
 	ob_pos.y = tmp_x * player.cos_angl + ob_pos.y * player.sin_angl;
 	if (ob_pos.y <= 0)
 		return ;
-	scale.x = (W * player.m_hfov) / (ob_pos.y);
-	scale.y = (H * player.m_vfov) / (ob_pos.y);
+	scale.x = (player.hfov) / (ob_pos.y);
+	scale.y = (player.vfov) / (ob_pos.y);
 	ob_pos.x = player.half_win_size.x + (int)(-ob_pos.x * scale.x);
 	ob_pos.y = player.half_win_size.y
 	+ (int)(-YAW(proj->pos.z - player.pos.z, ob_pos.y) * scale.y);

@@ -30,17 +30,22 @@ t_screen_inf		fill_inf(t_super_data *super, t_wall cp)
 void				calculate_frame(t_screen_inf *inf,
 								t_wall cp, t_super_data *super)
 {
-	inf->ya = (inf->x - cp.start.x) * (super->data->ceil_height)
+	float			d_x;
+	float			m_d_x;
+
+	d_x = inf->x - cp.start.x;
+	m_d_x = d_x * cp.start.y;
+	inf->ya = (d_x) * (super->data->ceil_height)
 		/ inf->x_lenght + super->data->ceil_y_s;
 	inf->cya = CLAMP(inf->ya, super->data->ytop[inf->x],
 		super->data->ybottom[inf->x]);
-	inf->yb = (inf->x - cp.start.x) * (super->data->floor_height)
+	inf->yb = (d_x) * (super->data->floor_height)
 		/ inf->x_lenght + super->data->floor_y_s;
 	inf->cyb = CLAMP(inf->yb, super->data->ytop[inf->x],
 		super->data->ybottom[inf->x]);
 	inf->txtx = (super->u0 * ((cp.end.x - inf->x) * cp.end.y) + super->u1
-	* ((inf->x - cp.start.x) * cp.start.y)) / ((cp.end.x - inf->x)
-	* cp.end.y + (inf->x - cp.start.x) * cp.start.y);
+	* (m_d_x)) / ((cp.end.x - inf->x)
+	* cp.end.y + m_d_x);
 }
 
 void				calculate_neighbours(t_screen_inf *inf,
@@ -50,13 +55,8 @@ void				calculate_neighbours(t_screen_inf *inf,
 					/ inf->x_lenght + data->n_ceil_y_s;
 	inf->nyb = (inf->x - cp.start.x) * (data->n_floor_height)
 					/ inf->x_lenght + data->n_floor_y_s;
-	inf->n_cya = CLAMP((inf->x - cp.start.x) * (data->n_ceil_height)
-				/ inf->x_lenght + data->n_ceil_y_s,
-						data->ytop[inf->x], inf->cyb);
-//	inf->n_cya = inf->n_cya > inf->cyb ? inf->cyb : inf->n_cya;
-	inf->n_cyb = CLAMP((inf->x - cp.start.x) * (data->n_floor_height)
-				/ inf->x_lenght + data->n_floor_y_s,
-						data->ytop[inf->x], data->ybottom[inf->x]);
+	inf->n_cya = CLAMP(inf->nya, data->ytop[inf->x], inf->cyb);
+	inf->n_cyb = CLAMP(inf->nyb, data->ytop[inf->x], data->ybottom[inf->x]);
 }
 
 void				render_neighbours(t_screen_inf inf,

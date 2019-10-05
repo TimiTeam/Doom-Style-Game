@@ -73,7 +73,7 @@ void			move_player(t_player *player, float sin_angle, float cos_angle)
 
 	i = -1;
 	step = (t_vector){player->pos.x + cos_angle * player->speed,
-					player->pos.y + sin_angle * player->speed, 0};
+					player->pos.y + sin_angle * player->speed, player->pos.z};
 	wall = player->curr_sector->wall;
 	while (++i < player->curr_sector->n_walls)
 	{
@@ -85,10 +85,7 @@ void			move_player(t_player *player, float sin_angle, float cos_angle)
 			break ;
 		}
 	}
-	printf("player z before: %f step z %f, z after: ", player->pos.z, step.z);
-	step.z += player->pos.z;
 	player->pos = step;
-	printf("%f\n", player->pos.z);
 	if (player->end_sec == player->curr_sector->sector
 	&& len_between_points(player->pos, player->end_pos) < 3)
 		player->win = 1;

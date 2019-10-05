@@ -183,7 +183,6 @@ void				check_door(t_player *player, t_sector *sectors)
 				sec->state = action_sec;
 				after_door = get_sector_after_door(sec, player->curr_sector);
 				sec->max_up = after_door->floor + 15;
-				printf("Door #%d max up %d\n", sec->sector, sec->max_up);
 				sec->speed = 0.2f;
 			}
 			else

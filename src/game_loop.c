@@ -123,9 +123,7 @@ void 				change_sector_state(t_sector *sectors, t_player *player)
 				sec->floor += sec->speed;
 				sec->ceil += sec->speed;
 				if (player->curr_sector == sec)
-			//		move_player(player, 0,0);
 					player->pos.z += sec->speed;
-				printf("floor %f, max %d\n", sec->floor, sec->max_up);
 			}
 			if (((int)sec->ceil == (int)sec->max_up && sec->type == door) || 
 				(sec->type == lift && (int)sec->floor == (int)sec->max_up))

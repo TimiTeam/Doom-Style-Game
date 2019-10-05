@@ -1,5 +1,5 @@
 Properties{
-size 60x70
+size 12x12
 }
 waiting{
 textures/old_key/card_1.png
