@@ -52,7 +52,8 @@ void				calculate_neighbours(t_screen_inf *inf,
 					/ inf->x_lenght + data->n_floor_y_s;
 	inf->n_cya = CLAMP((inf->x - cp.start.x) * (data->n_ceil_height)
 				/ inf->x_lenght + data->n_ceil_y_s,
-						data->ytop[inf->x], data->ybottom[inf->x]);
+						data->ytop[inf->x], inf->cyb);
+//	inf->n_cya = inf->n_cya > inf->cyb ? inf->cyb : inf->n_cya;
 	inf->n_cyb = CLAMP((inf->x - cp.start.x) * (data->n_floor_height)
 				/ inf->x_lenght + data->n_floor_y_s,
 						data->ytop[inf->x], data->ybottom[inf->x]);

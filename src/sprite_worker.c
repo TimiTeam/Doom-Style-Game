@@ -56,6 +56,19 @@ t_point			calculate_size(t_item *obj, t_player player,
 	return (size);
 }
 
+unsigned short          sprite_side(t_vector player, t_vector sprite)
+{
+	if (player.x >= sprite.x)
+    {
+        if (player.y >= sprite.y)
+            return (3);
+        return (1);
+    }
+    if (player.y >= sprite.y)
+        return (2);
+    return (0);
+}
+
 void			draw_enemy_sprite(t_item *obj, t_draw_data data,
 										t_player player, SDL_Surface *surface)
 {
@@ -77,6 +90,9 @@ void			draw_enemy_sprite(t_item *obj, t_draw_data data,
 	if (obj->curr_state != die && enemy_hit(player, data, screen_pos, size))
 		obj->players_hit = 1;
 	anim = &obj->states[obj->curr_state];
+	if (obj->type == object)
+		obj->curr_frame = sprite_side(obj->pos, player.pos);
+	obj->curr_frame = obj->curr_frame >= anim->max_textures ? anim->max_textures - 1 : obj->curr_frame;
 	if (anim->texture[(int)obj->curr_frame])
 		draw_image_with_criteria(surface,
 		anim->texture[(int)obj->curr_frame], (t_rect){screen_pos, size}, data);

@@ -40,8 +40,9 @@ t_vector		point_of_intersec(t_vector p1, t_vector p2,
 
 t_scaler		init_scaler(int n, t_point curr, t_point dst)
 {
+	curr.y += curr.y == curr.x ? 1 : 0;
 	return ((t_scaler){dst.x + (n - 1 - curr.x) * (dst.y - dst.x)
-	/ (curr.y - curr.x), ((dst.y < dst.x) ^ (curr.y < curr.x)) ? -1 : 1,
+	/ ((curr.y - curr.x)), ((dst.y < dst.x) ^ (curr.y < curr.x)) ? -1 : 1,
 	abs(dst.y - dst.x), abs(curr.y - curr.x), (int)((n - 1 - curr.x)
 	* abs((int)(dst.y - dst.x))) % abs(curr.y - curr.x) });
 }

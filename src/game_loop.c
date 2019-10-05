@@ -106,6 +106,38 @@ void				render_tex(t_sdl *sdl)
 	SDL_RenderPresent(sdl->ren);
 }
 
+void 				change_sector_state(t_sector *sectors, t_player *player)
+{
+	t_sector		*sec;
+
+	if (!(sec = sectors))
+		return ;
+	while (sec)
+	{
+		if (sec->state == action_sec && (sec->type == door || sec->type == lift))
+		{
+			if (sec->type == door)
+				sec->ceil += sec->speed;
+			else if (sec->type == lift)
+			{
+				sec->floor += sec->speed;
+				sec->ceil += sec->speed;
+				if (player->curr_sector == sec)
+					player->pos.z += sec->speed;
+				printf("floor %f, max %d\n", sec->floor, sec->max_up);
+			}
+			if (((int)sec->ceil == (int)sec->max_up && sec->type == door) || 
+				(sec->type == lift && (int)sec->floor == (int)sec->max_up))
+			{
+				sec->state = calm;
+				sec->speed = 0;
+				sec->max_up = 0;
+			}
+		}
+		sec = sec->next;
+	}
+}
+
 int					game_loop(t_sdl *sdl, t_player *player, t_sector *sectors)
 {
 	int				run;
@@ -119,6 +151,7 @@ int					game_loop(t_sdl *sdl, t_player *player, t_sector *sectors)
 	run = 1;
 	dead_text = txt_surf(sdl->font, "YOU DIED", (SDL_Color){255, 30, 30, 255});
 	win_text = txt_surf(sdl->font, "You Win", (SDL_Color){30, 255, 30, 255});
+	sectors = player->all;
 	if (!sectors)
 		printf("NO sectors!!\n");
 	while (run > 0)
@@ -133,6 +166,7 @@ int					game_loop(t_sdl *sdl, t_player *player, t_sector *sectors)
 		if(player->win && all_death(sectors))
 			win_animation(sdl, player, win_text, &run);
 		render_tex(sdl);
+		change_sector_state(sectors, player);
 	}
 	SDL_FreeSurface(win_text);
 	SDL_FreeSurface(dead_text);

@@ -46,6 +46,9 @@ int				guess_event(SDL_Keycode code,
 		player->current_gun = player->gun[plasmagun];
 	else if (type == SDL_KEYDOWN && code == SDLK_e)
 		check_door(player, player->curr_sector);
+	else if (type == SDL_KEYDOWN && code == SDLK_f && 
+		player->curr_sector->type == lift && player->curr_sector->state == calm)
+			activate_lift(player);		
 	if (type == SDL_KEYDOWN && code == SDLK_LCTRL)
 		player->sit = -3;
 	if (type == SDL_KEYUP && code == SDLK_LCTRL)
@@ -97,7 +100,6 @@ int				hook_event(t_player *player,
 			if (!player->dead)
 				guess_event(e.key.keysym.sym, player, move, e.type);
 		}
-		
 		else if (e.type == SDL_MOUSEBUTTONDOWN
 			&& player->current_gun && e.button.button == SDL_BUTTON_LEFT
 			&& player->current_gun->ammo > 0 && !player->dead)

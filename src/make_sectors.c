@@ -94,15 +94,22 @@ static char 		*door_or_sky(char *line, t_sector *current)
 	int				i;
 
 	i = 0;
+	current->type = simple;
+	current->state = calm;
 	if (ft_strncmp(line, "door", ft_strlen("door")) == 0)
 	{
-		current->door = 1;
+		current->type = door;
 		return (skip_line_with_word(line, "door"));
 	}
-	if (ft_strncmp(line, "sky", ft_strlen("sky")) == 0)
+	if (ft_strncmp(line, "uncovered", ft_strlen("uncovered")) == 0)
 	{
-		current->sky = 1;
-		return (skip_line_with_word(line, "sky"));
+		current->type = uncovered;
+		return (skip_line_with_word(line, "uncovered"));
+	}
+	if (ft_strncmp(line, "lift", ft_strlen("lift")) == 0)
+	{
+		current->type = lift;
+		return (skip_line_with_word(line, "lift"));
 	}
 	return (line);
 }

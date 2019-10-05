@@ -79,6 +79,7 @@ typedef struct		s_player
 {
 	SDL_Surface		*sky;
 	t_sector		*curr_sector;
+	t_sector		*all;
 	t_item			*inventar;
 	t_gun			**all_guns;
 	t_gun			*gun[3];
@@ -378,6 +379,7 @@ void				draw_sectors(t_sector *sectors,
 void				update_player(t_player *player, unsigned char move[4]);
 int					hook_event(t_player *player,
 					unsigned char move[4]);
+void				activate_lift(t_player *player);
 void				draw_sector_items(t_item **items,
 					t_player *player, t_draw_data data, SDL_Surface *screen);
 int					game_loop(t_sdl *sdl, t_player *player, t_sector *sectors);

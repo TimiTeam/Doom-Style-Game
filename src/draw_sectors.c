@@ -53,6 +53,7 @@ void				*thread_draw_sector(void *param)
 	{
 		calculate_frame(&inf, cp, super);
 		draw_ceil(inf, super);
+
 		draw_floor(inf, super);
 		find_tex_pos(&inf, super);
 		if (super->wall.type != empty_wall)
@@ -77,8 +78,6 @@ void				draw_sectors(t_sector *sec, t_player *player,
 
 	i = -1;
 	p = -1;
-	if (sec->door && sec->opening && sec->ceil <= sec->floor + 15)
-		sec->ceil += 0.2f;
 	data.diff_ceil = sec->ceil - data.player_current_height;
 	data.diff_floor = sec->floor - data.player_current_height;
 	if (data.diff_ceil < 0)

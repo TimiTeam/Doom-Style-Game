@@ -85,8 +85,10 @@ void			move_player(t_player *player, float sin_angle, float cos_angle)
 			break ;
 		}
 	}
+	printf ("player z %f, step z %f\n", player->pos.z, step.z);
 	step.z += player->pos.z;
 	player->pos = step;
+	printf ("player z %f, step z %f\n", player->pos.z, step.z);
 	if (player->end_sec == player->curr_sector->sector
 	&& len_between_points(player->pos, player->end_pos) < 3)
 		player->win = 1;

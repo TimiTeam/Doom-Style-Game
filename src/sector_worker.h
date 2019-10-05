@@ -27,6 +27,20 @@ enum					e_wall_type
 	transparent
 };
 
+enum					e_sect_type
+{
+	simple,
+	door,
+	lift,
+	uncovered
+};
+
+enum 					e_sect_state
+{
+	calm,
+	action_sec
+};
+
 enum					e_gun_type
 {
 	pistol,
@@ -132,9 +146,8 @@ typedef struct			s_sector
 	t_wall				**wall;
 	t_wall				*only_walls[MAX_PORTALS];
 	t_wall				*portals[MAX_PORTALS];
-	unsigned			door;
-	unsigned			sky;
 	unsigned			opening;
+	unsigned			door_open;
 	t_light				*sector_light[MAX_LIGHT_SRC];
 	SDL_Surface			*floor_tex;
 	SDL_Surface			*ceil_tex;
@@ -143,6 +156,11 @@ typedef struct			s_sector
 	t_projectile		*projectiles;
 	float				floor;
 	float				ceil;
+	float				speed;
+	int 				max_up;
+	enum e_sect_type	type;
+	enum e_sect_state	state;
+	unsigned char		player_use;
 	unsigned short		sector;
 	unsigned short		n_walls;
 }						t_sector;

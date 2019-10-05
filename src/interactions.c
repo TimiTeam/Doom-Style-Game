@@ -105,11 +105,66 @@ void				use_key(t_player *player)
 	}
 }
 
+t_sector			*get_sector_after_door(t_sector *door, t_sector *prev)
+{
+	int 			i;
+	t_wall			*wall;
+
+	if (!door || !prev)
+		return (NULL);
+	i = 0;
+	while (i < MAX_PORTALS && (wall = door->wall[i]))
+	{
+		if (wall->sectors[1] != door && wall->sectors[1] != prev && wall->sectors[1])
+			return (wall->sectors[1]);
+		if (wall->sectors[0] != door && wall->sectors[0] != prev && wall->sectors[0])
+			return (wall->sectors[0]);
+		i++;
+	}
+	return (NULL);
+}
+
+void				activate_lift(t_player *player)
+{
+	t_wall			*wall;
+	t_sector		*lift;
+	t_sector		*next;
+	unsigned		i;
+
+	i = 0;
+	next = NULL;
+	lift = player->curr_sector;
+	while (lift && i < MAX_PORTALS && (wall = lift->portals[i]))
+	{
+		if (wall->sectors[0] != lift)
+			next = wall->sectors[0];
+		if (wall->sectors[1] != lift)
+			next = wall->sectors[1];
+		if (next)
+		{
+			if (next->type == door)
+				next = get_sector_after_door(next, lift);
+			if ((int)next->floor != (int)lift->floor)
+			{
+				if ((int)next->floor > (int)lift->floor)
+					lift->speed = 0.2f;
+				else
+					lift->speed = -0.2f;
+				lift->max_up = next->floor;
+				lift->state = action_sec;
+				return ;
+			}
+		}
+		i++;
+	}
+}
+
 void				check_door(t_player *player, t_sector *sectors)
 {
 	int				i;
 	t_wall			**walls;
 	t_sector		*sec;
+	t_sector		*after_door;
 
 	i = -1;
 	if (!has_key(player->inventar))
@@ -120,13 +175,16 @@ void				check_door(t_player *player, t_sector *sectors)
 		if (find_dot_radius_intersect(player->pos, 3,
 						walls[i]->start, walls[i]->end))
 		{
-			sec = player->curr_sector ==
-			walls[i]->sectors[0] ? walls[i]->sectors[1] : walls[i]->sectors[0];
-			if (sec->door)
+			sec = player->curr_sector == walls[i]->sectors[0] ?
+			walls[i]->sectors[1] : walls[i]->sectors[0];
+			if (sec->type == door && sec->state != action_sec)
 			{
-				if (!sec->opening)
-					use_key(player);
-				sec->opening = 1;
+				use_key(player);
+				sec->state = action_sec;
+				after_door = get_sector_after_door(sec, player->curr_sector);
+				sec->max_up = after_door->floor + 15;
+				printf("Door #%d max up %d\n", sec->sector, sec->max_up);
+				sec->speed = 0.2f;
 			}
 			else
 				continue ;

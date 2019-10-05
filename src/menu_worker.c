@@ -50,6 +50,7 @@ int 		prepare_playear(t_player *player, t_read_holder *holder)
 	player->yaw = 0;
 	player->win = 0;
 	player->curr_map = holder->curr_map;
+	player->all = holder->all;
 	return (1);
 }
 

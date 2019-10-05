@@ -1,27 +1,57 @@
 #Levels
 Path: Maps/
 0) map_one
-1) map_two
-2) map_three
+1) map_three
+2) super
 3) fortress.txt
 ###
 
-#Textures 14
+#Textures 44
 Path: textures/
-0) warrning_wall.jpg
-1) electro_wall2.jpg
-2) meta_wall3.jpg
-3) electro_wall.jpg
-4) wall2.jpg
-5) strong_door.jpg
-6) metal_wall.jpg
-7) simple_wall.jpg
-8) new_door.jpg
-9) doors.jpg
-10) cude_wall.jpg
-11) iluminator.jpg
-12) meta_wall3.jpg
-13) window1.png
+0) AgoraAera.png
+1) AgoraBasRelief.png
+2) Autel.png
+3) Braises.png
+4) Ca_ship_front1.png
+5) Ca_ship_front.png
+6) Ca_ship_top.png
+7) Counter-wood-02.png
+8) ForgeBois2.png
+9) ForgeBois.png
+10) F_tapis_carre.png
+11) FumDallage01.png
+12) FumDallage02.png
+13) FumDallage03.png
+14) FumDallage04.png
+15) FumDallage05.png
+16) FumPanneauDeco.png
+17) Fy-os_panneau.png
+18) FyrCityBasReliefEntree.png
+19) FyrosInsideWall02.png
+20) Fy_uk_store.png
+21) G_caisseBonus.png
+22) G_carrelage.png
+23) Ground_lava_rock.png
+24) G_toit-tower.png
+25) Magasin4b.png
+26) Marble.png
+27) Tr-wood4.png
+28) Tr-wood7.png
+29) Wall_exterior_wood_02.png
+30) warrning_wall.jpg
+31) electro_wall2.jpg
+32) meta_wall3.jpg
+33) electro_wall.jpg
+34) wall2.jpg
+35) strong_door.jpg
+36) metal_wall.jpg
+37) simple_wall.jpg
+38) new_door.jpg
+39) doors.jpg
+40) cude_wall.jpg
+41) iluminator.jpg
+42) meta_wall3.jpg
+43) window1.png
 ###
 
 #Items
@@ -48,4 +78,5 @@ Path: textures/
 19) object broken_tree
 20) object broken_tree_two
 21) enemy hell_king
+22) object box
 ###

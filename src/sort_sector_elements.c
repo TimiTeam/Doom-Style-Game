@@ -13,7 +13,7 @@
 #include "sectors.h"
 
 int				check_sectors(t_sector *sector)
-{
+{/*
 	int			i;
 	t_sector	*sec;
 
@@ -31,7 +31,7 @@ int				check_sectors(t_sector *sector)
 			i++;
 		}
 		sec = sec->next;
-	}
+	}*/
 	return (1);
 }
 
