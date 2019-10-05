@@ -107,16 +107,16 @@ Walls
 35) 27-28 filled 34
 36) 28-29 filled 6
 37) 29-30 empty 36
-38) 30-26 filled 43
+38) 30-26 transparent 43
 39) 31-30 filled 38
-40) 32-31 filled 43
+40) 32-31 transparent 43
 41) 33-32 empty 31
 42) 29-33 filled 39
 43) 33-35 filled 30
 44) 35-34 empty 0
 45) 34-32 empty 34
 46) 36-34 filled 40
-47) 37-36 filled 43
+47) 37-36 transparent 43
 48) 35-37 empty 39
 49) 35-39 filled 32
 50) 39-38 empty 0
@@ -128,7 +128,7 @@ Walls
 56) 43-44 filled 34
 57) 44-38 filled 30
 58) 41-45 filled 30
-59) 45-46 filled 43
+59) 45-46 transparent 43
 60) 46-42 empty 39
 61) 48-42 filled 0
 62) 47-48 empty 39
@@ -157,28 +157,28 @@ Walls
 85) 61-27 filled 0
 
 Sectors
-0) floor(0 9) ceil(20 4) walls '0 1 2 3 4 5 ' items '(11,4 1)(8,13 0)(7,4 16)(12,10 5)(14,13 1)(7,9 16)'
+0) floor(0 9) ceil(20 4) walls '0 1 2 3 4 5 ' items '(11,4 1)(8,13 0)(7,4 16)(12,10 5)(14,13 1)(7,9 6)'
 1) door floor(0 0) ceil(0 0) walls '8 7 6 2 ' items ''
 2) lift floor(0 34) ceil(20 0) walls '9 10 11 7 ' items '(19,7 1)(17,9 0)'
-3) door floor(0 0) ceil(0 0) walls '14 13 12 10 ' items ''
-4) floor(21 2) ceil(41 5) walls '15 16 17 18 19 20 13 ' items '(27,13 0)(23,12 9)(27,6 12)(26,9 5)'
-5) floor(23 15) ceil(37 19) walls '21 22 23 24 25 26 17 ' items '(37,2 5)(32,7 1)'
-6) door floor(0 0) ceil(0 0) walls '29 28 27 25 ' items ''
-7) floor(22 4) ceil(42 6) walls '30 31 32 33 28 ' items '(41,18 3)(37,17 0)(41,12 5)'
-8) floor(22 34) ceil(54 38) walls '34 35 36 37 38 32 ' items '(28,22 3)(35,28 3)(35,21 9)(38,24 16)(26,26 12)(32,25 5)(28,29 1)'
-9) floor(23 37) ceil(40 42) walls '37 42 41 40 39 ' items '(21,17 5)(18,21 12)(23,19 7)'
-10) door floor(0 0) ceil(0 0) walls '41 43 44 45 ' items ''
-11) floor(24 4) ceil(42 5) walls '44 48 47 46 ' items '(8,17 1)(12,20 5)'
-12) door floor(0 0) ceil(0 0) walls '48 49 50 51 ' items ''
-13) floor(21 34) ceil(50 38) walls '52 53 54 55 56 57 50 ' items '(6,27 4)(15,27 4)(10,28 5)(4,24 9)(17,24 8)(15,23 12)'
-14) floor(24 34) ceil(40 32) walls '58 59 60 54 ' items '(21,25 7)(19,24 0)(21,28 5)'
-15) door floor(0 0) ceil(0 0) walls '63 62 61 60 ' items ''
-16) floor(24 4) ceil(48 32) walls '64 65 66 67 68 69 70 62 ' items '(20,37 3)(16,34 5)(16,31 1)(14,37 0)(14,32 16)'
-17) door floor(0 0) ceil(0 0) walls '73 72 71 66 ' items ''
+3) door floor(21 0) ceil(21 0) walls '14 13 12 10 ' items ''
+4) floor(21 2) ceil(41 5) walls '15 16 17 18 19 20 13 ' items '(27,13 0)(23,12 10)(27,6 12)(26,9 6)'
+5) floor(23 15) ceil(37 19) walls '21 22 23 24 25 26 17 ' items '(37,2 15)(32,7 1)'
+6) door floor(23 0) ceil(23 0) walls '29 28 27 25 ' items ''
+7) floor(22 4) ceil(42 6) walls '30 31 32 33 28 ' items '(41,18 3)(37,17 0)(41,12 6)'
+8) floor(22 34) ceil(54 38) walls '34 35 36 37 38 32 ' items '(28,22 3)(35,28 3)(35,21 11)(38,24 16)(26,26 13)(32,25 5)(28,29 1)'
+9) floor(23 37) ceil(40 42) walls '37 42 41 40 39 ' items '(21,17 15)(18,21 13)(23,19 7)'
+10) door floor(23 0) ceil(23 0) walls '41 43 44 45 ' items ''
+11) floor(24 4) ceil(42 5) walls '44 48 47 46 ' items '(8,17 1)(12,20 15)'
+12) door floor(23 0) ceil(23 0) walls '48 49 50 51 ' items ''
+13) floor(21 34) ceil(50 38) walls '52 53 54 55 56 57 50 ' items '(6,27 3)(15,27 4)(10,28 6)(4,24 9)(17,24 8)(15,23 12)'
+14) floor(24 34) ceil(40 32) walls '58 59 60 54 ' items '(21,25 7)(19,24 0)(21,28 15)'
+15) door floor(22 0) ceil(22 0) walls '63 62 61 60 ' items ''
+16) floor(24 4) ceil(48 32) walls '64 65 66 67 68 69 70 62 ' items '(20,37 3)(16,34 6)(16,31 1)(14,37 0)(14,32 22)'
+17) door floor(25 0) ceil(25 0) walls '73 72 71 66 ' items ''
 18) lift floor(23 42) ceil(43 32) walls '74 75 76 72 ' items '(29,33 1)'
-19) door floor(0 0) ceil(0 0) walls '79 78 77 75 ' items ''
-20) floor(42 19) ceil(59 7) walls '80 81 82 78 ' items '(37,34 5)(33,33 0)(36,33 3)'
-21) floor(43 28) ceil(70 29) walls '81 85 34 84 83 ' items '(44,30 5)(43,25 0)(42,27 0)(44,28 0)(42,32 0)(40,30 16)'
+19) door floor(40 0) ceil(40 0) walls '79 78 77 75 ' items ''
+20) floor(42 19) ceil(59 7) walls '80 81 82 78 ' items '(37,34 15)(33,33 0)(36,33 21)'
+21) floor(43 28) ceil(70 29) walls '81 85 34 84 83 ' items '(44,30 15)(43,25 0)(42,27 0)(44,28 0)(42,32 0)(40,30 20)'
 
 Player
 0) 1,1 (sector: -1) start

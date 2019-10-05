@@ -32,7 +32,7 @@ int				change_player(t_sector *new, t_player *player,
 	if (next->floor - player->pos.z + player->height > 3)
 		return (0);
 	if (player->pos.z - player->height < next->floor)
-		step->z += next->floor - player->curr_sector->floor;
+		step->z += next->floor - player->pos.z + player->height;
 	player->curr_sector = new;
 	return (1);
 }

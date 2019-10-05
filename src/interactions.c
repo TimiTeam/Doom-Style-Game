@@ -146,11 +146,11 @@ void				activate_lift(t_player *player)
 				next = get_sector_after_door(next, lift);
 			if ((int)next->floor != (int)lift->floor)
 			{
+				lift->max_up = next->floor;
 				if ((int)next->floor > (int)lift->floor)
 					lift->speed = 0.2f;
 				else
 					lift->speed = -0.2f;
-				lift->max_up = next->floor;
 				lift->state = action_sec;
 				return ;
 			}
