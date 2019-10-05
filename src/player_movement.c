@@ -26,7 +26,7 @@ void			move_player_vertically(t_player *player)
 int				change_player(t_sector *new, t_player *player,
 								t_vector *step, t_sector *next)
 {
-	if (!new || (int)(new->ceil - new->floor) <=
+	if (!new || (int)(new->ceil - player->curr_sector->floor) <=
 					(int)(player->height + player->sit))
 		return (0);
 	if (next->floor - player->pos.z + player->height > 3)
@@ -85,10 +85,10 @@ void			move_player(t_player *player, float sin_angle, float cos_angle)
 			break ;
 		}
 	}
-	printf ("player z %f, step z %f\n", player->pos.z, step.z);
+	printf("player z before: %f step z %f, z after: ", player->pos.z, step.z);
 	step.z += player->pos.z;
 	player->pos = step;
-	printf ("player z %f, step z %f\n", player->pos.z, step.z);
+	printf("%f\n", player->pos.z);
 	if (player->end_sec == player->curr_sector->sector
 	&& len_between_points(player->pos, player->end_pos) < 3)
 		player->win = 1;
