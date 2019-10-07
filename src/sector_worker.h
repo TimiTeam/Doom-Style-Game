@@ -24,6 +24,7 @@ enum					e_wall_type
 {
 	filled_wall,
 	empty_wall,
+	window,
 	transparent
 };
 

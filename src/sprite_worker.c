@@ -80,7 +80,7 @@ void			draw_enemy_sprite(t_item *obj, t_draw_data data,
 		size.x = CLAMP(0, size.x, 1500);
 		size.y = CLAMP(0, size.y, 1500);
 	}
-	screen_pos.x = ob_pos.x - size.x / 2;
+	screen_pos.x = ob_pos.x - (size.x >> 1);
 	screen_pos.y = ob_pos.y - size.y;
 	if (obj->curr_state != die && enemy_hit(player, data, screen_pos, size))
 		obj->players_hit = 1;

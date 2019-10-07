@@ -21,8 +21,8 @@ void			put_skybox_pixel(SDL_Surface *screen, SDL_Surface *skybox,
 	int			imw;
 	int			imh;
 
-	imh = skybox->h / 4;
-	imw = skybox->w / 2;
+	imh = skybox->h >> 2;
+	imw = skybox->w >> 1;
 	ty = 0;
 	tx = ((float)imw / screen->w) * pos.x;
 	ty = ((float)imh / screen->h) * pos.y;
@@ -35,7 +35,7 @@ void			put_skybox_pixel(SDL_Surface *screen, SDL_Surface *skybox,
 void			draw_skybox(SDL_Surface *dst, t_point pos,
 								int end_y, t_player player)
 {
-	player.sky_h = (player.yaw + 5) / 10 * (player.sky->h / 2);
+	player.sky_h = (player.yaw + 5) / 10 * (player.sky->h >> 1);
 	while (pos.y < end_y)
 	{
 		put_skybox_pixel(dst, player.sky, pos,

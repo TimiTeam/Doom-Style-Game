@@ -59,7 +59,7 @@ void				win_animation(t_sdl *sdl, t_player *player,
 	draw_image(sdl->surf, text,
 	(t_point){player->half_win_size.x - 200,
 	player->half_win_size.y - 100}, (t_point){400, 200});
-	if (player->win > 30)
+	if (player->win > 40)
 	{
 		*run = 0;
 		player->curr_map++;
@@ -137,6 +137,43 @@ void 				change_sector_state(t_sector *sectors, t_player *player)
 	}
 }
 
+#define FRAME_VALUES 10
+Uint32 frametimes[FRAME_VALUES];
+Uint32 frametimelast;
+Uint32 framecount;
+float framespersecond;
+void 		fpsinit()
+{
+    ft_memset(frametimes, 0, sizeof(frametimes));
+    framecount = 0;
+    framespersecond = 0;
+    frametimelast = SDL_GetTicks();
+}
+
+void		fpsthink()
+{
+    Uint32	frametimesindex;
+    Uint32	getticks;
+    Uint8	count;
+    Uint8 	i;
+    frametimesindex = framecount % FRAME_VALUES;
+    getticks = SDL_GetTicks();
+    frametimes[frametimesindex] = getticks - frametimelast;
+    frametimelast = getticks;
+    framecount++;
+    if (framecount < FRAME_VALUES)
+        count = framecount;
+    else
+        count = FRAME_VALUES;
+    framespersecond = 0;
+    for (i = 0; i < count; i++) {
+        framespersecond += frametimes[i];
+    }
+    framespersecond /= count;
+    framespersecond = 1000.f / framespersecond;
+}
+
+
 int					game_loop(t_sdl *sdl, t_player *player, t_sector *sectors)
 {
 	int				run;
@@ -144,6 +181,8 @@ int					game_loop(t_sdl *sdl, t_player *player, t_sector *sectors)
 	unsigned char	move[4];
 	SDL_Surface		*dead_text;
 	SDL_Surface 	*win_text;
+	float			max_fps = 0;
+	float			min_fps = 20;
 	ft_memset(move, 0, sizeof(move) * 4);
 	player->cos_angl = cos(player->angle);
 	player->sin_angl = sin(player->angle);
@@ -151,6 +190,7 @@ int					game_loop(t_sdl *sdl, t_player *player, t_sector *sectors)
 	dead_text = txt_surf(sdl->font, "YOU DIED", (SDL_Color){255, 30, 30, 255});
 	win_text = txt_surf(sdl->font, "You Win", (SDL_Color){30, 255, 30, 255});
 	sectors = player->all;
+	fpsinit();
 	if (!sectors)
 		printf("NO sectors!!\n");
 	while (run > 0)
@@ -158,6 +198,12 @@ int					game_loop(t_sdl *sdl, t_player *player, t_sector *sectors)
 		prepare_surf(sdl);
 		run_with_buff(player, sdl, sdl->win_size.x);
 		draw_hud(sdl, player);
+		fpsthink();
+	//	max_fps = MAX(max_fps, framespersecond);
+	//	min_fps = MIN(min_fps, framespersecond);
+	//	printf("fps %f\n", framespersecond);
+		if (framespersecond > 25)
+			SDL_Delay(10);
 		run = hook_event(player, move);
 		move_player_vertically(player);
 		if (player->dead)
@@ -169,5 +215,6 @@ int					game_loop(t_sdl *sdl, t_player *player, t_sector *sectors)
 	}
 	SDL_FreeSurface(win_text);
 	SDL_FreeSurface(dead_text);
+	//printf("\n\tFPS %f  -   %f\n\n", min_fps, max_fps);
 	return (run);
 }

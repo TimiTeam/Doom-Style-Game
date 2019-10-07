@@ -89,7 +89,7 @@ void			fill_sectors_light_source(t_sector *sec,
 		j = 0;
 		while (i < array_size && (source = light[i]))
 		{
-			if (j < MAX_LIGHT_SRC && (source->sector == sectors ||
+			if (j < MAX_LIGHT_SRC && (dot_inside_sector(source->pos, sectors->wall, sectors->n_walls) ||
 				light_catch_sector(sectors->portals, MAX_PORTALS, source->pos,
 					source->max_dist / 2)))
 			{

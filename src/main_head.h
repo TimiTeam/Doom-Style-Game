@@ -61,6 +61,9 @@ typedef struct		s_draw_data
 	int				ceil_height;
 	int				n_floor_height;
 	int				n_ceil_height;
+	float			calc_one;
+	float			floor_calc;
+	float			ceil_calc;
 }					t_draw_data;
 
 typedef struct		s_gun
@@ -213,6 +216,8 @@ typedef struct		s_ceil_inf
 	unsigned		tx;
 	unsigned		txtz;
 	float			brightness;
+	float 			calc_one;
+	float 			calc_two;
 }					t_ceil_inf;
 
 typedef struct		s_world
@@ -327,8 +332,6 @@ int					box_intersection(t_vector p1, t_vector p2,
 											t_vector p3, t_vector p4);
 t_scaler			init_scaler(int n, t_point curr, t_point dst);
 void				make_intersect(t_wall *wall);
-unsigned short		dot_inside_sector(t_vector player_pos,
-									t_wall **walls, unsigned arr_size);
 void				get_gun_to_player(t_player *player,
 						enum e_gun_type gun_type, SDL_Surface *icon);
 void				rest_of_the_action_shit(t_pr *m, Uint8 *menu,

@@ -73,6 +73,8 @@ int					find_dot_radius_intersect(t_vector light_pos, float radius,
 						t_vector start, t_vector end);
 void				swap(int *a, int *b);
 char				*get_path(int fd);
+unsigned short		dot_inside_sector(t_vector dot,
+									t_wall **walls, unsigned arr_size);
 int					check_sectors(t_sector *sector);
 void				mark_all_neighbors(t_sector *sec, t_wall **all);
 

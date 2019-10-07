@@ -48,6 +48,8 @@ static enum e_wall_type	get_wall_type(char *line)
 		return (filled_wall);
 	if (ft_strncmp(line, "transparent", ft_strlen("transparent")) == 0)
 		return (transparent);
+	if (ft_strncmp(line, "window", ft_strlen("window")) == 0)
+		return (window);
 	return (0);
 }
 

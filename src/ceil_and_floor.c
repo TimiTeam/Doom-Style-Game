@@ -53,9 +53,8 @@ void			draw_floor_or_ceil(t_ceil_inf inf)
 		return ;
 	while (inf.y < inf.end_y)
 	{
-		inf.mapz = inf.diff_height * H * inf.player.m_vfov
-		/ ((inf.player.half_win_size.y - inf.y) - H
-		* inf.player.m_vfov * inf.player.yaw);
+		inf.mapz = inf.calc_two
+		/ ((inf.player.half_win_size.y - inf.y) - inf.calc_one);
 		inf.mapx = inf.mapz *
 		(inf.player.half_win_size.x - inf.x) / (inf.player.m_hfov * W);
 		tmp = inf.mapx;

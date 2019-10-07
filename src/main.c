@@ -43,10 +43,6 @@ int					run_game(t_sdl *sdl, t_player *player,
 			if (player->curr_map != holder->curr_map || player->win || player->dead)
 				if (!(ret = load_game(player, holder)))
 					return (error_message("Can't create game"));
-			if (!ret)
-				printf("NO holder->all sectors!!\n");
-			else 
-				printf("Before game loop sectors  exist\n");
 			in_game = game_loop(sdl, player, ret);
 		}
 	}

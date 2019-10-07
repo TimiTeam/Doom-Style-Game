@@ -38,6 +38,10 @@ SANIT_F =
 
 FLAG_F = -F frameworks
 
+O_FLAGS = -fomit-frame-pointer -foptimize-sibling-calls -fzero-initialized-in-bss
+
+#O_FLAGS = 
+
 LFT_INCL = -I libft/
 
 LIBFT_A = libft/libft.a
@@ -63,9 +67,8 @@ $(DIR_OBJ):
 $(NAME): $(LIBFT_A) $(OBJS)
 	$(CC) -g $(SANIT_F) $(OBJS) $(FLAG_F) $(SDL_RUN_FLAGS) -L libft -lft -o $(NAME)
 
-
 $(DIR_OBJ)/%.o: $(DIR_SRC)/%.c | $(DIR_OBJ)
-	$(CC) -g $(SANIT_F) $(FLAG_W) -pthread  $(FLAG_F) $(SDL_INCL) $(LFT_INCL) -c $< -o $@ 
+	$(CC) -g $(SANIT_F) $(FLAG_W) -pthread  $(FLAG_F) $(SDL_INCL) $(LFT_INCL) -c $< -o $@ $(O_FLAGS)
 
 clean:
 	@make -C libft/ clean

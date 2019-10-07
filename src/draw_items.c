@@ -64,12 +64,15 @@ void		draw_sector_items(t_item **items, t_player *player,
 			it = get_item_to_player(items, it, player);
 		if (it)
 		{
-			draw_enemy_sprite(it, data, *player, screen);
-			if (it->players_hit && closer > it->dist_to_player)
+			if (it->dist_to_player >= 1.f)
 			{
-				it->players_hit = 0;
-				closer = it->dist_to_player;
-				get_damege = it;
+				draw_enemy_sprite(it, data, *player, screen);
+				if (it->players_hit && closer > it->dist_to_player)
+				{
+					it->players_hit = 0;
+					closer = it->dist_to_player;
+					get_damege = it;
+				}
 			}
 			it = it->next;
 		}
