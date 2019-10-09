@@ -17,7 +17,7 @@
 # include <pthread.h>
 # include "sdl_head.h"
 # include "sectors.h"
-# define W 1360
+# define W 1024
 # define H 720
 # define EYEHEIGHT  5
 # define THREADS 4
