@@ -1,7 +1,7 @@
 #Levels
 Path: Maps/
-0) map_one
-1) map_three
+0) starship
+1) map_one
 2) super
 3) jumplevel
 4) fortress.txt
@@ -91,6 +91,7 @@ Path: textures/
 24) object radio
 25) object skull
 26) object pool_blood
-27) light candle
+27) light ceil_light
 28) light strange_light
+29) light candle
 ###

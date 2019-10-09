@@ -1,5 +1,5 @@
 Properties{
-size 5x40
+size 40x8
 }
 waiting{
 textures/pool_blood/pool_blood1.png

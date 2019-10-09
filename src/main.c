@@ -100,7 +100,7 @@ int					main(void)
 	{
 		sdl->font = m.font;
 		player = new_t_player(3, 3, sdl->win_size);
-		player->sky = load_jpg_png("textures/skybox.png");
+		player->sky = load_jpg_png("textures/dark_matter.jpg");
 		player->all_guns = (t_gun**)malloc(sizeof(t_gun*) * 3);
 		load_guns(player->all_guns);
 		run_game(sdl, player, &m, &holder);

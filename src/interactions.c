@@ -117,13 +117,11 @@ t_sector 			*get_near_sector(t_player *player)
 	t_sector		*ret;
 
 	ret = NULL;
-	if ((ret = get_new_player_sector((t_vector){player->pos.x + player->cos_angl * 3,
+	if ((ret = get_new_player_sector((t_vector){player->pos.x + player->cos_angl * 2,
 			player->pos.y + player->sin_angl * 2, player->pos.z}, player->curr_sector))
 				&& ret->state == calm)
 					return (ret);
-	else
-		return (player->curr_sector);
-	return (NULL);
+	return (player->curr_sector);
 }
 
 void				activate_lift(t_player *player)
@@ -139,9 +137,9 @@ void				activate_lift(t_player *player)
 		return ;
 	while (sect && i < MAX_PORTALS && (wall = sect->portals[i]))
 	{
-		if (wall->sectors[0] != sect)
+		if (wall->sectors[0] != sect && (int)wall->sectors[0]->floor != (int)sect->floor)
 			next = wall->sectors[0];
-		if (wall->sectors[1] != sect)
+		if (wall->sectors[1] != sect && (int)wall->sectors[1]->floor != (int)sect->floor)
 			next = wall->sectors[1];
 		if (next)
 		{
