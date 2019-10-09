@@ -42,8 +42,8 @@ typedef struct		s_scaler
 
 typedef struct		s_draw_data
 {
-	int				ytop[W];
-	int				ybottom[W];
+	short			ytop[W];
+	short			ybottom[W];
 	float			start;
 	float			end;
 	float			player_current_height;
@@ -57,13 +57,13 @@ typedef struct		s_draw_data
 	float			n_floor_y_e;
 	float			diff_ceil;
 	float			diff_floor;
+	float			calc_one;
+	float			floor_calc;
+	float			ceil_calc;
 	int				floor_height;
 	int				ceil_height;
 	int				n_floor_height;
 	int				n_ceil_height;
-	float			calc_one;
-	float			floor_calc;
-	float			ceil_calc;
 }					t_draw_data;
 
 typedef struct		s_gun
@@ -72,8 +72,8 @@ typedef struct		s_gun
 	SDL_Surface		*frame[10];
 	SDL_Surface		*icon;
 	enum e_gun_type	type;
-	int				max_frames;
-	int				ammo;
+	char			max_frames;
+	unsigned short	ammo;
 	float			damage;
 	float			rate_of_fire;
 }					t_gun;
@@ -88,7 +88,7 @@ typedef struct		s_player
 	t_gun			*gun[3];
 	t_vector		pos;
 	t_vector		end_pos;
-	unsigned		end_sector;
+	unsigned short	end_sector;
 	t_point			half_win_size;
 	t_gun			*current_gun;
 	float			speed;
@@ -101,19 +101,21 @@ typedef struct		s_player
 	float			m_vfov;
 	float			m_hfov;
 	float			velocity;
-	int				height;
-	int				health;
-	int				end_sec;
-	unsigned char	fall;
-	char			sit;
-	unsigned char	shooting;
-	char			dead;
-	char			curr_map;
 	float			sky_w;
 	float			sky_h;
-	unsigned char	falling;
-	int				win;
-	int				jetpack;
+	char			lift_near;
+	char			door_near;
+	short			height;
+	short			health;
+	short			end_sec;
+	char			fall;
+	char			sit;
+	char			shooting;
+	char			dead;
+	char			curr_map;
+	char			falling;
+	char			win;
+	char			jetpack;
 }					t_player;
 
 typedef struct		s_super_data
@@ -303,6 +305,7 @@ SDL_Rect			reset_size(SDL_Rect rect);
 void				free_menu(t_pr *menu);
 void				apply_filter(SDL_Surface *surface, float intensity);
 void				check_door(t_player *player, t_sector *sectors);
+t_sector 			*get_near_sector(t_player *player);
 t_player			*new_t_player(int pos_x, int pos_y, t_point wid_size);
 void				free_player(t_player *player);
 void				move_player(t_player *player, float sin_angle,

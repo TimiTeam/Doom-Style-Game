@@ -1,0 +1,14 @@
+Properties{
+size 15x40
+}
+waiting{
+textures/skull/skull.png
+}
+walk{
+}
+action{
+}
+taking_damage{
+}
+die{
+}

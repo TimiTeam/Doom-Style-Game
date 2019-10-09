@@ -47,7 +47,7 @@ int					copy_t_item_value_by_id(t_item *dst, t_item *all,
 			dst->damage = all->damage;
 			dst->gun_type = all->gun_type;
 			dst->size = all->size;
-			dst->speed = 0.4;
+			dst->speed = 0.3;
 			break ;
 		}
 		all = all->next;

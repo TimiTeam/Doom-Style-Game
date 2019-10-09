@@ -20,16 +20,7 @@ void			clear_player(t_player *player)
 		return ;
 	delete_items_list(player->inventar);
 	i = 0;
-	while (i < 3)
-	{
-		if (!player->gun[i])
-		{
-			i++;
-			continue;
-		}
-		ft_memdel((void**)&player->gun[i]);
-		i++;
-	}
+	ft_memset(player->gun, 0, sizeof(player->gun));
 	player->health = 100;
 	player->current_gun = NULL;
 	player->dead = 0;

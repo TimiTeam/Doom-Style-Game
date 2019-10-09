@@ -1,6 +1,6 @@
 Properties{
 shotgun
-ammo 24
+ammo 16
 size 12x8
 }
 waiting{

@@ -18,7 +18,7 @@ void			move_player_vertically(t_player *player)
 		player->velocity = 0;
 	player->pos.z += player->velocity;
 	if (player->pos.z - player->height > player->curr_sector->floor)
-		player->velocity -= 0.08;
+		player->velocity -= 0.1;
 	else
 		player->velocity = 0;
 }

@@ -1,0 +1,16 @@
+Properties{
+size 15x25
+}
+waiting{
+textures/candle/candlde1.png
+textures/candle/candlde2.png
+textures/candle/candlde3.png
+}
+walk{
+}
+action{
+}
+taking_damage{
+}
+die{
+}

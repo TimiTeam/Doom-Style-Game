@@ -3,10 +3,11 @@ Path: Maps/
 0) map_one
 1) map_three
 2) super
-3) fortress.txt
+3) jumplevel
+4) fortress.txt
 ###
 
-#Textures 44
+#Textures 51
 Path: textures/
 0) AgoraAera.png
 1) AgoraBasRelief.png
@@ -52,6 +53,13 @@ Path: textures/
 41) iluminator.jpg
 42) meta_wall3.jpg
 43) window1.png
+44) computer.png
+45) dig_galaxy.png
+46) dying_star.png
+47) electro_panel.png
+48) evil_planet.png
+49) ship_door.png
+50) ship_door2.png
 ###
 
 #Items
@@ -79,4 +87,10 @@ Path: textures/
 20) object broken_tree_two
 21) enemy hell_king
 22) object box
+23) object bones
+24) object radio
+25) object skull
+26) object pool_blood
+27) light candle
+28) light strange_light
 ###

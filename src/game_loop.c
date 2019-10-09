@@ -43,8 +43,8 @@ void				death_animation(t_sdl *sdl, t_player *player,
 	draw_image(sdl->surf, text,
 	(t_point){player->half_win_size.x - 200,
 	player->half_win_size.y - 100}, (t_point){400, 200});
-	player->yaw -= 3.0f / 50.0f;
-	player->pos.z -= 6.0f / 50;
+	player->yaw -= 0.1/*3.0f / 50.0f*/;
+	player->pos.z -= 0.2/*6.0f / 50*/;
 	if (player->dead > 49)
 	{
 		player->dead = 1;
@@ -131,6 +131,7 @@ void 				change_sector_state(t_sector *sectors, t_player *player)
 				sec->state = calm;
 				sec->speed = 0;
 				sec->max_up = 0;
+				sec->door_open = 1;
 			}
 		}
 		sec = sec->next;
@@ -138,11 +139,11 @@ void 				change_sector_state(t_sector *sectors, t_player *player)
 }
 
 #define FRAME_VALUES 10
-Uint32 frametimes[FRAME_VALUES];
-Uint32 frametimelast;
-Uint32 framecount;
-float framespersecond;
-void 		fpsinit()
+Uint32				frametimes[FRAME_VALUES];
+Uint32				frametimelast;
+Uint32				framecount;
+float 				framespersecond;
+void 				fpsinit()
 {
     ft_memset(frametimes, 0, sizeof(frametimes));
     framecount = 0;
@@ -150,12 +151,13 @@ void 		fpsinit()
     frametimelast = SDL_GetTicks();
 }
 
-void		fpsthink()
+void				fpsthink()
 {
-    Uint32	frametimesindex;
-    Uint32	getticks;
-    Uint8	count;
-    Uint8 	i;
+    Uint32			frametimesindex;
+    Uint32			getticks;
+    Uint8			count;
+    Uint8 			i;
+
     frametimesindex = framecount % FRAME_VALUES;
     getticks = SDL_GetTicks();
     frametimes[frametimesindex] = getticks - frametimelast;
@@ -173,17 +175,51 @@ void		fpsthink()
     framespersecond = 1000.f / framespersecond;
 }
 
+static void			print_text(t_player player, t_sdl *sdl)
+{
+	SDL_Surface 	*text_surf;
+
+	text_surf = NULL;
+	if (player.lift_near)
+		text_surf = txt_surf(sdl->font, "F to run lift", (SDL_Color){255, 255, 255, 255});
+	else if (player.door_near)
+		text_surf = txt_surf(sdl->font, "E to open Door", (SDL_Color){255, 255, 255, 255});
+	else if (player.current_gun && player.current_gun->ammo <= 0)
+		text_surf = txt_surf(sdl->font, "No ammo", (SDL_Color){255, 50, 50, 255});
+	if (text_surf)
+	{
+		draw_image(sdl->surf, text_surf,(t_point){player.half_win_size.x + 100, player.half_win_size.y + 100},
+		(t_point){150, 60});
+		SDL_FreeSurface(text_surf);
+	}
+}
+
+void 				change_player_state(t_player *player)
+{
+	t_sector		*near_sect;
+
+	near_sect = NULL;
+	if ((near_sect = get_near_sector(player)) &&
+		near_sect->type == lift && near_sect->state == calm)
+		player->lift_near = 1;
+	else
+		player->lift_near = 0;
+	if (near_sect && near_sect->type == door &&
+		near_sect->state == calm && !near_sect->door_open)
+		player->door_near = 1;
+	else
+		player->door_near = 0;
+}
 
 int					game_loop(t_sdl *sdl, t_player *player, t_sector *sectors)
 {
 	int				run;
-	char			str[100];
 	unsigned char	move[4];
 	SDL_Surface		*dead_text;
 	SDL_Surface 	*win_text;
 	float			max_fps = 0;
 	float			min_fps = 20;
-	ft_memset(move, 0, sizeof(move) * 4);
+	ft_memset(move, 0, sizeof(move));
 	player->cos_angl = cos(player->angle);
 	player->sin_angl = sin(player->angle);
 	run = 1;
@@ -199,9 +235,9 @@ int					game_loop(t_sdl *sdl, t_player *player, t_sector *sectors)
 		run_with_buff(player, sdl, sdl->win_size.x);
 		draw_hud(sdl, player);
 		fpsthink();
-	//	max_fps = MAX(max_fps, framespersecond);
-	//	min_fps = MIN(min_fps, framespersecond);
-	//	printf("fps %f\n", framespersecond);
+		max_fps = MAX(max_fps, framespersecond);
+		min_fps = MIN(min_fps, framespersecond);
+		printf("fps %f\n", framespersecond);
 		if (framespersecond > 25)
 			SDL_Delay(10);
 		run = hook_event(player, move);
@@ -210,11 +246,13 @@ int					game_loop(t_sdl *sdl, t_player *player, t_sector *sectors)
 			death_animation(sdl, player, dead_text, &run);
 		if(player->win && all_death(sectors))
 			win_animation(sdl, player, win_text, &run);
+		print_text(*player, sdl);
 		render_tex(sdl);
 		change_sector_state(sectors, player);
+		change_player_state(player);
 	}
 	SDL_FreeSurface(win_text);
 	SDL_FreeSurface(dead_text);
-	//printf("\n\tFPS %f  -   %f\n\n", min_fps, max_fps);
+	printf("\n\tFPS %f  -   %f\n\n", min_fps, max_fps);
 	return (run);
 }

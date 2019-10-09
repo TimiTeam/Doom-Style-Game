@@ -1,0 +1,14 @@
+Properties{
+size 5x40
+}
+waiting{
+textures/pool_blood/pool_blood1.png
+}
+walk{
+}
+action{
+}
+taking_damage{
+}
+die{
+}

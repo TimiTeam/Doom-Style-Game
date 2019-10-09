@@ -1,6 +1,6 @@
 Properties{
 plasmagun
-ammo 20
+ammo 10
 size 20x15
 }
 waiting{

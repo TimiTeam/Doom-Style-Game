@@ -40,7 +40,7 @@ FLAG_F = -F frameworks
 
 O_FLAGS = -fomit-frame-pointer -foptimize-sibling-calls -fzero-initialized-in-bss
 
-#O_FLAGS = 
+O_FLAGS = -O1
 
 LFT_INCL = -I libft/
 

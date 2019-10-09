@@ -31,9 +31,9 @@ int				guess_event(SDL_Keycode code,
 {
 	movement_events(code, player, move, type);
 	if (code == SDLK_LSHIFT && type == SDL_KEYDOWN && !player->sit)
-		player->speed = 1.2f;
+		player->speed *= 2;
 	else if (code == SDLK_LSHIFT && type == SDL_KEYUP)
-		player->speed = 0.6;
+		player->speed = 0.5;
 	else if (code == SDLK_SPACE && type == SDL_KEYDOWN
 			&& (player->pos.z - player->height <= player->curr_sector->floor
 			|| player->jetpack))
@@ -46,8 +46,7 @@ int				guess_event(SDL_Keycode code,
 		player->current_gun = player->gun[plasmagun];
 	else if (type == SDL_KEYDOWN && code == SDLK_e)
 		check_door(player, player->curr_sector);
-	else if (type == SDL_KEYDOWN && code == SDLK_f && 
-		player->curr_sector->type == lift && player->curr_sector->state == calm)
+	else if (type == SDL_KEYDOWN && code == SDLK_f)
 			activate_lift(player);		
 	if (type == SDL_KEYDOWN && code == SDLK_LCTRL)
 		player->sit = -3;
@@ -77,7 +76,7 @@ void			update_player(t_player *player, unsigned char move[4])
 	player->sin_angl = sin(player->angle);
 	player->yaw = CLAMP(player->yaw - y * 0.05f, -5, 5);
 	if (player->current_gun && player->current_gun->state
-	== 0.44f && player->current_gun->type == plasmagun)
+	== 0.5f && player->current_gun->type == plasmagun)
 		add_projectile(&player->curr_sector->projectiles,
 										create_projectile(*player));
 }

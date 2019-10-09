@@ -16,13 +16,13 @@ void			check_enemy_state(t_item *enemy, t_vector player_pos)
 {
 	if (enemy->health > 0)
 	{
-		enemy->speed = 0.22;
+		enemy->speed = 0.2;
 		if (enemy->is_dying)
 			enemy->is_dying--;
 		else if (enemy->dist_to_player < 40 && enemy->dist_to_player > 5)
 		{
 			enemy->curr_state = walk;
-			enemy->speed = 0.44;
+			enemy->speed = 0.3;
 			move_enemy_to_player(enemy, player_pos);
 		}
 		else if (enemy->dist_to_player <= 5 || enemy->curr_state == taking_damage)

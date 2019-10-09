@@ -16,30 +16,17 @@ void				get_gun_to_player(t_player *player,
 						enum e_gun_type gun_type, SDL_Surface *icon)
 {
 	t_gun			*src;
-	t_gun			*dst;
-	int				i;
 
-	if (gun_type > 3)
-		return ;
 	src = player->all_guns[gun_type];
-	if (player->gun[gun_type] == NULL)
+	if (!player->gun[gun_type])
 	{
-		dst = (t_gun*)malloc(sizeof(t_gun));
-		*dst = (t_gun){0};
-		i = 0;
-		while (i < 10)
-		{
-			dst->frame[i] = src->frame[i];
-			i++;
-		}
-		dst->damage = src->damage;
-		dst->icon = src->icon;
-		dst->type = src->type;
-		player->current_gun = dst;
-		player->gun[gun_type] = dst;
-		player->gun[gun_type]->icon = icon;
+		player->gun[gun_type] = src;
+		player->current_gun = player->gun[gun_type];
+		player->current_gun->icon = icon;
+		player->gun[gun_type]->ammo = 15;
 	}
-	player->gun[gun_type]->ammo += src->ammo;
+	else
+		player->gun[gun_type]->ammo += 10;
 }
 
 int					has_key(t_item *items)
@@ -124,34 +111,50 @@ t_sector			*get_sector_after_door(t_sector *door, t_sector *prev)
 	return (NULL);
 }
 
+
+t_sector 			*get_near_sector(t_player *player)
+{
+	t_sector		*ret;
+
+	ret = NULL;
+	if ((ret = get_new_player_sector((t_vector){player->pos.x + player->cos_angl * 3,
+			player->pos.y + player->sin_angl * 2, player->pos.z}, player->curr_sector))
+				&& ret->state == calm)
+					return (ret);
+	else
+		return (player->curr_sector);
+	return (NULL);
+}
+
 void				activate_lift(t_player *player)
 {
 	t_wall			*wall;
-	t_sector		*lift;
+	t_sector		*sect;
 	t_sector		*next;
 	unsigned		i;
 
 	i = 0;
 	next = NULL;
-	lift = player->curr_sector;
-	while (lift && i < MAX_PORTALS && (wall = lift->portals[i]))
+	if(!(sect = get_near_sector(player)) || sect->type != lift || sect->state != calm)
+		return ;
+	while (sect && i < MAX_PORTALS && (wall = sect->portals[i]))
 	{
-		if (wall->sectors[0] != lift)
+		if (wall->sectors[0] != sect)
 			next = wall->sectors[0];
-		if (wall->sectors[1] != lift)
+		if (wall->sectors[1] != sect)
 			next = wall->sectors[1];
 		if (next)
 		{
 			if (next->type == door)
-				next = get_sector_after_door(next, lift);
-			if ((int)next->floor != (int)lift->floor)
+				next = get_sector_after_door(next, sect);
+			if ((int)next->floor != (int)sect->floor)
 			{
-				lift->max_up = next->floor;
-				if ((int)next->floor > (int)lift->floor)
-					lift->speed = 0.2f;
+				sect->max_up = next->floor;
+				if ((int)next->floor > (int)sect->floor)
+					sect->speed = 0.2f;
 				else
-					lift->speed = -0.2f;
-				lift->state = action_sec;
+					sect->speed = -0.2f;
+				sect->state = action_sec;
 				return ;
 			}
 		}
@@ -177,7 +180,7 @@ void				check_door(t_player *player, t_sector *sectors)
 		{
 			sec = player->curr_sector == walls[i]->sectors[0] ?
 			walls[i]->sectors[1] : walls[i]->sectors[0];
-			if (sec->type == door && sec->state != action_sec)
+			if (sec->type == door && sec->state == calm)
 			{
 				use_key(player);
 				sec->state = action_sec;

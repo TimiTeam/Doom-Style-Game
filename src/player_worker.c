@@ -20,16 +20,6 @@ void			free_player(t_player *player)
 		return ;
 	delete_items_list(player->inventar);
 	i = 0;
-	while (i < 3)
-	{
-		if (!player->gun[i])
-		{
-			i++;
-			continue;
-		}
-		ft_memdel((void**)&player->gun[i]);
-		i++;
-	}
 	if (player->sky)
 		SDL_FreeSurface(player->sky);
 	ft_memdel((void**)&player);
@@ -174,7 +164,7 @@ t_player		*new_t_player(int pos_x, int pos_y, t_point win_size)
 	player->hfov = win_size.x * player->m_hfov;
 	player->vfov = win_size.y * player->m_vfov;
 	player->fall = 0;
-	player->speed = 0.6f;
+	player->speed = 0.5f;
 	player->inventar = NULL;
 	player->height = EYEHEIGHT;
 	player->health = 100;
