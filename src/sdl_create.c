@@ -91,7 +91,8 @@ int				init_sound()
 	audio_channels = 2;
 	audio_buffers = 4096;
 	if (Mix_OpenAudio(audio_rate, audio_format, audio_channels, audio_buffers) != 0)
-		return (error_message(Mix_GetError()));
+		error_message(Mix_GetError());
+		//return (error_message(Mix_GetError()));
 	if (!mus)
 		printf("Mus is null");
 	return (1);

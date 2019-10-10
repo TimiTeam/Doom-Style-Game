@@ -107,5 +107,5 @@ int					main(void)
 	}
 	free_all(&player, &sdl, &holder, &m);
 	free_data_holder(&holder);
-	system("leaks -q doom-nukem");
+//	system("leaks -q doom-nukem");
 }
