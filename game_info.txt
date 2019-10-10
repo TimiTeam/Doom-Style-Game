@@ -3,11 +3,11 @@ Path: Maps/
 0) starship
 1) map_one
 2) super
-3) jumplevel
+3) transparent
 4) fortress.txt
 ###
 
-#Textures 51
+#Textures 57
 Path: textures/
 0) AgoraAera.png
 1) AgoraBasRelief.png
@@ -60,6 +60,12 @@ Path: textures/
 48) evil_planet.png
 49) ship_door.png
 50) ship_door2.png
+51) archplacehold2.jpg
+52) WTEX104.png
+53) WTEX169.png
+54) DARKPRISON_017.png
+55) DARKPRISON_005.png
+56) gate2_D.png
 ###
 
 #Items

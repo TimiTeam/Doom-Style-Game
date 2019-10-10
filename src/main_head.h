@@ -390,6 +390,7 @@ void				draw_sector_items(t_item **items,
 					t_player *player, t_draw_data data, SDL_Surface *screen);
 int					game_loop(t_sdl *sdl, t_player *player, t_sector *sectors);
 void				*thread_draw_sector(void *param);
+void 				draw_simple_wall(t_super_data super);
 void				draw_sectors(t_sector *sec,
 						t_player *player, t_sdl *sdl, t_draw_data data);
 void				free_data_holder(t_read_holder *holder);

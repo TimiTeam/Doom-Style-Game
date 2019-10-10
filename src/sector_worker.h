@@ -33,7 +33,8 @@ enum					e_sect_type
 	simple,
 	door,
 	lift,
-	uncovered
+	uncovered,
+	murderous
 };
 
 enum 					e_sect_state
@@ -55,6 +56,7 @@ enum					e_item_type
 	light,
 	coin,
 	super_bonus,
+	jetpack,
 	health,
 	gun,
 	ammo,

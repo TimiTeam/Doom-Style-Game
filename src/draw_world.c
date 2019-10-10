@@ -19,7 +19,7 @@ void			again(t_again a)
 
 	wall = a.wall;
 	player = a.player;
-	if (wall.type == empty_wall && wall.sectors[1] && wall.sectors[0])
+	if ((wall.type == empty_wall || wall.type == transparent) && wall.sectors[1] && wall.sectors[0])
 	{
 		if (wall.sectors[0]->sector != player.curr_sector->sector
 				&& wall.sectors[0]->sector != a.sec->sector)
@@ -56,6 +56,12 @@ void			threads(t_proj t)
 	while (++i < THREADS)
 		pthread_join(thread[i], NULL);
 	again((t_again){t.sec, t.wall, t.player, t.sdl, t.data});
+	if (super->wall.type == transparent)
+	{
+		super[0].start_x = t.data.start;
+		super[0].end_x = t.data.end;
+		draw_simple_wall(super[0]);
+	}
 }
 
 void			draw_projected(t_proj p)
@@ -76,7 +82,7 @@ void			draw_projected(t_proj p)
 		return ;
 	floor_and_ceil_calculation(&(p.data), player,
 							line, (t_vector){scl1.y, scl2.y, 0});
-	if (p.wall.type == empty_wall && p.wall.sectors[1] && p.wall.sectors[0])
+	if ((p.wall.type == empty_wall || p.wall.type == transparent) && p.wall.sectors[1] && p.wall.sectors[0])
 		neighbour_calculation(&(p.data), (t_n){player,
 					p.wall, line, scl1.y, scl2.y});
 	threads((t_proj){p.sec, p.wall, player, p.sdl, p.data,

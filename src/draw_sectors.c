@@ -72,6 +72,22 @@ void				*thread_draw_sector(void *param)
 	return (NULL);
 }
 
+void 				draw_simple_wall(t_super_data super)
+{
+	t_wall			cp;
+	t_screen_inf	inf;
+
+	cp = super.drawing_line;
+	inf = fill_inf(&super, cp);
+	while (inf.x < inf.end)
+	{
+		calculate_frame(&inf, cp, &super);
+		find_tex_pos(&inf, &super);
+		draw_line(inf, &super);
+		inf.x++;
+	}
+}
+
 void				draw_sectors(t_sector *sec, t_player *player,
 									t_sdl *sdl, t_draw_data data)
 {
