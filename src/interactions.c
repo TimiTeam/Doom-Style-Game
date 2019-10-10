@@ -160,7 +160,7 @@ void				activate_lift(t_player *player)
 	}
 }
 
-void				check_door(t_player *player, t_sector *sectors)
+void				check_door(t_player *player)
 {
 	int				i;
 	t_wall			**walls;

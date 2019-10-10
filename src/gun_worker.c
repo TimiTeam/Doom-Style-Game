@@ -37,7 +37,8 @@ void					delete_guns(t_gun **all)
 void					load_pistol(t_gun **gun)
 {
 	gun[pistol] = (t_gun*)malloc(sizeof(t_gun));
-	*gun[pistol] = (t_gun){0};
+	ft_memset(gun[pistol], 0, sizeof(t_gun));
+//	*gun[pistol] = (t_gun){0};
 	gun[pistol]->ammo = 35;
 	gun[pistol]->damage = 10;
 	gun[pistol]->max_frames = 4;
@@ -51,7 +52,8 @@ void					load_pistol(t_gun **gun)
 void					load_shotgun(t_gun **gun)
 {
 	gun[shotgun] = (t_gun*)malloc(sizeof(t_gun));
-	*gun[shotgun] = (t_gun){0};
+	ft_memset(gun[shotgun], 0, sizeof(t_gun));
+//	*gun[shotgun] = (t_gun){0};
 	gun[shotgun]->ammo = 12;
 	gun[shotgun]->damage = 20;
 	gun[shotgun]->max_frames = 6;
@@ -67,7 +69,8 @@ void					load_shotgun(t_gun **gun)
 void					load_plasmagun(t_gun **gun)
 {
 	gun[plasmagun] = (t_gun*)malloc(sizeof(t_gun));
-	*gun[plasmagun] = (t_gun){0};
+	ft_memset(gun[plasmagun], 0, sizeof(t_gun));
+//	*gun[plasmagun] = (t_gun){0};
 	gun[plasmagun]->ammo = 20;
 	gun[plasmagun]->type = plasmagun;
 	gun[plasmagun]->damage = 35;

@@ -30,17 +30,17 @@ SDL_INCL =	-I $(CURDIR)/frameworks/SDL2.framework/Headers/ \
 			-I $(CURDIR)/frameworks/SDL2_image.framework/Headers/
 
  
-FLAG_W = 
+FLAG_W = -Wall -Wextra -Werror
+
+#FLAG_W = 
 
 SANIT_F = -fsanitize=address 
 
-SANIT_F = 
+#SANIT_F = 
 
 FLAG_F = -F frameworks
 
-LINUX_F = -pthread -lm
-
-O_FLAGS = -fomit-frame-pointer -foptimize-sibling-calls -fzero-initialized-in-bss
+LINUX_F = 
 
 O_FLAGS = -O1
 
@@ -53,6 +53,8 @@ LIBFT_A = libft/libft.a
 SDL_RUN_FLAGS = -rpath frameworks -framework SDL2 -framework SDL2_mixer -framework SDL2_image -framework SDL2_ttf
 
 ifeq ($(UNAME), Linux)
+
+LINUX_F = -pthread -lm
 
 SDL_RUN_FLAGS = -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf
 

@@ -16,8 +16,6 @@ void				run_with_buff(t_player *player,
 					t_sdl *sdl, unsigned int win_x)
 {
 	unsigned		x;
-	int				ytop[win_x];
-	int				ybottom[win_x];
 	t_draw_data		draw_data;
 
 	x = 0;

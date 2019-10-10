@@ -26,7 +26,7 @@ SDL_Surface			**load_img_array_from_file(int fd, unsigned size)
 	SDL_Surface		**array;
 	char			*file_name;
 	char			*path;
-	int				i;
+	unsigned			i;
 
 	if (!(path = get_path(fd)) ||
 			!(array = (SDL_Surface**)malloc(sizeof(SDL_Surface**) * size)))

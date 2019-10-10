@@ -60,11 +60,15 @@ int				get_count_struct_arrays(int fd,
 	ret = 1;
 	get_next_line(fd, &vec);
 	get_next_line(fd, &wall);
-	*vect_count = get_num_from_str(vec);
-	*wall_count = get_num_from_str(wall);
-	if (*vect_count <= 0)
+	*vect_count = 0;
+	*wall_count = 0;
+	if (ft_strncmp(vec, "Count Vectors:", ft_strlen("Count Vectors:")) == 0)
+		*vect_count = get_num_from_str(vec);
+	if (ft_strncmp(wall, "Count Walls:", ft_strlen("Count Walls:")) == 0)
+		*wall_count = get_num_from_str(wall);
+	if (*vect_count <= 0 || *vect_count > 5000)
 		ret = print_error_message("Error: invalid vector count", vec);
-	if (*wall_count <= 0)
+	if (*wall_count <= 0 || *wall_count > 5000)
 		ret = print_error_message("Error: invalid wall count", wall);
 	ft_strdel(&vec);
 	ft_strdel(&wall);

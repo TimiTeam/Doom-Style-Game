@@ -57,6 +57,7 @@ void			text_line(t_text_inf inf)
 	t_light		*light;
 	int			y;
 
+	light = NULL;
 	if (!inf.surface || !inf.image || inf.image->w == 0 || inf.image->h == 0)
 		return ;
 	inf.y1 = CLAMP(inf.y1, 0, H - 1);

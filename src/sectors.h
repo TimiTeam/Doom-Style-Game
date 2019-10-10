@@ -36,8 +36,7 @@ typedef struct		s_read_holder
 
 int					read_game_config_file(t_read_holder *holder,
 						char *info_file_path);
-t_sector			*read_map(char *pth, t_read_holder *holder,
-						t_vector *player_pos);
+t_sector			*read_map(char *pth, t_read_holder *holder);
 SDL_Surface			**load_img_array_from_file(int fd, unsigned size);
 char				*skip_line_with_word(char *line, char *word);
 enum e_gun_type		get_gun_type(char *type);

@@ -18,7 +18,7 @@ t_screen_inf		fill_inf(t_super_data *super, t_wall cp)
 
 	inf.max_dist = 15;
 	inf.vec = (t_vector){super->wall.start.x - super->wall.end.x,
-		super->wall.start.y - super->wall.end.y};
+		super->wall.start.y - super->wall.end.y, 0};
 	inf.dist = sqrtf(inf.vec.x * inf.vec.x + inf.vec.y * inf.vec.y);
 	inf.x = super->start_x;
 	inf.end = super->end_x;
@@ -70,7 +70,7 @@ void				render_neighbours(t_screen_inf inf,
 		(t_point){0, super->scale_h * 10}), inf.txtx,
 		super->sect, super->main_screen,
 		super->wall.texture, inf.tex_pos,
-		super->scale_l, super->scale_h, super->sect->sector_light});
+		super->scale_l, super->scale_h, super->sect->sector_light, 0});
 	}
 	if (inf.yb - 1 != inf.nyb && inf.n_cyb != inf.cyb)
 		text_line((t_text_inf){inf.x, inf.n_cyb + 1, inf.cyb,
@@ -78,7 +78,7 @@ void				render_neighbours(t_screen_inf inf,
 		(t_point){0, super->scale_h * 10}), inf.txtx,
 		super->sect, super->main_screen, super->wall.texture,
 		inf.tex_pos, super->scale_l, super->scale_h,
-		super->sect->sector_light});
+		super->sect->sector_light, 0});
 	super->data->ytop[inf.x] = inf.n_cya;
 	super->data->ybottom[inf.x] = inf.n_cyb;
 }
@@ -88,5 +88,5 @@ void				find_tex_pos(t_screen_inf *inf, t_super_data *super)
 	inf->mapped = inf->txtx / (inf->scale_width_texture) * inf->dist;
 	inf->dx = (inf->dist - inf->mapped) / inf->dist;
 	inf->tex_pos = (t_vector){inf->vec.x * inf->dx
-	+ super->wall.end.x, inf->vec.y * inf->dx + super->wall.end.y};
+	+ super->wall.end.x, inf->vec.y * inf->dx + super->wall.end.y, 0};
 }

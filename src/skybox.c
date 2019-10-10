@@ -39,7 +39,7 @@ void			draw_skybox(SDL_Surface *dst, t_point pos,
 	while (pos.y < end_y)
 	{
 		put_skybox_pixel(dst, player.sky, pos,
-					(t_vector){player.sky_w, player.sky_h});
+					(t_vector){player.sky_w, player.sky_h, 0});
 		++pos.y;
 	}
 }

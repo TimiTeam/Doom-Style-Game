@@ -19,7 +19,8 @@ t_light			*new_t_light(t_vector pos, float max_dist, t_sector *cur_sec)
 	new = NULL;
 	if ((new = (t_light*)malloc(sizeof(t_light))))
 	{
-		*new = (t_light){NULL};
+	//	*new = (t_light){NULL};
+		ft_memset(new, 0, sizeof(t_light));
 		new->pos = pos;
 		new->max_dist = max_dist;
 		new->sector = cur_sec;
@@ -59,7 +60,7 @@ t_light			**create_all_light_source(t_sector *sec, unsigned light_count)
 int				light_catch_sector(t_wall **walls, unsigned arr_size,
 		t_vector light_pos, float max_dist)
 {
-	int			i;
+	unsigned	i;
 	t_wall		*w;
 
 	i = 0;

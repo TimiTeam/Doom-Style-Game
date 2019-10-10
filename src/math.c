@@ -34,7 +34,7 @@ t_vector		point_of_intersec(t_vector p1, t_vector p2,
 	/ VXS(p1.x - p2.x, p1.y - p2.y, p3.x - p4.x, p3.y - p4.y),
 	VXS(VXS(p1.x, p1.y, p2.x, p2.y), p1.y - p2.y,
 	VXS(p3.x, p3.y, p4.x, p4.y), p3.y - p4.y)
-	/ VXS(p1.x - p2.x, p1.y - p2.y, p3.x - p4.x, p3.y - p4.y)
+	/ VXS(p1.x - p2.x, p1.y - p2.y, p3.x - p4.x, p3.y - p4.y), 0
 	});
 }
 

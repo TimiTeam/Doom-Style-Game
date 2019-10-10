@@ -99,7 +99,7 @@ int				read_game_config_file(t_read_holder *holder, char *info_file)
 	return (print_error_message("Can't open file: ", info_file));
 }
 
-void			load_data_from_map(int fd, t_read_holder *h, t_vector *p_pos)
+void			load_data_from_map(int fd, t_read_holder *h)
 {
 	t_vector	*vectors;
 	char		*line;
@@ -127,7 +127,7 @@ void			load_data_from_map(int fd, t_read_holder *h, t_vector *p_pos)
 	ft_strdel(&line);
 }
 
-t_sector		*read_map(char *pth, t_read_holder *holder, t_vector *p_pos)
+t_sector		*read_map(char *pth, t_read_holder *holder)
 {
 	int			fd;
 
@@ -135,7 +135,7 @@ t_sector		*read_map(char *pth, t_read_holder *holder, t_vector *p_pos)
 		return (print_error_message_null("Error opening file:", pth));
 	if (!get_count_struct_arrays(fd, &holder->vect_count, &holder->wall_count))
 		return (print_error_message_null("Error reading map:", pth));
-	load_data_from_map(fd, holder, p_pos);
+	load_data_from_map(fd, holder);
 	delete_walls(holder->walls, holder->wall_count);
 	close(fd);
 	return (holder->all);

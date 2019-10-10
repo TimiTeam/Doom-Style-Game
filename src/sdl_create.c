@@ -14,11 +14,11 @@
 
 SDL_Surface			*get_empty_surface(unsigned width, unsigned height)
 {
-	Uint32			rmask;
-	Uint32			gmask;
-	Uint32			bmask;
-	Uint32			amask;
 #ifdef __LINUX__
+Uint32			rmask;
+Uint32			gmask;
+Uint32			bmask;
+Uint32			amask;
 
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
 	rmask = 0xff000000;
@@ -45,7 +45,8 @@ t_sdl				*new_t_sdl(int win_size_x, int win_size_y,
 	if (win_size_x < 1 || win_size_y < 1 || !title)
 		return (NULL);
 	new = (t_sdl*)ft_memalloc(sizeof(t_sdl));
-	*new = (t_sdl){NULL};
+	ft_memset(new, 0, sizeof(t_sdl));
+//	*new = (t_sdl){NULL};
 	new->title = ft_strdup(title);
 	new->win_size.x = win_size_x;
 	new->win_size.y = win_size_y;
@@ -86,6 +87,7 @@ int				init_sound()
 	Uint16		audio_format;
 	Mix_Chunk	*mus;
 
+	mus = NULL;
 	audio_rate = 22050;
 	audio_format = AUDIO_S16SYS;
 	audio_channels = 2;

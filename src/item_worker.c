@@ -18,7 +18,8 @@ t_item					*new_item(void)
 
 	if (!(i = (t_item*)ft_memalloc(sizeof(t_item))))
 		return (NULL);
-	*i = (t_item){NULL};
+//	*i = (t_item){NULL};
+	ft_memset(i, 0, sizeof(t_item));
 	return (i);
 }
 

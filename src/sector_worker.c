@@ -19,7 +19,8 @@ t_sector			*new_sector(void)
 
 	i = 0;
 	sec = (t_sector*)malloc(sizeof(t_sector));
-	*sec = (t_sector){NULL};
+	ft_memset(sec, 0, sizeof(t_sector));
+//	*sec = (t_sector){NULL};
 	return (sec);
 }
 
@@ -78,7 +79,6 @@ void				*delete_walls(t_wall **wall, unsigned size)
 void				*delete_sectors(t_sector *sectors)
 {
 	t_sector		*next;
-	t_light			*light;
 
 	if (!sectors)
 		return (NULL);

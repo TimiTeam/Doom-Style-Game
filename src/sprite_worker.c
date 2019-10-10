@@ -35,7 +35,7 @@ t_point			calculate_size(t_item *obj, t_player player,
 	t_point		size;
 	float		tmp_x;
 
-	*ob_pos = (t_vector){obj->pos.x - player.pos.x, obj->pos.y - player.pos.y};
+	*ob_pos = (t_vector){obj->pos.x - player.pos.x, obj->pos.y - player.pos.y, 0};
 	tmp_x = ob_pos->x;
 	ob_pos->x = ob_pos->x * player.sin_angl - ob_pos->y * player.cos_angl;
 	ob_pos->y = tmp_x * player.cos_angl + ob_pos->y * player.sin_angl;
@@ -100,7 +100,7 @@ void			draw_projectile(t_projectile *proj, t_draw_data data,
 	t_vector	scale;
 	t_point		screen_pos;
 
-	ob_pos = (t_vector){proj->pos.x - player.pos.x, proj->pos.y - player.pos.y};
+	ob_pos = (t_vector){proj->pos.x - player.pos.x, proj->pos.y - player.pos.y, 0};
 	tmp_x = ob_pos.x;
 	ob_pos.x = ob_pos.x * player.sin_angl - ob_pos.y * player.cos_angl;
 	ob_pos.y = tmp_x * player.cos_angl + ob_pos.y * player.sin_angl;

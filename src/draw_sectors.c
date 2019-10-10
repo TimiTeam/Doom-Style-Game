@@ -19,7 +19,7 @@ void				draw_line(t_screen_inf inf, t_super_data *super)
 		(t_point){0, super->wall.texture->h * super->scale_h / 20.0f}),
 		inf.txtx, super->sect, super->main_screen,
 		super->wall.texture, inf.tex_pos, super->scale_l,
-		super->scale_h, super->sect->sector_light});
+		super->scale_h, super->sect->sector_light, 0});
 }
 
 void				draw_ceil(t_screen_inf inf, t_super_data *super)

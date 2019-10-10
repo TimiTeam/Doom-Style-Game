@@ -154,7 +154,8 @@ t_player		*new_t_player(int pos_x, int pos_y, t_point win_size)
 	t_player	*player;
 
 	player = (t_player*)malloc(sizeof(t_player));
-	*player = (t_player){NULL};
+	ft_memset(player, 0, sizeof(t_player));
+//	*player = (t_player){NULL};
 	player->pos = (t_vector){pos_x, pos_y, 0};
 	player->curr_map = -1;
 	player->half_win_size = (t_point){win_size.x / 2, win_size.y / 2};

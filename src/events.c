@@ -13,7 +13,7 @@
 #include "main_head.h"
 
 int				movement_events(SDL_Keycode code,
-			t_player *player, unsigned char move[4], SDL_EventType type)
+				unsigned char move[4], SDL_EventType type)
 {
 	if (code == SDLK_w || code == SDLK_UP)
 		move[0] = type == SDL_KEYDOWN;
@@ -29,7 +29,7 @@ int				movement_events(SDL_Keycode code,
 int				guess_event(SDL_Keycode code,
 			t_player *player, unsigned char move[4], SDL_EventType type)
 {
-	movement_events(code, player, move, type);
+	movement_events(code, move, type);
 	if (code == SDLK_LSHIFT && type == SDL_KEYDOWN && !player->sit)
 		player->speed *= 2;
 	else if (code == SDLK_LSHIFT && type == SDL_KEYUP)
@@ -45,7 +45,7 @@ int				guess_event(SDL_Keycode code,
 	else if (code == SDLK_3 && type == SDL_KEYDOWN && player->gun[plasmagun])
 		player->current_gun = player->gun[plasmagun];
 	else if (type == SDL_KEYDOWN && code == SDLK_e)
-		check_door(player, player->curr_sector);
+		check_door(player);
 	else if (type == SDL_KEYDOWN && code == SDLK_f)
 			activate_lift(player);		
 	if (type == SDL_KEYDOWN && code == SDLK_LCTRL)

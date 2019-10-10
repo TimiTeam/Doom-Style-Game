@@ -15,7 +15,6 @@
 void				print_player_gun(t_sdl *sdl, t_player *pla)
 {
 	t_point			pos;
-	t_point			size;
 	SDL_Surface		*surf;
 
 	if (!pla->current_gun->frame[(int)pla->current_gun->state])
@@ -92,7 +91,7 @@ void				draw_items(t_sdl *sdl, t_player *player)
 		{
 			amount[i] = ft_itoa(items[i]);
 			item_surface[i] = TTF_RenderText_Blended(sdl->font, amount[i],
-											(SDL_Color){255, 255, 255});
+											(SDL_Color){255, 255, 255, 255});
 			draw_image(sdl->surf, item_surface[i],
 					(t_point){20 + 120 * i, H - 190}, (t_point){50, 50});
 			free(amount[i]);
@@ -115,7 +114,7 @@ void				draw_hud(t_sdl *sdl, t_player *player)
 		print_player_gun(sdl, player);
 		ammo = ft_itoa(player->current_gun->ammo);
 		ammo_surf = TTF_RenderText_Blended(sdl->font, ammo,
-								(SDL_Color){255, 255, 255});
+								(SDL_Color){255, 255, 255, 255});
 		draw_image(sdl->surf, ammo_surf, (t_point){0, 130}, (t_point){50, 50});
 		draw_image(sdl->surf, player->current_gun->icon, (t_point){0, 20},
 													(t_point){200, 100});

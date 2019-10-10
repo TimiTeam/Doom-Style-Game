@@ -30,7 +30,7 @@ void			apply_ceil_light(t_ceil_inf inf, t_light *light)
 	while (++i < MAX_LIGHT_SRC && (light = inf.light_source[i]))
 	{
 		dist_to_light = len_between_points(light->pos,
-								(t_vector){inf.mapx, inf.mapz});
+								(t_vector){inf.mapx, inf.mapz, 0});
 		if (dist_to_light < light->max_dist)
 			inf.brightness += 1.0f - CLAMP(dist_to_light, 0, light->max_dist)
 															/ light->max_dist;
@@ -46,11 +46,11 @@ void			apply_ceil_light(t_ceil_inf inf, t_light *light)
 void			draw_floor_or_ceil(t_ceil_inf inf)
 {
 	float		tmp;
-	Uint32		*pix;
 	t_light		*light;
 
 	if (!inf.dst || !inf.src || inf.src->w == 0 || inf.src->h == 0)
 		return ;
+	light = NULL;
 	while (inf.y < inf.end_y)
 	{
 		inf.mapz = inf.calc_two

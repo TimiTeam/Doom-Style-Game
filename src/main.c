@@ -62,7 +62,8 @@ void				free_all(t_player **player, t_sdl **sdl,
 	free_t_sdl(sdl);
 	*sdl = NULL;
 	free_menu(m);
-	*m = (t_pr){NULL};
+	ft_memset(m, 0, sizeof(t_pr));
+//	*m = (t_pr){NULL};
 }
 
 int					init(t_sdl **sdl, t_pr *m, t_read_holder *holder)
@@ -74,7 +75,7 @@ int					init(t_sdl **sdl, t_pr *m, t_read_holder *holder)
 		return (0);
 	SDL_ShowCursor(SDL_DISABLE);
 	SDL_SetRelativeMouseMode(SDL_TRUE);
-	if (!load_menu_textures(m, *sdl, holder))
+	if (!load_menu_textures(m, holder))
 		return (print_error_message("Can't load menu resourses\n", ""));
 	if (!init_sound())
 		return (print_error_message("Error initializing sound\n", ""));
@@ -87,11 +88,12 @@ int					main(void)
 	t_read_holder	holder;
 	t_player		*player;
 	t_sdl			*sdl;
-	t_vector		player_pos;
 	t_pr			m;
-
-		holder = (t_read_holder){NULL};
-	m = (t_pr){NULL};
+		
+//	holder = (t_read_holder){NULL};
+	ft_memset(&holder, 0, sizeof(t_read_holder));
+	ft_memset(&m, 0, sizeof(t_pr));
+//	m = (t_pr){NULL};
 	m.i = 0;
 	m.win_h = H;
 	m.win_w = W;

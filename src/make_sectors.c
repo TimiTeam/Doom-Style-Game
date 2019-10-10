@@ -81,7 +81,7 @@ char				*skip_line_with_word(char *line, char *word)
 		{
 			line++;
 			word++;
-			if (j == ft_strlen(word))
+			if (j == (int)ft_strlen(word))
 				return (line);
 		}
 		line++;

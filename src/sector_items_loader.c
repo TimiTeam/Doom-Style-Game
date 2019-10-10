@@ -93,7 +93,6 @@ t_item				*make_items(char *data, t_item *all_items,
 {
 	t_item				*list;
 	t_item				*next;
-	enum e_item_type	type;
 
 	list = NULL;
 	while (*data && *data != '\'')

@@ -64,7 +64,7 @@ t_sector			*load_game(t_player *player, t_read_holder *holder)
 		&& !player->win)
 		clear_player(player);
 	if(!(sectors = read_map(holder->maps_path[holder->curr_map],
-										holder, &player->pos)))
+										holder)))
 		return (print_error_message_null(holder->maps_path[holder->curr_map],"Wrong map"));
 	if (!prepare_playear(player, holder))
 		return (print_error_message_null("Player info is","Broken"));

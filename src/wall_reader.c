@@ -20,23 +20,24 @@ t_vector		*get_vectors(int fd, int vec_size)
 
 	vectors = (t_vector*)malloc(sizeof(t_vector) * vec_size);
 	i = 0;
-	while (get_next_line(fd, &line) > 0 && i < vec_size && ft_strcmp(line, ""))
+	while (vectors && get_next_line(fd, &line) > 0 && i < vec_size && ft_strcmp(line, ""))
 	{
 		if (ft_isdigit(line[0]))
 		{
-			get_numbers(&vectors[i].x, &vectors[i].y, ',',
-					skip_row_number(line));
+			if (!get_numbers(&vectors[i].x, &vectors[i].y, ',',
+					skip_row_number(line)))
+					break ;
 			i++;
 		}
 		ft_strdel(&line);
 	}
-	ft_strdel(&line);
 	if (i != vec_size)
 	{
 		ft_memdel((void**)&vectors);
 		vectors = NULL;
-		print_error_message("Wrong count of vectors", "");
+		print_error_message("Some error in creating vectors: ", line);
 	}
+	ft_strdel(&line);
 	return (vectors);
 }
 
@@ -67,7 +68,8 @@ static t_wall	*make_wall(char *line, t_vector *vectors, t_read_holder *holder)
 	if (start > holder->vect_count || end > holder->vect_count || (!start && !end))
 		return (print_error_message_null("Vectors not exist at line:", line));
 	ret = (t_wall*)malloc(sizeof(t_wall));
-	*ret = (t_wall){NULL};
+	ft_memset(ret, 0, sizeof(t_wall));
+//	*ret = (t_wall){NULL};
 	ret->start = vectors[(int)start];
 	ret->end = vectors[(int)end];
 	while (line[i] && !ft_isalpha(line[i]))
