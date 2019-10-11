@@ -7,7 +7,7 @@ Path: Maps/
 4) lavaisland
 ###
 
-#Textures 57
+#Textures 58
 Path: textures/
 0) ShanConc01.png
 1) AgoraBasRelief.png
@@ -66,6 +66,7 @@ Path: textures/
 54) DARKPRISON_017.png
 55) DARKPRISON_005.png
 56) gate2_D.png
+57) horizont.png
 ###
 
 #Items

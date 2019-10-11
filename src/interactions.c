@@ -178,11 +178,11 @@ void				check_door(t_player *player)
 		{
 			sec = player->curr_sector == walls[i]->sectors[0] ?
 			walls[i]->sectors[1] : walls[i]->sectors[0];
-			if (sec->type == door && sec->state == calm)
+			if (sec->type == door && sec->state == calm && !sec->door_open)
 			{
 				use_key(player);
 				sec->state = action_sec;
-				after_door = get_sector_after_door(sec, player->curr_sector);
+				after_door = player->curr_sector; //get_sector_after_door(sec, player->curr_sector);
 				sec->max_up = after_door->floor + 15;
 				sec->speed = 0.2f;
 			}

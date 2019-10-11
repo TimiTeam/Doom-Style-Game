@@ -122,6 +122,7 @@ int				player_start_and_end(int fd, t_read_holder *holder)
 
 	s = 0;
 	e = 0;
+	ret = 1;
 	while (get_next_line(fd, &line) > 0)
 	{
 		if (ft_strncmp(line, "0)", 2) == 0)
@@ -130,6 +131,8 @@ int				player_start_and_end(int fd, t_read_holder *holder)
 			e = get_player_pos(line, &holder->player_end, &holder->player_end_sect);
 		ft_strdel(&line);
 	}
+	printf("start sect %d pos %f %f\n", holder->player_sector_id, holder->player_start.x, holder->player_start.y);
+	printf("end sect %d pos %f %f\n", holder->player_end_sect, holder->player_end.x, holder->player_end.y);
 	ret = check_correct_satrt_end(holder, s, e, line);
 	ft_strdel(&line);
 	return (ret);

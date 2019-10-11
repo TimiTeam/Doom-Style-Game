@@ -15,7 +15,7 @@
 
 # define MAX_PORTALS 16
 # define MAX_TEXTURES 8
-# define MAX_LIGHT_SRC 8
+# define MAX_LIGHT_SRC 16
 # include "sdl_head.h"
 # include "libft.h"
 # include <fcntl.h>
