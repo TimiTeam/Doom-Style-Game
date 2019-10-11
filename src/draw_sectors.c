@@ -56,8 +56,12 @@ void				*thread_draw_sector(void *param)
 	while (inf.x < inf.end)
 	{
 		calculate_frame(&inf, cp, super);
-		draw_ceil(inf, super);
-		draw_floor(inf, super);
+		if (super->sect->type != uncovered)
+			draw_ceil(inf, super);
+		else
+			draw_skybox(super->main_screen, (t_point){inf.x, super->data->ytop[inf.x]}, inf.cya, super->player);
+		if (super->sect->floor_visible)
+			draw_floor(inf, super);
 		find_tex_pos(&inf, super);
 		if (super->wall.type != empty_wall && super->wall.type != transparent)
 		{
@@ -112,4 +116,5 @@ void				draw_sectors(t_sector *sec, t_player *player,
 	draw_sector_items(&sec->items, player, data, sdl->surf);
 	draw_projectiles(&sec->projectiles,
 				(t_p_n_d){*player, data}, sdl->surf, sec->items);
+//	printf("sect # %d : rec deep %d\n",sec->sector, data.recursion_deep);
 }

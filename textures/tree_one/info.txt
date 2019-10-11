@@ -2,7 +2,7 @@ Properties{
 size 100x150
 }
 waiting{
-textures/tree_one/tree_one.png
+textures/tree_one/tree_one1.png
 }
 walk{
 }

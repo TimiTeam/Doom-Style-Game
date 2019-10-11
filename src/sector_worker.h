@@ -28,6 +28,12 @@ enum					e_wall_type
 	transparent
 };
 
+enum					e_visible
+{
+	no_visible,
+	visible
+};
+
 enum					e_sect_type
 {
 	simple,
@@ -162,6 +168,7 @@ typedef struct			s_sector
 	int 				max_up;
 	enum e_sect_type	type;
 	enum e_sect_state	state;
+	enum e_visible		floor_visible;
 	unsigned char		player_use;
 	unsigned short		sector;
 	unsigned short		n_walls;

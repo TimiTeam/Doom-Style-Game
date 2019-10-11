@@ -45,7 +45,7 @@ static void				filed_t_animation(t_animation *anim, int fd)
 	int					i;
 
 	i = 0;
-	while (get_next_line(fd, &line) > 0)
+	while (get_next_line(fd, &line) > 0 && i < MAX_TEXTURES)
 	{
 		if (ft_strcmp(line, "}") == 0)
 			break ;
@@ -55,12 +55,14 @@ static void				filed_t_animation(t_animation *anim, int fd)
 	}
 	anim->current_text = 0;
 	anim->max_textures = i;
+	while (i < MAX_TEXTURES)
+		anim->texture[i++] = NULL;
 	ft_strdel(&line);
 }
 
 static void				read_properties(t_item *item, int fd)
 {
-	char				*line;
+	char				*line;	
 	t_vector			size;
 
 	size = (t_vector){};

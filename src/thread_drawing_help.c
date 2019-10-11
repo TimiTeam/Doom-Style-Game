@@ -65,12 +65,18 @@ void				render_neighbours(t_screen_inf inf,
 	calculate_neighbours(&inf, cp, super->data);
 	if (inf.nya - 1 != inf.ya && inf.cya != inf.n_cya)
 	{
-		text_line((t_text_inf){inf.x, inf.cya, inf.n_cya - 1,
-		init_scaler(inf.cya, (t_point){inf.ya, inf.nya - 1},
-		(t_point){0, super->scale_h * 10}), inf.txtx,
-		super->sect, super->main_screen,
-		super->wall.texture, inf.tex_pos,
-		super->scale_l, super->scale_h, super->sect->sector_light, 0});
+		if (super->sect->type != uncovered)
+			text_line((t_text_inf){inf.x, inf.cya, inf.n_cya - 1,
+			init_scaler(inf.cya, (t_point){inf.ya, inf.nya - 1},
+			(t_point){0, super->scale_h * 10}), inf.txtx,
+			super->sect, super->main_screen,
+			super->wall.texture, inf.tex_pos,
+			super->scale_l, super->scale_h, super->sect->sector_light, 0});
+		else
+		{
+			draw_skybox(super->main_screen, (t_point){inf.x, super->data->ytop[inf.x]}, inf.n_cya, super->player);
+		}
+		
 	}
 	if (inf.yb - 1 != inf.nyb && inf.n_cyb != inf.cyb)
 		text_line((t_text_inf){inf.x, inf.n_cyb + 1, inf.cyb,

@@ -12,6 +12,22 @@
 
 #include "main_head.h"
 
+static int 		compare_two_int_array(short *arr_one, short *arr_two, int from, int to)
+{
+	int 		i;
+	
+	i = from;
+	if (!arr_one || !arr_two)
+		return (0);
+	while (i < to)
+	{
+		if (arr_one[i] != arr_two[i])
+			return (0);
+		i++;
+	}
+	return (1);
+}
+
 void			again(t_again a)
 {
 	t_wall		wall;
@@ -19,7 +35,9 @@ void			again(t_again a)
 
 	wall = a.wall;
 	player = a.player;
-	if ((wall.type == empty_wall || wall.type == transparent) && wall.sectors[1] && wall.sectors[0])
+	a.data.recursion_deep++;
+	if ((wall.type == empty_wall || wall.type == transparent) && wall.sectors[1] && wall.sectors[0]
+	 && !compare_two_int_array(a.data.ybottom, a.data.ytop, a.data.start, a.data.end) && a.data.recursion_deep < 100 && a.data.recursion_deep < 36)
 	{
 		if (wall.sectors[0]->sector != player.curr_sector->sector
 				&& wall.sectors[0]->sector != a.sec->sector)

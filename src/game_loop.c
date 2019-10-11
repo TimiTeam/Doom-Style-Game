@@ -25,6 +25,7 @@ void				run_with_buff(t_player *player,
 		draw_data.ytop[x] = 0;
 		x++;
 	}
+	draw_data.recursion_deep = 0;
 	draw_data.start = 0;
 	draw_data.end = win_x;
 	draw_data.player_current_height = (player->pos.z
@@ -112,6 +113,10 @@ void 				change_sector_state(t_sector *sectors, t_player *player)
 		return ;
 	while (sec)
 	{
+		if (sec->floor > player->pos.z)
+			sec->floor_visible = no_visible;
+		else
+			sec->floor_visible = visible;
 		if (sec->state == action_sec && (sec->type == door || sec->type == lift))
 		{
 			if (sec->type == door)
@@ -197,6 +202,8 @@ void 				change_player_state(t_player *player)
 	t_sector		*near_sect;
 
 	near_sect = NULL;
+	if (player->curr_sector->type == murderous)
+		player->health -= 2;
 	if ((near_sect = get_near_sector(player)) &&
 		near_sect->type == lift && near_sect->state == calm)
 		player->lift_near = 1;
@@ -225,8 +232,6 @@ int					game_loop(t_sdl *sdl, t_player *player, t_sector *sectors)
 	win_text = txt_surf(sdl->font, "You Win", (SDL_Color){30, 255, 30, 255});
 	sectors = player->all;
 	fpsinit();
-	if (!sectors)
-		printf("NO sectors!!\n");
 	while (run > 0)
 	{
 		prepare_surf(sdl);

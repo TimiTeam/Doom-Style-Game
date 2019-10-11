@@ -36,7 +36,7 @@ FLAG_W = -Wall -Wextra -Werror
 
 SANIT_F = -fsanitize=address 
 
-#SANIT_F = 
+SANIT_F = 
 
 FLAG_F = -F frameworks
 

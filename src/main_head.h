@@ -60,6 +60,7 @@ typedef struct		s_draw_data
 	float			calc_one;
 	float			floor_calc;
 	float			ceil_calc;
+	short			recursion_deep;
 	int				floor_height;
 	int				ceil_height;
 	int				n_floor_height;

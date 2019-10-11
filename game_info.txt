@@ -1,18 +1,18 @@
 #Levels
 Path: Maps/
-0) starship
-1) map_one
-2) super
-3) transparent
-4) fortress.txt
+0) fortress.txt
+1) starship
+2) map_one
+3) super
+4) lavaisland
 ###
 
 #Textures 57
 Path: textures/
-0) AgoraAera.png
+0) ShanConc01.png
 1) AgoraBasRelief.png
 2) Autel.png
-3) Braises.png
+3) Mlava.jpg
 4) Ca_ship_front1.png
 5) Ca_ship_front.png
 6) Ca_ship_top.png
@@ -26,12 +26,12 @@ Path: textures/
 14) FumDallage04.png
 15) FumDallage05.png
 16) FumPanneauDeco.png
-17) Fy-os_panneau.png
+17) CaveRock.jpg
 18) FyrCityBasReliefEntree.png
 19) FyrosInsideWall02.png
 20) Fy_uk_store.png
 21) G_caisseBonus.png
-22) G_carrelage.png
+22) BookShelfWalnut1.jpg
 23) Ground_lava_rock.png
 24) G_toit-tower.png
 25) Magasin4b.png
