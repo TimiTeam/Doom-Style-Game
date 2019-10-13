@@ -55,25 +55,20 @@ static char			*fill_floor_and_ceil(t_sector *sector,
 
 void				*error_free_t_sector(t_sector **sect, char *message, char *line)
 {
-	t_sector		**ptr;
-
-	if (*sect)
+	if (sect && *sect)
 	{
-		ptr = sect;
 		delete_sectors(*sect);
-		ptr = NULL;
+		*sect = NULL;
 	}
 	return (print_error_message_null(message, line));
 }
 
 char				*skip_line_with_word(char *line, char *word)
 {
-	int				i;
 	int				j;
 
 	if (!line || !word)
 		return (NULL);
-	i = -1;
 	j = 0;
 	while (*line)
 	{
@@ -91,9 +86,6 @@ char				*skip_line_with_word(char *line, char *word)
 
 static char 		*door_or_sky(char *line, t_sector *current)
 {
-	int				i;
-
-	i = 0;
 	current->type = simple;
 	current->state = calm;
 	if (ft_strncmp(line, "door", ft_strlen("door")) == 0)

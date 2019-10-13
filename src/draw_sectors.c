@@ -46,12 +46,10 @@ void				*thread_draw_sector(void *param)
 {
 	t_wall			cp;
 	t_screen_inf	inf;
-	t_draw_data		*data;
 	t_super_data	*super;
 
 	super = (t_super_data*)param;
 	cp = super->drawing_line;
-	data = super->data;
 	inf = fill_inf(super, cp);
 	while (inf.x < inf.end)
 	{

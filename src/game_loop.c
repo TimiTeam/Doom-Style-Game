@@ -240,7 +240,7 @@ int					game_loop(t_sdl *sdl, t_player *player, t_sector *sectors)
 		fpsthink();
 		max_fps = MAX(max_fps, framespersecond);
 		min_fps = MIN(min_fps, framespersecond);
-		printf("fps %f\n", framespersecond);
+	//	printf("fps %f\n", framespersecond);
 		if (framespersecond > 25)
 			SDL_Delay(10);
 		run = hook_event(player, move);

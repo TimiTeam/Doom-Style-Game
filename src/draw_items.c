@@ -60,7 +60,7 @@ void		draw_sector_items(t_item **items, t_player *player,
 	while ((it = change_item_animations(items, player, it)))
 	{
 		if (player->curr_sector == it->sector && it->dist_to_player <= 1.2f && it->type != object
-		&& it->type != enemy & it->type != light)
+		&& it->type != enemy && it->type != light)
 			it = get_item_to_player(items, it, player);
 		if (it && it->dist_to_player >= 1.f)
 		{

@@ -14,12 +14,9 @@
 
 void			clear_player(t_player *player)
 {
-	int				i;
-
 	if (!player)
 		return ;
 	delete_items_list(player->inventar);
-	i = 0;
 	ft_memset(player->gun, 0, sizeof(player->gun));
 	player->health = 100;
 	player->current_gun = NULL;
@@ -102,10 +99,16 @@ int				render_menu(t_pr *m, t_sdl *sdl)
 
 void			free_menu(t_pr *menu)
 {
-	SDL_FreeSurface(menu->background);
-	SDL_FreeSurface(menu->play_button);
-	SDL_FreeSurface(menu->exit_button);
-	SDL_FreeSurface(menu->logo);
-	SDL_FreeSurface(menu->choose_level_button);
-	TTF_CloseFont(menu->font);
+	if (menu->background)
+		SDL_FreeSurface(menu->background);
+	if (menu->play_button)
+		SDL_FreeSurface(menu->play_button);
+	if (menu->exit_button)
+		SDL_FreeSurface(menu->exit_button);
+	if (menu->logo)
+		SDL_FreeSurface(menu->logo);
+	if (menu->choose_level_button)
+		SDL_FreeSurface(menu->choose_level_button);
+	if (menu->font)
+		TTF_CloseFont(menu->font);
 }

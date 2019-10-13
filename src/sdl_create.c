@@ -18,18 +18,15 @@ SDL_Surface			*get_empty_surface(unsigned width, unsigned height)
 Uint32			rmask;
 Uint32			gmask;
 Uint32			bmask;
-Uint32			amask;
 
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
 	rmask = 0xff000000;
 	gmask = 0x00ff0000;
 	bmask = 0x0000ff00;
-	amask = 0x000000ff;
 #else
 	rmask = 0x000000ff;
 	gmask = 0x0000ff00;
 	bmask = 0x00ff0000;
-	amask = 0xff000000;
 #endif
 	return (SDL_CreateRGBSurface(0, width, height, 32,
 				rmask, gmask, bmask, 0));
@@ -55,7 +52,6 @@ t_sdl				*new_t_sdl(int win_size_x, int win_size_y,
 
 int					init_sdl(t_sdl *sdl)
 {
-	atexit(quit_sdl);
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0)
 		return (error_message(SDL_GetError()));
 	IMG_Init(IMG_INIT_PNG & IMG_INIT_PNG);

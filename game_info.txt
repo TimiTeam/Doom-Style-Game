@@ -12,7 +12,7 @@ Path: textures/
 0) ShanConc01.png
 1) AgoraBasRelief.png
 2) Autel.png
-3) Mlava.jpg
+3) MLava.jpg
 4) Ca_ship_front1.png
 5) Ca_ship_front.png
 6) Ca_ship_top.png

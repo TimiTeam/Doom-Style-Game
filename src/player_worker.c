@@ -14,12 +14,9 @@
 
 void			free_player(t_player *player)
 {
-	int			i;
-
 	if (!player)
 		return ;
 	delete_items_list(player->inventar);
-	i = 0;
 	if (player->sky)
 		SDL_FreeSurface(player->sky);
 	ft_memdel((void**)&player);
@@ -94,6 +91,7 @@ unsigned char	check_correct_satrt_end(t_read_holder *holder, int start, int end,
 
 	res = 1;
 	res2 = 1;
+	e_sect = 0;
 	if (!holder)
 		return (0);
 	if(!(s_sect = get_player_sector(holder->all, holder->player_sector_id)) ||

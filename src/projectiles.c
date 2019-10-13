@@ -35,17 +35,17 @@ t_projectile		*create_projectile(t_player player)
 
 void				add_projectile(t_projectile **head, t_projectile *new)
 {
-	t_projectile	*main;
+	t_projectile	*m;
 
 	if (!*head)
 	{
 		*head = new;
 		return ;
 	}
-	main = *head;
-	while (main->next)
-		main = main->next;
-	main->next = new;
+	m = *head;
+	while (m->next)
+		m = m->next;
+	m->next = new;
 }
 
 void				swap_proj_sectors(t_projectile **current_list,

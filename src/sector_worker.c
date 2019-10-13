@@ -15,12 +15,9 @@
 t_sector			*new_sector(void)
 {
 	t_sector		*sec;
-	int				i;
 
-	i = 0;
 	sec = (t_sector*)malloc(sizeof(t_sector));
 	ft_memset(sec, 0, sizeof(t_sector));
-//	*sec = (t_sector){NULL};
 	return (sec);
 }
 

@@ -53,7 +53,6 @@ void			apply_light(t_text_inf inf, float txty,
 void			text_line(t_text_inf inf)
 {
 	int			*pix;
-	float		scale;
 	t_light		*light;
 	int			y;
 
@@ -64,7 +63,6 @@ void			text_line(t_text_inf inf)
 	inf.y2 = CLAMP(inf.y2, 0, H - 1);
 	pix = (int*)inf.surface->pixels;
 	pix += inf.y1 * W + inf.x;
-	scale = inf.image->h * inf.scale_h;
 	inf.txtx %= inf.image->w;
 	y = inf.y1;
 	while (y <= inf.y2)

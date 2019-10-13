@@ -45,10 +45,10 @@ t_item			*read_all_items(int fd)
 {
 	char		*file_name;
 	char		*path;
-	t_item		*main;
+	t_item		*head;
 	t_item		*new;
 
-	main = NULL;
+	head = NULL;
 	if (!(path = get_path(fd)))
 		return (NULL);
 	while (get_next_line(fd, &file_name) > 0 && ft_strncmp(file_name, "###", 3))
@@ -57,17 +57,17 @@ t_item			*read_all_items(int fd)
 		{
 			if (!(new = make_item_ftom_str(skip_row_number(file_name), path)))
 			{
-				delete_items_list_with_animation(main);
-				main = NULL;
+				delete_items_list_with_animation(head);
+				head = NULL;
 				break ;
 			}
-			add_next_item(&main, new);
+			add_next_item(&head, new);
 		}
 		ft_strdel(&file_name);
 	}
 	ft_strdel(&path);
 	ft_strdel(&file_name);
-	return (main);
+	return (head);
 }
 
 int				read_game_config_file(t_read_holder *holder, char *info_file)
@@ -79,14 +79,14 @@ int				read_game_config_file(t_read_holder *holder, char *info_file)
 	{
 		while (get_next_line(fd, &line) > 0)
 		{
-			if (ft_strcmp(line, "#Levels") == 0)
-				holder->maps_count = read_maps_path(fd,
-						&holder->maps_path[0], 5);
-			else if (ft_strncmp(line, "#Textures", ft_strlen("#Textures")) == 0)
-				holder->textures = load_img_array_from_file(fd,
-						(holder->text_count = get_num_from_str(line)));
-			else if (ft_strcmp(line, "#Items") == 0)
-				holder->all_items = read_all_items(fd);
+			if (ft_strcmp(line, "#Levels") == 0 && !(holder->maps_count = read_maps_path(fd,
+						&holder->maps_path[0], 5)))
+					break ;
+			else if (ft_strncmp(line, "#Textures", ft_strlen("#Textures")) == 0 && !(holder->textures = load_img_array_from_file(fd,
+						(holder->text_count = get_num_from_str(line)))))
+				break ;
+			else if (ft_strcmp(line, "#Items") == 0 && !(holder->all_items = read_all_items(fd)))
+				break ;
 			ft_strdel(&line);
 		}
 		ft_strdel(&line);
