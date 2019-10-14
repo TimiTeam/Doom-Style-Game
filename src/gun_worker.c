@@ -28,6 +28,8 @@ void					delete_guns(t_gun **all)
 			SDL_FreeSurface(all[i]->frame[j]);
 			j++;
 		}
+		if (all[i]->shot_sound)
+			Mix_FreeChunk(all[i]->shot_sound);
 		ft_memdel((void**)&all[i]);
 		i++;
 	}
@@ -38,7 +40,6 @@ void					load_pistol(t_gun **gun)
 {
 	gun[pistol] = (t_gun*)malloc(sizeof(t_gun));
 	ft_memset(gun[pistol], 0, sizeof(t_gun));
-//	*gun[pistol] = (t_gun){0};
 	gun[pistol]->ammo = 35;
 	gun[pistol]->damage = 10;
 	gun[pistol]->max_frames = 4;
@@ -60,7 +61,6 @@ void					load_shotgun(t_gun **gun)
 	gun[shotgun]->type = shotgun;
 	gun[shotgun]->frame[0] = load_jpg_png("textures/guns/shotgun/shotgun1.png");
 	gun[shotgun]->frame[1] = load_jpg_png("textures/guns/shotgun/shotgun2.png");
-	//gun[shotgun]->frame[2] = load_jpg_png("textures/guns/shotgun/shotgun3.png");
 	gun[shotgun]->frame[2] = load_jpg_png("textures/guns/shotgun/shotgun4.png");
 	gun[shotgun]->frame[3] = load_jpg_png("textures/guns/shotgun/shotgun5.png");
 	gun[shotgun]->frame[4] = load_jpg_png("textures/guns/shotgun/shotgun6.png");
@@ -73,7 +73,6 @@ void					load_plasmagun(t_gun **gun)
 {
 	gun[plasmagun] = (t_gun*)malloc(sizeof(t_gun));
 	ft_memset(gun[plasmagun], 0, sizeof(t_gun));
-//	*gun[plasmagun] = (t_gun){0};
 	gun[plasmagun]->ammo = 20;
 	gun[plasmagun]->type = plasmagun;
 	gun[plasmagun]->damage = 35;

@@ -78,8 +78,8 @@ int					init(t_sdl **sdl, t_pr *m, t_read_holder *holder)
 	SDL_SetRelativeMouseMode(SDL_TRUE);
 	if (!load_menu_textures(m, holder))
 		return (print_error_message("Can't load menu resourses\n", ""));
-	// if (!init_sound())
-	// 	return (print_error_message("Error initializing sound\n", ""));
+	holder->hit_sound = Mix_LoadWAV("sounds/monster_roar.wav");
+	holder->roar_sound = Mix_LoadWAV("sounds/monster_bite.wav");
 	initialize_menu(m);
 	return (1);
 }

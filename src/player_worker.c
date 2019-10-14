@@ -19,6 +19,8 @@ void			free_player(t_player *player)
 	delete_items_list(player->inventar);
 	if (player->sky)
 		SDL_FreeSurface(player->sky);
+	if (player->damage_sound)
+		Mix_FreeChunk(player->damage_sound);
 	ft_memdel((void**)&player);
 }
 
@@ -156,7 +158,6 @@ t_player		*new_t_player(int pos_x, int pos_y, t_point win_size)
 
 	player = (t_player*)malloc(sizeof(t_player));
 	ft_memset(player, 0, sizeof(t_player));
-//	*player = (t_player){NULL};
 	player->pos = (t_vector){pos_x, pos_y, 0};
 	player->curr_map = -1;
 	player->half_win_size = (t_point){win_size.x / 2, win_size.y / 2};

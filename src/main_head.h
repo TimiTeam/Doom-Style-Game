@@ -95,10 +95,14 @@ typedef struct		s_player
 	SDL_Surface		*sky;
 	t_sector		*curr_sector;
 	t_sector		*all;
-	Mix_Chunk		*damage_sound;
 	t_item			*inventar;
 	t_gun			**all_guns;
 	t_gun			*gun[3];
+	Mix_Chunk		*damage_sound;
+	Mix_Chunk		*hit_enemy;
+	Mix_Chunk		*get_item;
+	Mix_Chunk		*open_door;
+	Mix_Chunk		*move_lift;
 	t_vector		pos;
 	t_vector		end_pos;
 	unsigned short	end_sector;
@@ -240,7 +244,7 @@ typedef struct		s_world
 {
 	t_sector		*sec;
 	t_wall			wall;
-	t_player		player;
+	t_player		*player;
 	t_sdl			*sdl;
 	t_draw_data		data;
 	void			*thread_draw_sector;
@@ -250,7 +254,7 @@ typedef struct		s_rot
 {
 	t_sector		*sec;
 	t_wall			wall;
-	t_player		player;
+	t_player		*player;
 	t_sdl			*sdl;
 	t_draw_data		data;
 	t_wall			line;
@@ -261,7 +265,7 @@ typedef struct		s_proj
 {
 	t_sector		*sec;
 	t_wall			wall;
-	t_player		player;
+	t_player		*player;
 	t_sdl			*sdl;
 	t_draw_data		data;
 	t_wall			line;
@@ -275,7 +279,7 @@ typedef struct		s_again
 {
 	t_sector		*sec;
 	t_wall			wall;
-	t_player		player;
+	t_player		*player;
 	t_sdl			*sdl;
 	t_draw_data		data;
 }					t_again;

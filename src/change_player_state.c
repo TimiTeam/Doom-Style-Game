@@ -62,7 +62,7 @@ void 				change_player_state(t_player *player, t_sdl *sdl, int *run)
 
 	near_sect = NULL;
 	if (player->curr_sector->type == murderous)
-		player->health -= 2;
+		player->health -= 1;
 	if ((near_sect = get_near_sector(player)) &&
 		near_sect->type == lift && near_sect->state == calm)
 		player->lift_near = 1;
@@ -73,6 +73,8 @@ void 				change_player_state(t_player *player, t_sdl *sdl, int *run)
 		player->door_near = 1;
 	else
 		player->door_near = 0;
+	if (player->health <= 0 && !player->dead)
+		player->dead = 1;
 	player->count_enemies = count_enemies(player->all);
 	if (player->dead)
 	{

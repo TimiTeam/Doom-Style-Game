@@ -47,6 +47,7 @@ void				close_t_sdl(t_sdl *s)
 	s->win = NULL;
 	if (SDL_WasInit(SDL_INIT_AUDIO))
 		SDL_AudioQuit();
+	Mix_CloseAudio();
 }
 
 void				free_t_sdl(t_sdl **s)

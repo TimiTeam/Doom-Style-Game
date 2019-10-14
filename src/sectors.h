@@ -21,6 +21,8 @@ typedef struct		s_read_holder
 	t_light			**light_source;
 	t_sector		*all;
 	t_item			*all_items;
+	Mix_Chunk		*hit_sound;
+	Mix_Chunk		*roar_sound;
 	char			*maps_path[5];
 	uint8_t			curr_map;
 	uint8_t			maps_count;

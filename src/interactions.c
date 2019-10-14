@@ -165,7 +165,6 @@ void				check_door(t_player *player)
 	int				i;
 	t_wall			**walls;
 	t_sector		*sec;
-	t_sector		*after_door;
 
 	i = -1;
 	if (!has_key(player->inventar))
@@ -182,8 +181,7 @@ void				check_door(t_player *player)
 			{
 				use_key(player);
 				sec->state = action_sec;
-				after_door = player->curr_sector; //get_sector_after_door(sec, player->curr_sector);
-				sec->max_up = after_door->floor + 15;
+				sec->max_up = sec->floor + 15;
 				sec->speed = 0.2f;
 			}
 			else
