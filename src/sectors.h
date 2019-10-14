@@ -13,6 +13,7 @@
 #ifndef __SECTORS_H
 # define __SECTORS_H
 # include "sector_worker.h"
+# define MAX_MAPS 5
 
 typedef struct		s_read_holder
 {
@@ -23,7 +24,9 @@ typedef struct		s_read_holder
 	t_item			*all_items;
 	Mix_Chunk		*hit_sound;
 	Mix_Chunk		*roar_sound;
-	char			*maps_path[5];
+	char			*maps_path[MAX_MAPS];
+	SDL_Surface		*skyboxes[MAX_MAPS];
+	t_gun			**all_guns;
 	uint8_t			curr_map;
 	uint8_t			maps_count;
 	int				light_count;

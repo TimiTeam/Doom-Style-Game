@@ -13,7 +13,7 @@ SRCS	:= sdl_worker.c sdl_create.c sdl_exit.c sdl_texture.c img_loader.c \
 			player_movement.c math2.c interactions.c gun_worker.c proj_render.c \
 			draw_world.c fill_super_data.c thread_drawing_help.c events.c draw_items.c \
 			game_loop.c draw_sectors.c check_enemy_state.c change_player_state.c fps_counter.c \
-			run_drawig_sectors.c free_and_exit.c
+			run_drawig_sectors.c free_and_exit.c calc_wall_helper.c
 
 DIR_SRC := $(CURDIR)/src
 DIR_OBJ := $(CURDIR)/obj

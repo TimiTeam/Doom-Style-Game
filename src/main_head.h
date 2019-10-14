@@ -17,8 +17,8 @@
 # include <pthread.h>
 # include "sdl_head.h"
 # include "sectors.h"
-# define W 1380
-# define H 980
+# define W 1024
+# define H 680
 # define EYEHEIGHT  5
 # define THREADS 4
 # define DELETE 	{tmp->next = all->next; ft_memdel((void**)&all); return ;}
@@ -76,19 +76,6 @@ typedef struct		s_draw_data
 	int				n_floor_height;
 	int				n_ceil_height;
 }					t_draw_data;
-
-typedef struct		s_gun
-{
-	float			state;
-	SDL_Surface		*frame[10];
-	SDL_Surface		*icon;
-	Mix_Chunk		*shot_sound;
-	enum e_gun_type	type;
-	char			max_frames;
-	unsigned short	ammo;
-	float			damage;
-	float			rate_of_fire;
-}					t_gun;
 
 typedef struct		s_player
 {
@@ -324,6 +311,8 @@ int					load_menu_textures(t_pr *m, t_read_holder *holder);
 SDL_Rect			change_size(SDL_Rect rect);
 SDL_Rect			reset_size(SDL_Rect rect);
 void				free_menu(t_pr *menu);
+void				free_all(t_player **player, t_sdl **sdl,
+					t_read_holder *holder, t_pr *m);
 void				apply_filter(SDL_Surface *surface, float intensity);
 void				check_door(t_player *player);
 t_sector 			*get_near_sector(t_player *player);
@@ -334,7 +323,7 @@ void				move_player(t_player *player, float sin_angle,
 void				move_player_vertically(t_player *player);
 void				draw_scaled_image(SDL_Surface *screen, SDL_Surface *img,
 													t_point pos, t_point size);
-void				load_guns(t_gun **gun);
+int				load_guns(t_gun **gun);
 void				delete_guns(t_gun **all);
 int					scaler_next(t_scaler *i);
 t_sector			*get_new_player_sector(t_vector player_pos,
@@ -390,6 +379,7 @@ void				draw_sectors(t_sector *sec,
 							t_player *player, t_sdl *sdl, t_draw_data data);
 void				map_wall_text(int *u0, int *u1,
 										t_vector diff, float scaled_tex);
+int 				compare_two_int_array(short *arr_one, short *arr_two, int from, int to);
 void				floor_and_ceil_calculation(t_draw_data *data,
 								t_player player, t_wall line, t_vector scale);
 void				neighbour_calculation(t_draw_data *data, t_n n);

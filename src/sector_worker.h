@@ -92,6 +92,19 @@ typedef	struct			s_vector
 	float				z;
 }						t_vector;
 
+typedef struct		s_gun
+{
+	float			state;
+	SDL_Surface		*frame[MAX_TEXTURES];
+	SDL_Surface		*icon;
+	Mix_Chunk		*shot_sound;
+	enum e_gun_type	type;
+	char			max_frames;
+	unsigned short	ammo;
+	float			damage;
+	float			rate_of_fire;
+}					t_gun;
+
 typedef struct			s_light
 {
 	struct s_sector		*sector;

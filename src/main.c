@@ -12,13 +12,6 @@
 
 #include "main_head.h"
 
-void				map_wall_text(int *u0, int *u1,
-					t_vector diff, float scaled_tex)
-{
-	*u0 = diff.x * scaled_tex;
-	*u1 = diff.y * scaled_tex;
-}
-
 int					run_game(t_sdl *sdl, t_player *player,
 							t_pr *m, t_read_holder *holder)
 {
@@ -52,19 +45,20 @@ int					run_game(t_sdl *sdl, t_player *player,
 	return (0);
 }
 
-void				free_all(t_player **player, t_sdl **sdl,
-								t_read_holder *holder, t_pr *m)
+int					init_holder_data(t_read_holder *holder)
 {
-	if (*player && (*player)->all_guns)
-		delete_guns((*player)->all_guns);
-	free_player(*player);
-	*player = NULL;
-	delete_light_source(holder->light_source, holder->light_count);
-	holder->light_source = NULL;
-	free_t_sdl(sdl);
-	*sdl = NULL;
-	free_menu(m);
-	ft_memset(m, 0, sizeof(t_pr));
+	if (!(holder->skyboxes[0] = load_jpg_png("textures/dark_matter.jpg")))
+	       return (print_error_message("Can't load menu ", "textures/dark_matter.jpg"));
+	if (!(holder->skyboxes[1] = load_jpg_png("textures/hell.jpg")))
+	       return (print_error_message("Can't load menu ", "textures/hell.jpg"));
+	if (!(holder->skyboxes[2] = load_jpg_png("textures/night.jpg")))
+	       return (print_error_message("Can't load menu ", "textures/night.jpg"));
+	holder->hit_sound = Mix_LoadWAV("sounds/monster_roar.wav");
+	holder->roar_sound = Mix_LoadWAV("sounds/monster_bite.wav");
+	if ((holder->all_guns = (t_gun**)malloc(sizeof(t_gun*) * 3)))
+		if (!load_guns(holder->all_guns))
+			return (print_error_message("Some problame with loading guns","exit"));
+	return (1);
 }
 
 int					init(t_sdl **sdl, t_pr *m, t_read_holder *holder)
@@ -78,8 +72,8 @@ int					init(t_sdl **sdl, t_pr *m, t_read_holder *holder)
 	SDL_SetRelativeMouseMode(SDL_TRUE);
 	if (!load_menu_textures(m, holder))
 		return (print_error_message("Can't load menu resourses\n", ""));
-	holder->hit_sound = Mix_LoadWAV("sounds/monster_roar.wav");
-	holder->roar_sound = Mix_LoadWAV("sounds/monster_bite.wav");
+	if (!init_holder_data(holder))
+		return (print_error_message("Can't load main data", ""));
 	initialize_menu(m);
 	return (1);
 }
@@ -102,9 +96,7 @@ int					main(void)
 	{
 		sdl->font = m.font;
 		player = new_t_player(3, 3, sdl->win_size);
-		player->sky = load_jpg_png("textures/dark_matter.jpg");
-		player->all_guns = (t_gun**)malloc(sizeof(t_gun*) * 3);
-		load_guns(player->all_guns);
+		player->all_guns = holder.all_guns;
 		run_game(sdl, player, &m, &holder);
 	}
 	free_all(&player, &sdl, &holder, &m);

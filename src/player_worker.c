@@ -17,8 +17,6 @@ void			free_player(t_player *player)
 	if (!player)
 		return ;
 	delete_items_list(player->inventar);
-	if (player->sky)
-		SDL_FreeSurface(player->sky);
 	if (player->damage_sound)
 		Mix_FreeChunk(player->damage_sound);
 	ft_memdel((void**)&player);
