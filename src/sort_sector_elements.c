@@ -25,6 +25,7 @@ int				check_sectors(t_sector *sector)
 		{
 			if (!sec->portals[i]->sectors[0] || !sec->portals[i]->sectors[1])
 			{
+				printf("sector %d, wall %d\n", sec->sector, sec->portals[i]->id);
 				return (print_error_message("Error map!",
 						"The empty wall must be closed by all side"));
 			}
@@ -71,7 +72,7 @@ void			sort_walls(t_sector *sec, t_wall **all)
 		sec->wall[i]->sectors[1] = wall->sectors[1];
 		if (sec->wall[i]->type == empty_wall && p < MAX_PORTALS)
 			sec->portals[p++] = sec->wall[i];
-		else if (sec->wall[i]->type == filled_wall && w < MAX_PORTALS)
+		else if (sec->wall[i]->type != empty_wall && w < MAX_PORTALS)
 			sec->only_walls[w++] = sec->wall[i];
 	}
 }

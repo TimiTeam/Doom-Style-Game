@@ -1,6 +1,7 @@
 Properties{
 shotgun
-ammo 24
+ammo 16
+size 12x8
 }
 waiting{
 textures/shotgun_ammo/shotgun_ammo.png

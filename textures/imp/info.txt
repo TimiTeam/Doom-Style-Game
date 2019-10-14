@@ -1,6 +1,7 @@
 Properties{
 health 100
 damage 15
+size 50x80
 }
 waiting{
 textures/imp/imp_attacking_2.png

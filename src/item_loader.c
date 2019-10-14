@@ -45,7 +45,7 @@ static void				filed_t_animation(t_animation *anim, int fd)
 	int					i;
 
 	i = 0;
-	while (get_next_line(fd, &line) > 0)
+	while (get_next_line(fd, &line) > 0 && i < MAX_TEXTURES)
 	{
 		if (ft_strcmp(line, "}") == 0)
 			break ;
@@ -55,13 +55,17 @@ static void				filed_t_animation(t_animation *anim, int fd)
 	}
 	anim->current_text = 0;
 	anim->max_textures = i;
+	while (i < MAX_TEXTURES)
+		anim->texture[i++] = NULL;
 	ft_strdel(&line);
 }
 
 static void				read_properties(t_item *item, int fd)
 {
-	char				*line;
+	char				*line;	
+	t_vector			size;
 
+	size = (t_vector){};
 	while (get_next_line(fd, &line) > 0)
 	{
 		if (ft_strcmp(line, "}") == 0)
@@ -72,10 +76,14 @@ static void				read_properties(t_item *item, int fd)
 			item->damage = get_num_from_str(line);
 		else if (ft_strncmp(line, "ammo", ft_strlen("ammo")) == 0)
 			item->ammo = get_num_from_str(line);
+		else if (ft_strncmp(line, "size", ft_strlen("size")) == 0)
+			get_numbers(&size.x, &size.y, 'x', line);
 		else if (item->type == gun || item->type == ammo)
 			item->gun_type = get_gun_type(line);
 		ft_strdel(&line);
 	}
+	item->size.x = (int)size.x;
+	item->size.y = (int)size.y;
 	ft_strdel(&line);
 }
 
@@ -101,6 +109,11 @@ static int				create_animations(t_item *it, char *file_pth)
 		else if (ft_strcmp(line, "die{") == 0)
 			filed_t_animation(&it->states[die], fd);
 		ft_strdel(&line);
+	}
+	if (it->type == enemy){
+		it->roar_sound = Mix_LoadWAV("sounds/monster_roar.wav");
+		it->hit_sound = Mix_LoadWAV("sounds/monster_bite.wav");
+		Mix_PlayChannel(1, it->hit_sound, 0);
 	}
 	close(fd);
 	ft_strdel(&line);

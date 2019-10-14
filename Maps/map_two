@@ -11,17 +11,17 @@ Vectors
 5) 97,77
 
 Walls
-0) 0-1 filled 0
-1) 1-2 empty 0
-2) 2-3 filled 0
-3) 3-0 filled 0
-4) 1-4 filled 0
-5) 4-5 filled 0
-6) 5-2 filled 0
+0) 0-1 filled 2
+1) 1-2 empty 9
+2) 2-3 filled 3
+3) 3-0 filled 3
+4) 1-4 filled 1
+5) 4-5 filled 8
+6) 5-2 filled 7
 
 Sectors
-0) floor(0 0) ceil(60 0) walls '0 1 2 3' items '(44,37 5), (55,64 6)'
-1) floor(3 0) ceil(60 0) walls '1 4 5 6' items '(93,42 15)'
+0) floor(0 4) ceil(60 10) walls '0 1 2 3' items '(44,37 5), (55,64 6), (20,25 10), (38,40 21), (50,29 21)'
+1) floor(3 5) ceil(60 11) walls '1 4 5 6' items '(93,42 15), (60,55 13), (68,55 21), (88,70 21)'
 
 Player
 0) 32,26 start 0

@@ -18,7 +18,8 @@ t_projectile		*create_projectile(t_player player)
 
 	if (!(projectile = (t_projectile*)ft_memalloc(sizeof(t_projectile))))
 		return (NULL);
-	*projectile = (t_projectile){0};
+//	*projectile = (t_projectile){0};
+	ft_memset(projectile, 0, sizeof(t_projectile));
 	projectile->pos.x = player.pos.x + 1 * player.cos_angl;
 	projectile->pos.y = player.pos.y + 1 * player.sin_angl;
 	projectile->pos.z = player.pos.z - player.yaw - 3;
@@ -34,17 +35,17 @@ t_projectile		*create_projectile(t_player player)
 
 void				add_projectile(t_projectile **head, t_projectile *new)
 {
-	t_projectile	*main;
+	t_projectile	*m;
 
 	if (!*head)
 	{
 		*head = new;
 		return ;
 	}
-	main = *head;
-	while (main->next)
-		main = main->next;
-	main->next = new;
+	m = *head;
+	while (m->next)
+		m = m->next;
+	m->next = new;
 }
 
 void				swap_proj_sectors(t_projectile **current_list,
@@ -83,6 +84,7 @@ int					proj_collisions(t_projectile *proj,
 	t_sector		*next;
 
 	i = -1;
+	next = NULL;
 	while (++i < proj->curr_sector->n_walls)
 	{
 		if (box_intersection(proj->pos, step, wall[i]->start, wall[i]->end)
@@ -108,7 +110,6 @@ int					proj_collisions(t_projectile *proj,
 Uint8				move_projectile(t_projectile *proj)
 {
 	t_wall			**wall;
-	t_sector		*next;
 	t_vector		step;
 
 	if (!proj)

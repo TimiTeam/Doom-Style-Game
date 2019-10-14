@@ -59,10 +59,10 @@ void		draw_sector_items(t_item **items, t_player *player,
 	get_damege = NULL;
 	while ((it = change_item_animations(items, player, it)))
 	{
-		if (it->dist_to_player <= 1.2f && it->type != object
-		&& it->type != enemy & it->type != light)
+		if (player->curr_sector == it->sector && it->dist_to_player <= 1.2f && it->type != object
+		&& it->type != enemy && it->type != light)
 			it = get_item_to_player(items, it, player);
-		if (it)
+		if (it && it->dist_to_player >= 1.f)
 		{
 			draw_enemy_sprite(it, data, *player, screen);
 			if (it->players_hit && closer > it->dist_to_player)
@@ -71,8 +71,9 @@ void		draw_sector_items(t_item **items, t_player *player,
 				closer = it->dist_to_player;
 				get_damege = it;
 			}
-			it = it->next;
 		}
-	}
+		if (it)
+			it = it->next;
+	}	
 	is_player_hit(get_damege, player);
 }

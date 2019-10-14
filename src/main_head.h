@@ -6,7 +6,7 @@
 /*   By: ohavryle <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/29 18:49:16 by ohavryle          #+#    #+#             */
-/*   Updated: 2019/09/29 18:49:18 by ohavryle         ###   ########.fr       */
+/*   Updated: 2019/09/30 14:35:00 by tbujalo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,8 @@
 # include <pthread.h>
 # include "sdl_head.h"
 # include "sectors.h"
-# define W 1360
-# define H 720
+# define W 1200
+# define H 675
 # define EYEHEIGHT  5
 # define THREADS 4
 # define DELETE 	{tmp->next = all->next; ft_memdel((void**)&all); return ;}
@@ -42,8 +42,8 @@ typedef struct		s_scaler
 
 typedef struct		s_draw_data
 {
-	int				ytop[W];
-	int				ybottom[W];
+	short			ytop[W];
+	short			ybottom[W];
 	float			start;
 	float			end;
 	float			player_current_height;
@@ -57,6 +57,10 @@ typedef struct		s_draw_data
 	float			n_floor_y_e;
 	float			diff_ceil;
 	float			diff_floor;
+	float			calc_one;
+	float			floor_calc;
+	float			ceil_calc;
+	short			recursion_deep;
 	int				floor_height;
 	int				ceil_height;
 	int				n_floor_height;
@@ -70,8 +74,8 @@ typedef struct		s_gun
 	SDL_Surface		*icon;
 	Mix_Chunk		*shot_sound;
 	enum e_gun_type	type;
-	int				max_frames;
-	int				ammo;
+	char			max_frames;
+	unsigned short	ammo;
 	float			damage;
 	float			rate_of_fire;
 }					t_gun;
@@ -79,12 +83,15 @@ typedef struct		s_gun
 typedef struct		s_player
 {
 	SDL_Surface		*sky;
+	Mix_Chunk		*damage_sound;
 	t_sector		*curr_sector;
+	t_sector		*all;
 	t_item			*inventar;
 	t_gun			**all_guns;
 	t_gun			*gun[3];
 	t_vector		pos;
 	t_vector		end_pos;
+	unsigned short	end_sector;
 	t_point			half_win_size;
 	t_gun			*current_gun;
 	float			speed;
@@ -97,19 +104,21 @@ typedef struct		s_player
 	float			m_vfov;
 	float			m_hfov;
 	float			velocity;
-	int				height;
-	int				health;
-	int				end_sec;
-	unsigned char	fall;
-	char			sit;
-	unsigned char	shooting;
-	char			dead;
-	char			curr_map;
 	float			sky_w;
 	float			sky_h;
-	unsigned char	falling;
-	int				win;
-	int				jetpack;
+	char			lift_near;
+	char			door_near;
+	short			height;
+	short			health;
+	short			end_sec;
+	char			fall;
+	char			sit;
+	char			shooting;
+	char			dead;
+	char			curr_map;
+	char			falling;
+	char			win;
+	char			jetpack;
 }					t_player;
 
 typedef struct		s_super_data
@@ -212,6 +221,8 @@ typedef struct		s_ceil_inf
 	unsigned		tx;
 	unsigned		txtz;
 	float			brightness;
+	float 			calc_one;
+	float 			calc_two;
 }					t_ceil_inf;
 
 typedef struct		s_world
@@ -283,18 +294,21 @@ typedef struct		s_p_n_d
 
 void				run_with_buff(t_player *player,
 							t_sdl *sdl, unsigned int win_x);
-void				initialize_menu(t_pr *m);
-int					load_menu_textures(t_pr *m, t_sdl *sdl, t_read_holder *holder);
+void				initialize_sdl_win(t_pr *m);
+void				load_textures(t_pr *m, t_sdl *sdl, t_read_holder *holder);
 SDL_Surface			*txt_surf(TTF_Font *font, char *text, SDL_Color color);
 void				renderallshit(t_pr *m);
 int					render_menu(t_pr *m, t_sdl *sdl);
-int					load_game(t_player *player, t_read_holder *holder);
+t_sector			*load_game(t_player *player, t_read_holder *holder);
 int					menu_hooks(t_pr *m, t_read_holder *holder);
+void				initialize_menu(t_pr *m);
+int					load_menu_textures(t_pr *m, t_read_holder *holder);
 SDL_Rect			change_size(SDL_Rect rect);
 SDL_Rect			reset_size(SDL_Rect rect);
 void				free_menu(t_pr *menu);
 void				apply_filter(SDL_Surface *surface, float intensity);
-void				check_door(t_player *player, t_sector *sectors);
+void				check_door(t_player *player);
+t_sector 			*get_near_sector(t_player *player);
 t_player			*new_t_player(int pos_x, int pos_y, t_point wid_size);
 void				free_player(t_player *player);
 void				move_player(t_player *player, float sin_angle,
@@ -324,8 +338,6 @@ int					box_intersection(t_vector p1, t_vector p2,
 											t_vector p3, t_vector p4);
 t_scaler			init_scaler(int n, t_point curr, t_point dst);
 void				make_intersect(t_wall *wall);
-unsigned short		dot_inside_sector(t_vector player_pos,
-									t_wall **walls, unsigned arr_size);
 void				get_gun_to_player(t_player *player,
 						enum e_gun_type gun_type, SDL_Surface *icon);
 void				rest_of_the_action_shit(t_pr *m, Uint8 *menu,
@@ -375,16 +387,17 @@ void				draw_sectors(t_sector *sectors,
 					t_player *player, t_sdl *sdl, t_draw_data data);
 void				update_player(t_player *player, unsigned char move[4]);
 int					hook_event(t_player *player,
-					unsigned char move[4], t_sector *sectors);
+					unsigned char move[4]);
+void				activate_lift(t_player *player);
 void				draw_sector_items(t_item **items,
 					t_player *player, t_draw_data data, SDL_Surface *screen);
 int					game_loop(t_sdl *sdl, t_player *player, t_sector *sectors);
 void				*thread_draw_sector(void *param);
+void 				draw_simple_wall(t_super_data super);
 void				draw_sectors(t_sector *sec,
 						t_player *player, t_sdl *sdl, t_draw_data data);
 void				free_data_holder(t_read_holder *holder);
 t_item				*del_cur_item_and_get_next(t_item **it_list, t_item *curr);
 t_item				*change_item_animations(t_item **items,
 									t_player *player, t_item *it);
-int					init_sound();
 #endif

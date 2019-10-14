@@ -6,7 +6,7 @@
 /*   By: tbujalo <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/29 05:45:05 by tbujalo           #+#    #+#             */
-/*   Updated: 2019/09/29 06:11:23 by tbujalo          ###   ########.fr       */
+/*   Updated: 2019/09/30 15:35:56 by tbujalo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,10 +45,10 @@ t_item			*read_all_items(int fd)
 {
 	char		*file_name;
 	char		*path;
-	t_item		*main;
+	t_item		*head;
 	t_item		*new;
 
-	main = NULL;
+	head = NULL;
 	if (!(path = get_path(fd)))
 		return (NULL);
 	while (get_next_line(fd, &file_name) > 0 && ft_strncmp(file_name, "###", 3))
@@ -57,17 +57,17 @@ t_item			*read_all_items(int fd)
 		{
 			if (!(new = make_item_ftom_str(skip_row_number(file_name), path)))
 			{
-				delete_items_list_with_animation(main);
-				main = NULL;
+				delete_items_list_with_animation(head);
+				head = NULL;
 				break ;
 			}
-			add_next_item(&main, new);
+			add_next_item(&head, new);
 		}
 		ft_strdel(&file_name);
 	}
 	ft_strdel(&path);
 	ft_strdel(&file_name);
-	return (main);
+	return (head);
 }
 
 int				read_game_config_file(t_read_holder *holder, char *info_file)
@@ -79,14 +79,14 @@ int				read_game_config_file(t_read_holder *holder, char *info_file)
 	{
 		while (get_next_line(fd, &line) > 0)
 		{
-			if (ft_strcmp(line, "#Levels") == 0)
-				holder->maps_count = read_maps_path(fd,
-						&holder->maps_path[0], 5);
-			else if (ft_strncmp(line, "#Textures", ft_strlen("#Textures")) == 0)
-				holder->textures = load_img_array_from_file(fd,
-						(holder->text_count = get_num_from_str(line)));
-			else if (ft_strcmp(line, "#Items") == 0)
-				holder->all_items = read_all_items(fd);
+			if (ft_strcmp(line, "#Levels") == 0 && !(holder->maps_count = read_maps_path(fd,
+						&holder->maps_path[0], 5)))
+					break ;
+			else if (ft_strncmp(line, "#Textures", ft_strlen("#Textures")) == 0 && !(holder->textures = load_img_array_from_file(fd,
+						(holder->text_count = get_num_from_str(line)))))
+				break ;
+			else if (ft_strcmp(line, "#Items") == 0 && !(holder->all_items = read_all_items(fd)))
+				break ;
 			ft_strdel(&line);
 		}
 		ft_strdel(&line);
@@ -99,7 +99,7 @@ int				read_game_config_file(t_read_holder *holder, char *info_file)
 	return (print_error_message("Can't open file: ", info_file));
 }
 
-void			load_data_from_map(int fd, t_read_holder *h, t_vector *p_pos)
+void			load_data_from_map(int fd, t_read_holder *h)
 {
 	t_vector	*vectors;
 	char		*line;
@@ -118,8 +118,8 @@ void			load_data_from_map(int fd, t_read_holder *h, t_vector *p_pos)
 			h->light_source = create_all_light_source(h->all, h->light_count);
 			fill_sectors_light_source(h->all, h->light_source, h->light_count);
 		}
-		else if (ft_strncmp(line, "Player", ft_strlen("Player")) == 0)
-			get_player_pos(fd, p_pos, &h->player_sector_id);
+		else if (ft_strncmp(line, "Player", ft_strlen("Player")) == 0 && h->all)
+			player_start_and_end(fd, h);
 		ft_strdel(&line);
 	}
 	if (vectors)
@@ -127,7 +127,7 @@ void			load_data_from_map(int fd, t_read_holder *h, t_vector *p_pos)
 	ft_strdel(&line);
 }
 
-t_sector		*read_map(char *pth, t_read_holder *holder, t_vector *p_pos)
+t_sector		*read_map(char *pth, t_read_holder *holder)
 {
 	int			fd;
 
@@ -135,8 +135,7 @@ t_sector		*read_map(char *pth, t_read_holder *holder, t_vector *p_pos)
 		return (print_error_message_null("Error opening file:", pth));
 	if (!get_count_struct_arrays(fd, &holder->vect_count, &holder->wall_count))
 		return (print_error_message_null("Error reading map:", pth));
-	load_data_from_map(fd, holder, p_pos);
-	get_player_pos(fd, &holder->player_end, &holder->player_end_sect);
+	load_data_from_map(fd, holder);
 	delete_walls(holder->walls, holder->wall_count);
 	close(fd);
 	return (holder->all);

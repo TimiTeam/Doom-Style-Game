@@ -25,8 +25,7 @@ SDL_Surface			*txt_surf(TTF_Font *font,
 	return (ret);
 }
 
-int					load_menu_textures(t_pr *m, t_sdl *sdl,
-									t_read_holder *holder)
+int					load_menu_textures(t_pr *m, t_read_holder *holder)
 {
 	m->background = load_jpg_png("textures/background1.jpg");
 	m->play_button = load_jpg_png("textures/play_button.png");

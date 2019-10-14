@@ -6,7 +6,7 @@
 /*   By: tbujalo <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/29 18:55:55 by tbujalo           #+#    #+#             */
-/*   Updated: 2019/09/29 18:56:25 by tbujalo          ###   ########.fr       */
+/*   Updated: 2019/09/30 15:31:58 by tbujalo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ void			move_player_vertically(t_player *player)
 		player->velocity = 0;
 	player->pos.z += player->velocity;
 	if (player->pos.z - player->height > player->curr_sector->floor)
-		player->velocity -= 0.08;
+		player->velocity -= 0.1;
 	else
 		player->velocity = 0;
 }
@@ -26,20 +26,20 @@ void			move_player_vertically(t_player *player)
 int				change_player(t_sector *new, t_player *player,
 								t_vector *step, t_sector *next)
 {
-	if (!new || (int)(new->ceil - new->floor) <=
+	if (!new || (int)(new->ceil - player->curr_sector->floor) <=
 					(int)(player->height + player->sit))
 		return (0);
 	if (next->floor - player->pos.z + player->height > 3)
 		return (0);
 	if (player->pos.z - player->height < next->floor)
-		step->z += next->floor - player->curr_sector->floor;
+		step->z += next->floor - player->pos.z + player->height;
 	player->curr_sector = new;
 	return (1);
 }
 
 int				check_next_sec(t_wall *wall, t_player *player, t_sector **next)
 {
-	if (wall->type == filled_wall)
+	if (wall->type != empty_wall)
 		return (0);
 	if (wall->sectors[0] && player->curr_sector != wall->sectors[0])
 		*next = wall->sectors[0];
@@ -73,7 +73,7 @@ void			move_player(t_player *player, float sin_angle, float cos_angle)
 
 	i = -1;
 	step = (t_vector){player->pos.x + cos_angle * player->speed,
-					player->pos.y + sin_angle * player->speed, 0};
+					player->pos.y + sin_angle * player->speed, player->pos.z};
 	wall = player->curr_sector->wall;
 	while (++i < player->curr_sector->n_walls)
 	{
@@ -85,9 +85,8 @@ void			move_player(t_player *player, float sin_angle, float cos_angle)
 			break ;
 		}
 	}
-	step.z += player->pos.z;
 	player->pos = step;
 	if (player->end_sec == player->curr_sector->sector
-	&& len_between_points(player->pos, player->end_pos) < 5)
+	&& len_between_points(player->pos, player->end_pos) < 3)
 		player->win = 1;
 }

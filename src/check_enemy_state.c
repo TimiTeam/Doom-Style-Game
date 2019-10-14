@@ -16,16 +16,17 @@ void			check_enemy_state(t_item *enemy, t_vector player_pos)
 {
 	if (enemy->health > 0)
 	{
-		enemy->speed = 0.22;
+		enemy->speed = 0.2;
 		if (enemy->is_dying)
 			enemy->is_dying--;
-		else if (enemy->dist_to_player < 30 && enemy->dist_to_player > 5)
+		else if (enemy->dist_to_player < 40 && enemy->dist_to_player > 5)
 		{
+			Mix_PlayChannel(-1, enemy->roar_sound, 0);
 			enemy->curr_state = walk;
-			enemy->speed = 0.44;
+			enemy->speed = 0.3;
 			move_enemy_to_player(enemy, player_pos);
 		}
-		else if (enemy->dist_to_player <= 5)
+		else if (enemy->dist_to_player <= 5 || enemy->curr_state == taking_damage)
 			enemy->curr_state = action;
 		else
 			enemy->curr_state = waiting;
@@ -61,7 +62,12 @@ t_player *player, t_item *it)
 	it->states[it->curr_state].max_textures)
 	{
 		if (it->curr_state == action)
+		{
 			player->health -= it->damage;
+			Mix_PlayChannel(-1, player->damage_sound, 0);
+			printf("Attacker address: %p\n", it);
+			Mix_PlayChannel(-1, it->hit_sound, 0);
+		}
 		if (player->health <= 0 && !player->dead)
 			player->dead = 1;
 		it->curr_frame = 0;

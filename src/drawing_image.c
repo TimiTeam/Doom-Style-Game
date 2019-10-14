@@ -37,7 +37,8 @@ void				init_step(t_vector *step, t_vector *img_point,
 {
 	step->x = (float)im->w / size.x;
 	step->y = (float)im->h / size.y;
-	*img_point = (t_vector){0};
+//	*img_point = (t_vector){0};
+	ft_memset(img_point, 0, sizeof(t_vector));
 }
 
 void				draw_image(SDL_Surface *screen, SDL_Surface *img,
@@ -61,7 +62,7 @@ void				draw_image(SDL_Surface *screen, SDL_Surface *img,
 		{
 			pix = get_pixel(img, (int)img_point.x, (int)img_point.y);
 			if (point_in_image(x, y, screen)
-				&& transparent_pixel(pix, img->format))
+			&& transparent_pixel(pix, img->format))
 				put_pixel(screen, x + pos.x, y + pos.y, pix);
 			img_point.x += step.x;
 		}

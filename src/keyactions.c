@@ -79,6 +79,8 @@ int					menu_hooks(t_pr *m, t_read_holder *holder)
 			return (0);
 		if (m->event.type == SDL_KEYDOWN)
 		{
+			if (m->event.key.keysym.sym == SDLK_BACKSPACE)
+				return (1);
 			down_action(m);
 			up_action(m);
 			left_right(m);

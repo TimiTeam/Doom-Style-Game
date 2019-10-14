@@ -6,7 +6,7 @@
 /*   By: atabala <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/29 14:06:18 by atabala           #+#    #+#             */
-/*   Updated: 2019/09/29 14:10:04 by atabala          ###   ########.fr       */
+/*   Updated: 2019/09/30 15:16:02 by tbujalo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,20 +24,21 @@ typedef struct		s_read_holder
 	char			*maps_path[5];
 	uint8_t			curr_map;
 	uint8_t			maps_count;
-	int				player_sector_id;
 	int				light_count;
 	int				text_count;
 	int				vect_count;
 	int				wall_count;
+	t_vector 		player_start;
 	t_vector		player_end;
-	int				player_end_sect;
+	unsigned 		player_end_sect;
+	unsigned		player_sector_id;
 }					t_read_holder;
 
 int					read_game_config_file(t_read_holder *holder,
 						char *info_file_path);
-t_sector			*read_map(char *pth, t_read_holder *holder,
-						t_vector *player_pos);
+t_sector			*read_map(char *pth, t_read_holder *holder);
 SDL_Surface			**load_img_array_from_file(int fd, unsigned size);
+char				*skip_line_with_word(char *line, char *word);
 enum e_gun_type		get_gun_type(char *type);
 int					get_num_from_str(char *str);
 char				*skip_row_number(char *line);
@@ -48,8 +49,7 @@ unsigned			get_numbers(float *one, float *two,
 char				*clip_n_str(char *s1, char *s2, char *s3);
 int					get_wall_count(char *str);
 t_item				*make_item_ftom_str(char *line, char *directory_pth);
-int					get_player_pos(int fd, t_vector *player_pos,
-						int *player_sec_id);
+int 				player_start_and_end(int fd, t_read_holder *holder);
 t_sector			*get_player_sector(t_sector *sectors, int sec_num);
 t_vector			*get_vectors(int fd, int vec_size);
 t_wall				**get_walls(int fd, t_read_holder *holder,
@@ -59,7 +59,7 @@ t_item				*make_items(char *data, t_item *all_items,
 						t_read_holder *holder);
 void				*print_error_message_null(char *mess, char *error_obj);
 int					print_error_message(char *mess, char *error_obj);
-void				*free_array_surfcae_(SDL_Surface **array, unsigned size);
+void				*error_free_array_surf(SDL_Surface **array, unsigned size, char *message);
 t_wall				**create_sector_walls(t_sector *sector,
 						t_read_holder *holder, char *data, int wall_size);
 t_light				**create_all_light_source(t_sector *sec,
@@ -72,6 +72,8 @@ int					find_dot_radius_intersect(t_vector light_pos, float radius,
 						t_vector start, t_vector end);
 void				swap(int *a, int *b);
 char				*get_path(int fd);
+unsigned short		dot_inside_sector(t_vector dot,
+									t_wall **walls, unsigned arr_size);
 int					check_sectors(t_sector *sector);
 void				mark_all_neighbors(t_sector *sec, t_wall **all);
 

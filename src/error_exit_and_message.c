@@ -15,10 +15,10 @@
 int					print_error_message(char *mess, char *error_obj)
 {
 	ft_putstr("\x1b[31mError: \x1b[33m");
-	ft_putendl(mess);
-	ft_putstr(" ");
-	ft_putendl(error_obj);
-	ft_putstr("\x1b[0m");
+	ft_putstr(mess);
+	ft_putstr(" \x1b[31m");
+	ft_putstr(error_obj);
+	ft_putendl("\x1b[0m");
 	return (0);
 }
 
@@ -28,7 +28,7 @@ void				*print_error_message_null(char *mess, char *error_obj)
 	return (NULL);
 }
 
-void				*free_array_surfcae_(SDL_Surface **array, unsigned size)
+void				*error_free_array_surf(SDL_Surface **array, unsigned size, char *message)
 {
 	unsigned		i;
 
@@ -41,5 +41,5 @@ void				*free_array_surfcae_(SDL_Surface **array, unsigned size)
 		i++;
 	}
 	ft_memdel((void**)&array);
-	return (NULL);
+	return (print_error_message_null(message, "exit"));
 }

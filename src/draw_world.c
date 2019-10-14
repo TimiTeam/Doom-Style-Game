@@ -12,6 +12,22 @@
 
 #include "main_head.h"
 
+static int 		compare_two_int_array(short *arr_one, short *arr_two, int from, int to)
+{
+	int 		i;
+	
+	i = from;
+	if (!arr_one || !arr_two)
+		return (0);
+	while (i < to)
+	{
+		if (arr_one[i] != arr_two[i])
+			return (0);
+		i++;
+	}
+	return (1);
+}
+
 void			again(t_again a)
 {
 	t_wall		wall;
@@ -19,7 +35,9 @@ void			again(t_again a)
 
 	wall = a.wall;
 	player = a.player;
-	if (wall.type != filled_wall && wall.sectors[1] && wall.sectors[0])
+	a.data.recursion_deep++;
+	if ((wall.type == empty_wall || wall.type == transparent) && wall.sectors[1] && wall.sectors[0]
+	 && !compare_two_int_array(a.data.ybottom, a.data.ytop, a.data.start, a.data.end) && a.data.recursion_deep < 100 && a.data.recursion_deep < 36)
 	{
 		if (wall.sectors[0]->sector != player.curr_sector->sector
 				&& wall.sectors[0]->sector != a.sec->sector)
@@ -56,6 +74,12 @@ void			threads(t_proj t)
 	while (++i < THREADS)
 		pthread_join(thread[i], NULL);
 	again((t_again){t.sec, t.wall, t.player, t.sdl, t.data});
+	if (super->wall.type == transparent)
+	{
+		super[0].start_x = t.data.start;
+		super[0].end_x = t.data.end;
+		draw_simple_wall(super[0]);
+	}
 }
 
 void			draw_projected(t_proj p)
@@ -67,16 +91,16 @@ void			draw_projected(t_proj p)
 
 	line = p.line;
 	player = p.player;
-	scl1 = (t_vector){player.hfov / line.start.y, player.vfov / line.start.y};
-	scl2 = (t_vector){player.hfov / line.end.y, player.vfov / line.end.y};
+	scl1 = (t_vector){player.hfov / line.start.y, player.vfov / line.start.y, 0};
+	scl2 = (t_vector){player.hfov / line.end.y, player.vfov / line.end.y, 0};
 	line.start.x = player.half_win_size.x - (int)(line.start.x * scl1.x);
 	line.end.x = player.half_win_size.x - (int)(line.end.x * scl2.x);
 	if (line.start.x >= line.end.x || line.end.x < p.data.start
 								|| line.start.x > p.data.end)
 		return ;
 	floor_and_ceil_calculation(&(p.data), player,
-							line, (t_vector){scl1.y, scl2.y});
-	if (p.wall.type != filled_wall && p.wall.sectors[1] && p.wall.sectors[0])
+							line, (t_vector){scl1.y, scl2.y, 0});
+	if ((p.wall.type == empty_wall || p.wall.type == transparent) && p.wall.sectors[1] && p.wall.sectors[0])
 		neighbour_calculation(&(p.data), (t_n){player,
 					p.wall, line, scl1.y, scl2.y});
 	threads((t_proj){p.sec, p.wall, player, p.sdl, p.data,
@@ -91,8 +115,8 @@ void			get_rotated(t_rot r)
 	t_vector	org1;
 	t_vector	org2;
 
-	org1 = (t_vector){r.line.start.x, r.line.start.y};
-	org2 = (t_vector){r.line.end.x, r.line.end.y};
+	org1 = (t_vector){r.line.start.x, r.line.start.y, 0};
+	org2 = (t_vector){r.line.end.x, r.line.end.y, 0};
 	if (r.line.start.y <= 0 || r.line.end.y <= 0)
 		make_intersect(&(r.line));
 	if (fabsf(r.wall.start.x - r.wall.end.x)
@@ -103,11 +127,11 @@ void			get_rotated(t_rot r)
 	if (fabs(r.line.end.x - r.line.start.x)
 		> fabs(r.line.end.y - r.line.start.y))
 		map_wall_text(&u0, &u1, (t_vector){r.line.start.x - org1.x,
-		r.line.end.x - org1.x}, ((r.wall.texture->w) * scale_l - 1)
+		r.line.end.x - org1.x, 0}, ((r.wall.texture->w) * scale_l - 1)
 		/ (org2.x - org1.x));
 	else
 		map_wall_text(&u0, &u1, (t_vector){r.line.start.y - org1.y, r.line.end.y
-		- org1.y}, ((r.wall.texture->w) * scale_l - 1) / (org2.y - org1.y));
+		- org1.y, 0}, ((r.wall.texture->w) * scale_l - 1) / (org2.y - org1.y));
 	draw_projected((t_proj){r.sec, r.wall, r.player,
 	r.sdl, r.data, r.line, u0, u1, scale_l, r.thread_draw_sector});
 }

@@ -15,7 +15,7 @@
 
 # define MAX_PORTALS 16
 # define MAX_TEXTURES 8
-# define MAX_LIGHT_SRC 4
+# define MAX_LIGHT_SRC 16
 # include "sdl_head.h"
 # include "libft.h"
 # include <fcntl.h>
@@ -23,7 +23,30 @@
 enum					e_wall_type
 {
 	filled_wall,
-	empty_wall
+	empty_wall,
+	window,
+	transparent
+};
+
+enum					e_visible
+{
+	no_visible,
+	visible
+};
+
+enum					e_sect_type
+{
+	simple,
+	door,
+	lift,
+	uncovered,
+	murderous
+};
+
+enum 					e_sect_state
+{
+	calm,
+	action_sec
 };
 
 enum					e_gun_type
@@ -39,6 +62,7 @@ enum					e_item_type
 	light,
 	coin,
 	super_bonus,
+	jetpack,
 	health,
 	gun,
 	ammo,
@@ -97,6 +121,8 @@ typedef	struct			s_animation
 
 typedef struct			s_item
 {
+	Mix_Chunk			*hit_sound;
+	Mix_Chunk			*roar_sound;
 	t_animation			states[5];
 	float				curr_frame;
 	struct s_sector		*sector;
@@ -131,8 +157,7 @@ typedef struct			s_sector
 	t_wall				**wall;
 	t_wall				*only_walls[MAX_PORTALS];
 	t_wall				*portals[MAX_PORTALS];
-	unsigned			door;
-	unsigned			opening;
+	char				door_open;
 	t_light				*sector_light[MAX_LIGHT_SRC];
 	SDL_Surface			*floor_tex;
 	SDL_Surface			*ceil_tex;
@@ -141,6 +166,12 @@ typedef struct			s_sector
 	t_projectile		*projectiles;
 	float				floor;
 	float				ceil;
+	float				speed;
+	int 				max_up;
+	enum e_sect_type	type;
+	enum e_sect_state	state;
+	enum e_visible		floor_visible;
+	unsigned char		player_use;
 	unsigned short		sector;
 	unsigned short		n_walls;
 }						t_sector;

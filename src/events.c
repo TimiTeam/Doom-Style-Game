@@ -13,7 +13,7 @@
 #include "main_head.h"
 
 int				movement_events(SDL_Keycode code,
-			t_player *player, unsigned char move[4], SDL_EventType type)
+				unsigned char move[4], SDL_EventType type)
 {
 	if (code == SDLK_w || code == SDLK_UP)
 		move[0] = type == SDL_KEYDOWN;
@@ -29,14 +29,14 @@ int				movement_events(SDL_Keycode code,
 int				guess_event(SDL_Keycode code,
 			t_player *player, unsigned char move[4], SDL_EventType type)
 {
-	movement_events(code, player, move, type);
+	movement_events(code, move, type);
 	if (code == SDLK_LSHIFT && type == SDL_KEYDOWN && !player->sit)
-		player->speed = 1.2f;
+		player->speed *= 2;
 	else if (code == SDLK_LSHIFT && type == SDL_KEYUP)
-		player->speed = 0.6;
+		player->speed = 0.5;
 	else if (code == SDLK_SPACE && type == SDL_KEYDOWN
 			&& (player->pos.z - player->height <= player->curr_sector->floor
-			|| player->jetpack))
+			|| player->jetpack || player->curr_sector->type == uncovered))
 		player->velocity += 0.8f;
 	else if (code == SDLK_1 && type == SDL_KEYDOWN && player->gun[pistol])
 		player->current_gun = player->gun[pistol];
@@ -45,7 +45,9 @@ int				guess_event(SDL_Keycode code,
 	else if (code == SDLK_3 && type == SDL_KEYDOWN && player->gun[plasmagun])
 		player->current_gun = player->gun[plasmagun];
 	else if (type == SDL_KEYDOWN && code == SDLK_e)
-		check_door(player, player->curr_sector);
+		check_door(player);
+	else if (type == SDL_KEYDOWN && code == SDLK_f)
+			activate_lift(player);		
 	if (type == SDL_KEYDOWN && code == SDLK_LCTRL)
 		player->sit = -3;
 	if (type == SDL_KEYUP && code == SDLK_LCTRL)
@@ -74,15 +76,16 @@ void			update_player(t_player *player, unsigned char move[4])
 	player->sin_angl = sin(player->angle);
 	player->yaw = CLAMP(player->yaw - y * 0.05f, -5, 5);
 	if (player->current_gun && player->current_gun->state
-	== 0.44f && player->current_gun->type == plasmagun){
+	== 1.1f && player->current_gun->type == plasmagun)
+	{
 		add_projectile(&player->curr_sector->projectiles,
 										create_projectile(*player));
-		
+		Mix_PlayChannel(1, player->current_gun->shot_sound, 0);
 	}
 }
 
 int				hook_event(t_player *player,
-				unsigned char move[4], t_sector *sectors)
+				unsigned char move[4])
 {
 	SDL_Event	e;
 

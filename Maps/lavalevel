@@ -1,0 +1,168 @@
+Count Vectors: 53
+Count Walls: 77
+Count Sectors: 24
+
+Vectors
+0) 14,5
+1) 21,2
+2) 28,2
+3) 36,4
+4) 42,8
+5) 48,15
+6) 43,17
+7) 6,9
+8) 4,16
+9) 12,18
+10) 28,11
+11) 3,28
+12) 5,41
+13) 10,47
+14) 13,43
+15) 13,35
+16) 3,50
+17) 8,57
+18) 28,49
+19) 21,40
+20) 27,16
+21) 27,22
+22) 32,27
+23) 37,31
+24) 40,24
+25) 52,28
+26) 46,31
+27) 52,11
+28) 60,11
+29) 63,13
+30) 65,21
+31) 63,28
+32) 58,30
+33) 47,36
+34) 52,37
+35) 55,35
+36) 67,31
+37) 68,38
+38) 64,40
+39) 58,43
+40) 55,40
+41) 48,5
+42) 57,4
+43) 39,36
+44) 43,41
+45) 48,45
+46) 50,47
+47) 64,47
+48) 45,53
+49) 31,52
+50) 21,71
+51) 34,64
+52) 48,67
+
+Walls
+0) 0-1 filled 52
+1) 1-2 filled 52
+2) 2-3 filled 52
+3) 3-4 filled 52
+4) 4-5 filled 52
+5) 5-6 empty 52
+6) 6-0 filled 52
+7) 7-0 filled 52
+8) 8-7 filled 52
+9) 9-8 empty 52
+10) 10-9 empty 52
+11) 0-10 filled 52
+12) 11-8 filled 52
+13) 12-11 filled 52
+14) 13-12 empty 52
+15) 14-13 empty 52
+16) 15-14 empty 52
+17) 9-15 empty 52
+18) 16-12 filled 52
+19) 17-16 filled 52
+20) 13-17 empty 52
+21) 18-17 empty 52
+22) 19-18 empty 52
+23) 14-19 empty 52
+24) 15-19 empty 52
+25) 20-10 empty 23
+26) 21-20 empty 23
+27) 22-21 empty 23
+28) 23-22 empty 23
+29) 24-23 empty 23
+30) 6-24 empty 23
+31) 10-6 filled 23
+32) 5-25 filled 17
+33) 25-26 empty 17
+34) 26-24 empty 17
+35) 5-27 filled 52
+36) 27-28 filled 52
+37) 28-29 filled 52
+38) 29-30 filled 52
+39) 30-31 filled 52
+40) 31-32 filled 52
+41) 32-25 filled 52
+42) 33-26 empty 52
+43) 34-33 empty 52
+44) 35-34 filled 52
+45) 32-35 filled 52
+46) 31-36 filled 52
+47) 36-37 filled 52
+48) 37-38 filled 52
+49) 38-39 filled 52
+50) 39-40 filled 52
+51) 40-35 filled 52
+52) 4-41 filled 52
+53) 41-27 filled 52
+54) 41-42 filled 52
+55) 42-28 filled 52
+56) 43-23 empty 52
+57) 44-43 empty 52
+58) 33-44 empty 52
+59) 45-44 empty 52
+60) 34-45 empty 52
+61) 40-45 empty 52
+62) 39-46 empty 53
+63) 46-45 empty 53
+64) 37-47 filled 53
+65) 47-48 filled 53
+66) 48-46 empty 53
+67) 21-15 empty 53
+68) 43-19 empty 53
+69) 44-18 empty 53
+70) 48-49 empty 17
+71) 49-18 filled 17
+72) 50-17 filled 52
+73) 51-50 filled 52
+74) 49-51 filled 52
+75) 52-51 filled 52
+76) 48-52 filled 52
+
+Sectors
+0) uncovered floor(0 3) ceil(10 23) walls '0 1 2 3 4 5 6 ' items '(28,7 15)'
+1) uncovered floor(0 3) ceil(10 23) walls '11 10 9 8 7 ' items ''
+2) uncovered floor(0 3) ceil(10 23) walls '9 17 16 15 14 13 12 ' items ''
+3) uncovered floor(0 3) ceil(10 23) walls '14 20 19 18 ' items '(6,49 15)'
+4) uncovered floor(0 3) ceil(10 23) walls '20 15 23 22 21 ' items ''
+5) uncovered floor(0 3) ceil(10 23) walls '23 16 24 ' items ''
+6) uncovered floor(6 17) ceil(22 23) walls '31 30 29 28 27 26 25 ' items ''
+7) uncovered floor(16 17) ceil(32 17) walls '32 33 34 30 5 ' items ''
+8) uncovered floor(24 17) ceil(49 17) walls '35 36 37 38 39 40 41 32 ' items '(51,22 5)(50,18 5)'
+9) uncovered floor(18 52) ceil(37 53) walls '33 41 45 44 43 42 ' items '(50,34 5)(49,31 5)'
+10) uncovered floor(42 52) ceil(66 53) walls '46 47 48 49 50 51 45 40 ' items '(59,38 5)'
+11) uncovered floor(42 52) ceil(66 53) walls '52 53 35 4 ' items '(45,11 5)'
+12) uncovered floor(42 52) ceil(66 53) walls '54 55 36 53 ' items ''
+13) uncovered floor(4 53) ceil(22 53) walls '29 34 42 58 57 56 ' items '(43,32 16)'
+14) uncovered floor(4 53) ceil(22 53) walls '58 43 60 59 ' items '(48,39 26)'
+15) uncovered floor(9 53) ceil(22 53) walls '60 44 51 61 ' items ''
+16) uncovered floor(1 17) ceil(22 53) walls '62 63 61 50 ' items '(54,43 25)(51,45 23)'
+17) uncovered floor(0 3) ceil(22 53) walls '64 65 66 62 49 48 ' items '(60,46 15)'
+18) uncovered floor(0 23) ceil(24 53) walls '17 10 25 26 67 ' items '(14,26 15)(24,20 16)(18,27 17)(18,22 23)(23,15 16)(14,20 25)'
+19) uncovered floor(2 52) ceil(24 53) walls '67 27 28 56 68 24 ' items '(31,29 15)(22,36 15)(35,33 16)(19,36 16)(26,37 23)(27,26 16)(23,30 17)'
+20) uncovered floor(3 17) ceil(24 53) walls '22 68 57 69 ' items '(29,46 16)(38,39 18)'
+21) uncovered floor(1 53) ceil(24 53) walls '59 63 66 70 71 69 ' items '(41,48 19)(34,49 18)(46,45 23)'
+22) uncovered floor(21 53) ceil(46 53) walls '21 71 74 73 72 ' items ''
+23) uncovered floor(3 53) ceil(33 53) walls '74 70 76 75 ' items '(39,60 5)(40,63 0)(44,58 0)(35,61 0)(45,64 0)(42,60 7)(34,56 16)'
+
+Player
+0) 18,18 (sector: 18) start
+1) 46,65 (sector: 23) end
+

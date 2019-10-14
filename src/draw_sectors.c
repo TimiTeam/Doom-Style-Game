@@ -14,21 +14,12 @@
 
 void				draw_line(t_screen_inf inf, t_super_data *super)
 {
-	if (!super->sect->door)
-		text_line((t_text_inf){inf.x, inf.cya, inf.cyb,
-			init_scaler(inf.cya, (t_point){inf.ya, inf.yb},
-			(t_point){0, super->wall.texture->h * super->scale_h / 20.0f}),
-			inf.txtx, super->sect, super->main_screen,
-			super->wall.texture, inf.tex_pos, super->scale_l,
-			super->scale_h, super->sect->sector_light});
-	else
-		text_line((t_text_inf){inf.x, inf.cya, inf.cyb,
-			init_scaler(inf.cya, (t_point){inf.ya, inf.yb},
-			(t_point){super->wall.texture->h * (super->scale_h / 15.0f), 0}),
-			inf.txtx, super->sect, super->main_screen,
-			super->wall.texture, inf.tex_pos, super->scale_l,
-			super->scale_h, super->sect->sector_light});
-	
+	text_line((t_text_inf){inf.x, inf.cya, inf.cyb,
+		init_scaler(inf.cya, (t_point){inf.ya, inf.yb},
+		(t_point){fabsf(super->sect->ceil - super->sect->floor) * 10, 0}),
+		inf.txtx, super->sect, super->main_screen,
+		super->wall.texture, inf.tex_pos, super->scale_l,
+		super->scale_h, super->sect->sector_light, 0});
 }
 
 void				draw_ceil(t_screen_inf inf, t_super_data *super)
@@ -36,7 +27,9 @@ void				draw_ceil(t_screen_inf inf, t_super_data *super)
 	draw_floor_or_ceil((t_ceil_inf){super->main_screen,
 		super->ceil_texture, inf.x, super->data->ytop[inf.x],
 		inf.cya, super->data->diff_ceil, super->player,
-		super->sect, super->sect->sector_light});
+		super->sect, super->sect->sector_light,
+		.calc_one = super->data->calc_one,
+		.calc_two = super->data->ceil_calc});
 }
 
 void				draw_floor(t_screen_inf inf, t_super_data *super)
@@ -44,34 +37,57 @@ void				draw_floor(t_screen_inf inf, t_super_data *super)
 	draw_floor_or_ceil((t_ceil_inf){super->main_screen,
 		super->floor_texture, inf.x, inf.cyb,
 		super->data->ybottom[inf.x], super->data->diff_floor,
-		super->player, super->sect, super->sect->sector_light});
+		super->player, super->sect, super->sect->sector_light,
+		.calc_one = super->data->calc_one,
+		.calc_two = super->data->floor_calc});
 }
 
 void				*thread_draw_sector(void *param)
 {
 	t_wall			cp;
 	t_screen_inf	inf;
-	t_draw_data		*data;
 	t_super_data	*super;
 
 	super = (t_super_data*)param;
 	cp = super->drawing_line;
-	data = super->data;
 	inf = fill_inf(super, cp);
 	while (inf.x < inf.end)
 	{
 		calculate_frame(&inf, cp, super);
-		//draw_ceil(inf, super);
-		draw_skybox(super->main_screen, (t_point){inf.x, super->data->ytop[inf.x]}, inf.cya, super->player);
-		draw_floor(inf, super);
+		if (super->sect->type != uncovered)
+			draw_ceil(inf, super);
+		else
+			draw_skybox(super->main_screen, (t_point){inf.x, super->data->ytop[inf.x]}, inf.cya, super->player);
+		if (super->sect->floor_visible)
+			draw_floor(inf, super);
 		find_tex_pos(&inf, super);
-		if (super->wall.type == filled_wall)
+		if (super->wall.type != empty_wall && super->wall.type != transparent)
+		{
+			if (super->wall.type == window && (!super->wall.sectors[0] || !super->wall.sectors[1]))
+				draw_skybox(super->main_screen, (t_point){inf.x, inf.cya}, inf.cyb, super->player);
 			draw_line(inf, super);
+		}
 		else
 			render_neighbours(inf, super, cp);
 		inf.x++;
 	}
 	return (NULL);
+}
+
+void 				draw_simple_wall(t_super_data super)
+{
+	t_wall			cp;
+	t_screen_inf	inf;
+
+	cp = super.drawing_line;
+	inf = fill_inf(&super, cp);
+	while (inf.x < inf.end)
+	{
+		calculate_frame(&inf, cp, &super);
+		find_tex_pos(&inf, &super);
+		draw_line(inf, &super);
+		inf.x++;
+	}
 }
 
 void				draw_sectors(t_sector *sec, t_player *player,
@@ -83,12 +99,13 @@ void				draw_sectors(t_sector *sec, t_player *player,
 
 	i = -1;
 	p = -1;
-	if (sec->door && sec->opening && sec->ceil <= sec->floor + 15)
-		sec->ceil += 0.2f;
 	data.diff_ceil = sec->ceil - data.player_current_height;
 	data.diff_floor = sec->floor - data.player_current_height;
+	data.floor_calc = data.diff_floor * H * player->m_vfov;
+	data.ceil_calc = data.diff_ceil * H * player->m_vfov;
 	if (data.diff_ceil < 0)
 		player->fall = 1;
+	data.calc_one = H * player->m_vfov * player->yaw;
 	while (++i < MAX_PORTALS && (w = sec->only_walls[i]))
 		draw_world((t_world){sec, *w, *player, sdl, data, &thread_draw_sector});
 	while (++p < MAX_PORTALS && (w = sec->portals[p]))
@@ -97,4 +114,5 @@ void				draw_sectors(t_sector *sec, t_player *player,
 	draw_sector_items(&sec->items, player, data, sdl->surf);
 	draw_projectiles(&sec->projectiles,
 				(t_p_n_d){*player, data}, sdl->surf, sec->items);
+//	printf("sect # %d : rec deep %d\n",sec->sector, data.recursion_deep);
 }

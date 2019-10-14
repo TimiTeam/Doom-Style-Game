@@ -14,11 +14,19 @@
 # define __SDL_HEAD_H
 
 # include "libft.h"
+#ifdef __APPLE__
 # include <SDL.h>
 # include <SDL_mixer.h>
 # include <SDL_ttf.h>
 # include <SDL_image.h>
+#endif
 
+#ifdef __linux__
+# include <SDL2/SDL.h>
+# include <SDL2/SDL_mixer.h>
+# include <SDL2/SDL_ttf.h>
+# include <SDL2/SDL_image.h>
+#endif
 # define OK 1
 # define ERROR 0
 
@@ -61,6 +69,11 @@ typedef	struct		s_sdl
 t_sdl				*new_t_sdl(int win_size_x, int win_size_y,
 						const char *title);
 int					init_sdl(t_sdl *sdl);
+
+/*
+**					SOUND
+*/
+int					init_sound();
 
 /*
 ** 					INFO

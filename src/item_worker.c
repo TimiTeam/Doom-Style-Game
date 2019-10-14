@@ -18,7 +18,7 @@ t_item					*new_item(void)
 
 	if (!(i = (t_item*)ft_memalloc(sizeof(t_item))))
 		return (NULL);
-	*i = (t_item){NULL};
+	ft_memset(i, 0, sizeof(t_item));
 	return (i);
 }
 
@@ -36,7 +36,7 @@ t_item					*create_new_item(int x, int y)
 
 void					add_next_item(t_item **head, t_item *new)
 {
-	t_item				*main;
+	t_item				*m;
 	unsigned			id;
 
 	if (!*head)
@@ -46,14 +46,14 @@ void					add_next_item(t_item **head, t_item *new)
 		return ;
 	}
 	id = 1;
-	main = *head;
-	while (main->next)
+	m = *head;
+	while (m->next)
 	{
-		main = main->next;
+		m = m->next;
 		id++;
 	}
 	new->id = id;
-	main->next = new;
+	m->next = new;
 }
 
 void					from_list_to_another_list(t_item **current_list,

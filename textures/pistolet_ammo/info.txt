@@ -1,6 +1,7 @@
 Properties{
 pistol
-ammo 35
+ammo 30
+size 12x8
 }
 waiting{
 textures/pistolet_ammo/pistol_ammo.png

@@ -15,11 +15,9 @@
 t_sector			*new_sector(void)
 {
 	t_sector		*sec;
-	int				i;
 
-	i = 0;
 	sec = (t_sector*)malloc(sizeof(t_sector));
-	*sec = (t_sector){NULL};
+	ft_memset(sec, 0, sizeof(t_sector));
 	return (sec);
 }
 
@@ -62,11 +60,10 @@ void				*delete_walls(t_wall **wall, unsigned size)
 	if (!wall)
 		return (NULL);
 	i = 0;
-	while (i < size)
+	while (i < size && wall)
 	{
-		if (wall[i])
+		if (wall[i] && (ptr = wall[i]))
 		{
-			ptr = wall[i];
 			ft_memdel((void**)&ptr);
 			wall[i] = NULL;
 		}
@@ -79,7 +76,6 @@ void				*delete_walls(t_wall **wall, unsigned size)
 void				*delete_sectors(t_sector *sectors)
 {
 	t_sector		*next;
-	t_light			*light;
 
 	if (!sectors)
 		return (NULL);
@@ -88,9 +84,15 @@ void				*delete_sectors(t_sector *sectors)
 	{
 		next = sectors;
 		sectors = next->next;
-		delete_walls(next->wall, next->n_walls);
+		if (next->wall)
+		{
+			delete_walls(next->wall, next->n_walls);
+		}
+		next->wall = NULL;
 		delete_items_list(next->items);
+		next->items = NULL;
 		delete_projectiles(next->projectiles);
+		next->projectiles = NULL;
 		ft_memdel((void**)&next);
 	}
 	return (NULL);

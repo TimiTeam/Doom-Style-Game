@@ -1,23 +1,73 @@
 #Levels
 Path: Maps/
-0) map_one
-1) map_two
-2) fortress.txt
-3) new_level_0.txt
+0) fortress.txt
+1) starship
+2) map_one
+3) super
+4) lavaisland
+5) new_levefreeasdadasd.txt
 ###
 
-#Textures 10
+#Textures 58
 Path: textures/
-0) image.jpeg
-1) metal_wall.jpeg
-2) wall.jpeg
-3) wall2.jpeg
-4) wood_ceil.jpg
-5) ceil.jpeg
-6) floor2.jpg
-7) ground.jpeg
-8) metal_floor.jpeg
-9) metal_door.jpg
+0) ShanConc01.png
+1) AgoraBasRelief.png
+2) Autel.png
+3) MLava.jpg
+4) Ca_ship_front1.png
+5) Ca_ship_front.png
+6) Ca_ship_top.png
+7) Counter-wood-02.png
+8) ForgeBois2.png
+9) ForgeBois.png
+10) F_tapis_carre.png
+11) FumDallage01.png
+12) FumDallage02.png
+13) FumDallage03.png
+14) FumDallage04.png
+15) FumDallage05.png
+16) FumPanneauDeco.png
+17) CaveRock.jpg
+18) FyrCityBasReliefEntree.png
+19) FyrosInsideWall02.png
+20) Fy_uk_store.png
+21) G_caisseBonus.png
+22) BookShelfWalnut1.jpg
+23) Ground_lava_rock.png
+24) G_toit-tower.png
+25) Magasin4b.png
+26) Marble.png
+27) Tr-wood4.png
+28) Tr-wood7.png
+29) Wall_exterior_wood_02.png
+30) warrning_wall.jpg
+31) electro_wall2.jpg
+32) meta_wall3.jpg
+33) electro_wall.jpg
+34) wall2.jpg
+35) strong_door.jpg
+36) metal_wall.jpg
+37) simple_wall.jpg
+38) new_door.jpg
+39) doors.jpg
+40) cude_wall.jpg
+41) iluminator.jpg
+42) meta_wall3.jpg
+43) window1.png
+44) computer.png
+45) dig_galaxy.png
+46) dying_star.png
+47) electro_panel.png
+48) evil_planet.png
+49) ship_door.png
+50) ship_door2.png
+51) archplacehold2.jpg
+52) WTEX104.png
+53) WTEX169.png
+54) DARKPRISON_017.png
+55) DARKPRISON_005.png
+56) gate2_D.png
+57) horizont.png
 ###
 
 #Items
@@ -43,4 +93,13 @@ Path: textures/
 18) object dead_man
 19) object broken_tree
 20) object broken_tree_two
+21) enemy hell_king
+22) object box
+23) object bones
+24) object radio
+25) object skull
+26) object pool_blood
+27) light ceil_light
+28) light strange_light
+29) light candle
 ###

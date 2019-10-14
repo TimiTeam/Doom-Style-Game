@@ -26,7 +26,7 @@ SDL_Surface			**load_img_array_from_file(int fd, unsigned size)
 	SDL_Surface		**array;
 	char			*file_name;
 	char			*path;
-	int				i;
+	unsigned			i;
 
 	if (!(path = get_path(fd)) ||
 			!(array = (SDL_Surface**)malloc(sizeof(SDL_Surface**) * size)))
@@ -39,14 +39,14 @@ SDL_Surface			**load_img_array_from_file(int fd, unsigned size)
 		{
 			if (!(array[i] = get_surface_from_file(
 				clip_n_str(path, skip_row_number(file_name), ""))))
-				array = free_array_surfcae_(array, i);
+				array = error_free_array_surf(array, i, "Can't create surface");
 			i++;
 		}
 		ft_strdel(&file_name);
 	}
 	ft_strdel(&path);
 	ft_strdel(&file_name);
-	return (i < size ? free_array_surfcae_(array, i) : array);
+	return (i != size ? error_free_array_surf(array, i, "Wrong count of images") : array);
 }
 
 enum e_gun_type		get_gun_type(char *type)
