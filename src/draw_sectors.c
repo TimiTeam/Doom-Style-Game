@@ -16,7 +16,7 @@ void				draw_line(t_screen_inf inf, t_super_data *super)
 {
 	text_line((t_text_inf){inf.x, inf.cya, inf.cyb,
 		init_scaler(inf.cya, (t_point){inf.ya, inf.yb},
-		(t_point){0, super->wall.texture->h * super->scale_h / 20.0f}),
+		(t_point){fabsf(super->sect->ceil - super->sect->floor) * 10, 0}),
 		inf.txtx, super->sect, super->main_screen,
 		super->wall.texture, inf.tex_pos, super->scale_l,
 		super->scale_h, super->sect->sector_light, 0});
@@ -88,31 +88,4 @@ void 				draw_simple_wall(t_super_data super)
 		draw_line(inf, &super);
 		inf.x++;
 	}
-}
-
-void				draw_sectors(t_sector *sec, t_player *player,
-									t_sdl *sdl, t_draw_data data)
-{
-	int				i;
-	int				p;
-	t_wall			*w;
-
-	i = -1;
-	p = -1;
-	data.diff_ceil = sec->ceil - data.player_current_height;
-	data.diff_floor = sec->floor - data.player_current_height;
-	data.floor_calc = data.diff_floor * H * player->m_vfov;
-	data.ceil_calc = data.diff_ceil * H * player->m_vfov;
-	if (data.diff_ceil < 0)
-		player->fall = 1;
-	data.calc_one = H * player->m_vfov * player->yaw;
-	while (++i < MAX_PORTALS && (w = sec->only_walls[i]))
-		draw_world((t_world){sec, *w, *player, sdl, data, &thread_draw_sector});
-	while (++p < MAX_PORTALS && (w = sec->portals[p]))
-		draw_world((t_world){sec, *w, *player, sdl, data, &thread_draw_sector});
-	quicksort(&sec->items, player);
-	draw_sector_items(&sec->items, player, data, sdl->surf);
-	draw_projectiles(&sec->projectiles,
-				(t_p_n_d){*player, data}, sdl->surf, sec->items);
-//	printf("sect # %d : rec deep %d\n",sec->sector, data.recursion_deep);
 }

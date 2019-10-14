@@ -36,7 +36,7 @@ int				guess_event(SDL_Keycode code,
 		player->speed = 0.5;
 	else if (code == SDLK_SPACE && type == SDL_KEYDOWN
 			&& (player->pos.z - player->height <= player->curr_sector->floor
-			|| player->jetpack))
+			|| player->jetpack || player->curr_sector->type == uncovered))
 		player->velocity += 0.8f;
 	else if (code == SDLK_1 && type == SDL_KEYDOWN && player->gun[pistol])
 		player->current_gun = player->gun[pistol];
@@ -76,9 +76,12 @@ void			update_player(t_player *player, unsigned char move[4])
 	player->sin_angl = sin(player->angle);
 	player->yaw = CLAMP(player->yaw - y * 0.05f, -5, 5);
 	if (player->current_gun && player->current_gun->state
-	== 0.5f && player->current_gun->type == plasmagun)
+	== 1.1f && player->current_gun->type == plasmagun)
+	{
 		add_projectile(&player->curr_sector->projectiles,
 										create_projectile(*player));
+		Mix_PlayChannel(1, player->current_gun->shot_sound, 0);
+	}
 }
 
 int				hook_event(t_player *player,

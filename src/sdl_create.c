@@ -81,17 +81,12 @@ int				init_sound()
 	int			audio_channels;
 	int			audio_buffers;
 	Uint16		audio_format;
-	Mix_Chunk	*mus;
 
-	mus = NULL;
 	audio_rate = 22050;
 	audio_format = AUDIO_S16SYS;
-	audio_channels = 2;
-	audio_buffers = 4096;
+	audio_channels = 6;
+	audio_buffers = 1024;
 	if (Mix_OpenAudio(audio_rate, audio_format, audio_channels, audio_buffers) != 0)
 		error_message(Mix_GetError());
-		//return (error_message(Mix_GetError()));
-	if (!mus)
-		printf("Mus is null");
 	return (1);
 }

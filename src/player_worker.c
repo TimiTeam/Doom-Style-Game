@@ -170,5 +170,6 @@ t_player		*new_t_player(int pos_x, int pos_y, t_point win_size)
 	player->inventar = NULL;
 	player->height = EYEHEIGHT;
 	player->health = 100;
+	player->damage_sound = Mix_LoadWAV("sounds/player_damaged.wav");
 	return (player);
 }

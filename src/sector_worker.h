@@ -121,6 +121,8 @@ typedef	struct			s_animation
 
 typedef struct			s_item
 {
+	Mix_Chunk			*hit_sound;
+	Mix_Chunk			*roar_sound;
 	t_animation			states[5];
 	float				curr_frame;
 	struct s_sector		*sector;

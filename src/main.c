@@ -78,8 +78,8 @@ int					init(t_sdl **sdl, t_pr *m, t_read_holder *holder)
 	SDL_SetRelativeMouseMode(SDL_TRUE);
 	if (!load_menu_textures(m, holder))
 		return (print_error_message("Can't load menu resourses\n", ""));
-	if (!init_sound())
-		return (print_error_message("Error initializing sound\n", ""));
+	// if (!init_sound())
+	// 	return (print_error_message("Error initializing sound\n", ""));
 	initialize_menu(m);
 	return (1);
 }
@@ -97,7 +97,7 @@ int					main(void)
 	m.win_h = H;
 	m.win_w = W;
 	player = NULL;
-	if (read_game_config_file(&holder, "game_info.txt")
+	if (init_sound() && read_game_config_file(&holder, "game_info.txt")
 	&& init(&sdl, &m, &holder))
 	{
 		sdl->font = m.font;

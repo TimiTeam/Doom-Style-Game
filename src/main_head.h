@@ -17,13 +17,23 @@
 # include <pthread.h>
 # include "sdl_head.h"
 # include "sectors.h"
-# define W 980
-# define H 720
+# define W 1380
+# define H 980
 # define EYEHEIGHT  5
 # define THREADS 4
 # define DELETE 	{tmp->next = all->next; ft_memdel((void**)&all); return ;}
 # define DEL tmp = curr->next;delete_projectile(projectiles, curr);curr = tmp;
 # define CON {DEL; continue;}
+# define FRAME_VALUES 10
+
+typedef	struct		s_fps_counter
+{
+	Uint32			frametimes[FRAME_VALUES];
+	Uint32			frametimelast;
+	Uint32			framecount;
+	float 			framespersecond;
+}					t_fps_counter;
+
 
 typedef struct		s_rect
 {
@@ -72,6 +82,7 @@ typedef struct		s_gun
 	float			state;
 	SDL_Surface		*frame[10];
 	SDL_Surface		*icon;
+	Mix_Chunk		*shot_sound;
 	enum e_gun_type	type;
 	char			max_frames;
 	unsigned short	ammo;
@@ -84,6 +95,7 @@ typedef struct		s_player
 	SDL_Surface		*sky;
 	t_sector		*curr_sector;
 	t_sector		*all;
+	Mix_Chunk		*damage_sound;
 	t_item			*inventar;
 	t_gun			**all_guns;
 	t_gun			*gun[3];
@@ -109,6 +121,7 @@ typedef struct		s_player
 	short			height;
 	short			health;
 	short			end_sec;
+	short			count_enemies;
 	char			fall;
 	char			sit;
 	char			shooting;
@@ -290,6 +303,9 @@ typedef struct		s_p_n_d
 
 # define YAW(y,z) (y + z * player.yaw)
 
+void 				fpsinit(t_fps_counter *fps);
+void				fpsthink(t_fps_counter *fps);
+void 				change_player_state(t_player *player, t_sdl *sdl, int *run);
 void				run_with_buff(t_player *player,
 							t_sdl *sdl, unsigned int win_x);
 void				initialize_sdl_win(t_pr *m);

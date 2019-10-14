@@ -34,6 +34,7 @@ void			check_enemy_state(t_item *enemy, t_vector player_pos)
 	{
 		enemy->curr_state = die;
 		enemy->curr_frame = 0;
+		Mix_PlayChannel(-1, enemy->roar_sound, 0);
 	}
 }
 
@@ -61,7 +62,11 @@ t_player *player, t_item *it)
 	it->states[it->curr_state].max_textures)
 	{
 		if (it->curr_state == action)
+		{
 			player->health -= it->damage;
+			Mix_PlayChannel(-1, player->damage_sound, 0);
+			Mix_PlayChannel(-1, it->hit_sound, 0);
+		}
 		if (player->health <= 0 && !player->dead)
 			player->dead = 1;
 		it->curr_frame = 0;

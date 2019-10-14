@@ -47,23 +47,26 @@ void					load_pistol(t_gun **gun)
 	gun[pistol]->frame[1] = load_jpg_png("textures/guns/pistol/pistol2.png");
 	gun[pistol]->frame[2] = load_jpg_png("textures/guns/pistol/pistol3.png");
 	gun[pistol]->frame[3] = load_jpg_png("textures/guns/pistol/pistol4.png");
+	gun[pistol]->shot_sound = Mix_LoadWAV("sounds/pistol_shot.wav");
 }
 
 void					load_shotgun(t_gun **gun)
 {
 	gun[shotgun] = (t_gun*)malloc(sizeof(t_gun));
 	ft_memset(gun[shotgun], 0, sizeof(t_gun));
-//	*gun[shotgun] = (t_gun){0};
 	gun[shotgun]->ammo = 12;
 	gun[shotgun]->damage = 20;
-	gun[shotgun]->max_frames = 6;
+	gun[shotgun]->max_frames = 8;
 	gun[shotgun]->type = shotgun;
 	gun[shotgun]->frame[0] = load_jpg_png("textures/guns/shotgun/shotgun1.png");
 	gun[shotgun]->frame[1] = load_jpg_png("textures/guns/shotgun/shotgun2.png");
-	gun[shotgun]->frame[2] = load_jpg_png("textures/guns/shotgun/shotgun3.png");
-	gun[shotgun]->frame[3] = load_jpg_png("textures/guns/shotgun/shotgun4.png");
-	gun[shotgun]->frame[4] = load_jpg_png("textures/guns/shotgun/shotgun3.png");
-	gun[shotgun]->frame[5] = load_jpg_png("textures/guns/shotgun/shotgun2.png");
+	//gun[shotgun]->frame[2] = load_jpg_png("textures/guns/shotgun/shotgun3.png");
+	gun[shotgun]->frame[2] = load_jpg_png("textures/guns/shotgun/shotgun4.png");
+	gun[shotgun]->frame[3] = load_jpg_png("textures/guns/shotgun/shotgun5.png");
+	gun[shotgun]->frame[4] = load_jpg_png("textures/guns/shotgun/shotgun6.png");
+	gun[shotgun]->frame[5] = load_jpg_png("textures/guns/shotgun/shotgun5.png");
+	gun[shotgun]->frame[6] = load_jpg_png("textures/guns/shotgun/shotgun4.png");
+	gun[shotgun]->shot_sound = Mix_LoadWAV("sounds/shotgun_shot.wav");
 }
 
 void					load_plasmagun(t_gun **gun)
@@ -81,6 +84,7 @@ void					load_plasmagun(t_gun **gun)
 		load_jpg_png("textures/guns/plasmagun/plasmagun_2.png");
 	gun[plasmagun]->frame[2] =
 		load_jpg_png("textures/guns/plasmagun/plasmagun_3.png");
+	gun[plasmagun]->shot_sound = Mix_LoadWAV("sounds/plasmagun_shot.wav");
 }
 
 void					load_guns(t_gun **gun)

@@ -102,6 +102,8 @@ SDL_Texture			*new_fresh_texture(SDL_Renderer *ren, int width,
 */
 void				sdl_render(SDL_Renderer *ren, SDL_Texture *tex,
 						SDL_Rect *src, SDL_Rect *dst);
+void				prepare_surf(t_sdl *sdl);
+void				render_tex(t_sdl *sdl);
 
 /*
 **					FONT AND TEXT

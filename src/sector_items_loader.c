@@ -48,6 +48,8 @@ int					copy_t_item_value_by_id(t_item *dst, t_item *all,
 			dst->gun_type = all->gun_type;
 			dst->size = all->size;
 			dst->speed = 0.3;
+			dst->roar_sound = all->roar_sound;
+			dst->hit_sound = all->hit_sound;
 			break ;
 		}
 		all = all->next;
