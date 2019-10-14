@@ -39,11 +39,20 @@ int				guess_event(SDL_Keycode code,
 			|| player->jetpack || player->curr_sector->type == uncovered))
 		player->velocity += 0.8f;
 	else if (code == SDLK_1 && type == SDL_KEYDOWN && player->gun[pistol])
+	{
+		player->current_gun->state = 0;
 		player->current_gun = player->gun[pistol];
+	}
 	else if (code == SDLK_2 && type == SDL_KEYDOWN && player->gun[shotgun])
+	{
+		player->current_gun->state = 0;
 		player->current_gun = player->gun[shotgun];
+	}
 	else if (code == SDLK_3 && type == SDL_KEYDOWN && player->gun[plasmagun])
+	{
+		player->current_gun->state = 0;
 		player->current_gun = player->gun[plasmagun];
+	}
 	else if (type == SDL_KEYDOWN && code == SDLK_e)
 		check_door(player);
 	else if (type == SDL_KEYDOWN && code == SDLK_f)
@@ -75,9 +84,10 @@ void			update_player(t_player *player, unsigned char move[4])
 	player->cos_angl = cos(player->angle);
 	player->sin_angl = sin(player->angle);
 	player->yaw = CLAMP(player->yaw - y * 0.05f, -5, 5);
-	if (player->current_gun && player->current_gun->state
-	== 1.1f && player->current_gun->type == plasmagun)
+	if (player->current_gun && player->current_gun->type == plasmagun
+			&& player->current_gun->state == 1.1f && player->current_gun->ammo > 0) 
 	{
+		player->current_gun->ammo--;
 		add_projectile(&player->curr_sector->projectiles,
 										create_projectile(*player));
 		Mix_PlayChannel(1, player->current_gun->shot_sound, 0);

@@ -63,7 +63,7 @@ t_player *player, t_item *it)
 	if ((it->curr_frame += it->speed) >=
 	it->states[it->curr_state].max_textures)
 	{
-		if (it->curr_state == action)
+		if (it->curr_state == action && it->sector->floor + 10 >= player->pos.z)
 		{
 			player->health -= it->damage;
 			Mix_PlayChannel(-1, player->damage_sound, 0);

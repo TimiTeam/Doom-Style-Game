@@ -32,7 +32,7 @@ int				move_enemy(t_item *en, t_vector step)
 				next = wall[i]->sectors[0];
 			else if (wall[i]->sectors[1] && en->sector != wall[i]->sectors[1])
 				next = wall[i]->sectors[1];
-			if (en->pos.z + 8 > next->ceil - en->sector->floor)
+			if (en->pos.z + 7 > next->ceil - en->sector->floor)
 				return (0);
 			from_list_to_another_list(&en->sector->items, &next->items, en);
 			en->sector = next;
