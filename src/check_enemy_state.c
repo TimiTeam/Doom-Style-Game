@@ -21,7 +21,6 @@ void			check_enemy_state(t_item *enemy, t_vector player_pos)
 			enemy->is_dying--;
 		else if (enemy->dist_to_player < 40 && enemy->dist_to_player > 5)
 		{
-			Mix_PlayChannel(-1, enemy->roar_sound, 0);
 			enemy->curr_state = walk;
 			enemy->speed = 0.3;
 			move_enemy_to_player(enemy, player_pos);
@@ -35,6 +34,7 @@ void			check_enemy_state(t_item *enemy, t_vector player_pos)
 	{
 		enemy->curr_state = die;
 		enemy->curr_frame = 0;
+		Mix_PlayChannel(-1, enemy->roar_sound, 0);
 	}
 }
 
@@ -65,7 +65,6 @@ t_player *player, t_item *it)
 		{
 			player->health -= it->damage;
 			Mix_PlayChannel(-1, player->damage_sound, 0);
-			printf("Attacker address: %p\n", it);
 			Mix_PlayChannel(-1, it->hit_sound, 0);
 		}
 		if (player->health <= 0 && !player->dead)

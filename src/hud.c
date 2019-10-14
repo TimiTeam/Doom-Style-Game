@@ -27,9 +27,8 @@ void				print_player_gun(t_sdl *sdl, t_player *pla)
 		if (pla->current_gun->type == plasmagun)
 			pla->current_gun->state += 0.75f;
 	}
-	printf("%f\n", pla->current_gun->state);
 	if (pla->current_gun->state == 0.35f
-		&& pla->current_gun->type != plasmagun)
+		&& pla->current_gun->type != plasmagun && pla->current_gun->ammo > 0)
 	{
 		Mix_PlayChannel(-1, pla->current_gun->shot_sound, 0);
 		pla->current_gun->ammo--;
