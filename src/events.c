@@ -89,6 +89,7 @@ void			update_player(t_player *player, unsigned char move[4])
 										create_projectile(*player));
 		Mix_PlayChannel(1, player->current_gun->shot_sound, 0);
 	}
+	update_player_view(player);
 }
 
 int				hook_event(t_player *player,
