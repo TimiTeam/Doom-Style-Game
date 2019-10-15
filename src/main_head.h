@@ -350,6 +350,7 @@ void				get_gun_to_player(t_player *player,
 void				rest_of_the_action_shit(t_pr *m, Uint8 *menu,
 									t_sdl *sdl, t_read_holder *holder);
 void				draw_hud(t_sdl *sdl, t_player *player);
+void				print_player_gun(t_sdl *sdl, t_player *player);
 t_projectile		*create_projectile(t_player player);
 void				delete_projectile(t_projectile **head,
 										t_projectile *proj);

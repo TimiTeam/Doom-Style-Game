@@ -104,7 +104,7 @@ int					game_loop(t_sdl *sdl, t_player *player, t_sector *sectors)
 	fpsinit(&fps);
 	while (run > 0)
 	{
-		prepare_surf(sdl);
+		prepare_surf(sdl->ren, sdl->surf);
 		run_with_buff(player, sdl, sdl->win_size.x);
 		draw_hud(sdl, player);
 		fpsthink(&fps);

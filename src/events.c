@@ -26,6 +26,24 @@ int				movement_events(SDL_Keycode code,
 	return (1);
 }
 
+void			change_gun(t_player *player, SDL_Keycode code)
+{
+	t_gun		*new_gun;
+
+	new_gun = NULL;
+	if (code == SDLK_1 && player->gun[pistol])
+		new_gun = player->gun[pistol];
+	else if (code == SDLK_2 && player->gun[shotgun])
+		new_gun = player->gun[shotgun];
+	else if (code == SDLK_3 && player->gun[plasmagun])
+		new_gun = player->gun[plasmagun];
+	if (new_gun && player->current_gun->type != new_gun->type)
+	{
+		new_gun->state = 0;
+		player->current_gun = new_gun;
+	}
+}
+
 int				guess_event(SDL_Keycode code,
 			t_player *player, unsigned char move[4], SDL_EventType type)
 {
@@ -38,21 +56,8 @@ int				guess_event(SDL_Keycode code,
 			&& (player->pos.z - player->height <= player->curr_sector->floor
 			|| player->jetpack || player->curr_sector->type == uncovered))
 		player->velocity += 0.8f;
-	else if (code == SDLK_1 && type == SDL_KEYDOWN && player->gun[pistol])
-	{
-		player->current_gun->state = 0;
-		player->current_gun = player->gun[pistol];
-	}
-	else if (code == SDLK_2 && type == SDL_KEYDOWN && player->gun[shotgun])
-	{
-		player->current_gun->state = 0;
-		player->current_gun = player->gun[shotgun];
-	}
-	else if (code == SDLK_3 && type == SDL_KEYDOWN && player->gun[plasmagun])
-	{
-		player->current_gun->state = 0;
-		player->current_gun = player->gun[plasmagun];
-	}
+	else if ((code == SDLK_1 || code == SDLK_2 || code == SDLK_3) && type == SDL_KEYDOWN)
+		change_gun(player, code);
 	else if (type == SDL_KEYDOWN && code == SDLK_e)
 		check_door(player);
 	else if (type == SDL_KEYDOWN && code == SDLK_f)

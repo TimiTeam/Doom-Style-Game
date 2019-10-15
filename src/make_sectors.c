@@ -105,7 +105,7 @@ static char 		*door_or_sky(char *line, t_sector *current)
 	}
 	if (ft_strncmp(line, "murderous", ft_strlen("murderous")) == 0)
 	{
-		current->type = lift;
+		current->type = murderous;
 		return (skip_line_with_word(line, "murderous"));
 	}
 	return (line);

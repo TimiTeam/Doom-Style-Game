@@ -20,12 +20,12 @@ void			sdl_render(SDL_Renderer *ren, SDL_Texture *tex,
 	SDL_RenderCopy(ren, tex, src, dst);
 }
 
-void				prepare_surf(t_sdl *sdl)
+void				prepare_surf(SDL_Renderer *ren, SDL_Surface *surf)
 {
 	
-	SDL_SetRenderDrawColor(sdl->ren, 0, 200, 0, 255);
-	SDL_RenderClear(sdl->ren);
-	SDL_FillRect(sdl->surf, NULL, 0x00);
+	SDL_SetRenderDrawColor(ren, 0, 200, 0, 255);
+	SDL_RenderClear(ren);
+	SDL_FillRect(surf, NULL, 0x00);
 }
 
 void				render_tex(t_sdl *sdl)

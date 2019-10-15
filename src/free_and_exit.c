@@ -13,10 +13,35 @@ void				free_all(t_player **player, t_sdl **sdl,
 	ft_memset(m, 0, sizeof(t_pr));
 }
 
-void			free_data_holder(t_read_holder *holder)
+static void		free_holder_texture_and_maps(t_read_holder *holder)
 {
 	int			i;
 
+	if (holder)
+	{
+		i = -1;
+		while (++i < 5 && holder->maps_path[i])
+		{
+			if (holder->skyboxes[i])
+				SDL_FreeSurface(holder->skyboxes[i]);
+			ft_strdel(&holder->maps_path[i]);
+			holder->maps_path[i] = NULL;
+		}
+		i = -1;
+		if (holder->textures)
+		{
+			while (++i < holder->text_count && holder->textures[i])
+			{
+				SDL_FreeSurface(holder->textures[i]);
+				holder->textures[i] = NULL;
+			}
+			ft_memdel((void**)&holder->textures);
+		}
+	}
+}
+
+void			free_data_holder(t_read_holder *holder)
+{
 	if (!holder)
 		return ;
 	if (holder->all_guns)
@@ -27,22 +52,8 @@ void			free_data_holder(t_read_holder *holder)
 	if (holder->hit_sound)
 		Mix_FreeChunk(holder->hit_sound);
 	delete_items_list_with_animation(holder->all_items);
+	holder->all_items = NULL;
 	delete_sectors(holder->all);
 	holder->all = NULL;
-	holder->all_items = NULL;
-	i = -1;
-	while (++i < 5 && holder->maps_path[i])
-	{
-		if (holder->skyboxes[i])
-			SDL_FreeSurface(holder->skyboxes[i]);
-		ft_strdel(&holder->maps_path[i]);
-		holder->maps_path[i] = NULL;
-	}
-	i = -1;
-	while (holder->textures && ++i < holder->text_count && holder->textures[i])
-	{
-		SDL_FreeSurface(holder->textures[i]);
-		holder->textures[i] = NULL;
-	}
-	ft_memdel((void**)&holder->textures);
+	free_holder_texture_and_maps(holder);
 }

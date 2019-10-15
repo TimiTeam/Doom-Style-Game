@@ -26,9 +26,8 @@ int					run_game(t_sdl *sdl, t_player *player,
 	{
 		if (!player->win && !player->dead && (in_game = menu_hooks(m, holder)) < 0)
 			break ;
+		prepare_surf(sdl->ren, sdl->surf);
 		render_menu(m, sdl);
-		SDL_SetRenderDrawColor(sdl->ren, 255, 255, 255, 255);
-		SDL_RenderClear(sdl->ren);
 		tex = SDL_CreateTextureFromSurface(sdl->ren, sdl->surf);
 		sdl_render(sdl->ren, tex, NULL, NULL);
 		SDL_DestroyTexture(tex);
@@ -84,13 +83,11 @@ int					main(void)
 	t_player		*player;
 	t_sdl			*sdl;
 	t_pr			m;
-		
+
 	ft_memset(&holder, 0, sizeof(t_read_holder));
 	ft_memset(&m, 0, sizeof(t_pr));
-	m.i = 0;
 	m.win_h = H;
 	m.win_w = W;
-	player = NULL;
 	if (init_sound() && read_game_config_file(&holder, "game_info.txt")
 	&& init(&sdl, &m, &holder))
 	{
@@ -101,5 +98,6 @@ int					main(void)
 	}
 	free_all(&player, &sdl, &holder, &m);
 	free_data_holder(&holder);
+	system("leaks -q doom-nukem");
 	return (0);
 }
