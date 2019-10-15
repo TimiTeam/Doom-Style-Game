@@ -56,12 +56,13 @@ int				guess_event(SDL_Keycode code,
 			&& (player->pos.z - player->height <= player->curr_sector->floor
 			|| player->jetpack || player->curr_sector->type == uncovered))
 		player->velocity += 0.8f;
-	else if ((code == SDLK_1 || code == SDLK_2 || code == SDLK_3) && type == SDL_KEYDOWN)
+	else if ((code == SDLK_1 || code == SDLK_2 || code == SDLK_3)
+		&& type == SDL_KEYDOWN)
 		change_gun(player, code);
 	else if (type == SDL_KEYDOWN && code == SDLK_e)
 		check_door(player);
 	else if (type == SDL_KEYDOWN && code == SDLK_f)
-			activate_lift(player);		
+		activate_lift(player);
 	if (type == SDL_KEYDOWN && code == SDLK_LCTRL)
 		player->sit = -3;
 	if (type == SDL_KEYUP && code == SDLK_LCTRL)
@@ -71,9 +72,6 @@ int				guess_event(SDL_Keycode code,
 
 void			update_player(t_player *player, unsigned char move[4])
 {
-	int			x;
-	int			y;
-
 	if (move[0] && !player->dead)
 		move_player(player, player->sin_angl, player->cos_angl);
 	if (move[1] && !player->dead)
@@ -82,15 +80,9 @@ void			update_player(t_player *player, unsigned char move[4])
 		move_player(player, -player->cos_angl, player->sin_angl);
 	if (move[3] && !player->dead)
 		move_player(player, player->cos_angl, -player->sin_angl);
-	SDL_GetRelativeMouseState(&x, &y);
-	y = -y;
-	player->angle += x * 0.01;
-	player->sky_w += x * (player->sky->w / 360.0f);
-	player->cos_angl = cos(player->angle);
-	player->sin_angl = sin(player->angle);
-	player->yaw = CLAMP(player->yaw - y * 0.05f, -5, 5);
 	if (player->current_gun && player->current_gun->type == plasmagun
-			&& player->current_gun->state == 1.1f && player->current_gun->ammo > 0) 
+			&& player->current_gun->state == 1.1f &&
+			player->current_gun->ammo > 0)
 	{
 		player->current_gun->ammo--;
 		add_projectile(&player->curr_sector->projectiles,

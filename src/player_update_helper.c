@@ -1,37 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   calc_wall_helper.c                                 :+:      :+:    :+:   */
+/*   player_update_helper.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tbujalo <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/10/15 14:57:00 by tbujalo           #+#    #+#             */
-/*   Updated: 2019/10/15 14:58:34 by tbujalo          ###   ########.fr       */
+/*   Created: 2019/10/15 16:13:50 by tbujalo           #+#    #+#             */
+/*   Updated: 2019/10/15 16:13:51 by tbujalo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "main_head.h"
 
-void			map_wall_text(int *u0, int *u1,
-					t_vector diff, float scaled_tex)
+void			update_player_view(t_player *player)
 {
-	*u0 = diff.x * scaled_tex;
-	*u1 = diff.y * scaled_tex;
-}
+	int			x;
+	int			y;
 
-int				compare_two_int_array(short *arr_one, short *arr_two,
-		int from, int to)
-{
-	int			i;
-
-	i = from;
-	if (!arr_one || !arr_two)
-		return (0);
-	while (i < to)
-	{
-		if (arr_one[i] != arr_two[i])
-			return (0);
-		i++;
-	}
-	return (1);
+	if (!player)
+		return ;
+	SDL_GetRelativeMouseState(&x, &y);
+	y = -y;
+	player->angle += x * 0.01;
+	player->sky_w += x * (player->sky->w / 360.0f);
+	player->cos_angl = cos(player->angle);
+	player->sin_angl = sin(player->angle);
+	player->yaw = CLAMP(player->yaw - y * 0.05f, -5, 5);
 }

@@ -12,7 +12,20 @@
 
 #include "main_head.h"
 
-int					run_game(t_sdl *sdl, t_player *player,
+static void			draw_menu(t_sdl *sdl, t_pr *m, SDL_Texture *tex)
+{
+	if (sdl && m)
+	{
+		prepare_surf(sdl->ren, sdl->surf);
+		render_menu(m, sdl);
+		tex = SDL_CreateTextureFromSurface(sdl->ren, sdl->surf);
+		sdl_render(sdl->ren, tex, NULL, NULL);
+		SDL_DestroyTexture(tex);
+		SDL_RenderPresent(sdl->ren);
+	}
+}
+
+static int			run_game(t_sdl *sdl, t_player *player,
 							t_pr *m, t_read_holder *holder)
 {
 	int				in_game;
@@ -24,17 +37,14 @@ int					run_game(t_sdl *sdl, t_player *player,
 	tex = NULL;
 	while (in_game >= 0)
 	{
-		if (!player->win && !player->dead && (in_game = menu_hooks(m, holder)) < 0)
+		if (!player->win && !player->dead &&
+			(in_game = menu_hooks(m, holder)) < 0)
 			break ;
-		prepare_surf(sdl->ren, sdl->surf);
-		render_menu(m, sdl);
-		tex = SDL_CreateTextureFromSurface(sdl->ren, sdl->surf);
-		sdl_render(sdl->ren, tex, NULL, NULL);
-		SDL_DestroyTexture(tex);
-		SDL_RenderPresent(sdl->ren);
+		draw_menu(sdl, m, tex);
 		if (in_game > 0 || player->win || player->dead)
 		{
-			if (player->curr_map != holder->curr_map || player->win || player->dead)
+			if (player->curr_map != holder->curr_map
+				|| player->win || player->dead)
 				if (!(ret = load_game(player, holder)))
 					return (error_message("Can't create game"));
 			in_game = game_loop(sdl, player, ret);
@@ -44,23 +54,26 @@ int					run_game(t_sdl *sdl, t_player *player,
 	return (0);
 }
 
-int					init_holder_data(t_read_holder *holder)
+static int			init_holder_data(t_read_holder *holder)
 {
 	if (!(holder->skyboxes[0] = load_jpg_png("textures/dark_matter.jpg")))
-	       return (print_error_message("Can't load menu ", "textures/dark_matter.jpg"));
+	{
+		return (print_error_message("Can't load menu ",
+				"textures/dark_matter.jpg"));
+	}
 	if (!(holder->skyboxes[1] = load_jpg_png("textures/hell.jpg")))
-	       return (print_error_message("Can't load menu ", "textures/hell.jpg"));
+		return (print_error_message("Can't load menu ", "textures/hell.jpg"));
 	if (!(holder->skyboxes[2] = load_jpg_png("textures/night.jpg")))
-	       return (print_error_message("Can't load menu ", "textures/night.jpg"));
+		return (print_error_message("Can't load menu ", "textures/night.jpg"));
 	holder->hit_sound = Mix_LoadWAV("sounds/monster_roar.wav");
 	holder->roar_sound = Mix_LoadWAV("sounds/monster_bite.wav");
 	if ((holder->all_guns = (t_gun**)malloc(sizeof(t_gun*) * 3)))
 		if (!load_guns(holder->all_guns))
-			return (print_error_message("Some problame with loading guns","exit"));
+			return (print_error_message("Problame with loading guns", "exit"));
 	return (1);
 }
 
-int					init(t_sdl **sdl, t_pr *m, t_read_holder *holder)
+static int			init(t_sdl **sdl, t_pr *m, t_read_holder *holder)
 {
 	*sdl = new_t_sdl(W, H, "doom-nukem");
 	if (!sdl)

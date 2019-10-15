@@ -317,6 +317,7 @@ void				apply_filter(SDL_Surface *surface, float intensity);
 void				check_door(t_player *player);
 t_sector 			*get_near_sector(t_player *player);
 t_player			*new_t_player(int pos_x, int pos_y, t_point wid_size);
+void				update_player_view(t_player *player);
 void				free_player(t_player *player);
 void				move_player(t_player *player, float sin_angle,
 													float cos_angle);
@@ -330,7 +331,9 @@ t_sector			*get_new_player_sector(t_vector player_pos,
 										t_sector *intersect_sector);
 void				text_line(t_text_inf inf);
 void				draw_world(t_world w);
+void				draw_stripes(t_super_data *super, t_screen_inf inf);
 void				draw_floor_or_ceil(t_ceil_inf inf);
+void				draw_line(t_screen_inf inf, t_super_data *super);
 void				draw_enemy_sprite(t_item *obj, t_draw_data data,
 									t_player player, SDL_Surface *surface);
 void				move_enemy_to_player(t_item *enemy, t_vector player_pos);

@@ -28,7 +28,8 @@ void				*print_error_message_null(char *mess, char *error_obj)
 	return (NULL);
 }
 
-void				*error_free_array_surf(SDL_Surface **array, unsigned size, char *message)
+void				*error_free_array_surf(SDL_Surface **array, unsigned size,
+					char *message)
 {
 	unsigned		i;
 

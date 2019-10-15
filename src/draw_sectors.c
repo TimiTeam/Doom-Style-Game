@@ -22,7 +22,7 @@ void				draw_line(t_screen_inf inf, t_super_data *super)
 		super->scale_h, super->sect->sector_light, 0});
 }
 
-void				draw_ceil(t_screen_inf inf, t_super_data *super)
+static void			draw_ceil(t_screen_inf inf, t_super_data *super)
 {
 	draw_floor_or_ceil((t_ceil_inf){super->main_screen,
 		super->ceil_texture, inf.x, super->data->ytop[inf.x],
@@ -32,7 +32,7 @@ void				draw_ceil(t_screen_inf inf, t_super_data *super)
 		.calc_two = super->data->ceil_calc});
 }
 
-void				draw_floor(t_screen_inf inf, t_super_data *super)
+static void			draw_floor(t_screen_inf inf, t_super_data *super)
 {
 	draw_floor_or_ceil((t_ceil_inf){super->main_screen,
 		super->floor_texture, inf.x, inf.cyb,
@@ -42,39 +42,7 @@ void				draw_floor(t_screen_inf inf, t_super_data *super)
 		.calc_two = super->data->floor_calc});
 }
 
-void				*thread_draw_sector(void *param)
-{
-	t_wall			cp;
-	t_screen_inf	inf;
-	t_super_data	*super;
-
-	super = (t_super_data*)param;
-	cp = super->drawing_line;
-	inf = fill_inf(super, cp);
-	while (inf.x < inf.end)
-	{
-		calculate_frame(&inf, cp, super);
-		if (super->sect->type != uncovered)
-			draw_ceil(inf, super);
-		else
-			draw_skybox(super->main_screen, (t_point){inf.x, super->data->ytop[inf.x]}, inf.cya, super->player);
-		if (super->sect->floor_visible)
-			draw_floor(inf, super);
-		find_tex_pos(&inf, super);
-		if (super->wall.type != empty_wall && super->wall.type != transparent)
-		{
-			if (super->wall.type == window && (!super->wall.sectors[0] || !super->wall.sectors[1]))
-				draw_skybox(super->main_screen, (t_point){inf.x, inf.cya}, inf.cyb, super->player);
-			draw_line(inf, super);
-		}
-		else
-			render_neighbours(inf, super, cp);
-		inf.x++;
-	}
-	return (NULL);
-}
-
-void 				draw_simple_wall(t_super_data super)
+void				draw_simple_wall(t_super_data super)
 {
 	t_wall			cp;
 	t_screen_inf	inf;
@@ -88,4 +56,15 @@ void 				draw_simple_wall(t_super_data super)
 		draw_line(inf, &super);
 		inf.x++;
 	}
+}
+
+void				draw_stripes(t_super_data *super, t_screen_inf inf)
+{
+	if (super->sect->type != uncovered)
+		draw_ceil(inf, super);
+	else
+		draw_skybox(super->main_screen,
+		(t_point){inf.x, super->data->ytop[inf.x]}, inf.cya, super->player);
+	if (super->sect->floor_visible)
+		draw_floor(inf, super);
 }

@@ -25,7 +25,8 @@ void			check_enemy_state(t_item *enemy, t_vector player_pos)
 			enemy->speed = 0.3;
 			move_enemy_to_player(enemy, player_pos);
 		}
-		else if (enemy->dist_to_player <= 4 || enemy->curr_state == taking_damage)
+		else if (enemy->dist_to_player <= 4 ||
+				enemy->curr_state == taking_damage)
 			enemy->curr_state = action;
 		else
 			enemy->curr_state = waiting;

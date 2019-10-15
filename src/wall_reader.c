@@ -69,7 +69,6 @@ static t_wall	*make_wall(char *line, t_vector *vectors, t_read_holder *holder)
 		return (print_error_message_null("Vectors not exist at line:", line));
 	ret = (t_wall*)malloc(sizeof(t_wall));
 	ft_memset(ret, 0, sizeof(t_wall));
-//	*ret = (t_wall){NULL};
 	ret->start = vectors[(int)start];
 	ret->end = vectors[(int)end];
 	while (line[i] && !ft_isalpha(line[i]))
