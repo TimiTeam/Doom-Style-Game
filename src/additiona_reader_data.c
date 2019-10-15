@@ -12,6 +12,27 @@
 
 #include "sectors.h"
 
+char				*skip_line_with_word(char *line, char *word)
+{
+	int				j;
+
+	if (!line || !word)
+		return (NULL);
+	j = 0;
+	while (*line)
+	{
+		while (*line && *word && *line == *word)
+		{
+			line++;
+			word++;
+			if (j == (int)ft_strlen(word))
+				return (line);
+		}
+		line++;
+	}
+	return (NULL);
+}
+
 char				*get_path(int fd)
 {
 	char			*pth;

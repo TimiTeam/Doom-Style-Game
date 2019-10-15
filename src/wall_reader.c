@@ -12,21 +12,22 @@
 
 #include "sectors.h"
 
-t_vector		*get_vectors(int fd, int vec_size)
+t_vector				*get_vectors(int fd, int vec_size)
 {
-	int			i;
-	char		*line;
-	t_vector	*vectors;
+	int					i;
+	char				*line;
+	t_vector			*vectors;
 
 	vectors = (t_vector*)malloc(sizeof(t_vector) * vec_size);
 	i = 0;
-	while (vectors && get_next_line(fd, &line) > 0 && i < vec_size && ft_strcmp(line, ""))
+	while (vectors && get_next_line(fd, &line) > 0 && i < vec_size
+		&& ft_strcmp(line, ""))
 	{
 		if (ft_isdigit(line[0]))
 		{
 			if (!get_numbers(&vectors[i].x, &vectors[i].y, ',',
 					skip_row_number(line)))
-					break ;
+				break ;
 			i++;
 		}
 		ft_strdel(&line);
@@ -34,7 +35,6 @@ t_vector		*get_vectors(int fd, int vec_size)
 	if (i != vec_size)
 	{
 		ft_memdel((void**)&vectors);
-		vectors = NULL;
 		print_error_message("Some error in creating vectors: ", line);
 	}
 	ft_strdel(&line);
@@ -54,18 +54,19 @@ static enum e_wall_type	get_wall_type(char *line)
 	return (0);
 }
 
-static t_wall	*make_wall(char *line, t_vector *vectors, t_read_holder *holder)
+static t_wall			*make_wall(char *line, t_vector *vectors,
+									t_read_holder *h)
 {
-	t_wall		*ret;
-	int			i;
-	int			text;
-	float		start;
-	float		end;
+	t_wall				*ret;
+	int					i;
+	int					text;
+	float				start;
+	float				end;
 
 	if (!line || !*line)
-		return (print_error_message_null("Can't create t_wall:","error reading map"));
+		return (print_error_message_null("Reading map", "exit"));
 	i = get_numbers(&start, &end, '-', line);
-	if (start > holder->vect_count || end > holder->vect_count || (!start && !end))
+	if (start > h->vect_count || end > h->vect_count || (!start && !end))
 		return (print_error_message_null("Vectors not exist at line:", line));
 	ret = (t_wall*)malloc(sizeof(t_wall));
 	ft_memset(ret, 0, sizeof(t_wall));
@@ -74,20 +75,20 @@ static t_wall	*make_wall(char *line, t_vector *vectors, t_read_holder *holder)
 	while (line[i] && !ft_isalpha(line[i]))
 		i++;
 	ret->type = get_wall_type(&line[i]);
-	if ((text = get_num_from_str(&line[i])) > holder->text_count || text < 0)
+	if ((text = get_num_from_str(&line[i])) > h->text_count || text < 0)
 	{
 		ft_memdel((void**)&ret);
 		return (print_error_message_null("Wrong index of texture ", &line[i]));
 	}
-	ret->texture = holder->textures[text];
+	ret->texture = h->textures[text];
 	return (ret);
 }
 
-t_wall			**get_walls(int fd, t_read_holder *h, t_vector *vectors)
+t_wall					**get_walls(int fd, t_read_holder *h, t_vector *vectors)
 {
-	char		*line;
-	int			i;
-	t_wall		**walls;
+	char				*line;
+	int					i;
+	t_wall				**walls;
 
 	i = 0;
 	walls = (t_wall**)malloc(sizeof(t_wall*) * h->wall_count);

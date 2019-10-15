@@ -57,6 +57,5 @@ void				free_t_sdl(t_sdl **s)
 	close_t_sdl(*s);
 	if ((*s)->title)
 		free((char*)(*s)->title);
-		//ft_strdel(&(*s)->title);
 	ft_memdel((void**)s);
 }

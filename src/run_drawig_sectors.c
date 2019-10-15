@@ -1,5 +1,16 @@
-#include "main_head.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   run_drawig_sectors.c                               :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: tbujalo <marvin@42.fr>                     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/10/15 21:22:32 by tbujalo           #+#    #+#             */
+/*   Updated: 2019/10/15 21:22:38 by tbujalo          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
+#include "main_head.h"
 
 void				draw_sectors(t_sector *sec, t_player *player,
 									t_sdl *sdl, t_draw_data data)

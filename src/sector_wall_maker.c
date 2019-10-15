@@ -12,35 +12,11 @@
 
 #include "sectors.h"
 
-int				get_wall_count(char *str)
-{
-	int			count;
-
-	count = 0;
-	while (*str && *str != '\'' && ft_strncmp(str, "items", ft_strlen("items")))
-		str++;
-	if (!str)
-		return (0);
-	str++;
-	while (*str && *str != '\'' && ft_strncmp(str, "items", ft_strlen("items")))
-	{
-		if (ft_isdigit(*str))
-		{
-			count++;
-			while (*str && ft_isdigit(*str))
-				str++;
-			continue ;
-		}
-		str++;
-	}
-	return (count);
-}
-
 static void		mark_like_neighbors(t_sector *who, t_wall *where)
 {
 	if (!where)
 	{
-		print_error_message("Wall is not exist","");
+		print_error_message("Wall is not exist", "");
 		return ;
 	}
 	if (!where->sectors[0])
@@ -66,18 +42,7 @@ static t_wall	*copy_t_wall_velue(t_wall *src)
 	return (dst);
 }
 
-int				skip_to_word(char *data, char *to_word)
-{
-	int			i;
-
-	i = 0;
-	while (data[i] && ft_strncmp(&data[i], to_word,
-				ft_strlen(to_word)) && !ft_isdigit(data[i]))
-		i++;
-	return (i);
-}
-
-void			*error_free_t_wall(t_wall **array, int count, char *line)
+static void		*error_free_t_wall(t_wall **array, int count, char *line)
 {
 	if (array && *array)
 		delete_walls(array, count);
@@ -89,32 +54,25 @@ t_wall			**create_sector_walls(t_sector *sector,
 {
 	t_wall		**walls;
 	int			id;
-	char		*orig;
 	int			count;
 
 	if (wall_count < 1 || !(walls = malloc(sizeof(t_wall*) * wall_count)))
 		return (NULL);
 	count = 0;
-	orig = data;
 	while (*data && *data != '\'')
 		data++;
-	if (*data)
-		data++;
-	while (count < wall_count && *data && *data != '\'' &&
+	while (count < wall_count && *data && data++ && *data != '\'' &&
 				ft_strncmp(data, "items", ft_strlen("items")))
 	{
 		if (ft_isdigit(*data) && (id = ft_atoi(data)) >= 0)
 		{
 			if (id > holder->wall_count)
-				return (error_free_t_wall(walls, count, orig));
+				return (error_free_t_wall(walls, count, data));
 			mark_like_neighbors(sector, holder->walls[id]);
-			walls[count] = copy_t_wall_velue(holder->walls[id]);
-			count++;
+			walls[count++] = copy_t_wall_velue(holder->walls[id]);
 			while (*data && ft_isdigit(*data))
 				data++;
 		}
-		else
-			data++;
 	}
-	return (count == wall_count? walls : delete_walls(walls, wall_count));
+	return (count == wall_count ? walls : delete_walls(walls, wall_count));
 }

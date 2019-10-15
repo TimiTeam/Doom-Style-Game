@@ -20,8 +20,10 @@ void			again(t_again a)
 	wall = a.wall;
 	player = *a.player;
 	a.data.recursion_deep++;
-	if ((wall.type == empty_wall || wall.type == transparent) && wall.sectors[1] && wall.sectors[0]
-	 && !compare_two_int_array(a.data.ybottom, a.data.ytop, a.data.start, a.data.end) && a.data.recursion_deep < 100 && a.data.recursion_deep < 36)
+	if ((wall.type == empty_wall || wall.type == transparent) &&
+		wall.sectors[1] && wall.sectors[0]
+	&& !compare_two_int_array(a.data.ybottom, a.data.ytop, a.data.start,
+	a.data.end) && a.data.recursion_deep < 100 && a.data.recursion_deep < 36)
 	{
 		if (wall.sectors[0]->sector != player.curr_sector->sector
 				&& wall.sectors[0]->sector != a.sec->sector)
@@ -29,40 +31,6 @@ void			again(t_again a)
 		else if (wall.sectors[1]->sector != player.curr_sector->sector
 						&& wall.sectors[1]->sector != a.sec->sector)
 			draw_sectors(wall.sectors[1], a.player, a.sdl, a.data);
-	}
-}
-
-void			threads(t_proj t)
-{
-	pthread_t		thread[THREADS];
-	t_super_data	super[THREADS];
-	int				step;
-	int				i;
-
-	i = -1;
-	t.data.start = MAX(t.line.start.x, t.data.start);
-	t.data.end = MIN(t.line.end.x, t.data.end);
-	step = (t.data.end - t.data.start) / THREADS;
-	while (++i < THREADS)
-	{
-		fill_super_data(&super[i], t.sec, &(t.data), t.line);
-		fill_super_data_2(&super[i], t.data, step, i);
-		fill_super_data_3(&super[i], t.sec, *t.player, t.sdl);
-		super[i].scale_l = t.scale_l;
-		super[i].u0 = t.u0;
-		super[i].u1 = t.u1;
-		super[i].wall = t.wall;
-		pthread_create(&thread[i], NULL, t.thread_draw_sector, &super[i]);
-	}
-	i = -1;
-	while (++i < THREADS)
-		pthread_join(thread[i], NULL);
-	again((t_again){t.sec, t.wall, t.player, t.sdl, t.data});
-	if (super->wall.type == transparent)
-	{
-		super[0].start_x = t.data.start;
-		super[0].end_x = t.data.end;
-		draw_simple_wall(super[0]);
 	}
 }
 
@@ -75,7 +43,8 @@ void			draw_projected(t_proj p)
 
 	line = p.line;
 	player = *p.player;
-	scl1 = (t_vector){player.hfov / line.start.y, player.vfov / line.start.y, 0};
+	scl1 = (t_vector){player.hfov / line.start.y,
+		player.vfov / line.start.y, 0};
 	scl2 = (t_vector){player.hfov / line.end.y, player.vfov / line.end.y, 0};
 	line.start.x = player.half_win_size.x - (int)(line.start.x * scl1.x);
 	line.end.x = player.half_win_size.x - (int)(line.end.x * scl2.x);
@@ -84,7 +53,8 @@ void			draw_projected(t_proj p)
 		return ;
 	floor_and_ceil_calculation(&(p.data), player,
 							line, (t_vector){scl1.y, scl2.y, 0});
-	if ((p.wall.type == empty_wall || p.wall.type == transparent) && p.wall.sectors[1] && p.wall.sectors[0])
+	if ((p.wall.type == empty_wall || p.wall.type == transparent)
+	&& p.wall.sectors[1] && p.wall.sectors[0])
 		neighbour_calculation(&(p.data), (t_n){player,
 					p.wall, line, scl1.y, scl2.y});
 	threads((t_proj){p.sec, p.wall, p.player, p.sdl, p.data,

@@ -27,9 +27,8 @@ void			put_skybox_pixel(SDL_Surface *screen, SDL_Surface *skybox,
 	tx = ((float)imw / screen->w) * pos.x;
 	ty = ((float)imh / screen->h) * pos.y;
 	if (pos.x < screen->w && pos.x >= 0 && pos.y < screen->h && pos.y >= 0)
-		put_pixel(screen, pos.x, pos.y,
-					get_pixel(skybox, abs(((int)tx + (int)im_pos.x) % skybox->w),
-															(int)ty + im_pos.y));
+		put_pixel(screen, pos.x, pos.y, get_pixel(skybox,
+		abs(((int)tx + (int)im_pos.x) % skybox->w), (int)ty + im_pos.y));
 }
 
 void			draw_skybox(SDL_Surface *dst, t_point pos,

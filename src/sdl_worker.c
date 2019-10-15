@@ -20,17 +20,16 @@ void			sdl_render(SDL_Renderer *ren, SDL_Texture *tex,
 	SDL_RenderCopy(ren, tex, src, dst);
 }
 
-void				prepare_surf(SDL_Renderer *ren, SDL_Surface *surf)
+void			prepare_surf(SDL_Renderer *ren, SDL_Surface *surf)
 {
-	
 	SDL_SetRenderDrawColor(ren, 0, 200, 0, 255);
 	SDL_RenderClear(ren);
 	SDL_FillRect(surf, NULL, 0x00);
 }
 
-void				render_tex(t_sdl *sdl)
+void			render_tex(t_sdl *sdl)
 {
-	SDL_Texture		*tex;
+	SDL_Texture	*tex;
 
 	tex = SDL_CreateTextureFromSurface(sdl->ren, sdl->surf);
 	sdl_render(sdl->ren, tex, NULL, NULL);

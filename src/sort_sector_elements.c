@@ -25,7 +25,6 @@ int				check_sectors(t_sector *sector)
 		{
 			if (!sec->portals[i]->sectors[0] || !sec->portals[i]->sectors[1])
 			{
-				printf("sector %d, wall %d\n", sec->sector, sec->portals[i]->id);
 				return (print_error_message("Error map!",
 						"The empty wall must be closed by all side"));
 			}

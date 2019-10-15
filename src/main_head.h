@@ -86,10 +86,10 @@ typedef struct		s_player
 	t_gun			**all_guns;
 	t_gun			*gun[3];
 	Mix_Chunk		*damage_sound;
-	Mix_Chunk		*hit_enemy;
 	Mix_Chunk		*get_item;
-	Mix_Chunk		*open_door;
+	Mix_Chunk		*door_sound;
 	Mix_Chunk		*move_lift;
+	Mix_Chunk		*ambient;
 	t_vector		pos;
 	t_vector		end_pos;
 	unsigned short	end_sector;
@@ -315,8 +315,12 @@ void				free_all(t_player **player, t_sdl **sdl,
 					t_read_holder *holder, t_pr *m);
 void				apply_filter(SDL_Surface *surface, float intensity);
 void				check_door(t_player *player);
+int			        has_key(t_item *items);
+t_sector			*get_sector_after_door(t_sector *door, t_sector *prev);
 t_sector 			*get_near_sector(t_player *player);
 t_player			*new_t_player(int pos_x, int pos_y, t_point wid_size);
+int					get_player_pos(char *line, t_vector *player_pos,
+								unsigned *player_sec_id);
 void				update_player_view(t_player *player);
 void				free_player(t_player *player);
 void				move_player(t_player *player, float sin_angle,
@@ -334,6 +338,8 @@ void				draw_world(t_world w);
 void				draw_stripes(t_super_data *super, t_screen_inf inf);
 void				draw_floor_or_ceil(t_ceil_inf inf);
 void				draw_line(t_screen_inf inf, t_super_data *super);
+void				threads(t_proj t);
+void				again(t_again a);
 void				draw_enemy_sprite(t_item *obj, t_draw_data data,
 									t_player player, SDL_Surface *surface);
 void				move_enemy_to_player(t_item *enemy, t_vector player_pos);

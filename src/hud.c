@@ -86,9 +86,11 @@ void				draw_hud(t_sdl *sdl, t_player *player)
 	char			*ammo;
 	SDL_Surface		*ammo_surf;
 
-	draw_rect(sdl->surf, (t_point){player->half_win_size.x - 150, 30}, (t_point){300, 30}, 0x00);
+	draw_rect(sdl->surf, (t_point){player->half_win_size.x - 150, 30},
+				(t_point){300, 30}, 0x00);
 	if (player->health > 0)
-		draw_rect(sdl->surf, (t_point){player->half_win_size.x - 150 + 4, 30 + 4},
+		draw_rect(sdl->surf, (t_point){player->half_win_size.x - 150 + 4,
+					30 + 4},
 		(t_point){(300 - 8) * player->health / 100.0f, 30 - 8}, 0x00ff0000);
 	if (player->current_gun)
 	{

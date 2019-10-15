@@ -12,10 +12,10 @@
 
 #include "main_head.h"
 
-void					delete_guns(t_gun **all)
+void				delete_guns(t_gun **all)
 {
-	enum e_gun_type		i;
-	int					j;
+	enum e_gun_type	i;
+	int				j;
 
 	i = pistol;
 	if (!all)
@@ -38,7 +38,6 @@ void					delete_guns(t_gun **all)
 	ft_memdel((void**)&all);
 }
 
-
 int					load_pistol(t_gun **gun)
 {
 	gun[pistol] = (t_gun*)malloc(sizeof(t_gun));
@@ -47,13 +46,17 @@ int					load_pistol(t_gun **gun)
 	gun[pistol]->damage = 10;
 	gun[pistol]->max_frames = 4;
 	gun[pistol]->type = pistol;
-	if (!(gun[pistol]->frame[0] = load_jpg_png("textures/guns/pistol/pistol1.png")))
+	if (!(gun[pistol]->frame[0] =
+	load_jpg_png("textures/guns/pistol/pistol1.png")))
 		return (0);
-	if (!(gun[pistol]->frame[1] = load_jpg_png("textures/guns/pistol/pistol2.png")))
+	if (!(gun[pistol]->frame[1] =
+	load_jpg_png("textures/guns/pistol/pistol2.png")))
 		return (0);
-	if (!(gun[pistol]->frame[2] = load_jpg_png("textures/guns/pistol/pistol3.png")))
+	if (!(gun[pistol]->frame[2] =
+	load_jpg_png("textures/guns/pistol/pistol3.png")))
 		return (0);
-	if (!(gun[pistol]->frame[3] = load_jpg_png("textures/guns/pistol/pistol4.png")))
+	if (!(gun[pistol]->frame[3] =
+	load_jpg_png("textures/guns/pistol/pistol4.png")))
 		return (0);
 	gun[pistol]->shot_sound = Mix_LoadWAV("sounds/pistol_shot.wav");
 	return (1);
@@ -61,25 +64,28 @@ int					load_pistol(t_gun **gun)
 
 int					load_shotgun(t_gun **gun)
 {
+	SDL_Surface		**frame;
+
 	gun[shotgun] = (t_gun*)malloc(sizeof(t_gun));
 	ft_memset(gun[shotgun], 0, sizeof(t_gun));
 	gun[shotgun]->ammo = 12;
 	gun[shotgun]->damage = 20;
 	gun[shotgun]->max_frames = 7;
 	gun[shotgun]->type = shotgun;
-	if (!(gun[shotgun]->frame[0] = load_jpg_png("textures/guns/shotgun/shotgun1.png")))
+	frame = gun[shotgun]->frame;
+	if (!(frame[0] = load_jpg_png("textures/guns/shotgun/shotgun1.png")))
 		return (0);
-	if (!(gun[shotgun]->frame[1] = load_jpg_png("textures/guns/shotgun/shotgun2.png")))
+	if (!(frame[1] = load_jpg_png("textures/guns/shotgun/shotgun2.png")))
 		return (0);
-	if (!(gun[shotgun]->frame[2] = load_jpg_png("textures/guns/shotgun/shotgun4.png")))
+	if (!(frame[2] = load_jpg_png("textures/guns/shotgun/shotgun4.png")))
 		return (0);
-	if (!(gun[shotgun]->frame[3] = load_jpg_png("textures/guns/shotgun/shotgun5.png")))
+	if (!(frame[3] = load_jpg_png("textures/guns/shotgun/shotgun5.png")))
 		return (0);
-	if (!(gun[shotgun]->frame[4] = load_jpg_png("textures/guns/shotgun/shotgun6.png")))
+	if (!(frame[4] = load_jpg_png("textures/guns/shotgun/shotgun6.png")))
 		return (0);
-	if (!(gun[shotgun]->frame[5] = load_jpg_png("textures/guns/shotgun/shotgun5.png")))
+	if (!(frame[5] = load_jpg_png("textures/guns/shotgun/shotgun5.png")))
 		return (0);
-	if (!(gun[shotgun]->frame[6] = load_jpg_png("textures/guns/shotgun/shotgun4.png")))
+	if (!(frame[6] = load_jpg_png("textures/guns/shotgun/shotgun4.png")))
 		return (0);
 	gun[shotgun]->shot_sound = Mix_LoadWAV("sounds/shotgun_shot.wav");
 	return (1);

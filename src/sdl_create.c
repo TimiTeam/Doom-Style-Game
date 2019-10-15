@@ -14,12 +14,11 @@
 
 SDL_Surface			*get_empty_surface(unsigned width, unsigned height)
 {
+	Uint32			rmask;
+	Uint32			gmask;
+	Uint32			bmask;
 #ifdef __LINUX__
-Uint32			rmask;
-Uint32			gmask;
-Uint32			bmask;
-
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+# if SDL_BYTEORDER == SDL_BIG_ENDIAN
 	rmask = 0xff000000;
 	gmask = 0x00ff0000;
 	bmask = 0x0000ff00;
@@ -31,7 +30,10 @@ Uint32			bmask;
 	return (SDL_CreateRGBSurface(0, width, height, 32,
 				rmask, gmask, bmask, 0));
 #endif
-	return (SDL_CreateRGBSurface(0, width, height, 32, 0, 0, 0, 0));
+	rmask = 0;
+	gmask = 0;
+	bmask = 0;
+	return (SDL_CreateRGBSurface(0, width, height, 32, rmask, gmask, bmask, 0));
 }
 
 t_sdl				*new_t_sdl(int win_size_x, int win_size_y,
@@ -74,7 +76,7 @@ int					init_sdl(t_sdl *sdl)
 	return (OK);
 }
 
-int				init_sound()
+int				init_sound(void)
 {
 	int			audio_rate;
 	int			audio_channels;
@@ -85,7 +87,8 @@ int				init_sound()
 	audio_format = AUDIO_S16SYS;
 	audio_channels = 6;
 	audio_buffers = 1024;
-	if (Mix_OpenAudio(audio_rate, audio_format, audio_channels, audio_buffers) != 0)
+	if (Mix_OpenAudio(audio_rate, audio_format,
+		audio_channels, audio_buffers) != 0)
 		error_message(Mix_GetError());
 	return (1);
 }

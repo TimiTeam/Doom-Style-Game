@@ -107,6 +107,8 @@ int					main(void)
 		sdl->font = m.font;
 		player = new_t_player(3, 3, sdl->win_size);
 		player->all_guns = holder.all_guns;
+		Mix_PlayChannel(0, player->ambient, -1);
+		Mix_Volume(0, 64);
 		run_game(sdl, player, &m, &holder);
 	}
 	free_all(&player, &sdl, &holder, &m);

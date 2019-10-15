@@ -61,7 +61,7 @@ t_item				*create_item(char *data, t_item *all_items)
 	int				i;
 	int				index;
 
-	if(!data || !*data || !(item = create_new_item(0,0)))
+	if (!data || !*data || !(item = create_new_item(0, 0)))
 		return (0);
 	if (!(i = get_numbers(&item->pos.x, &item->pos.y, ',', data)))
 	{
@@ -76,13 +76,8 @@ t_item				*create_item(char *data, t_item *all_items)
 	}
 	if (!item->size.x && !item->size.y)
 	{
-		item->size.x = item->states[0].texture[0]->w;
-		item->size.y = item->states[0].texture[0]->h;
-		if (item->size.x > 150 && item->size.y > 150)
-		{
-			item->size.x = item->size.x / 5;
-			item->size.y = item->size.y / 5;
-		}
+		item->size.x = 50;
+		item->size.y = 50;
 	}
 	return (item);
 }
