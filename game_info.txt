@@ -5,7 +5,6 @@ Path: Maps/
 2) map_one
 3) super
 4) lavaisland
-5) new_levefreeasdadasd.txt
 ###
 
 #Textures 58

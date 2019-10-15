@@ -12,7 +12,7 @@
 
 #include "main_head.h"
 
-t_item		*get_item_to_player(t_item **items,
+static t_item	*get_item_to_player(t_item **items,
 t_item *curr, t_player *player)
 {
 	if (curr->type == gun)
@@ -37,7 +37,7 @@ t_item *curr, t_player *player)
 	return (curr);
 }
 
-void		is_player_hit(t_item *get_damege, t_player *player)
+static void		is_player_hit(t_item *get_damege, t_player *player)
 {
 	if (get_damege && get_damege->type == enemy)
 	{
@@ -47,33 +47,37 @@ void		is_player_hit(t_item *get_damege, t_player *player)
 	}
 }
 
-void		draw_sector_items(t_item **items, t_player *player,
+static t_item	*change_enemy(t_item *enemy, float *prev_dist)
+{
+	enemy->players_hit = 0;
+	*prev_dist = enemy->dist_to_player;
+	return (enemy);
+}
+
+void			draw_sector_items(t_item **items, t_player *player,
 		t_draw_data data, SDL_Surface *screen)
 {
-	t_item	*get_damege;
-	float	closer;
-	t_item	*it;
+	t_item		*get_damege;
+	float		closer;
+	t_item		*it;
 
 	closer = 1000.f;
 	it = *items;
 	get_damege = NULL;
 	while ((it = change_item_animations(items, player, it)))
 	{
-		if (player->curr_sector == it->sector && it->dist_to_player <= 1.2f && it->type != object
+		if (player->curr_sector == it->sector &&
+			it->dist_to_player <= 1.2f && it->type != object
 		&& it->type != enemy && it->type != light)
 			it = get_item_to_player(items, it, player);
 		if (it && it->dist_to_player >= 1.f)
 		{
 			draw_enemy_sprite(it, data, *player, screen);
 			if (it->players_hit && closer > it->dist_to_player)
-			{
-				it->players_hit = 0;
-				closer = it->dist_to_player;
-				get_damege = it;
-			}
+				get_damege = change_enemy(it, &closer);
 		}
 		if (it)
 			it = it->next;
-	}	
+	}
 	is_player_hit(get_damege, player);
 }

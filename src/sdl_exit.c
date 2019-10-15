@@ -47,6 +47,7 @@ void				close_t_sdl(t_sdl *s)
 	s->win = NULL;
 	if (SDL_WasInit(SDL_INIT_AUDIO))
 		SDL_AudioQuit();
+	Mix_CloseAudio();
 }
 
 void				free_t_sdl(t_sdl **s)
@@ -55,6 +56,7 @@ void				free_t_sdl(t_sdl **s)
 		return ;
 	close_t_sdl(*s);
 	if ((*s)->title)
-		ft_strdel(&(*s)->title);
+		free((char*)(*s)->title);
+		//ft_strdel(&(*s)->title);
 	ft_memdel((void**)s);
 }

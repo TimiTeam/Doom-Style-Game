@@ -12,39 +12,23 @@
 
 #include "main_head.h"
 
-static int 		compare_two_int_array(short *arr_one, short *arr_two, int from, int to)
-{
-	int 		i;
-	
-	i = from;
-	if (!arr_one || !arr_two)
-		return (0);
-	while (i < to)
-	{
-		if (arr_one[i] != arr_two[i])
-			return (0);
-		i++;
-	}
-	return (1);
-}
-
 void			again(t_again a)
 {
 	t_wall		wall;
 	t_player	player;
 
 	wall = a.wall;
-	player = a.player;
+	player = *a.player;
 	a.data.recursion_deep++;
 	if ((wall.type == empty_wall || wall.type == transparent) && wall.sectors[1] && wall.sectors[0]
 	 && !compare_two_int_array(a.data.ybottom, a.data.ytop, a.data.start, a.data.end) && a.data.recursion_deep < 100 && a.data.recursion_deep < 36)
 	{
 		if (wall.sectors[0]->sector != player.curr_sector->sector
 				&& wall.sectors[0]->sector != a.sec->sector)
-			draw_sectors(wall.sectors[0], &player, a.sdl, a.data);
+			draw_sectors(wall.sectors[0], a.player, a.sdl, a.data);
 		else if (wall.sectors[1]->sector != player.curr_sector->sector
 						&& wall.sectors[1]->sector != a.sec->sector)
-			draw_sectors(wall.sectors[1], &player, a.sdl, a.data);
+			draw_sectors(wall.sectors[1], a.player, a.sdl, a.data);
 	}
 }
 
@@ -63,7 +47,7 @@ void			threads(t_proj t)
 	{
 		fill_super_data(&super[i], t.sec, &(t.data), t.line);
 		fill_super_data_2(&super[i], t.data, step, i);
-		fill_super_data_3(&super[i], t.sec, t.player, t.sdl);
+		fill_super_data_3(&super[i], t.sec, *t.player, t.sdl);
 		super[i].scale_l = t.scale_l;
 		super[i].u0 = t.u0;
 		super[i].u1 = t.u1;
@@ -90,7 +74,7 @@ void			draw_projected(t_proj p)
 	t_wall		line;
 
 	line = p.line;
-	player = p.player;
+	player = *p.player;
 	scl1 = (t_vector){player.hfov / line.start.y, player.vfov / line.start.y, 0};
 	scl2 = (t_vector){player.hfov / line.end.y, player.vfov / line.end.y, 0};
 	line.start.x = player.half_win_size.x - (int)(line.start.x * scl1.x);
@@ -103,7 +87,7 @@ void			draw_projected(t_proj p)
 	if ((p.wall.type == empty_wall || p.wall.type == transparent) && p.wall.sectors[1] && p.wall.sectors[0])
 		neighbour_calculation(&(p.data), (t_n){player,
 					p.wall, line, scl1.y, scl2.y});
-	threads((t_proj){p.sec, p.wall, player, p.sdl, p.data,
+	threads((t_proj){p.sec, p.wall, p.player, p.sdl, p.data,
 				line, p.u0, p.u1, p.scale_l, p.thread_draw_sector});
 }
 
@@ -142,7 +126,7 @@ void			draw_world(t_world w)
 	t_player	player;
 	t_wall		wall;
 
-	player = w.player;
+	player = *w.player;
 	wall = w.wall;
 	line.start = (t_vector){wall.start.x - player.pos.x,
 							wall.start.y - player.pos.y, 0};
@@ -158,6 +142,6 @@ void			draw_world(t_world w)
 				+ line.end.y * player.sin_angl, .z = line.end.y};
 	if (line.start.y <= 0 && line.end.y <= 0)
 		return ;
-	get_rotated((t_rot){w.sec, wall, player,
+	get_rotated((t_rot){w.sec, wall, w.player,
 			w.sdl, w.data, line, w.thread_draw_sector});
 }

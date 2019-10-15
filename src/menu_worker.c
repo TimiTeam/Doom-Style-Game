@@ -39,6 +39,8 @@ int 		prepare_playear(t_player *player, t_read_holder *holder)
 	player->win = 0;
 	player->curr_map = holder->curr_map;
 	player->all = holder->all;
+	player->sky = holder->skyboxes[holder->curr_map] ?
+		holder->skyboxes[holder->curr_map] : holder->skyboxes[0];
 	return (1);
 }
 

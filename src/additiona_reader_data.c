@@ -12,6 +12,25 @@
 
 #include "sectors.h"
 
+char				*get_path(int fd)
+{
+	char			*pth;
+	char			*line;
+	int				skip_len;
+
+	pth = NULL;
+	skip_len = ft_strlen("Path: ");
+	if (get_next_line(fd, &line) > 0 &&
+			ft_strncmp(line, "Path: ", skip_len) == 0)
+	{
+		pth = ft_strsub(line, skip_len, ft_strlen(line) - skip_len);
+		if (!*pth)
+			ft_strdel(&pth);
+	}
+	ft_strdel(&line);
+	return (pth);
+}
+
 SDL_Surface			*get_surface_from_file(char *full_path)
 {
 	SDL_Surface		*ret;
@@ -26,7 +45,7 @@ SDL_Surface			**load_img_array_from_file(int fd, unsigned size)
 	SDL_Surface		**array;
 	char			*file_name;
 	char			*path;
-	unsigned			i;
+	unsigned		i;
 
 	if (!(path = get_path(fd)) ||
 			!(array = (SDL_Surface**)malloc(sizeof(SDL_Surface**) * size)))
@@ -46,7 +65,8 @@ SDL_Surface			**load_img_array_from_file(int fd, unsigned size)
 	}
 	ft_strdel(&path);
 	ft_strdel(&file_name);
-	return (i != size ? error_free_array_surf(array, i, "Wrong count of images") : array);
+	return (i != size ? error_free_array_surf(array, i,
+		"Wrong count of images") : array);
 }
 
 enum e_gun_type		get_gun_type(char *type)

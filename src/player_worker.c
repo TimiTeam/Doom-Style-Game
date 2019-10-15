@@ -17,8 +17,12 @@ void			free_player(t_player *player)
 	if (!player)
 		return ;
 	delete_items_list(player->inventar);
-	if (player->sky)
-		SDL_FreeSurface(player->sky);
+	if (player->damage_sound)
+		Mix_FreeChunk(player->damage_sound);
+	if (player->ambient)
+		Mix_FreeChunk(player->ambient);
+	if (player->door_sound)
+		Mix_FreeChunk(player->door_sound);
 	ft_memdel((void**)&player);
 }
 
@@ -129,8 +133,6 @@ int				player_start_and_end(int fd, t_read_holder *holder)
 			e = get_player_pos(line, &holder->player_end, &holder->player_end_sect);
 		ft_strdel(&line);
 	}
-	printf("start sect %d pos %f %f\n", holder->player_sector_id, holder->player_start.x, holder->player_start.y);
-	printf("end sect %d pos %f %f\n", holder->player_end_sect, holder->player_end.x, holder->player_end.y);
 	ret = check_correct_satrt_end(holder, s, e, line);
 	ft_strdel(&line);
 	return (ret);
@@ -156,7 +158,6 @@ t_player		*new_t_player(int pos_x, int pos_y, t_point win_size)
 
 	player = (t_player*)malloc(sizeof(t_player));
 	ft_memset(player, 0, sizeof(t_player));
-//	*player = (t_player){NULL};
 	player->pos = (t_vector){pos_x, pos_y, 0};
 	player->curr_map = -1;
 	player->half_win_size = (t_point){win_size.x / 2, win_size.y / 2};
@@ -171,5 +172,7 @@ t_player		*new_t_player(int pos_x, int pos_y, t_point win_size)
 	player->height = EYEHEIGHT;
 	player->health = 100;
 	player->damage_sound = Mix_LoadWAV("sounds/player_damaged.wav");
+	player->ambient = Mix_LoadWAV("sounds/ambient.wav");
+	player->door_sound = Mix_LoadWAV("sounds/door_sound.wav");
 	return (player);
 }

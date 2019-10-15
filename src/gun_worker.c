@@ -23,73 +23,96 @@ void					delete_guns(t_gun **all)
 	while (i <= plasmagun && all[i])
 	{
 		j = 0;
-		while (j < all[i]->max_frames)
+		while (j < all[i]->max_frames && all[i]->frame[j])
 		{
 			SDL_FreeSurface(all[i]->frame[j]);
+			all[i]->frame[j] = NULL;
 			j++;
 		}
+		if (all[i]->shot_sound)
+			Mix_FreeChunk(all[i]->shot_sound);
 		ft_memdel((void**)&all[i]);
+		all[i] = NULL;
 		i++;
 	}
 	ft_memdel((void**)&all);
 }
 
-void					load_pistol(t_gun **gun)
+
+int					load_pistol(t_gun **gun)
 {
 	gun[pistol] = (t_gun*)malloc(sizeof(t_gun));
 	ft_memset(gun[pistol], 0, sizeof(t_gun));
-//	*gun[pistol] = (t_gun){0};
 	gun[pistol]->ammo = 35;
 	gun[pistol]->damage = 10;
 	gun[pistol]->max_frames = 4;
 	gun[pistol]->type = pistol;
-	gun[pistol]->frame[0] = load_jpg_png("textures/guns/pistol/pistol1.png");
-	gun[pistol]->frame[1] = load_jpg_png("textures/guns/pistol/pistol2.png");
-	gun[pistol]->frame[2] = load_jpg_png("textures/guns/pistol/pistol3.png");
-	gun[pistol]->frame[3] = load_jpg_png("textures/guns/pistol/pistol4.png");
+	if (!(gun[pistol]->frame[0] = load_jpg_png("textures/guns/pistol/pistol1.png")))
+		return (0);
+	if (!(gun[pistol]->frame[1] = load_jpg_png("textures/guns/pistol/pistol2.png")))
+		return (0);
+	if (!(gun[pistol]->frame[2] = load_jpg_png("textures/guns/pistol/pistol3.png")))
+		return (0);
+	if (!(gun[pistol]->frame[3] = load_jpg_png("textures/guns/pistol/pistol4.png")))
+		return (0);
 	gun[pistol]->shot_sound = Mix_LoadWAV("sounds/pistol_shot.wav");
+	return (1);
 }
 
-void					load_shotgun(t_gun **gun)
+int					load_shotgun(t_gun **gun)
 {
 	gun[shotgun] = (t_gun*)malloc(sizeof(t_gun));
 	ft_memset(gun[shotgun], 0, sizeof(t_gun));
 	gun[shotgun]->ammo = 12;
 	gun[shotgun]->damage = 20;
-	gun[shotgun]->max_frames = 8;
+	gun[shotgun]->max_frames = 7;
 	gun[shotgun]->type = shotgun;
-	gun[shotgun]->frame[0] = load_jpg_png("textures/guns/shotgun/shotgun1.png");
-	gun[shotgun]->frame[1] = load_jpg_png("textures/guns/shotgun/shotgun2.png");
-	//gun[shotgun]->frame[2] = load_jpg_png("textures/guns/shotgun/shotgun3.png");
-	gun[shotgun]->frame[2] = load_jpg_png("textures/guns/shotgun/shotgun4.png");
-	gun[shotgun]->frame[3] = load_jpg_png("textures/guns/shotgun/shotgun5.png");
-	gun[shotgun]->frame[4] = load_jpg_png("textures/guns/shotgun/shotgun6.png");
-	gun[shotgun]->frame[5] = load_jpg_png("textures/guns/shotgun/shotgun5.png");
-	gun[shotgun]->frame[6] = load_jpg_png("textures/guns/shotgun/shotgun4.png");
+	if (!(gun[shotgun]->frame[0] = load_jpg_png("textures/guns/shotgun/shotgun1.png")))
+		return (0);
+	if (!(gun[shotgun]->frame[1] = load_jpg_png("textures/guns/shotgun/shotgun2.png")))
+		return (0);
+	if (!(gun[shotgun]->frame[2] = load_jpg_png("textures/guns/shotgun/shotgun4.png")))
+		return (0);
+	if (!(gun[shotgun]->frame[3] = load_jpg_png("textures/guns/shotgun/shotgun5.png")))
+		return (0);
+	if (!(gun[shotgun]->frame[4] = load_jpg_png("textures/guns/shotgun/shotgun6.png")))
+		return (0);
+	if (!(gun[shotgun]->frame[5] = load_jpg_png("textures/guns/shotgun/shotgun5.png")))
+		return (0);
+	if (!(gun[shotgun]->frame[6] = load_jpg_png("textures/guns/shotgun/shotgun4.png")))
+		return (0);
 	gun[shotgun]->shot_sound = Mix_LoadWAV("sounds/shotgun_shot.wav");
+	return (1);
 }
 
-void					load_plasmagun(t_gun **gun)
+int					load_plasmagun(t_gun **gun)
 {
 	gun[plasmagun] = (t_gun*)malloc(sizeof(t_gun));
 	ft_memset(gun[plasmagun], 0, sizeof(t_gun));
-//	*gun[plasmagun] = (t_gun){0};
 	gun[plasmagun]->ammo = 20;
 	gun[plasmagun]->type = plasmagun;
 	gun[plasmagun]->damage = 35;
 	gun[plasmagun]->max_frames = 3;
-	gun[plasmagun]->frame[0] =
-		load_jpg_png("textures/guns/plasmagun/plasmagun_1.png");
-	gun[plasmagun]->frame[1] =
-		load_jpg_png("textures/guns/plasmagun/plasmagun_2.png");
-	gun[plasmagun]->frame[2] =
-		load_jpg_png("textures/guns/plasmagun/plasmagun_3.png");
+	if (!(gun[plasmagun]->frame[0] =
+		load_jpg_png("textures/guns/plasmagun/plasmagun_1.png")))
+		return (0);
+	if (!(gun[plasmagun]->frame[1] =
+		load_jpg_png("textures/guns/plasmagun/plasmagun_2.png")))
+		return (0);
+	if (!(gun[plasmagun]->frame[2] =
+		load_jpg_png("textures/guns/plasmagun/plasmagun_3.png")))
+		return (0);
 	gun[plasmagun]->shot_sound = Mix_LoadWAV("sounds/plasmagun_shot.wav");
+	return (1);
 }
 
-void					load_guns(t_gun **gun)
+int					load_guns(t_gun **gun)
 {
-	load_pistol(gun);
-	load_shotgun(gun);
-	load_plasmagun(gun);
+	if (!load_pistol(gun))
+		return (print_error_message("Can't ceate ", "Pitsol"));
+	if (!load_shotgun(gun))
+		return (print_error_message("Can't ceate ", "Shotgun"));
+	if (!load_plasmagun(gun))
+		return (print_error_message("Can't ceate ", "Plasmagun"));
+	return (1);
 }

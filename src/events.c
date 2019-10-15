@@ -26,6 +26,24 @@ int				movement_events(SDL_Keycode code,
 	return (1);
 }
 
+void			change_gun(t_player *player, SDL_Keycode code)
+{
+	t_gun		*new_gun;
+
+	new_gun = NULL;
+	if (code == SDLK_1 && player->gun[pistol])
+		new_gun = player->gun[pistol];
+	else if (code == SDLK_2 && player->gun[shotgun])
+		new_gun = player->gun[shotgun];
+	else if (code == SDLK_3 && player->gun[plasmagun])
+		new_gun = player->gun[plasmagun];
+	if (new_gun && player->current_gun->type != new_gun->type)
+	{
+		new_gun->state = 0;
+		player->current_gun = new_gun;
+	}
+}
+
 int				guess_event(SDL_Keycode code,
 			t_player *player, unsigned char move[4], SDL_EventType type)
 {
@@ -38,16 +56,13 @@ int				guess_event(SDL_Keycode code,
 			&& (player->pos.z - player->height <= player->curr_sector->floor
 			|| player->jetpack || player->curr_sector->type == uncovered))
 		player->velocity += 0.8f;
-	else if (code == SDLK_1 && type == SDL_KEYDOWN && player->gun[pistol])
-		player->current_gun = player->gun[pistol];
-	else if (code == SDLK_2 && type == SDL_KEYDOWN && player->gun[shotgun])
-		player->current_gun = player->gun[shotgun];
-	else if (code == SDLK_3 && type == SDL_KEYDOWN && player->gun[plasmagun])
-		player->current_gun = player->gun[plasmagun];
+	else if ((code == SDLK_1 || code == SDLK_2 || code == SDLK_3)
+		&& type == SDL_KEYDOWN)
+		change_gun(player, code);
 	else if (type == SDL_KEYDOWN && code == SDLK_e)
 		check_door(player);
 	else if (type == SDL_KEYDOWN && code == SDLK_f)
-			activate_lift(player);		
+		activate_lift(player);
 	if (type == SDL_KEYDOWN && code == SDLK_LCTRL)
 		player->sit = -3;
 	if (type == SDL_KEYUP && code == SDLK_LCTRL)
@@ -57,9 +72,6 @@ int				guess_event(SDL_Keycode code,
 
 void			update_player(t_player *player, unsigned char move[4])
 {
-	int			x;
-	int			y;
-
 	if (move[0] && !player->dead)
 		move_player(player, player->sin_angl, player->cos_angl);
 	if (move[1] && !player->dead)
@@ -68,20 +80,16 @@ void			update_player(t_player *player, unsigned char move[4])
 		move_player(player, -player->cos_angl, player->sin_angl);
 	if (move[3] && !player->dead)
 		move_player(player, player->cos_angl, -player->sin_angl);
-	SDL_GetRelativeMouseState(&x, &y);
-	y = -y;
-	player->angle += x * 0.01;
-	player->sky_w += x * (player->sky->w / 360.0f);
-	player->cos_angl = cos(player->angle);
-	player->sin_angl = sin(player->angle);
-	player->yaw = CLAMP(player->yaw - y * 0.05f, -5, 5);
-	if (player->current_gun && player->current_gun->state
-	== 1.1f && player->current_gun->type == plasmagun)
+	if (player->current_gun && player->current_gun->type == plasmagun
+			&& player->current_gun->state == 1.1f &&
+			player->current_gun->ammo > 0)
 	{
+		player->current_gun->ammo--;
 		add_projectile(&player->curr_sector->projectiles,
 										create_projectile(*player));
 		Mix_PlayChannel(1, player->current_gun->shot_sound, 0);
 	}
+	update_player_view(player);
 }
 
 int				hook_event(t_player *player,

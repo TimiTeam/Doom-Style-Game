@@ -48,8 +48,6 @@ int					copy_t_item_value_by_id(t_item *dst, t_item *all,
 			dst->gun_type = all->gun_type;
 			dst->size = all->size;
 			dst->speed = 0.3;
-			dst->roar_sound = all->roar_sound;
-			dst->hit_sound = all->hit_sound;
 			break ;
 		}
 		all = all->next;
@@ -85,7 +83,6 @@ t_item				*create_item(char *data, t_item *all_items)
 			item->size.x = item->size.x / 5;
 			item->size.y = item->size.y / 5;
 		}
-		printf ("%s\n", data);
 	}
 	return (item);
 }
@@ -107,6 +104,11 @@ t_item				*make_items(char *data, t_item *all_items,
 				add_next_item(&list, next);
 			if (next && next->type == light)
 				holder->light_count++;
+			if (next && next->type == enemy)
+			{
+				next->roar_sound = holder->roar_sound;
+				next->hit_sound = holder->hit_sound;
+			}
 			while (*data && *data != ')')
 				data++;
 		}

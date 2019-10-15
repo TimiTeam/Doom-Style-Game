@@ -75,11 +75,22 @@ int				get_count_struct_arrays(int fd,
 	return (ret);
 }
 
-unsigned		get_numbers(float *one, float *two, char delimiter, char *line)
+static int		get_len_number(int number)
+{
+	char		*num;
+	int			len;
+
+	num = ft_itoa(number);
+	len = ft_strlen(num);
+	ft_strdel(&num);
+	return (len);
+}
+
+unsigned		get_numbers(float *one, float *two, char delimiter,
+							char *line)
 {
 	unsigned	i;
 	int			nb;
-	char		*num;
 
 	if (!line)
 		return (0);
@@ -87,12 +98,10 @@ unsigned		get_numbers(float *one, float *two, char delimiter, char *line)
 	while (line[i] && !ft_isdigit(line[i]))
 		i++;
 	nb = (float)ft_atoi(&line[i]);
-	num = ft_itoa(nb);
-	i += ft_strlen(num);
+	i += get_len_number(nb);
 	*one = nb;
 	if (line[i] && line[i] == delimiter)
 		i++;
-	ft_strdel(&num);
 	nb = (float)ft_atoi(&line[i]);
 	*two = nb;
 	if (!ft_isdigit(line[i]))
@@ -101,27 +110,6 @@ unsigned		get_numbers(float *one, float *two, char delimiter, char *line)
 		*one = 0;
 		return (0);
 	}
-	num = ft_itoa(nb);
-	i += ft_strlen(num);
-	ft_strdel(&num);
+	i += get_len_number(nb);
 	return (i);
-}
-
-char			*get_path(int fd)
-{
-	char		*pth;
-	char		*line;
-	int			skip_len;
-
-	pth = NULL;
-	skip_len = ft_strlen("Path: ");
-	if (get_next_line(fd, &line) > 0 &&
-			ft_strncmp(line, "Path: ", skip_len) == 0)
-	{
-		pth = ft_strsub(line, skip_len, ft_strlen(line) - skip_len);
-		if (!*pth)
-			ft_strdel(&pth);
-	}
-	ft_strdel(&line);
-	return (pth);
 }

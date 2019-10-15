@@ -18,7 +18,6 @@ t_projectile		*create_projectile(t_player player)
 
 	if (!(projectile = (t_projectile*)ft_memalloc(sizeof(t_projectile))))
 		return (NULL);
-//	*projectile = (t_projectile){0};
 	ft_memset(projectile, 0, sizeof(t_projectile));
 	projectile->pos.x = player.pos.x + 1 * player.cos_angl;
 	projectile->pos.y = player.pos.y + 1 * player.sin_angl;

@@ -12,7 +12,7 @@
 
 #include "main_head.h"
 
-int				scaler_next(t_scaler *i)
+int					scaler_next(t_scaler *i)
 {
 	i->cache += i->fd;
 	while (i->cache >= i->ca)
@@ -23,7 +23,7 @@ int				scaler_next(t_scaler *i)
 	return (i->result);
 }
 
-void			apply_light(t_text_inf inf, float txty,
+static void			apply_light(t_text_inf inf, float txty,
 								int *pix, t_light *light)
 {
 	int			i;

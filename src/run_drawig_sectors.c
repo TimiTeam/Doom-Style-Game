@@ -18,9 +18,9 @@ void				draw_sectors(t_sector *sec, t_player *player,
 		player->fall = 1;
 	data.calc_one = H * player->m_vfov * player->yaw;
 	while (++i < MAX_PORTALS && (w = sec->only_walls[i]))
-		draw_world((t_world){sec, *w, *player, sdl, data, &thread_draw_sector});
+		draw_world((t_world){sec, *w, player, sdl, data, &thread_draw_sector});
 	while (++p < MAX_PORTALS && (w = sec->portals[p]))
-		draw_world((t_world){sec, *w, *player, sdl, data, &thread_draw_sector});
+		draw_world((t_world){sec, *w, player, sdl, data, &thread_draw_sector});
 	quicksort(&sec->items, player);
 	draw_sector_items(&sec->items, player, data, sdl->surf);
 	draw_projectiles(&sec->projectiles,

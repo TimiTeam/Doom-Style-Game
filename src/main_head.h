@@ -17,8 +17,8 @@
 # include <pthread.h>
 # include "sdl_head.h"
 # include "sectors.h"
-# define W 1380
-# define H 980
+# define W 1024
+# define H 680
 # define EYEHEIGHT  5
 # define THREADS 4
 # define DELETE 	{tmp->next = all->next; ft_memdel((void**)&all); return ;}
@@ -77,28 +77,20 @@ typedef struct		s_draw_data
 	int				n_ceil_height;
 }					t_draw_data;
 
-typedef struct		s_gun
-{
-	float			state;
-	SDL_Surface		*frame[10];
-	SDL_Surface		*icon;
-	Mix_Chunk		*shot_sound;
-	enum e_gun_type	type;
-	char			max_frames;
-	unsigned short	ammo;
-	float			damage;
-	float			rate_of_fire;
-}					t_gun;
-
 typedef struct		s_player
 {
 	SDL_Surface		*sky;
 	t_sector		*curr_sector;
 	t_sector		*all;
-	Mix_Chunk		*damage_sound;
 	t_item			*inventar;
 	t_gun			**all_guns;
 	t_gun			*gun[3];
+	Mix_Chunk		*damage_sound;
+	Mix_Chunk		*hit_enemy;
+	Mix_Chunk		*get_item;
+	Mix_Chunk		*door_sound;
+	Mix_Chunk		*move_lift;
+	Mix_Chunk		*ambient;
 	t_vector		pos;
 	t_vector		end_pos;
 	unsigned short	end_sector;
@@ -240,7 +232,7 @@ typedef struct		s_world
 {
 	t_sector		*sec;
 	t_wall			wall;
-	t_player		player;
+	t_player		*player;
 	t_sdl			*sdl;
 	t_draw_data		data;
 	void			*thread_draw_sector;
@@ -250,7 +242,7 @@ typedef struct		s_rot
 {
 	t_sector		*sec;
 	t_wall			wall;
-	t_player		player;
+	t_player		*player;
 	t_sdl			*sdl;
 	t_draw_data		data;
 	t_wall			line;
@@ -261,7 +253,7 @@ typedef struct		s_proj
 {
 	t_sector		*sec;
 	t_wall			wall;
-	t_player		player;
+	t_player		*player;
 	t_sdl			*sdl;
 	t_draw_data		data;
 	t_wall			line;
@@ -275,7 +267,7 @@ typedef struct		s_again
 {
 	t_sector		*sec;
 	t_wall			wall;
-	t_player		player;
+	t_player		*player;
 	t_sdl			*sdl;
 	t_draw_data		data;
 }					t_again;
@@ -320,24 +312,29 @@ int					load_menu_textures(t_pr *m, t_read_holder *holder);
 SDL_Rect			change_size(SDL_Rect rect);
 SDL_Rect			reset_size(SDL_Rect rect);
 void				free_menu(t_pr *menu);
+void				free_all(t_player **player, t_sdl **sdl,
+					t_read_holder *holder, t_pr *m);
 void				apply_filter(SDL_Surface *surface, float intensity);
 void				check_door(t_player *player);
 t_sector 			*get_near_sector(t_player *player);
 t_player			*new_t_player(int pos_x, int pos_y, t_point wid_size);
+void				update_player_view(t_player *player);
 void				free_player(t_player *player);
 void				move_player(t_player *player, float sin_angle,
 													float cos_angle);
 void				move_player_vertically(t_player *player);
 void				draw_scaled_image(SDL_Surface *screen, SDL_Surface *img,
 													t_point pos, t_point size);
-void				load_guns(t_gun **gun);
+int				load_guns(t_gun **gun);
 void				delete_guns(t_gun **all);
 int					scaler_next(t_scaler *i);
 t_sector			*get_new_player_sector(t_vector player_pos,
 										t_sector *intersect_sector);
 void				text_line(t_text_inf inf);
 void				draw_world(t_world w);
+void				draw_stripes(t_super_data *super, t_screen_inf inf);
 void				draw_floor_or_ceil(t_ceil_inf inf);
+void				draw_line(t_screen_inf inf, t_super_data *super);
 void				draw_enemy_sprite(t_item *obj, t_draw_data data,
 									t_player player, SDL_Surface *surface);
 void				move_enemy_to_player(t_item *enemy, t_vector player_pos);
@@ -357,6 +354,7 @@ void				get_gun_to_player(t_player *player,
 void				rest_of_the_action_shit(t_pr *m, Uint8 *menu,
 									t_sdl *sdl, t_read_holder *holder);
 void				draw_hud(t_sdl *sdl, t_player *player);
+void				print_player_gun(t_sdl *sdl, t_player *player);
 t_projectile		*create_projectile(t_player player);
 void				delete_projectile(t_projectile **head,
 										t_projectile *proj);
@@ -386,6 +384,7 @@ void				draw_sectors(t_sector *sec,
 							t_player *player, t_sdl *sdl, t_draw_data data);
 void				map_wall_text(int *u0, int *u1,
 										t_vector diff, float scaled_tex);
+int 				compare_two_int_array(short *arr_one, short *arr_two, int from, int to);
 void				floor_and_ceil_calculation(t_draw_data *data,
 								t_player player, t_wall line, t_vector scale);
 void				neighbour_calculation(t_draw_data *data, t_n n);

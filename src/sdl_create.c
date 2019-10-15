@@ -43,7 +43,6 @@ t_sdl				*new_t_sdl(int win_size_x, int win_size_y,
 		return (NULL);
 	new = (t_sdl*)ft_memalloc(sizeof(t_sdl));
 	ft_memset(new, 0, sizeof(t_sdl));
-//	*new = (t_sdl){NULL};
 	new->title = ft_strdup(title);
 	new->win_size.x = win_size_x;
 	new->win_size.y = win_size_y;

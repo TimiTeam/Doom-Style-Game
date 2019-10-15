@@ -12,14 +12,20 @@
 
 #include "main_head.h"
 
-void				map_wall_text(int *u0, int *u1,
-					t_vector diff, float scaled_tex)
+static void			draw_menu(t_sdl *sdl, t_pr *m, SDL_Texture *tex)
 {
-	*u0 = diff.x * scaled_tex;
-	*u1 = diff.y * scaled_tex;
+	if (sdl && m)
+	{
+		prepare_surf(sdl->ren, sdl->surf);
+		render_menu(m, sdl);
+		tex = SDL_CreateTextureFromSurface(sdl->ren, sdl->surf);
+		sdl_render(sdl->ren, tex, NULL, NULL);
+		SDL_DestroyTexture(tex);
+		SDL_RenderPresent(sdl->ren);
+	}
 }
 
-int					run_game(t_sdl *sdl, t_player *player,
+static int			run_game(t_sdl *sdl, t_player *player,
 							t_pr *m, t_read_holder *holder)
 {
 	int				in_game;
@@ -31,18 +37,14 @@ int					run_game(t_sdl *sdl, t_player *player,
 	tex = NULL;
 	while (in_game >= 0)
 	{
-		if (!player->win && !player->dead && (in_game = menu_hooks(m, holder)) < 0)
+		if (!player->win && !player->dead &&
+			(in_game = menu_hooks(m, holder)) < 0)
 			break ;
-		render_menu(m, sdl);
-		SDL_SetRenderDrawColor(sdl->ren, 255, 255, 255, 255);
-		SDL_RenderClear(sdl->ren);
-		tex = SDL_CreateTextureFromSurface(sdl->ren, sdl->surf);
-		sdl_render(sdl->ren, tex, NULL, NULL);
-		SDL_DestroyTexture(tex);
-		SDL_RenderPresent(sdl->ren);
+		draw_menu(sdl, m, tex);
 		if (in_game > 0 || player->win || player->dead)
 		{
-			if (player->curr_map != holder->curr_map || player->win || player->dead)
+			if (player->curr_map != holder->curr_map
+				|| player->win || player->dead)
 				if (!(ret = load_game(player, holder)))
 					return (error_message("Can't create game"));
 			in_game = game_loop(sdl, player, ret);
@@ -52,22 +54,26 @@ int					run_game(t_sdl *sdl, t_player *player,
 	return (0);
 }
 
-void				free_all(t_player **player, t_sdl **sdl,
-								t_read_holder *holder, t_pr *m)
+static int			init_holder_data(t_read_holder *holder)
 {
-	if (*player && (*player)->all_guns)
-		delete_guns((*player)->all_guns);
-	free_player(*player);
-	*player = NULL;
-	delete_light_source(holder->light_source, holder->light_count);
-	holder->light_source = NULL;
-	free_t_sdl(sdl);
-	*sdl = NULL;
-	free_menu(m);
-	ft_memset(m, 0, sizeof(t_pr));
+	if (!(holder->skyboxes[0] = load_jpg_png("textures/dark_matter.jpg")))
+	{
+		return (print_error_message("Can't load menu ",
+				"textures/dark_matter.jpg"));
+	}
+	if (!(holder->skyboxes[1] = load_jpg_png("textures/hell.jpg")))
+		return (print_error_message("Can't load menu ", "textures/hell.jpg"));
+	if (!(holder->skyboxes[2] = load_jpg_png("textures/night.jpg")))
+		return (print_error_message("Can't load menu ", "textures/night.jpg"));
+	holder->hit_sound = Mix_LoadWAV("sounds/monster_roar.wav");
+	holder->roar_sound = Mix_LoadWAV("sounds/monster_bite.wav");
+	if ((holder->all_guns = (t_gun**)malloc(sizeof(t_gun*) * 3)))
+		if (!load_guns(holder->all_guns))
+			return (print_error_message("Problame with loading guns", "exit"));
+	return (1);
 }
 
-int					init(t_sdl **sdl, t_pr *m, t_read_holder *holder)
+static int			init(t_sdl **sdl, t_pr *m, t_read_holder *holder)
 {
 	*sdl = new_t_sdl(W, H, "doom-nukem");
 	if (!sdl)
@@ -78,8 +84,8 @@ int					init(t_sdl **sdl, t_pr *m, t_read_holder *holder)
 	SDL_SetRelativeMouseMode(SDL_TRUE);
 	if (!load_menu_textures(m, holder))
 		return (print_error_message("Can't load menu resourses\n", ""));
-	// if (!init_sound())
-	// 	return (print_error_message("Error initializing sound\n", ""));
+	if (!init_holder_data(holder))
+		return (print_error_message("Can't load main data", ""));
 	initialize_menu(m);
 	return (1);
 }
@@ -90,24 +96,23 @@ int					main(void)
 	t_player		*player;
 	t_sdl			*sdl;
 	t_pr			m;
-		
+
 	ft_memset(&holder, 0, sizeof(t_read_holder));
 	ft_memset(&m, 0, sizeof(t_pr));
-	m.i = 0;
 	m.win_h = H;
 	m.win_w = W;
-	player = NULL;
 	if (init_sound() && read_game_config_file(&holder, "game_info.txt")
 	&& init(&sdl, &m, &holder))
 	{
 		sdl->font = m.font;
 		player = new_t_player(3, 3, sdl->win_size);
-		player->sky = load_jpg_png("textures/dark_matter.jpg");
-		player->all_guns = (t_gun**)malloc(sizeof(t_gun*) * 3);
-		load_guns(player->all_guns);
+		Mix_PlayChannel(0, player->ambient, -1);
+		Mix_Volume(0, 64);
+		player->all_guns = holder.all_guns;
 		run_game(sdl, player, &m, &holder);
 	}
 	free_all(&player, &sdl, &holder, &m);
 	free_data_holder(&holder);
+	system("leaks -q doom-nukem");
 	return (0);
 }

@@ -37,7 +37,6 @@ void				init_step(t_vector *step, t_vector *img_point,
 {
 	step->x = (float)im->w / size.x;
 	step->y = (float)im->h / size.y;
-//	*img_point = (t_vector){0};
 	ft_memset(img_point, 0, sizeof(t_vector));
 }
 

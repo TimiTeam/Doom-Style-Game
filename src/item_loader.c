@@ -110,11 +110,6 @@ static int				create_animations(t_item *it, char *file_pth)
 			filed_t_animation(&it->states[die], fd);
 		ft_strdel(&line);
 	}
-	if (it->type == enemy){
-		it->roar_sound = Mix_LoadWAV("sounds/monster_roar.wav");
-		it->hit_sound = Mix_LoadWAV("sounds/monster_bite.wav");
-		Mix_PlayChannel(1, it->hit_sound, 0);
-	}
 	close(fd);
 	ft_strdel(&line);
 	return (1);

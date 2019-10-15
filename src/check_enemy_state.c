@@ -19,13 +19,14 @@ void			check_enemy_state(t_item *enemy, t_vector player_pos)
 		enemy->speed = 0.2;
 		if (enemy->is_dying)
 			enemy->is_dying--;
-		else if (enemy->dist_to_player < 40 && enemy->dist_to_player > 5)
+		else if (enemy->dist_to_player < 40 && enemy->dist_to_player > 3)
 		{
 			enemy->curr_state = walk;
 			enemy->speed = 0.3;
 			move_enemy_to_player(enemy, player_pos);
 		}
-		else if (enemy->dist_to_player <= 5 || enemy->curr_state == taking_damage)
+		else if (enemy->dist_to_player <= 4 ||
+				enemy->curr_state == taking_damage)
 			enemy->curr_state = action;
 		else
 			enemy->curr_state = waiting;
@@ -58,17 +59,16 @@ t_player *player, t_item *it)
 		return (it);
 	if (it->type == enemy)
 		check_enemy_state(it, player->pos);
+	if (it->curr_state == action && it->curr_frame == 0)
+		Mix_PlayChannel(-1, it->hit_sound, 0);
 	if ((it->curr_frame += it->speed) >=
 	it->states[it->curr_state].max_textures)
 	{
-		if (it->curr_state == action)
+		if (it->curr_state == action && it->sector->floor + 10 >= player->pos.z)
 		{
 			player->health -= it->damage;
 			Mix_PlayChannel(-1, player->damage_sound, 0);
-			Mix_PlayChannel(-1, it->hit_sound, 0);
 		}
-		if (player->health <= 0 && !player->dead)
-			player->dead = 1;
 		it->curr_frame = 0;
 		if (it->type == enemy && it->curr_state == die)
 			return (del_cur_item_and_get_next(items, it));
