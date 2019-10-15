@@ -57,6 +57,8 @@ void				calculate_neighbours(t_screen_inf *inf,
 					/ inf->x_lenght + data->n_floor_y_s;
 	inf->n_cya = CLAMP(inf->nya, data->ytop[inf->x], inf->cyb);
 	inf->n_cyb = CLAMP(inf->nyb, data->ytop[inf->x], data->ybottom[inf->x]);
+	if (inf->n_cyb < inf->cya)
+		inf->n_cyb = inf->cya;
 }
 
 void				render_neighbours(t_screen_inf inf,
@@ -73,10 +75,7 @@ void				render_neighbours(t_screen_inf inf,
 			super->wall.texture, inf.tex_pos,
 			super->scale_l, super->scale_h, super->sect->sector_light, 0});
 		else
-		{
 			draw_skybox(super->main_screen, (t_point){inf.x, super->data->ytop[inf.x]}, inf.n_cya, super->player);
-		}
-		
 	}
 	if (inf.yb - 1 != inf.nyb && inf.n_cyb != inf.cyb)
 		text_line((t_text_inf){inf.x, inf.n_cyb + 1, inf.cyb,
