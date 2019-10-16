@@ -108,6 +108,7 @@ int					game_loop(t_sdl *sdl, t_player *player, t_sector *sectors)
 		run_with_buff(player, sdl, sdl->win_size.x);
 		draw_hud(sdl, player);
 		fpsthink(&fps);
+		Mix_Volume(0, 64);
 		if (fps.framespersecond > 25)
 			SDL_Delay(10);
 		run = hook_event(player, move);

@@ -85,7 +85,7 @@ Walls
 
 Sectors
 0) floor(5 21) ceil(55 37) walls '0 1 2 3 ' items ''
-1) floor(0 11) ceil(55 37) walls '3 7 6 5 4 ' itemss '(34,41 6)'
+1) floor(0 11) ceil(55 37) walls '3 7 6 5 4 ' itemss '(34,41 30)'
 2) floor(0 11) ceil(55 37) walls '9 1 8 ' items ''
 3) floor(0 11) ceil(55 37) walls '10 11 12 7 2 ' items '(36,54 6)'
 4) floor(0 11) ceil(55 37) walls '6 12 14 13 ' items ''

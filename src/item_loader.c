@@ -35,6 +35,8 @@ static enum e_item_type	get_item_type(char *type)
 			ret = enemy;
 		else if (ft_strncmp("light", type, ft_strlen("light")) == 0)
 			ret = light;
+		else if (ft_strncmp("jetpack", type, ft_strlen("jetpack")) == 0)
+			ret = jetpack;
 	}
 	return (ret);
 }

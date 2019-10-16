@@ -1,6 +1,6 @@
 #Levels
 Path: Maps/
-0) fortress.txt
+0) starship
 ###
 
 #Textures 58
@@ -97,4 +97,5 @@ Path: textures/
 27) light ceil_light
 28) light strange_light
 29) light candle
+30) jetpack jetpack
 ###

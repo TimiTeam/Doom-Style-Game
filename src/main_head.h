@@ -87,7 +87,6 @@ typedef struct		s_player
 	Mix_Chunk		*damage_sound;
 	Mix_Chunk		*get_item;
 	Mix_Chunk		*door_sound;
-	Mix_Chunk		*move_lift;
 	Mix_Chunk		*ambient;
 	t_vector		pos;
 	t_vector		end_pos;

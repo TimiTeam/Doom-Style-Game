@@ -38,6 +38,7 @@ int					prepare_playear(t_player *player, t_read_holder *holder)
 	player->pos.z = player->curr_sector->floor + player->height;
 	player->yaw = 0;
 	player->win = 0;
+	player->jetpack = 0;
 	player->curr_map = holder->curr_map;
 	player->all = holder->all;
 	player->sky = holder->skyboxes[holder->curr_map] ?

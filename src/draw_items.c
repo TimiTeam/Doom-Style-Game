@@ -15,6 +15,10 @@
 static t_item	*get_item_to_player(t_item **items,
 t_item *curr, t_player *player)
 {
+	Mix_Volume(2, 64);
+	Mix_PlayChannel(2, player->get_item, 0);
+	if (curr->type == jetpack)
+		player->jetpack = 1;
 	if (curr->type == gun)
 	{
 		get_gun_to_player(player, curr->gun_type,

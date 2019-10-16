@@ -23,6 +23,8 @@ void			free_player(t_player *player)
 		Mix_FreeChunk(player->ambient);
 	if (player->door_sound)
 		Mix_FreeChunk(player->door_sound);
+	if (player->get_item)
+		Mix_FreeChunk(player->get_item);
 	ft_memdel((void**)&player);
 }
 
@@ -78,5 +80,6 @@ t_player		*new_t_player(int pos_x, int pos_y, t_point win_size)
 	player->damage_sound = Mix_LoadWAV("sounds/player_damaged.wav");
 	player->ambient = Mix_LoadWAV("sounds/ambient.wav");
 	player->door_sound = Mix_LoadWAV("sounds/door_sound.wav");
+	player->get_item = Mix_LoadWAV("sounds/oh_yeah.wav");
 	return (player);
 }
