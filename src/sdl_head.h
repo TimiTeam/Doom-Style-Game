@@ -6,7 +6,7 @@
 /*   By: atabala <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/29 14:10:43 by atabala           #+#    #+#             */
-/*   Updated: 2019/09/29 14:16:15 by atabala          ###   ########.fr       */
+/*   Updated: 2019/10/16 14:14:13 by tbujalo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,19 +14,33 @@
 # define __SDL_HEAD_H
 
 # include "libft.h"
-#ifdef __APPLE__
-# include <SDL.h>
-# include <SDL_mixer.h>
-# include <SDL_ttf.h>
-# include <SDL_image.h>
-#endif
+# ifdef __APPLE__
 
-#ifdef __linux__
-# include <SDL2/SDL.h>
-# include <SDL2/SDL_mixer.h>
-# include <SDL2/SDL_ttf.h>
-# include <SDL2/SDL_image.h>
-#endif
+#  include <SDL.h>
+#  include <SDL_mixer.h>
+#  include <SDL_ttf.h>
+#  include <SDL_image.h>
+#  define RMASK 0
+#  define GMASK 0
+#  define BMASK 0
+# endif
+
+# ifdef __linux__
+
+#  include <SDL2/SDL.h>
+#  include <SDL2/SDL_mixer.h>
+#  include <SDL2/SDL_ttf.h>
+#  include <SDL2/SDL_image.h>
+#  if SDL_BYTEORDER == SDL_BIG_ENDIAN
+#   define RMASK 0xff000000;
+#   define GMASK 0x00ff0000;
+#   define BMASK 0x0000ff00;
+#  else
+#   define RMASK 0x000000ff;
+#   define GMASK 0x0000ff00;
+#   define BMASK 0x00ff0000;
+#  endif
+# endif
 # define OK 1
 # define ERROR 0
 

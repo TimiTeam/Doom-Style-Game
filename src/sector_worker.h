@@ -6,7 +6,7 @@
 /*   By: atabala <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/29 13:59:26 by atabala           #+#    #+#             */
-/*   Updated: 2019/09/29 14:05:44 by atabala          ###   ########.fr       */
+/*   Updated: 2019/10/16 14:18:38 by tbujalo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ enum					e_sect_type
 	murderous
 };
 
-enum 					e_sect_state
+enum					e_sect_state
 {
 	calm,
 	action_sec
@@ -92,18 +92,18 @@ typedef	struct			s_vector
 	float				z;
 }						t_vector;
 
-typedef struct		s_gun
+typedef struct			s_gun
 {
-	float			state;
-	SDL_Surface		*frame[MAX_TEXTURES];
-	SDL_Surface		*icon;
-	Mix_Chunk		*shot_sound;
-	enum e_gun_type	type;
-	char			max_frames;
-	unsigned short	ammo;
-	float			damage;
-	float			rate_of_fire;
-}					t_gun;
+	float				state;
+	SDL_Surface			*frame[MAX_TEXTURES];
+	SDL_Surface			*icon;
+	Mix_Chunk			*shot_sound;
+	enum e_gun_type		type;
+	char				max_frames;
+	unsigned short		ammo;
+	float				damage;
+	float				rate_of_fire;
+}						t_gun;
 
 typedef struct			s_light
 {
@@ -180,7 +180,7 @@ typedef struct			s_sector
 	float				floor;
 	float				ceil;
 	float				speed;
-	int 				max_up;
+	int					max_up;
 	enum e_sect_type	type;
 	enum e_sect_state	state;
 	enum e_visible		floor_visible;

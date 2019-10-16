@@ -6,7 +6,7 @@
 /*   By: ohavryle <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/29 05:11:00 by ohavryle          #+#    #+#             */
-/*   Updated: 2019/09/29 05:11:01 by ohavryle         ###   ########.fr       */
+/*   Updated: 2019/10/16 14:06:25 by tbujalo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,9 @@ SDL_Surface			*get_empty_surface(unsigned width, unsigned height)
 	Uint32			rmask;
 	Uint32			gmask;
 	Uint32			bmask;
+
 #ifdef __LINUX__
-# if SDL_BYTEORDER == SDL_BIG_ENDIAN
+# if SDL_BYTEORDER == SDL_BIG_ENDIAN	
 	rmask = 0xff000000;
 	gmask = 0x00ff0000;
 	bmask = 0x0000ff00;
