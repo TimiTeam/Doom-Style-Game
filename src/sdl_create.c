@@ -6,41 +6,21 @@
 /*   By: ohavryle <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/29 05:11:00 by ohavryle          #+#    #+#             */
-/*   Updated: 2019/10/16 14:06:25 by tbujalo          ###   ########.fr       */
+/*   Updated: 2019/10/16 14:30:26 by tbujalo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "sdl_head.h"
 
-SDL_Surface			*get_empty_surface(unsigned width, unsigned height)
+SDL_Surface		*get_empty_surface(unsigned width, unsigned height)
 {
-	Uint32			rmask;
-	Uint32			gmask;
-	Uint32			bmask;
-
-#ifdef __LINUX__
-# if SDL_BYTEORDER == SDL_BIG_ENDIAN	
-	rmask = 0xff000000;
-	gmask = 0x00ff0000;
-	bmask = 0x0000ff00;
-#else
-	rmask = 0x000000ff;
-	gmask = 0x0000ff00;
-	bmask = 0x00ff0000;
-#endif
-	return (SDL_CreateRGBSurface(0, width, height, 32,
-				rmask, gmask, bmask, 0));
-#endif
-	rmask = 0;
-	gmask = 0;
-	bmask = 0;
-	return (SDL_CreateRGBSurface(0, width, height, 32, rmask, gmask, bmask, 0));
+	return (SDL_CreateRGBSurface(0, width, height, 32, RMASK, GMASK, BMASK, 0));
 }
 
-t_sdl				*new_t_sdl(int win_size_x, int win_size_y,
+t_sdl			*new_t_sdl(int win_size_x, int win_size_y,
 											const char *title)
 {
-	t_sdl			*new;
+	t_sdl		*new;
 
 	if (win_size_x < 1 || win_size_y < 1 || !title)
 		return (NULL);
@@ -52,7 +32,7 @@ t_sdl				*new_t_sdl(int win_size_x, int win_size_y,
 	return (new);
 }
 
-int					init_sdl(t_sdl *sdl)
+int				init_sdl(t_sdl *sdl)
 {
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0)
 		return (error_message(SDL_GetError()));

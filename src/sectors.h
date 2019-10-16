@@ -6,7 +6,7 @@
 /*   By: atabala <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/29 14:06:18 by atabala           #+#    #+#             */
-/*   Updated: 2019/09/30 15:16:02 by tbujalo          ###   ########.fr       */
+/*   Updated: 2019/10/16 14:22:26 by tbujalo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,9 +33,9 @@ typedef struct		s_read_holder
 	int				text_count;
 	int				vect_count;
 	int				wall_count;
-	t_vector 		player_start;
+	t_vector		player_start;
 	t_vector		player_end;
-	unsigned 		player_end_sect;
+	unsigned		player_end_sect;
 	unsigned		player_sector_id;
 }					t_read_holder;
 
@@ -54,7 +54,7 @@ unsigned			get_numbers(float *one, float *two,
 char				*clip_n_str(char *s1, char *s2, char *s3);
 int					get_wall_count(char *str);
 t_item				*make_item_ftom_str(char *line, char *directory_pth);
-int 				player_start_and_end(int fd, t_read_holder *holder);
+int					player_start_and_end(int fd, t_read_holder *holder);
 t_sector			*get_player_sector(t_sector *sectors, int sec_num);
 t_vector			*get_vectors(int fd, int vec_size);
 t_wall				**get_walls(int fd, t_read_holder *holder,
@@ -64,7 +64,8 @@ t_item				*make_items(char *data, t_item *all_items,
 						t_read_holder *holder);
 void				*print_error_message_null(char *mess, char *error_obj);
 int					print_error_message(char *mess, char *error_obj);
-void				*error_free_array_surf(SDL_Surface **array, unsigned size, char *message);
+void				*error_free_array_surf(SDL_Surface **array, unsigned size,
+											char *message);
 t_wall				**create_sector_walls(t_sector *sector,
 						t_read_holder *holder, char *data, int wall_size);
 t_light				**create_all_light_source(t_sector *sec,

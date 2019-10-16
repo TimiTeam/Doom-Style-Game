@@ -6,13 +6,13 @@
 /*   By: ohavryle <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/29 05:10:42 by ohavryle          #+#    #+#             */
-/*   Updated: 2019/09/30 16:09:00 by tbujalo          ###   ########.fr       */
+/*   Updated: 2019/10/16 14:38:43 by tbujalo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "main_head.h"
 
-void			clear_player(t_player *player)
+void				clear_player(t_player *player)
 {
 	if (!player)
 		return ;
@@ -25,7 +25,7 @@ void			clear_player(t_player *player)
 	player->inventar = NULL;
 }
 
-int 		prepare_playear(t_player *player, t_read_holder *holder)
+int					prepare_playear(t_player *player, t_read_holder *holder)
 {
 	player->pos = holder->player_start;
 	player->end_pos = holder->player_end;
@@ -51,9 +51,9 @@ t_sector			*load_game(t_player *player, t_read_holder *holder)
 	if (player->win)
 		holder->curr_map++;
 	if (holder->curr_map >= holder->maps_count && player->win)
-		return (print_error_message_null("Player ","Win!!"));
+		return (print_error_message_null("Player ", "Win!!"));
 	else if (holder->curr_map >= holder->maps_count)
-		return (print_error_message_null("Invalid map","Exit"));
+		return (print_error_message_null("Invalid map", "Exit"));
 	delete_sectors(holder->all);
 	holder->all = NULL;
 	delete_light_source(holder->light_source, holder->light_count);
@@ -62,17 +62,20 @@ t_sector			*load_game(t_player *player, t_read_holder *holder)
 	if ((player->curr_map != holder->curr_map || player->dead)
 		&& !player->win)
 		clear_player(player);
-	if(!(sectors = read_map(holder->maps_path[holder->curr_map],
+	if (!(sectors = read_map(holder->maps_path[holder->curr_map],
 										holder)))
-		return (print_error_message_null(holder->maps_path[holder->curr_map],"Wrong map"));
+	{
+		return (print_error_message_null(holder->maps_path[holder->curr_map],
+					"Wrong map"));
+	}
 	if (!prepare_playear(player, holder))
-		return (print_error_message_null("Player info is","Broken"));
+		return (print_error_message_null("Player info is", "Broken"));
 	return (sectors);
 }
 
-int				render_menu(t_pr *m, t_sdl *sdl)
+int					render_menu(t_pr *m, t_sdl *sdl)
 {
-	SDL_Surface	*level;
+	SDL_Surface		*level;
 
 	level = NULL;
 	draw_image(sdl->surf, m->background, (t_point){0, 0}, sdl->win_size);
@@ -99,7 +102,7 @@ int				render_menu(t_pr *m, t_sdl *sdl)
 	return (1);
 }
 
-void			free_menu(t_pr *menu)
+void				free_menu(t_pr *menu)
 {
 	if (menu->background)
 		SDL_FreeSurface(menu->background);

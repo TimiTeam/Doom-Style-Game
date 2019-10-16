@@ -6,7 +6,7 @@
 /*   By: ohavryle <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/29 18:49:16 by ohavryle          #+#    #+#             */
-/*   Updated: 2019/09/30 14:35:00 by tbujalo          ###   ########.fr       */
+/*   Updated: 2019/10/16 14:44:11 by tbujalo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,8 @@
 # include <pthread.h>
 # include "sdl_head.h"
 # include "sectors.h"
-# define W 1024
-# define H 680
+# define W 1280
+# define H 980
 # define EYEHEIGHT  5
 # define THREADS 4
 # define DELETE 	{tmp->next = all->next; ft_memdel((void**)&all); return ;}
@@ -31,9 +31,8 @@ typedef	struct		s_fps_counter
 	Uint32			frametimes[FRAME_VALUES];
 	Uint32			frametimelast;
 	Uint32			framecount;
-	float 			framespersecond;
+	float			framespersecond;
 }					t_fps_counter;
-
 
 typedef struct		s_rect
 {
@@ -223,8 +222,8 @@ typedef struct		s_ceil_inf
 	unsigned		tx;
 	unsigned		txtz;
 	float			brightness;
-	float 			calc_one;
-	float 			calc_two;
+	float			calc_one;
+	float			calc_two;
 }					t_ceil_inf;
 
 typedef struct		s_world
@@ -294,9 +293,9 @@ typedef struct		s_p_n_d
 
 # define YAW(y,z) (y + z * player.yaw)
 
-void 				fpsinit(t_fps_counter *fps);
+void				fpsinit(t_fps_counter *fps);
 void				fpsthink(t_fps_counter *fps);
-void 				change_player_state(t_player *player, t_sdl *sdl, int *run);
+void				change_player_state(t_player *player, t_sdl *sdl, int *run);
 void				run_with_buff(t_player *player,
 							t_sdl *sdl, unsigned int win_x);
 void				initialize_sdl_win(t_pr *m);
@@ -315,9 +314,9 @@ void				free_all(t_player **player, t_sdl **sdl,
 					t_read_holder *holder, t_pr *m);
 void				apply_filter(SDL_Surface *surface, float intensity);
 void				check_door(t_player *player);
-int			        has_key(t_item *items);
+int					has_key(t_item *items);
 t_sector			*get_sector_after_door(t_sector *door, t_sector *prev);
-t_sector 			*get_near_sector(t_player *player);
+t_sector			*get_near_sector(t_player *player);
 t_player			*new_t_player(int pos_x, int pos_y, t_point wid_size);
 int					get_player_pos(char *line, t_vector *player_pos,
 								unsigned *player_sec_id);
@@ -328,7 +327,7 @@ void				move_player(t_player *player, float sin_angle,
 void				move_player_vertically(t_player *player);
 void				draw_scaled_image(SDL_Surface *screen, SDL_Surface *img,
 													t_point pos, t_point size);
-int				load_guns(t_gun **gun);
+int					load_guns(t_gun **gun);
 void				delete_guns(t_gun **all);
 int					scaler_next(t_scaler *i);
 t_sector			*get_new_player_sector(t_vector player_pos,
@@ -389,7 +388,8 @@ void				draw_sectors(t_sector *sec,
 							t_player *player, t_sdl *sdl, t_draw_data data);
 void				map_wall_text(int *u0, int *u1,
 										t_vector diff, float scaled_tex);
-int 				compare_two_int_array(short *arr_one, short *arr_two, int from, int to);
+int					compare_two_int_array(short *arr_one, short *arr_two,
+											int from, int to);
 void				floor_and_ceil_calculation(t_draw_data *data,
 								t_player player, t_wall line, t_vector scale);
 void				neighbour_calculation(t_draw_data *data, t_n n);
@@ -411,7 +411,7 @@ void				draw_sector_items(t_item **items,
 					t_player *player, t_draw_data data, SDL_Surface *screen);
 int					game_loop(t_sdl *sdl, t_player *player, t_sector *sectors);
 void				*thread_draw_sector(void *param);
-void 				draw_simple_wall(t_super_data super);
+void				draw_simple_wall(t_super_data super);
 void				draw_sectors(t_sector *sec,
 						t_player *player, t_sdl *sdl, t_draw_data data);
 void				free_data_holder(t_read_holder *holder);
