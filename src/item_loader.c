@@ -14,31 +14,29 @@
 
 static enum e_item_type	get_item_type(char *type)
 {
-	enum e_item_type		ret;
-
-	ret = object;
 	if (type)
 	{
 		if (ft_strncmp("coin", type, ft_strlen("coin")) == 0)
-			ret = coin;
+			return (coin);
 		else if (ft_strncmp("super_bonus", type, ft_strlen("super_bonus")) == 0)
-			ret = super_bonus;
+			return (super_bonus);
 		else if (ft_strncmp("health", type, ft_strlen("health")) == 0)
-			ret = health;
+			return (health);
 		else if (ft_strncmp("ammo", type, ft_strlen("ammo")) == 0)
-			ret = ammo;
+			return (ammo);
 		else if (ft_strncmp("gun", type, ft_strlen("gun")) == 0)
-			ret = gun;
+			return (gun);
 		else if (ft_strncmp("key", type, ft_strlen("key")) == 0)
-			ret = key;
+			return (key);
 		else if (ft_strncmp("enemy", type, ft_strlen("enemy")) == 0)
-			ret = enemy;
+			return (enemy);
 		else if (ft_strncmp("light", type, ft_strlen("light")) == 0)
-			ret = light;
-		else if (ft_strncmp("jetpack", type, ft_strlen("jetpack")) == 0)
-			ret = jetpack;
+			return (light);
+		else if (ft_strncmp("objectjetpack", type,
+					ft_strlen("objectjetpack")) == 0)
+			return (jetpack);
 	}
-	return (ret);
+	return (object);
 }
 
 static void				filed_t_animation(t_animation *anim, int fd)
@@ -141,3 +139,4 @@ t_item					*make_item_ftom_str(char *line, char *dir_pth)
 	}
 	return (item);
 }
+git 

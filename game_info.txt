@@ -1,5 +1,6 @@
 #Levels
 Path: Maps/
+0) jumplevel
 0) starship
 ###
 
@@ -97,5 +98,5 @@ Path: textures/
 27) light ceil_light
 28) light strange_light
 29) light candle
-30) jetpack jetpack
+30) objectjetpack jetpack
 ###
