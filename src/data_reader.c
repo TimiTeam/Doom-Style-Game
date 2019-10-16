@@ -23,7 +23,7 @@ static int		read_maps_path(int fd, char **array, int arr_size)
 	file_name = NULL;
 	if (!(path = get_path(fd)))
 		return (0);
-	while (get_next_line(fd, &file_name) > 0 && i < arr_size)
+	while (get_next_line(fd, &file_name) > 0 && i < arr_size && *file_name)
 	{
 		if (ft_isdigit(*file_name))
 		{
@@ -33,8 +33,8 @@ static int		read_maps_path(int fd, char **array, int arr_size)
 		}
 		else if (ft_strcmp(file_name, "###") == 0)
 			break ;
-		ft_strdel(&file_name);
 		i++;
+		ft_strdel(&file_name);
 	}
 	ft_strdel(&path);
 	ft_strdel(&file_name);

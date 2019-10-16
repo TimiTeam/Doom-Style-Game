@@ -1,10 +1,6 @@
 #Levels
 Path: Maps/
 0) fortress.txt
-1) starship
-2) map_one
-3) super
-4) lavaisland
 ###
 
 #Textures 58

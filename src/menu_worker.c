@@ -31,6 +31,7 @@ int					prepare_playear(t_player *player, t_read_holder *holder)
 	player->end_pos = holder->player_end;
 	player->end_sec = holder->player_end_sect;
 	player->height = EYEHEIGHT;
+	holder->f = 0;
 	if (!(player->curr_sector = get_player_sector(holder->all,
 					holder->player_sector_id)))
 		return (error_message("Sector Not Found"));
@@ -44,31 +45,31 @@ int					prepare_playear(t_player *player, t_read_holder *holder)
 	return (1);
 }
 
-t_sector			*load_game(t_player *player, t_read_holder *holder)
+t_sector			*load_game(t_player *player, t_read_holder *h)
 {
 	t_sector		*sectors;
 
-	if (player->win)
-		holder->curr_map++;
-	if (holder->curr_map >= holder->maps_count && player->win)
-		return (print_error_message_null("Player ", "Win!!"));
-	else if (holder->curr_map >= holder->maps_count)
-		return (print_error_message_null("Invalid map", "Exit"));
-	delete_sectors(holder->all);
-	holder->all = NULL;
-	delete_light_source(holder->light_source, holder->light_count);
-	holder->light_source = NULL;
-	holder->light_count = 0;
-	if ((player->curr_map != holder->curr_map || player->dead)
-		&& !player->win)
-		clear_player(player);
-	if (!(sectors = read_map(holder->maps_path[holder->curr_map],
-										holder)))
+	if (player->win && player->curr_map >= h->maps_count && (h->f = 1))
 	{
-		return (print_error_message_null(holder->maps_path[holder->curr_map],
+		player->win = 0;
+		return (print_error_message_null("Player ", "Win!!"));
+	}
+	else if (player->win)
+		h->curr_map++;
+	delete_sectors(h->all);
+	h->all = NULL;
+	delete_light_source(h->light_source, h->light_count);
+	h->light_source = NULL;
+	h->light_count = 0;
+	if ((player->curr_map != h->curr_map || player->dead) && !player->win)
+		clear_player(player);
+	if (h->curr_map >= h->maps_count ||
+	!(sectors = read_map(h->maps_path[h->curr_map], h)))
+	{
+		return (print_error_message_null(h->maps_path[h->curr_map],
 					"Wrong map"));
 	}
-	if (!prepare_playear(player, holder))
+	if (!prepare_playear(player, h))
 		return (print_error_message_null("Player info is", "Broken"));
 	return (sectors);
 }

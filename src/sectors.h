@@ -37,6 +37,7 @@ typedef struct		s_read_holder
 	t_vector		player_end;
 	unsigned		player_end_sect;
 	unsigned		player_sector_id;
+	char			f;
 }					t_read_holder;
 
 int					read_game_config_file(t_read_holder *holder,

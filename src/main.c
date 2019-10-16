@@ -12,13 +12,28 @@
 
 #include "main_head.h"
 
-static void			draw_menu(t_sdl *sdl, t_pr *m, SDL_Texture *tex)
+static void			draw_menu(t_sdl *sdl, t_pr *m, SDL_Texture *tex,
+								int finish)
 {
+	SDL_Surface		*end;
+
+	end = NULL;
 	if (sdl && m)
 	{
 		prepare_surf(sdl->ren, sdl->surf);
 		render_menu(m, sdl);
+		if (finish)
+		{
+			end = txt_surf(sdl->font, "Well Done",
+					(SDL_Color){50, 255, 100, 255});
+			draw_image(sdl->surf, end,
+			(t_point){(sdl->win_size.x >> 1) - 400,
+			(sdl->win_size.y >> 1) - 300},
+			(t_point){700, 250});
+		}
 		tex = SDL_CreateTextureFromSurface(sdl->ren, sdl->surf);
+		if (end)
+			SDL_FreeSurface(end);
 		sdl_render(sdl->ren, tex, NULL, NULL);
 		SDL_DestroyTexture(tex);
 		SDL_RenderPresent(sdl->ren);
@@ -40,14 +55,15 @@ static int			run_game(t_sdl *sdl, t_player *player,
 		if (!player->win && !player->dead &&
 			(in_game = menu_hooks(m, holder)) < 0)
 			break ;
-		draw_menu(sdl, m, tex);
+		draw_menu(sdl, m, tex, holder->f);
 		if (in_game > 0 || player->win || player->dead)
 		{
 			if (player->curr_map != holder->curr_map
 				|| player->win || player->dead)
-				if (!(ret = load_game(player, holder)))
+				if (!(ret = load_game(player, holder)) && !holder->f)
 					return (error_message("Can't create game"));
-			in_game = game_loop(sdl, player, ret);
+			if (!holder->f)
+				in_game = game_loop(sdl, player, ret);
 		}
 	}
 	SDL_DestroyTexture(tex);
