@@ -28,7 +28,7 @@ t_projectile		*create_projectile(t_player player)
 	projectile->curr_sector = player.curr_sector;
 	projectile->speed = 3.0f;
 	projectile->damage = 20;
-	projectile->sprite = load_jpg_png("textures/plasma_raw.png");
+	projectile->sprite = load_jpg_png("media/textures/plasma_raw.png");
 	return (projectile);
 }
 

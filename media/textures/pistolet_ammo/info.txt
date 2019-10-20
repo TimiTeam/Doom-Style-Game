@@ -4,7 +4,7 @@ ammo 30
 size 12x8
 }
 waiting{
-textures/pistolet_ammo/pistol_ammo.png
+media/textures/pistolet_ammo/pistol_ammo.png
 }
 walk{
 }

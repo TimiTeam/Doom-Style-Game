@@ -1,8 +1,8 @@
 Properties{
-size 25x8
+size 40x8
 }
 waiting{
-textures/bones/bones.png
+media/textures/bones/bones.png
 }
 walk{
 }

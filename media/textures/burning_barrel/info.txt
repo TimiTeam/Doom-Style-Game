@@ -2,9 +2,9 @@ Properties{
 size 50x65
 }
 waiting{
-textures/burning_barrel/burning_barrel_1.png
-textures/burning_barrel/burning_barrel_2.png
-textures/burning_barrel/burning_barrel_3.png
+media/textures/burning_barrel/burning_barrel_1.png
+media/textures/burning_barrel/burning_barrel_2.png
+media/textures/burning_barrel/burning_barrel_3.png
 }
 walk{
 }

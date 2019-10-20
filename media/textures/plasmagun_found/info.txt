@@ -3,7 +3,7 @@ plasmagun
 size 45x20
 }
 waiting{
-textures/plasmagun_found/plasmagun_found.png
+media/textures/plasmagun_found/plasmagun_found.png
 }
 walk{
 }

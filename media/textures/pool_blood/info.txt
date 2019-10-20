@@ -2,7 +2,7 @@ Properties{
 size 40x8
 }
 waiting{
-textures/pool_blood/pool_blood1.png
+media/textures/pool_blood/pool_blood1.png
 }
 walk{
 }

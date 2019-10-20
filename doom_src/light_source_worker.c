@@ -62,12 +62,13 @@ int				light_catch_sector(t_wall **walls, unsigned arr_size,
 	unsigned	i;
 	t_wall		*w;
 
-	i = 0;
-	while (i < arr_size && (w = walls[i]))
+	i = -1;
+	while (++i < arr_size && (w = walls[i]))
 	{
+		if (w->type == filled_wall)
+			continue;
 		if (find_dot_radius_intersect(light_pos, max_dist, w->start, w->end))
 			return (1);
-		i++;
 	}
 	return (0);
 }
@@ -90,7 +91,7 @@ void			fill_sectors_light_source(t_sector *sec,
 		while (i < array_size && (l = light[i]))
 		{
 			if (j < MAX_LIGHT_SRC && (dot_inside_sector(l->pos, s->wall,
-			s->n_walls) || (light_catch_sector(s->portals, MAX_PORTALS, l->pos,
+			s->n_walls) || (light_catch_sector(s->wall, s->n_walls, l->pos,
 					l->max_dist / 2))))
 			{
 				s->sector_light[j] = l;

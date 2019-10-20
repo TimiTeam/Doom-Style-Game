@@ -63,19 +63,19 @@ static char			*door_or_sky(char *line, t_sector *current)
 		current->type = door;
 		return (skip_line_with_word(line, "door"));
 	}
-	if (ft_strncmp(line, "uncovered", ft_strlen("uncovered")) == 0)
-	{
-		current->type = uncovered;
-		return (skip_line_with_word(line, "uncovered"));
-	}
 	if (ft_strncmp(line, "lift", ft_strlen("lift")) == 0)
 	{
 		current->type = lift;
 		return (skip_line_with_word(line, "lift"));
 	}
+	if (ft_strncmp(line, "uncovered", ft_strlen("uncovered")) == 0)
+	{
+		current->type = uncovered;
+		line = skip_line_with_word(line, "uncovered ");
+	}
 	if (ft_strncmp(line, "murderous", ft_strlen("murderous")) == 0)
 	{
-		current->type = murderous;
+		current->murderous = 1;
 		return (skip_line_with_word(line, "murderous"));
 	}
 	return (line);

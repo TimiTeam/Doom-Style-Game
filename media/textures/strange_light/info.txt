@@ -2,10 +2,10 @@ Properties{
 size 30x70
 }
 waiting{
-textures/strange_light/strange_light1.png
-textures/strange_light/strange_light2.png
-textures/strange_light/strange_light3.png
-textures/strange_light/strange_light4.png
+media/textures/strange_light/strange_light1.png
+media/textures/strange_light/strange_light2.png
+media/textures/strange_light/strange_light3.png
+media/textures/strange_light/strange_light4.png
 }
 walk{
 }

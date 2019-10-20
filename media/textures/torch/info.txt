@@ -2,10 +2,10 @@ Properties{
 size 10x60
 }
 waiting{
-textures/torch/torch_1.png
-textures/torch/torch_2.png
-textures/torch/torch_3.png
-textures/torch/torch_4.png
+media/textures/torch/torch_1.png
+media/textures/torch/torch_2.png
+media/textures/torch/torch_3.png
+media/textures/torch/torch_4.png
 }
 walk{
 }

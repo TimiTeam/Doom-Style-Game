@@ -1,0 +1,17 @@
+Properties{
+size 18x18
+}
+waiting{
+media/textures/skullbox/tile000.png
+media/textures/skullbox/tile001.png
+media/textures/skullbox/tile002.png
+media/textures/skullbox/tile003.png
+}
+walk{
+}
+action{
+}
+taking_damage{
+}
+die{
+}

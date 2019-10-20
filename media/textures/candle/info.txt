@@ -2,9 +2,9 @@ Properties{
 size 15x25
 }
 waiting{
-textures/candle/candle1.png
-textures/candle/candle2.png
-textures/candle/candle3.png
+media/textures/candle/candle1.png
+media/textures/candle/candle2.png
+media/textures/candle/candle3.png
 }
 walk{
 }

@@ -1,8 +1,8 @@
 Properties{
-size 25x40
+size 35x45
 }
 waiting{
-textures/skull/skull.png
+media/textures/skull/skull.png
 }
 walk{
 }

@@ -30,10 +30,10 @@ static int		read_maps_path(int fd, char **array, int arr_size)
 			full_path = clip_n_str(path, skip_row_number(file_name), "");
 			array[i] = ft_strdup(full_path);
 			ft_strdel(&full_path);
+			i++;
 		}
 		else if (ft_strcmp(file_name, "###") == 0)
 			break ;
-		i++;
 		ft_strdel(&file_name);
 	}
 	ft_strdel(&path);

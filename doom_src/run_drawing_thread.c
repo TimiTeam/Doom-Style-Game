@@ -24,6 +24,25 @@ static void			filling_super_data(t_super_data *super, t_proj *t,
 	super->wall = t->wall;
 }
 
+static void			draw_transparent_wall(t_proj t)
+{
+	pthread_t		thread[THREADS];
+	t_super_data	super[THREADS];
+	int				step;
+	int				i;
+
+	step = (t.data.end - t.data.start) / THREADS;
+	i = -1;
+	while (++i < THREADS)
+	{
+		filling_super_data(&super[i], &t, step, i);
+		pthread_create(&thread[i], NULL, draw_simple_wall, &super[i]);
+	}
+	i = -1;
+	while (++i < THREADS)
+		pthread_join(thread[i], NULL);
+}
+
 void				threads(t_proj t)
 {
 	pthread_t		thread[THREADS];
@@ -45,11 +64,7 @@ void				threads(t_proj t)
 		pthread_join(thread[i], NULL);
 	again((t_again){t.sec, t.wall, t.player, t.sdl, t.data});
 	if (super->wall.type == transparent)
-	{
-		super[0].start_x = t.data.start;
-		super[0].end_x = t.data.end;
-		draw_simple_wall(super[0]);
-	}
+		draw_transparent_wall(t);
 }
 
 void				*thread_draw_sector(void *param)

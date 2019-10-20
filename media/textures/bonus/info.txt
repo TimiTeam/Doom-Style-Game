@@ -2,7 +2,7 @@ Properties{
 size 20x20
 }
 waiting{
-textures/bonus/bonus.png
+media/textures/bonus/bonus.png
 }
 walk{
 }

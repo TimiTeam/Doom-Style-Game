@@ -42,20 +42,23 @@ static void			draw_floor(t_screen_inf inf, t_super_data *super)
 		.calc_two = super->data->floor_calc});
 }
 
-void				draw_simple_wall(t_super_data super)
+void				*draw_simple_wall(void *param)
 {
 	t_wall			cp;
 	t_screen_inf	inf;
+	t_super_data	*super;
 
-	cp = super.drawing_line;
-	inf = fill_inf(&super, cp);
+	super = (t_super_data*)param;
+	cp = super->drawing_line;
+	inf = fill_inf(super, cp);
 	while (inf.x < inf.end)
 	{
-		calculate_frame(&inf, cp, &super);
-		find_tex_pos(&inf, &super);
-		draw_line(inf, &super);
+		calculate_frame(&inf, cp, super);
+		find_tex_pos(&inf, super);
+		draw_line(inf, super);
 		inf.x++;
 	}
+	return (NULL);
 }
 
 void				draw_stripes(t_super_data *super, t_screen_inf inf)

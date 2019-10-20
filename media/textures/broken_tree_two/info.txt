@@ -1,8 +1,8 @@
 Properties{
-size 50x70
+size 80x50
 }
 waiting{
-textures/broken_tree_two/broken_tree_two.png
+media/textures/broken_tree_two/broken_tree_two.png
 }
 walk{
 }

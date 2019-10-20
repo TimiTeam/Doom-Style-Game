@@ -2,11 +2,11 @@ Properties{
 size 15x15
 }
 waiting{
-textures/coin/coin_face.png
-textures/coin/coin_move1.png
-textures/coin/coin_move2.png
-textures/coin/coin_move3.png
-textures/coin/coin_move4.png
+media/textures/coin/coin_face.png
+media/textures/coin/coin_move1.png
+media/textures/coin/coin_move2.png
+media/textures/coin/coin_move3.png
+media/textures/coin/coin_move4.png
 }
 walk{
 }

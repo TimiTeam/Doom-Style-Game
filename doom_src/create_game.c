@@ -12,20 +12,28 @@
 
 #include "sectors.h"
 
+static int		line_cmp_with_wall(char *line)
+{
+	if (line && ft_strncmp(line, "Walls", ft_strlen("Walls")) == 0)
+		return (1);
+	return (0);
+}
+
 static void		load_data_from_map(int fd, t_read_holder *h)
 {
-	t_vector	*vectors;
+	t_vector	*vec;
 	char		*line;
 
-	vectors = NULL;
+	vec = NULL;
+	h->walls = NULL;
 	while (get_next_line(fd, &line) > 0)
 	{
-		if (ft_strncmp(line, "Vectors", ft_strlen("Vectors")) == 0)
-			vectors = get_vectors(fd, h->vect_count);
-		else if (ft_strncmp(line, "Walls", ft_strlen("Walls")) == 0 && vectors)
-			h->walls = get_walls(fd, h, vectors);
+		if (ft_strncmp(line, "Vectors", ft_strlen("Vectors")) == 0 && !vec)
+			vec = get_vectors(fd, h->vect_count);
+		else if (line_cmp_with_wall(line) && vec && !h->walls)
+			h->walls = get_walls(fd, h, vec);
 		else if (ft_strncmp(line, "Sectors", ft_strlen("Sectors")) == 0 &&
-				h->walls)
+				h->walls && !h->all)
 		{
 			h->all = make_sectors_list(fd, h);
 			h->light_source = create_all_light_source(h->all, h->light_count);
@@ -35,8 +43,8 @@ static void		load_data_from_map(int fd, t_read_holder *h)
 			player_start_and_end(fd, h);
 		ft_strdel(&line);
 	}
-	if (vectors)
-		ft_memdel((void**)&vectors);
+	if (vec)
+		ft_memdel((void**)&vec);
 	ft_strdel(&line);
 }
 

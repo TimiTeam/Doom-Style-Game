@@ -6,7 +6,7 @@
 /*   By: ohavryle <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/29 17:17:21 by ohavryle          #+#    #+#             */
-/*   Updated: 2019/09/29 17:17:22 by ohavryle         ###   ########.fr       */
+/*   Updated: 2019/10/16 18:45:05 by tbujalo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ static void			draw_menu(t_sdl *sdl, t_pr *m, SDL_Texture *tex,
 		render_menu(m, sdl);
 		if (finish)
 		{
-			end = txt_surf(sdl->font, "Well Done",
+			end = txt_surf(sdl->font, "/Well Done",
 					(SDL_Color){50, 255, 100, 255});
 			draw_image(sdl->surf, end,
 			(t_point){(sdl->win_size.x >> 1) - 400,
@@ -72,20 +72,29 @@ static int			run_game(t_sdl *sdl, t_player *player,
 
 static int			init_holder_data(t_read_holder *holder)
 {
-	if (!(holder->skyboxes[0] = load_jpg_png("textures/dark_matter.jpg")))
+	if (!(holder->skyboxes[0] = load_jpg_png("media/textures/dark_matter.jpg")))
 	{
 		return (print_error_message("Can't load menu ",
-				"textures/dark_matter.jpg"));
+				"media/textures/dark_matter.jpg"));
 	}
-	if (!(holder->skyboxes[1] = load_jpg_png("textures/hell.jpg")))
-		return (print_error_message("Can't load menu ", "textures/hell.jpg"));
-	if (!(holder->skyboxes[2] = load_jpg_png("textures/night.jpg")))
-		return (print_error_message("Can't load menu ", "textures/night.jpg"));
-	holder->hit_sound = Mix_LoadWAV("sounds/monster_roar.wav");
-	holder->roar_sound = Mix_LoadWAV("sounds/monster_bite.wav");
-	if ((holder->all_guns = (t_gun**)malloc(sizeof(t_gun*) * 3)))
-		if (!load_guns(holder->all_guns))
-			return (print_error_message("Problame with loading guns", "exit"));
+	if (!(holder->skyboxes[1] =
+						load_jpg_png("media/textures/night_skybox.png")))
+	{
+		return (print_error_message("Can't load menu ",
+			"media/textures/hell.jpg"));
+	}
+	if (!(holder->skyboxes[2] =
+						load_jpg_png("media/textures/night_skybox.png")))
+	{
+		return (print_error_message("Can't load menu ",
+			"media/textures/night.jpg"));
+	}
+	holder->hit_sound = Mix_LoadWAV("media/sounds/monster_roar.wav");
+	holder->roar_sound = Mix_LoadWAV("media/sounds/monster_bite.wav");
+	holder->all_guns = (t_gun**)malloc(sizeof(t_gun*) * 3);
+	ft_memset(holder->all_guns, 0, sizeof(t_gun*) * 3);
+	if (!load_guns(holder->all_guns))
+		return (print_error_message("Problame with loading guns", "exit"));
 	return (1);
 }
 
@@ -99,7 +108,7 @@ static int			init(t_sdl **sdl, t_pr *m, t_read_holder *holder)
 	SDL_ShowCursor(SDL_DISABLE);
 	SDL_SetRelativeMouseMode(SDL_TRUE);
 	if (!load_menu_textures(m, holder))
-		return (print_error_message("Can't load menu resourses\n", ""));
+		return (print_error_message("Can't load menu resources", "!"));
 	if (!init_holder_data(holder))
 		return (print_error_message("Can't load main data", ""));
 	initialize_menu(m);
@@ -129,6 +138,5 @@ int					main(void)
 	}
 	free_all(&player, &sdl, &holder, &m);
 	free_data_holder(&holder);
-	system("leaks -q doom-nukem");
 	return (0);
 }

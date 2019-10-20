@@ -6,7 +6,7 @@
 /*   By: ohavryle <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/29 17:16:16 by ohavryle          #+#    #+#             */
-/*   Updated: 2019/09/30 16:10:45 by tbujalo          ###   ########.fr       */
+/*   Updated: 2019/10/20 18:47:09 by tbujalo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,13 +57,13 @@ static void			change_sector_state(t_sector *sectors, t_player *player)
 static SDL_Surface	*get_text_surf(t_sdl *sdl, t_player player)
 {
 	if (player.lift_near)
-		return (txt_surf(sdl->font, "F to run lift",
+		return (txt_surf(sdl->font, "/F to run lift",
 			(SDL_Color){255, 255, 255, 255}));
 	else if (player.door_near)
-		return (txt_surf(sdl->font, "E to open Door",
+		return (txt_surf(sdl->font, "/E to open Door",
 			(SDL_Color){255, 255, 255, 255}));
 	else if (player.current_gun && player.current_gun->ammo <= 0)
-		return (txt_surf(sdl->font, "No ammo",
+		return (txt_surf(sdl->font, "/No ammo",
 			(SDL_Color){255, 50, 50, 255}));
 	else
 		return (NULL);
@@ -74,10 +74,12 @@ static void			print_text(t_player player, t_sdl *sdl)
 	SDL_Surface		*text_surf;
 	SDL_Surface		*enemies;
 	char			*num_enemues;
+	char			*enemy_text;
 
 	num_enemues = ft_itoa(player.count_enemies);
+	enemy_text = ft_strjoin("/Left kill ", num_enemues);
 	text_surf = get_text_surf(sdl, player);
-	enemies = txt_surf(sdl->font, num_enemues,
+	enemies = txt_surf(sdl->font, enemy_text,
 	(SDL_Color){255, 255, 255, 255});
 	if (text_surf)
 	{
@@ -87,9 +89,10 @@ static void			print_text(t_player player, t_sdl *sdl)
 		SDL_FreeSurface(text_surf);
 	}
 	draw_image(sdl->surf, enemies, (t_point)
-		{sdl->win_size.x - 100, sdl->win_size.y - 100}, (t_point){80, 60});
+		{sdl->win_size.x - 200, sdl->win_size.y - 100}, (t_point){180, 70});
 	SDL_FreeSurface(enemies);
 	ft_strdel(&num_enemues);
+	ft_strdel(&enemy_text);
 }
 
 int					game_loop(t_sdl *sdl, t_player *player, t_sector *sectors)

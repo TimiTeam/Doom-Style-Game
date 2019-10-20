@@ -1,0 +1,33 @@
+Properties{
+health 400
+damage 20
+size 60x90
+}
+waiting{
+media/textures/afrit/walk1.png
+}
+walk{
+media/textures/afrit/walk1.png
+media/textures/afrit/walk2.png
+media/textures/afrit/walk3.png
+media/textures/afrit/walk4.png
+}
+action{
+media/textures/afrit/attac1.png
+media/textures/afrit/attac2.png
+media/textures/afrit/attac3.png
+media/textures/afrit/attac4.png
+media/textures/afrit/attac5.png
+media/textures/afrit/attac6.png
+media/textures/afrit/attac7.png
+}
+taking_damage{
+media/textures/afrit/dying2.png
+}
+die{
+media/textures/afrit/dying1.png
+media/textures/afrit/dying2.png
+media/textures/afrit/dying3.png
+media/textures/afrit/dying4.png
+media/textures/afrit/dying5.png
+}

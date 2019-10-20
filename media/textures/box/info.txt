@@ -2,10 +2,10 @@ Properties{
 size 30x30
 }
 waiting{
-textures/box/side1.png
-textures/box/side2.png
-textures/box/side3.png
-textures/box/side4.png
+media/textures/box/side1.png
+media/textures/box/side2.png
+media/textures/box/side3.png
+media/textures/box/side4.png
 }
 walk{
 }

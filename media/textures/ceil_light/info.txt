@@ -2,7 +2,7 @@ Properties{
 size 1x1
 }
 waiting{
-textures/ceil_light/ceil_light.png
+media/textures/ceil_light/ceil_light.png
 }
 walk{
 }

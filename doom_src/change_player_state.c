@@ -70,7 +70,7 @@ static void			cheak_player_sector(t_player *player)
 	t_sector		*near_sect;
 
 	near_sect = NULL;
-	if (player->curr_sector->type == murderous)
+	if (player->curr_sector->murderous)
 		player->health -= 1;
 	if ((near_sect = get_near_sector(player)) &&
 		near_sect->type == lift && near_sect->state == calm)
@@ -95,14 +95,14 @@ void				change_player_state(t_player *player, t_sdl *sdl, int *run)
 	player->count_enemies = count_enemies(player->all);
 	if (player->dead)
 	{
-		dead_text = txt_surf(sdl->font, "YOU DIED",
+		dead_text = txt_surf(sdl->font, "/YOU DIED",
 					(SDL_Color){255, 30, 30, 255});
 		death_animation(sdl, player, dead_text, run);
 		SDL_FreeSurface(dead_text);
 	}
-	else if (player->win && !player->count_enemies)
+	else if (player->win && player->count_enemies - 10 <= 0)
 	{
-		win_text = txt_surf(sdl->font, "You Win",
+		win_text = txt_surf(sdl->font, "/You Win",
 					(SDL_Color){30, 255, 30, 255});
 		win_animation(sdl, player, win_text, run);
 		SDL_FreeSurface(win_text);

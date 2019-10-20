@@ -1,11 +1,16 @@
 #Levels
-Path: Maps/
-0) jumplevel
+Path: ./media/maps/
+Extension: 
+File Names: 
 0) starship
+1) earth
+2) hell
 ###
 
-#Textures 58
-Path: textures/
+#Textures 71
+Path: ./media/textures/
+Extension: 
+File Names: 
 0) ShanConc01.png
 1) AgoraBasRelief.png
 2) Autel.png
@@ -64,14 +69,29 @@ Path: textures/
 55) DARKPRISON_005.png
 56) gate2_D.png
 57) horizont.png
+58) WTEX062.png
+59) WTEX094.png
+60) WTEX091.png
+61) WTEX077.png
+62) WTEX056.png
+63) CR_floor_new2.png
+64) WTEX170.png
+65) arch1.png
+66) cob-web2.png
+67) Wintest2.png
+68) WTEX030.png
+69) WTEX033.png
+70) hellcave2.png
 ###
 
 #Items
-Path: textures/
+Path: ./media/textures/
+Extension: 
+File Names: 
 0) coin coin
 1) key old_key
 2) super_bonus bonus
-3) enemy demon
+3) enemy new_demon
 4) enemy imp
 5) light burning_barrel
 6) light lantern
@@ -83,7 +103,7 @@ Path: textures/
 12) ammo pistolet_ammo
 13) ammo shotgun_ammo
 14) ammo plasmagun_ammo
-15) light torch
+15) light ceil_light
 16) object tree_one
 17) object tree_two
 18) object dead_man
@@ -98,5 +118,11 @@ Path: textures/
 27) light ceil_light
 28) light strange_light
 29) light candle
-30) objectjetpack jetpack
+30) light largefire
+31) coin pentagram
+32) light firewall
+33) enemy afrit
+34) objectjetpack jetpack
+35) light trap
 ###
+

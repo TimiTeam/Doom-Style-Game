@@ -25,7 +25,8 @@ enum					e_wall_type
 	filled_wall,
 	empty_wall,
 	window,
-	transparent
+	transparent,
+	error
 };
 
 enum					e_visible
@@ -39,8 +40,7 @@ enum					e_sect_type
 	simple,
 	door,
 	lift,
-	uncovered,
-	murderous
+	uncovered
 };
 
 enum					e_sect_state
@@ -183,6 +183,7 @@ typedef struct			s_sector
 	int					max_up;
 	enum e_sect_type	type;
 	enum e_sect_state	state;
+	char				murderous;
 	enum e_visible		floor_visible;
 	unsigned char		player_use;
 	unsigned short		sector;

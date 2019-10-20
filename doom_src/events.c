@@ -54,7 +54,7 @@ int				guess_event(SDL_Keycode code,
 		player->speed = 0.5;
 	else if (code == SDLK_SPACE && type == SDL_KEYDOWN
 			&& (player->pos.z - player->height <= player->curr_sector->floor
-			|| player->jetpack || player->curr_sector->type == uncovered))
+			|| player->jetpack))
 		player->velocity += 0.8f;
 	else if ((code == SDLK_1 || code == SDLK_2 || code == SDLK_3)
 		&& type == SDL_KEYDOWN)

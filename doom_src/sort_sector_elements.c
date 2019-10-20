@@ -20,15 +20,17 @@ int				check_sectors(t_sector *sector)
 	sec = sector;
 	while (sec)
 	{
-		i = 0;
-		while (i < MAX_PORTALS && sec->portals[i])
+		i = -1;
+		while (++i < sec->n_walls && sec->wall[i])
 		{
-			if (!sec->portals[i]->sectors[0] || !sec->portals[i]->sectors[1])
+			if (sec->wall[i]->type != transparent &&
+					sec->wall[i]->type != empty_wall)
+				continue ;
+			if (!sec->wall[i]->sectors[0] || !sec->wall[i]->sectors[1])
 			{
 				return (print_error_message("Error map!",
 						"The empty wall must be closed by all side"));
 			}
-			i++;
 		}
 		sec = sec->next;
 	}

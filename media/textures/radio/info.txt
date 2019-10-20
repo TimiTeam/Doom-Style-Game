@@ -2,7 +2,7 @@ Properties{
 size 20x20
 }
 waiting{
-textures/radio/radio.png
+media/textures/radio/radio.png
 }
 walk{
 }

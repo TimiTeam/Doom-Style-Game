@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   menu_main.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: atabala <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/18 14:55:25 by atabala           #+#    #+#             */
-/*   Updated: 2019/09/18 14:55:26 by atabala          ###   ########.fr       */
+/*   Updated: 2019/10/16 18:42:45 by tbujalo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,23 +16,30 @@ SDL_Surface			*txt_surf(TTF_Font *font,
 							char *text, SDL_Color color)
 {
 	SDL_Surface		*ret;
+	char			*level_name;
 
+	level_name = NULL;
 	ret = NULL;
 	if (font && text)
 	{
-		ret = TTF_RenderText_Blended(font, text, color);
+		level_name = ft_strrchr(text, '/');
+		if (level_name && *level_name)
+			level_name++;
+		if (level_name && *level_name)
+			ret = TTF_RenderText_Blended(font, level_name, color);
 	}
 	return (ret);
 }
 
 int					load_menu_textures(t_pr *m, t_read_holder *holder)
 {
-	m->background = load_jpg_png("textures/background1.jpg");
-	m->play_button = load_jpg_png("textures/play_button.png");
-	m->exit_button = load_jpg_png("textures/exit_button.png");
-	m->logo = load_jpg_png("textures/logo.png");
-	m->choose_level_button = load_jpg_png("textures/choose_level_button.png");
-	m->font = TTF_OpenFont("amazdoom/AmazDooMLeft2.ttf", 256);
+	m->background = load_jpg_png("media/textures/background1.jpg");
+	m->play_button = load_jpg_png("media/textures/play_button.png");
+	m->exit_button = load_jpg_png("media/textures/exit_button.png");
+	m->logo = load_jpg_png("media/textures/logo.png");
+	m->choose_level_button =
+	load_jpg_png("media/textures/choose_level_button.png");
+	m->font = TTF_OpenFont("media/AmazDooMLeft2.ttf", 256);
 	if (!m->background || !m->play_button || !m->logo
 	|| !m->exit_button || !m->choose_level_button || !m->font)
 		return (0);

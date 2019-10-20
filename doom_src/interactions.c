@@ -57,11 +57,11 @@ void				activate_lift(t_player *player)
 	t_sector		*next;
 	unsigned		i;
 
-	i = 0;
+	i = -1;
 	next = NULL;
 	if (!(s = get_near_sector(player)) || s->type != lift || s->state != calm)
 		return ;
-	while (s && i < MAX_PORTALS && (w = s->portals[i]))
+	while (s && ++i < MAX_PORTALS && (w = s->portals[i]))
 	{
 		if (w->sectors[0] != s && (int)w->sectors[0]->floor != (int)s->floor)
 			next = w->sectors[0];
@@ -71,10 +71,11 @@ void				activate_lift(t_player *player)
 		{
 			if (next->type == door)
 				next = get_sector_after_door(next, s);
-			if ((int)next->floor != (int)s->floor && set_lift_max_up(s, next))
+			if (next && (int)next->floor == (int)s->floor)
+				continue ;
+			if (next && set_lift_max_up(s, next))
 				return ;
 		}
-		i++;
 	}
 }
 

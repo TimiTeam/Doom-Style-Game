@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   item_loader.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tbujalo <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: mshpakov <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/29 06:15:19 by tbujalo           #+#    #+#             */
-/*   Updated: 2019/10/16 14:34:21 by tbujalo          ###   ########.fr       */
+/*   Updated: 2019/10/16 18:32:37 by mshpakov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,8 +32,7 @@ static enum e_item_type	get_item_type(char *type)
 			return (enemy);
 		else if (ft_strncmp("light", type, ft_strlen("light")) == 0)
 			return (light);
-		else if (ft_strncmp("objectjetpack", type,
-					ft_strlen("objectjetpack")) == 0)
+		else if (!ft_strncmp("objectjetpack", type, ft_strlen("objectjetpack")))
 			return (jetpack);
 	}
 	return (object);
@@ -139,4 +138,3 @@ t_item					*make_item_ftom_str(char *line, char *dir_pth)
 	}
 	return (item);
 }
-git 

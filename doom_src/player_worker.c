@@ -73,13 +73,13 @@ t_player		*new_t_player(int pos_x, int pos_y, t_point win_size)
 	player->hfov = win_size.x * player->m_hfov;
 	player->vfov = win_size.y * player->m_vfov;
 	player->fall = 0;
-	player->speed = 0.5f;
+	player->speed = 0.6f;
 	player->inventar = NULL;
 	player->height = EYEHEIGHT;
 	player->health = 100;
-	player->damage_sound = Mix_LoadWAV("sounds/player_damaged.wav");
-	player->ambient = Mix_LoadWAV("sounds/ambient.wav");
-	player->door_sound = Mix_LoadWAV("sounds/door_sound.wav");
-	player->get_item = Mix_LoadWAV("sounds/oh_yeah.wav");
+	player->damage_sound = Mix_LoadWAV("media/sounds/player_damaged.wav");
+	player->ambient = Mix_LoadWAV("media/sounds/ambient.wav");
+	player->door_sound = Mix_LoadWAV("media/sounds/door_sound.wav");
+	player->get_item = Mix_LoadWAV("media/sounds/oh_yeah.wav");
 	return (player);
 }

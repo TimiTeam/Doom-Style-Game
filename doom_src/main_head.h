@@ -6,7 +6,7 @@
 /*   By: ohavryle <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/29 18:49:16 by ohavryle          #+#    #+#             */
-/*   Updated: 2019/10/16 14:44:11 by tbujalo          ###   ########.fr       */
+/*   Updated: 2019/10/20 18:55:08 by tbujalo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,8 @@
 # include <pthread.h>
 # include "sdl_head.h"
 # include "sectors.h"
-# define W 1390
-# define H 980
+# define W 1024
+# define H 720
 # define EYEHEIGHT  5
 # define THREADS 4
 # define DELETE 	{tmp->next = all->next; ft_memdel((void**)&all); return ;}
@@ -410,7 +410,7 @@ void				draw_sector_items(t_item **items,
 					t_player *player, t_draw_data data, SDL_Surface *screen);
 int					game_loop(t_sdl *sdl, t_player *player, t_sector *sectors);
 void				*thread_draw_sector(void *param);
-void				draw_simple_wall(t_super_data super);
+void				*draw_simple_wall(void *param);
 void				draw_sectors(t_sector *sec,
 						t_player *player, t_sdl *sdl, t_draw_data data);
 void				free_data_holder(t_read_holder *holder);

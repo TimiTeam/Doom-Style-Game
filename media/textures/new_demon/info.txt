@@ -1,0 +1,31 @@
+Properties{
+health 200
+damage 12
+size 65x80
+}
+waiting{
+media/textures/new_demon/demon12.png
+}
+walk{
+media/textures/new_demon/demon11.png
+media/textures/new_demon/demon12.png
+media/textures/new_demon/demon13.png
+media/textures/new_demon/demon14.png
+}
+action{
+media/textures/new_demon/demon15.png
+media/textures/new_demon/demon16.png
+media/textures/new_demon/demon17.png
+}
+taking_damage{
+media/textures/new_demon/demon18.png
+}
+die{
+media/textures/new_demon/demon18.png
+media/textures/new_demon/demon61.png
+media/textures/new_demon/demon62.png
+media/textures/new_demon/demon63.png
+media/textures/new_demon/demon64.png
+media/textures/new_demon/demon65.png
+media/textures/new_demon/demon66.png
+}

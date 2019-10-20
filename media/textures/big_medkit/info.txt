@@ -3,7 +3,7 @@ health 60
 size 20x20
 }
 waiting{
-textures/big_medkit/big_medkit.png
+media/textures/big_medkit/big_medkit.png
 }
 walk{
 }

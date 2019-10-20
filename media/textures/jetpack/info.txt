@@ -2,7 +2,7 @@ Properties{
 size 50x40
 }
 waiting{
-textures/jetpack/jetpack.png
+media/textures/jetpack/jetpack.png
 }
 walk{
 }

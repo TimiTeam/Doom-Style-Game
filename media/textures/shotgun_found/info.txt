@@ -3,7 +3,7 @@ shotgun
 size 35x12
 }
 waiting{
-textures/shotgun_found/shotgun_found.png
+media/textures/shotgun_found/shotgun_found.png
 }
 walk{
 }
