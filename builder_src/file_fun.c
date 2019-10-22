@@ -30,7 +30,8 @@ int						my_rename(const char *oldname, const char *newname)
 			free(tmp2);
 			if (tmp)
 			{
-				system(tmp);
+				if (system(tmp) == -1)
+					ft_putstr("Error moving\n");
 				free(tmp);
 				return (SUCCESS);
 			}

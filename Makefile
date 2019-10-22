@@ -12,7 +12,8 @@
 
 # Compilation
 CFLAGS =            -Wall -Wextra -Werror -g
-OTHER_FLAGS =       -O2
+O_FLAG =		-O2
+OTHER_FLAGS = 
 #OTHER_FLAGS =      -fsanitize=address
 
 # Default rule
@@ -51,7 +52,7 @@ ifeq ($(UNAME_S),Linux)
     SDL2_FLAGS =   `sdl2-config --cflags`
     FLAG_F =
     SDL2_LINK =     `sdl2-config --libs` -lSDL2_ttf -lSDL2_image -lSDL2_mixer
-
+    OTHER_FLAGS =       -pthread
 endif
 
 # Sources
@@ -268,11 +269,11 @@ ft:
 
 $(BUILDER_OBJDIR)/%.o: $(BUILDER_SRCDIR)/%.c
 	echo -e "--$(LOG_CLEAR)$(LOG_VIOLET)$(BUILDER_NAME)$(LOG_NOCOLOR)........................... $(LOG_YELLOW)$<$(LOG_NOCOLOR)$(LOG_UP)"
-	$(CC) $(CFLAGS) $(OTHER_FLAGS) -c -o $@ $^ $(FLAG_F) $(FT_INC) $(SDL2_INC) $(SDL2_FLAGS)
+	$(CC) $(CFLAGS) $(O_FLAG) $(OTHER_FLAGS) -c -o $@ $^ $(FLAG_F) $(FT_INC) $(SDL2_INC) $(SDL2_FLAGS)
 
 $(DOOM_OBJDIR)/%.o: $(DOOM_SRCDIR)/%.c
 	echo -e "--$(LOG_CLEAR)$(LOG_VIOLET)$(DOOM_NAME)$(LOG_NOCOLOR)........................... $(LOG_YELLOW)$<$(LOG_NOCOLOR)$(LOG_UP)"
-	$(CC) $(CFLAGS) $(OTHER_FLAGS) -c -o $@ $^ $(FLAG_F) $(FT_INC) $(SDL2_INC) $(SDL2_FLAGS)
+	$(CC) $(CFLAGS) $(O_FLAG) $(OTHER_FLAGS) -c -o $@ $^ $(FLAG_F) $(FT_INC) $(SDL2_INC) $(SDL2_FLAGS)
 
 $(BUILDER_OBJDIR):
 	@echo -e "$(LOG_CLEAR)$(LOG_BLUE)build $(LOG_YELLOW)$(BUILDER_NAME)$(LOG_NOCOLOR)"
@@ -284,12 +285,12 @@ $(DOOM_OBJDIR):
 
 $(BUILDER_NAME): $(BUILDER_OBJP)
 	@echo -e "--$(LOG_CLEAR)$(LOG_VIOLET)$(BUILDER_NAME)$(LOG_NOCOLOR)......................... $(LOG_YELLOW)assembling$(LOG_NOCOLOR)$(LOG_UP)"
-	@$(CC) $(CFLAGS) $(OTHER_FLAGS) -o $@ $^ $(FLAG_F) $(SDL2_LINK) $(FT_LINK) $(MATH_LINK) $(SDL2_INC)
+	@$(CC) $(CFLAGS) $(O_FLAG) $(OTHER_FLAGS) -o $@ $^ $(FLAG_F) $(SDL2_LINK) $(FT_LINK) $(MATH_LINK) $(SDL2_INC)
 	@echo -e "--$(LOG_CLEAR)$(LOG_VIOLET)$(BUILDER_NAME)$(LOG_NOCOLOR) compiled.................. $(LOG_GREEN)✓$(LOG_NOCOLOR)"
 
 $(DOOM_NAME): $(DOOM_OBJP)
 	echo -e "--$(LOG_CLEAR)$(LOG_VIOLET)$(DOOM_NAME)$(LOG_NOCOLOR)......................... $(LOG_YELLOW)assembling$(LOG_NOCOLOR)$(LOG_UP)"
-	$(CC) $(CFLAGS) $(OTHER_FLAGS) -o $@ $^ $(FLAG_F) $(SDL2_LINK) $(FT_LINK) $(MATH_LINK) $(SDL2_INC)
+	$(CC) $(CFLAGS) $(O_FLAG) $(OTHER_FLAGS) -o $@ $^ $(FLAG_F) $(SDL2_LINK) $(FT_LINK) $(MATH_LINK) $(SDL2_INC)
 	echo -e "--$(LOG_CLEAR)$(LOG_VIOLET)$(DOOM_NAME)$(LOG_NOCOLOR) compiled.................. $(LOG_GREEN)✓$(LOG_NOCOLOR)"
 
 clean:

@@ -17,8 +17,8 @@
 # include <pthread.h>
 # include "sdl_head.h"
 # include "sectors.h"
-# define W 1024
-# define H 720
+# define W 980
+# define H 620
 # define EYEHEIGHT  5
 # define THREADS 4
 # define DELETE 	{tmp->next = all->next; ft_memdel((void**)&all); return ;}
