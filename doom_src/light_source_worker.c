@@ -6,7 +6,7 @@
 /*   By: tbujalo <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/29 04:23:21 by tbujalo           #+#    #+#             */
-/*   Updated: 2019/09/29 04:32:09 by tbujalo          ###   ########.fr       */
+/*   Updated: 2019/10/28 16:23:26 by tbujalo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,20 @@ int				light_catch_sector(t_wall **walls, unsigned arr_size,
 	return (0);
 }
 
+int				its_new_light(t_light *new, t_light **array)
+{
+	int 		i;
+
+	i = 0;
+	while (i < MAX_LIGHT_SRC && array[i])
+	{
+		if (array[i] == new)
+			return (0);
+		i++;
+	}
+	return (1);
+}
+
 void			fill_sectors_light_source(t_sector *sec,
 		t_light **light, unsigned array_size)
 {
@@ -88,11 +102,20 @@ void			fill_sectors_light_source(t_sector *sec,
 	{
 		i = 0;
 		j = 0;
-		while (i < array_size && (l = light[i]))
+		while (i < array_size && (l = light[i]) && j < MAX_LIGHT_SRC)
 		{
-			if (j < MAX_LIGHT_SRC && (dot_inside_sector(l->pos, s->wall,
-			s->n_walls) || (light_catch_sector(s->wall, s->n_walls, l->pos,
-					l->max_dist / 2))))
+			if (l->sector == s)
+			{
+				s->sector_light[j] = l;
+				j++;
+			}
+			i++;
+		}
+		i = 0;
+		while (i < array_size && (l = light[i]) && j < MAX_LIGHT_SRC
+			&& its_new_light(l, s->sector_light))
+		{
+			if (light_catch_sector(s->wall, s->n_walls, l->pos, l->max_dist / 2))
 			{
 				s->sector_light[j] = l;
 				j++;

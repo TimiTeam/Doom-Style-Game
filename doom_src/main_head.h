@@ -6,7 +6,7 @@
 /*   By: ohavryle <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/29 18:49:16 by ohavryle          #+#    #+#             */
-/*   Updated: 2019/10/20 18:55:08 by tbujalo          ###   ########.fr       */
+/*   Updated: 2019/10/28 15:44:05 by tbujalo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,8 @@
 # include <pthread.h>
 # include "sdl_head.h"
 # include "sectors.h"
-# define W 980
-# define H 620
+# define W 1024
+# define H 720
 # define EYEHEIGHT  5
 # define THREADS 4
 # define DELETE 	{tmp->next = all->next; ft_memdel((void**)&all); return ;}
