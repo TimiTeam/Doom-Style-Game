@@ -21,5 +21,11 @@ Mouse button(left) - shoot;
 
 On the game work two person. On the Level editor one.
 Some math part we used was written "Bisqwit" (https://www.youtube.com/watch?v=HQYsFshbkYw).
-
-<img src="room1.png" alt="room>
+Room
+<img src="room1.png" alt="room"/>
+Oped door
+<img src="door2.png" alt="room"/>
+Enemy
+<img src="enemy.png" alt="room"/>
+Dieing
+<img src="die.png" alt="room"/>
