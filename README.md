@@ -21,3 +21,5 @@ Mouse button(left) - shoot;
 
 On the game work two person. On the Level editor one.
 Some math part we used was written "Bisqwit" (https://www.youtube.com/watch?v=HQYsFshbkYw).
+
+<img src="room1.png" alt="room>
